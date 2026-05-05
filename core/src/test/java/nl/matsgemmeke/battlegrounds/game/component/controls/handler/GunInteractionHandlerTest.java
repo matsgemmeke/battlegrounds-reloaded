@@ -37,6 +37,8 @@ class GunInteractionHandlerTest {
     @Mock
     private GunRegistry gunRegistry;
     @Mock
+    private ItemController<GunUser> controller;
+    @Mock
     private ItemControllerRegistry itemControllerRegistry;
     @InjectMocks
     private GunInteractionHandler interactionHandler;
@@ -70,17 +72,17 @@ class GunInteractionHandlerTest {
     void handleChangeFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.CHANGE_FROM, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.CHANGE_FROM, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+
+        verify(controller).cancelAllFunctions();
     }
 
     @Test
@@ -88,12 +90,10 @@ class GunInteractionHandlerTest {
     void handleChangeTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.CHANGE_TO, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.CHANGE_TO, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleChangeTo(gamePlayer, ITEM_STACK);
 
@@ -106,12 +106,10 @@ class GunInteractionHandlerTest {
     void handleDropItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.DROP_ITEM, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.DROP_ITEM, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleDropItem(gamePlayer, ITEM_STACK);
 
@@ -119,6 +117,7 @@ class GunInteractionHandlerTest {
         assertThat(result.cancelEvent()).isTrue();
 
         verify(gun).setUser(null);
+        verify(controller).cancelAllFunctions();
     }
 
     @Test
@@ -126,12 +125,10 @@ class GunInteractionHandlerTest {
     void handleLeftClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.LEFT_CLICK, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.LEFT_CLICK, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleLeftClick(gamePlayer, ITEM_STACK);
 
@@ -144,12 +141,10 @@ class GunInteractionHandlerTest {
     void handlePickupItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
@@ -164,12 +159,10 @@ class GunInteractionHandlerTest {
     void handleRightClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.RIGHT_CLICK, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.RIGHT_CLICK, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleRightClick(gamePlayer, ITEM_STACK);
 
@@ -182,12 +175,10 @@ class GunInteractionHandlerTest {
     void handleSwapFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.SWAP_FROM, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.SWAP_FROM, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleSwapFrom(gamePlayer, ITEM_STACK);
 
@@ -200,12 +191,10 @@ class GunInteractionHandlerTest {
     void handleSwapTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        ItemController<GunUser> controller = mock();
-        when(controller.performActionNew(Action.SWAP_TO, gamePlayer)).thenReturn(actionResult);
-
         when(gunRegistry.getAssignedGun(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(gun));
         when(gun.getId()).thenReturn(GUN_ID);
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
+        when(controller.performActionNew(Action.SWAP_TO, gamePlayer)).thenReturn(actionResult);
 
         DispatchResult result = interactionHandler.handleSwapTo(gamePlayer, ITEM_STACK);
 

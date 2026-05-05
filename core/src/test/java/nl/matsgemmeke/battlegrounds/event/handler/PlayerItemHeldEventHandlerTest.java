@@ -1,27 +1,36 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
-import java.util.function.Function;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class PlayerItemHeldEventHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerItemHeldEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
@@ -29,28 +38,39 @@ public class PlayerItemHeldEventHandlerTest {
     private static final int CURRENT_SLOT = 1;
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
+    private GamePlayer gamePlayer;
+    @Mock
     private GameScope gameScope;
+    @Mock
+    private ItemInteractionDispatcher itemInteractionDispatcher;
+    @Mock
     private Player player;
-    private Provider<ActionInvoker> actionInvokerProvider;
+    @Mock
+    private PlayerRegistry playerRegistry;
+    @Mock
+    private Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    @Mock
+    private Provider<PlayerRegistry> playerRegistryProvider;
+
+    private PlayerItemHeldEventHandler eventHandler;
 
     @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        actionInvokerProvider = mock();
-
-        player = mock(Player.class);
+    void setUp() {
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
+
+        eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, itemInteractionDispatcherProvider, playerRegistryProvider);
     }
 
     @Test
-    public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
-
+    @DisplayName("handle does nothing when player is not in any game context")
+    void handle_playerNotInGameContext() {
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
 
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
+        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
@@ -59,13 +79,12 @@ public class PlayerItemHeldEventHandlerTest {
     }
 
     @Test
-    public void handleThrowsEventHandlingExceptionWhenGameKeyOfPlayerHasNoCorrespondingGameContext() {
+    @DisplayName("handle throws EventHandlingException when game key of player has no corresponding game context")
+    void handle_playerGameKeyWithoutContext() {
         PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -73,92 +92,56 @@ public class PlayerItemHeldEventHandlerTest {
     }
 
     @Test
-    public void handleCancelsEventBasedOnResultOfActionInvoker() {
-        ActionInvoker actionInvoker = mock(ActionInvoker.class);
-        ItemStack changeFrom = this.createItemStack(Material.IRON_HOE);
-        ItemStack changeTo = this.createItemStack(Material.IRON_HOE);
-
-        PlayerInventory inventory = mock(PlayerInventory.class);
-        when(inventory.getItemInMainHand()).thenReturn(changeFrom);
-        when(inventory.getItem(CURRENT_SLOT)).thenReturn(changeTo);
-
-        ActionExecutor actionExecutor = mock(ActionExecutor.class);
-        when(actionExecutor.handleChangeFromAction(player, changeFrom)).thenReturn(true);
-        when(actionExecutor.handleChangeToAction(player, changeTo)).thenReturn(true);
+    @DisplayName("handle does nothing when player is not registered in player registry")
+    void handle_playerNotRegistered() {
+        PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
-        when(player.getInventory()).thenReturn(inventory);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
 
-        doAnswer(invocation -> {
-            Function<ActionExecutor, Boolean> function = invocation.getArgument(1);
-            return function.apply(actionExecutor);
-        }).when(actionInvoker).performAction(any(ItemStack.class), any());
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        doAnswer(invocation -> {
-            Runnable runnable = invocation.getArgument(1);
-            runnable.run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-
-        PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
-
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
-
-        verify(actionExecutor).handleChangeFromAction(player, changeFrom);
-        verify(actionExecutor).handleChangeToAction(player, changeTo);
     }
 
-    @Test
-    public void handleInvokesActionExecutorButDoesNotCancelEventWhenAlreadyCancelled() {
-        ActionInvoker actionInvoker = mock(ActionInvoker.class);
-        ItemStack changeFrom = this.createItemStack(Material.IRON_HOE);
-        ItemStack changeTo = this.createItemStack(Material.IRON_HOE);
+    @ParameterizedTest
+    @DisplayName("handle cancels event based on result of the interaction dispatch")
+    @CsvSource({
+            "true,false,false,true",
+            "false,true,false,true",
+            "false,false,true,true",
+            "false,false,false,false"
+    })
+    void handleCancelsEventBasedOnResultOfActionInvoker(boolean eventCancelled, boolean changeFromCancelEvent, boolean changeToCancelEvent, boolean expectedCancelled) {
+        ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
+        ItemStack changeTo = new ItemStack(Material.IRON_HOE);
+        DispatchResult changeFromResult = new DispatchResult(true, changeFromCancelEvent);
+        DispatchResult changeToResult = new DispatchResult(true, changeToCancelEvent);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(inventory.getItemInMainHand()).thenReturn(changeFrom);
         when(inventory.getItem(CURRENT_SLOT)).thenReturn(changeTo);
 
-        ActionExecutor actionExecutor = mock(ActionExecutor.class);
-        when(actionExecutor.handleChangeFromAction(player, changeFrom)).thenReturn(false);
-        when(actionExecutor.handleChangeToAction(player, changeTo)).thenReturn(false);
+        PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
+        event.setCancelled(eventCancelled);
 
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(actionInvokerProvider.get()).thenReturn(actionInvoker);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
+        when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
+        when(itemInteractionDispatcher.dispatchChangeFrom(gamePlayer, changeFrom)).thenReturn(changeFromResult);
+        when(itemInteractionDispatcher.dispatchChangeTo(gamePlayer, changeTo)).thenReturn(changeToResult);
         when(player.getInventory()).thenReturn(inventory);
 
-        doAnswer(invocation -> {
-            Function<ActionExecutor, Boolean> function = invocation.getArgument(1);
-            return function.apply(actionExecutor);
-        }).when(actionInvoker).performAction(any(ItemStack.class), any());
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        doAnswer(invocation -> {
-            Runnable runnable = invocation.getArgument(1);
-            runnable.run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-
-        PlayerItemHeldEvent event = new PlayerItemHeldEvent(player, PREVIOUS_SLOT, CURRENT_SLOT);
-        event.setCancelled(true);
-
-        PlayerItemHeldEventHandler eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, actionInvokerProvider);
         eventHandler.handle(event);
 
-        assertThat(event.isCancelled()).isTrue();
-
-        verify(actionExecutor).handleChangeFromAction(player, changeFrom);
-        verify(actionExecutor).handleChangeToAction(player, changeTo);
-    }
-
-    private ItemStack createItemStack(Material material) {
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.getType()).thenReturn(material);
-
-        return itemStack;
+        assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
     }
 }

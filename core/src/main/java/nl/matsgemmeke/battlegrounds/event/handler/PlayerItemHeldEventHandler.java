@@ -2,9 +2,12 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionInvoker;
+import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -13,7 +16,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -22,21 +24,26 @@ public class PlayerItemHeldEventHandler implements EventHandler<PlayerItemHeldEv
 
     private static final ItemStack EMPTY_ITEM_STACK = new ItemStack(Material.AIR);
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
-    private final Provider<ActionInvoker> actionInvokerProvider;
+    private final Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
-    public PlayerItemHeldEventHandler(@NotNull GameContextProvider gameContextProvider, @NotNull GameScope gameScope, @NotNull Provider<ActionInvoker> actionInvokerProvider) {
+    public PlayerItemHeldEventHandler(
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
+    ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionInvokerProvider = actionInvokerProvider;
+        this.itemInteractionDispatcherProvider = itemInteractionDispatcherProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
-    public void handle(@NotNull PlayerItemHeldEvent event) {
+    @Override
+    public void handle(PlayerItemHeldEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
         GameKey gameKey = gameContextProvider.getGameKeyByEntityId(playerId).orElse(null);
@@ -52,13 +59,20 @@ public class PlayerItemHeldEventHandler implements EventHandler<PlayerItemHeldEv
     }
 
     private void performActions(PlayerItemHeldEvent event, Player player) {
-        ActionInvoker actionInvoker = actionInvokerProvider.get();
-        ItemStack changeFrom = player.getInventory().getItemInMainHand();
-        ItemStack changeTo = Optional.ofNullable(player.getInventory().getItem(event.getNewSlot())).orElse(EMPTY_ITEM_STACK);
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
-        boolean performChangeFromAction = actionInvoker.performAction(changeFrom, actionExecutor -> actionExecutor.handleChangeFromAction(player, changeFrom));
-        boolean performChangeToAction = actionInvoker.performAction(changeTo, actionExecutor -> actionExecutor.handleChangeToAction(player, changeTo));
+        if (gamePlayer == null) {
+            return;
+        }
 
-        event.setCancelled(event.isCancelled() || !performChangeFromAction || !performChangeToAction);
+        ItemStack changeFromItemStack = player.getInventory().getItemInMainHand();
+        ItemStack changeToItemStack = Optional.ofNullable(player.getInventory().getItem(event.getNewSlot())).orElse(EMPTY_ITEM_STACK);
+
+        ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
+        DispatchResult changeFromResult = dispatcher.dispatchChangeFrom(gamePlayer, changeFromItemStack);
+        DispatchResult changeToResult = dispatcher.dispatchChangeTo(gamePlayer, changeToItemStack);
+
+        event.setCancelled(event.isCancelled() || changeFromResult.cancelEvent() || changeToResult.cancelEvent());
     }
 }

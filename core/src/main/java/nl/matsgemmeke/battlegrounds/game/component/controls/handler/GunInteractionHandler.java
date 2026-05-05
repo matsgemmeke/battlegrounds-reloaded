@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class GunInteractionHandler implements ItemInteractionHandler {
 
@@ -27,7 +27,9 @@ public class GunInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleChangeFrom(GamePlayer gamePlayer, ItemStack itemStack) {
-        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM);
+        BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> controller.cancelAllFunctions();
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM, consumer);
     }
 
     @Override
@@ -37,7 +39,10 @@ public class GunInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        Consumer<Gun> consumer = gun -> gun.setUser(null);
+        BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> {
+            gun.setUser(null);
+            controller.cancelAllFunctions();
+        };
 
         return this.handleInteraction(gamePlayer, itemStack, Action.DROP_ITEM, consumer);
     }
@@ -49,7 +54,7 @@ public class GunInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        Consumer<Gun> consumer = gun -> gun.setUser(gamePlayer);
+        BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> gun.setUser(gamePlayer);
 
         return this.handleInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
     }
@@ -70,10 +75,10 @@ public class GunInteractionHandler implements ItemInteractionHandler {
     }
 
     private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
-        return this.handleInteraction(gamePlayer, itemStack, action, gun -> {});
+        return this.handleInteraction(gamePlayer, itemStack, action, (gun, controller) -> {});
     }
 
-    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, Consumer<Gun> consumer) {
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Gun, ItemController<GunUser>> consumer) {
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, itemStack).orElse(null);
 
         if (gun == null) {
@@ -88,7 +93,7 @@ public class GunInteractionHandler implements ItemInteractionHandler {
 
         ActionResult actionResult = controller.performActionNew(action, gamePlayer);
 
-        consumer.accept(gun);
+        consumer.accept(gun, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
