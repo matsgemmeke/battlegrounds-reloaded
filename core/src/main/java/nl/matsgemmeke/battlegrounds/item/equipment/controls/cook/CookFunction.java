@@ -28,7 +28,7 @@ public class CookFunction implements Function<EquipmentUser> {
 
     @Override
     public FunctionResult perform(EquipmentUser user) {
-        if (!equipment.isAwaitingDeployment() || !user.canDeploy()) {
+        if (equipment.isAwaitingDeployment() || !user.canDeploy()) {
             return FunctionResult.FAILED;
         }
 

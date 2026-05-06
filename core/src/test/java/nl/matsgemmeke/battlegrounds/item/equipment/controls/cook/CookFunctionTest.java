@@ -27,9 +27,9 @@ class CookFunctionTest {
     private CookFunction function;
 
     @Test
-    @DisplayName("perform returns FAILED when equipment is not awaiting deployment")
+    @DisplayName("perform returns FAILED when equipment is already awaiting deployment")
     void perform_equipmentIsNotAwaitingDeployment() {
-        when(equipment.isAwaitingDeployment()).thenReturn(false);
+        when(equipment.isAwaitingDeployment()).thenReturn(true);
 
         FunctionResult result = function.perform(user);
 
@@ -39,7 +39,7 @@ class CookFunctionTest {
     @Test
     @DisplayName("perform returns FAILED when user cannot deploy")
     void perform_userCannotDeploy() {
-        when(equipment.isAwaitingDeployment()).thenReturn(true);
+        when(equipment.isAwaitingDeployment()).thenReturn(false);
         when(user.canDeploy()).thenReturn(false);
 
         FunctionResult result = function.perform(user);
@@ -50,7 +50,7 @@ class CookFunctionTest {
     @Test
     @DisplayName("perform returns SUCCESS and starts deployment process")
     void perform_startsDeploymentProcess() {
-        when(equipment.isAwaitingDeployment()).thenReturn(true);
+        when(equipment.isAwaitingDeployment()).thenReturn(false);
         when(user.canDeploy()).thenReturn(true);
 
         FunctionResult result = function.perform(user);

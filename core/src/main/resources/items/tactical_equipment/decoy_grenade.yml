@@ -4,15 +4,12 @@ description: Distraction device that simulates enemy gunfire.
 controls:
   throwing:
     action: LEFT_CLICK
-    blocking: true
     cancels-event: true
   cook:
     action: RIGHT_CLICK
-    blocking: true
     cancels-event: true
   drop:
     action: DROP_ITEM
-    blocking: true
     cancels-event: true
 deploy:
   health: 50.0
@@ -61,7 +58,7 @@ items:
       weapon-type:
         key: weapon-type
         type: STRING
-        value: GUN
+        value: EQUIPMENT
       weapon-name:
         key: weapon-name
         type: STRING
