@@ -17,7 +17,7 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
@@ -43,7 +43,9 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleChangeFrom(GamePlayer gamePlayer, ItemStack itemStack) {
-        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM);
+        BiConsumer<MeleeWeapon, ItemController<MeleeWeaponUser>> consumer = (meleeWeapon, controller) -> controller.cancelAllFunctions();
+
+        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_FROM, consumer);
     }
 
     @Override
@@ -53,9 +55,12 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
     @Override
     public DispatchResult handleDropItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        Consumer<MeleeWeapon> consumer = MeleeWeapon::unassign;
+        BiConsumer<MeleeWeapon, ItemController<MeleeWeaponUser>> consumer = (meleeWeapon, controller) -> {
+            controller.cancelAllFunctions();
+            meleeWeapon.unassign();
+        };
 
-        return this.handleInteraction(gamePlayer, itemStack, Action.CHANGE_TO, consumer);
+        return this.handleInteraction(gamePlayer, itemStack, Action.DROP_ITEM, consumer);
     }
 
     @Override
@@ -175,6 +180,8 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         resourceContainer.setLoadedAmount(1);
         resourceContainer.setReserveAmount(0);
 
+        controller.performActionNew(Action.PICKUP_ITEM, gamePlayer);
+
         meleeWeapon.update();
 
         gamePlayer.addItem(meleeWeapon.getItemStack());
@@ -198,10 +205,10 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
     }
 
     private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action) {
-        return this.handleInteraction(gamePlayer, itemStack, action, meleeWeapon -> {});
+        return this.handleInteraction(gamePlayer, itemStack, action, (meleeWeapon, controller) -> {});
     }
 
-    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, Consumer<MeleeWeapon> consumer) {
+    private DispatchResult handleInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<MeleeWeapon, ItemController<MeleeWeaponUser>> consumer) {
         MeleeWeapon meleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapon(gamePlayer, itemStack).orElse(null);
 
         if (meleeWeapon == null) {
@@ -216,7 +223,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
         ActionResult actionResult = controller.performActionNew(action, gamePlayer);
 
-        consumer.accept(meleeWeapon);
+        consumer.accept(meleeWeapon, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
