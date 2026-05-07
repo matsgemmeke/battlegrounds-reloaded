@@ -56,7 +56,6 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamag
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.item.action.ActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -74,11 +73,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerforman
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformanceFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
-import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
@@ -195,8 +191,6 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
         targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
 
-        binder.bind(ActionExecutorRegistry.class).toProvider(ActionExecutorRegistryProvider.class).in(GameScoped.class);
-        binder.bind(ActionInvoker.class).in(GameScoped.class);
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
@@ -222,19 +216,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
-
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("Equipment"))
-                .to(EquipmentActionExecutor.class)
-                .in(GameScoped.class);
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("Gun"))
-                .to(GunActionExecutor.class)
-                .in(GameScoped.class);
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("MeleeWeapon"))
-                .to(MeleeWeaponActionExecutor.class)
-                .in(GameScoped.class);
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
