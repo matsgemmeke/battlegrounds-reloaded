@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemNotFoundException;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -30,6 +31,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -40,6 +42,7 @@ class MeleeWeaponInteractionHandlerTest {
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID MELEE_WEAPON_ID = UUID.randomUUID();
     private static final String NAME = "Test Melee Weapon";
+    private static final String PLAYER_NAME = "TestPlayer";
     private static final int ITEM_SLOT = 5;
 
     @Mock
@@ -50,6 +53,8 @@ class MeleeWeaponInteractionHandlerTest {
     private ItemControllerRegistry itemControllerRegistry;
     @Mock
     private ItemCreator itemCreator;
+    @Mock
+    private Logger logger;
     @Mock
     private MeleeWeapon meleeWeapon;
     @Mock
@@ -290,6 +295,30 @@ class MeleeWeaponInteractionHandlerTest {
 
         verify(existingMeleeWeapon).update();
         verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+    }
+
+    @Test
+    @DisplayName("handlePickupAction returns unhandled result when picked up item has an unknown name")
+    void handlePickupAction_newMeleeWeaponUnknownName() {
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
+        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenThrow(new ItemNotFoundException("error"));
+        when(gamePlayer.getName()).thenReturn(PLAYER_NAME);
+
+        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+
+        assertThat(result.handled()).isFalse();
+        assertThat(result.cancelEvent()).isFalse();
+
+        verify(logger).warning("Player TestPlayer picked up item with unrecognized melee weapon name 'Test Melee Weapon' - ignoring pickup");
+        verify(meleeWeapon, never()).update();
+        verify(gamePlayer, never()).addItem(any(ItemStack.class));
     }
 
     @Test

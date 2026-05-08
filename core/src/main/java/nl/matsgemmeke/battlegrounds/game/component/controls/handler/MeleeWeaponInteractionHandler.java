@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemNotFoundException;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.BiConsumer;
+import java.util.logging.Logger;
 
 public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
@@ -25,6 +27,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
     private final ItemControllerRegistry itemControllerRegistry;
     private final ItemCreator itemCreator;
+    private final Logger logger;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final NamespacedKeyCreator namespacedKeyCreator;
 
@@ -32,11 +35,13 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
     public MeleeWeaponInteractionHandler(
             ItemControllerRegistry itemControllerRegistry,
             ItemCreator itemCreator,
+            Logger logger,
             MeleeWeaponRegistry meleeWeaponRegistry,
             NamespacedKeyCreator namespacedKeyCreator
     ) {
         this.itemControllerRegistry = itemControllerRegistry;
         this.itemCreator = itemCreator;
+        this.logger = logger;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.namespacedKeyCreator = namespacedKeyCreator;
     }
@@ -168,7 +173,15 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
     }
 
     private DispatchResult createAndAssignNewMeleeWeapon(GamePlayer gamePlayer, String weaponName) {
-        MeleeWeapon meleeWeapon = itemCreator.createMeleeWeapon(weaponName, gamePlayer);
+        MeleeWeapon meleeWeapon;
+
+        try {
+            meleeWeapon = itemCreator.createMeleeWeapon(weaponName, gamePlayer);
+        } catch (ItemNotFoundException ex) {
+            logger.warning("Player " + gamePlayer.getName() + " picked up item with unrecognized melee weapon name '" + weaponName + "' - ignoring pickup");
+            return DispatchResult.unhandled();
+        }
+
         ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
 
         if (controller == null) {

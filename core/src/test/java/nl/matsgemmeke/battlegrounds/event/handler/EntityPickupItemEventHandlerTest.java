@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
@@ -175,5 +176,6 @@ class EntityPickupItemEventHandlerTest {
         assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
 
         verify(item).remove();
+        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1);
     }
 }

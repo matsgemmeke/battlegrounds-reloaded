@@ -23,14 +23,14 @@ item:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
   data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: MELEE_WEAPON
     weapon-name:
       key: weapon-name
       type: STRING
       value: Tomahawk
-    action-executor-id:
-      key: action-executor-id
-      type: STRING
-      value: melee-weapon
   unbreakable: true
 throwing:
   projectile:
@@ -46,7 +46,7 @@ throwing:
         weapon-name:
           key: weapon-name
           type: STRING
-          value: Ballistic Knife
+          value: Tomahawk
     velocity: 2.5
     pickup-delay: 20
     launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0

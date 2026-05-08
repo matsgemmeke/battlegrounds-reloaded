@@ -12,6 +12,7 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -55,12 +56,12 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
                 .orElseThrow(() -> new EventHandlingException("Unable to process EntityPickupItemEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
         ItemStack itemStack = event.getItem().getItemStack();
 
-        gameScope.runInScope(gameContext, () -> this.performAction(event, playerId, itemStack));
+        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack));
     }
 
-    private void performAction(EntityPickupItemEvent event, UUID playerId, ItemStack itemStack) {
+    private void performAction(EntityPickupItemEvent event, Player player, ItemStack itemStack) {
         PlayerRegistry playerRegistry = playerRegistryProvider.get();
-        GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
         if (gamePlayer == null) {
             return;
@@ -70,6 +71,8 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         DispatchResult result = dispatcher.dispatchPickupItem(gamePlayer, itemStack);
 
         if (result.handled()) {
+            player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1);
+
             event.getItem().remove();
         }
 
