@@ -13,4 +13,11 @@ public record PickupDispatchResult(boolean dispatched, boolean cancelEvent, bool
     public static PickupDispatchResult cancelPickup() {
         return new PickupDispatchResult(true, true, true);
     }
+
+    /**
+     * The dispatch is successfully handled, but do not perform the pickup action.
+     */
+    public static PickupDispatchResult ignore() {
+        return new PickupDispatchResult(true, true, false);
+    }
 }

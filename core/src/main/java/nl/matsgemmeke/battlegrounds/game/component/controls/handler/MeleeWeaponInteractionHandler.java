@@ -130,45 +130,10 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
     }
 
     private PickupDispatchResult handlePickupItemCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
-        MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
-                .filter(m -> m.getName().equals(meleeWeapon.getName()))
-                .findFirst()
-                .orElse(null);
-
-        if (existingMeleeWeapon != null) {
-            return this.resupplyExistingMeleeWeapon(gamePlayer, meleeWeapon, existingMeleeWeapon);
-        } else {
-            return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
-        }
-    }
-
-    private PickupDispatchResult resupplyExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon pickedUpMeleeWeapon, MeleeWeapon existingMeleeWeapon) {
-        Integer slot = gamePlayer.getItemSlot(existingMeleeWeapon).orElse(null);
-
-        if (slot == null) {
-            // We have already found an assigned melee weapon to the player's name, so we don't expect this scenario
-            // to happen. If it somehow does, just treat the existing melee weapon as picked up, and do perform any
-            // logic.
-            return PickupDispatchResult.unhandled();
-        }
-
-        int pickedUpResourceAmount = pickedUpMeleeWeapon.getResourceContainer().getLoadedAmount() + pickedUpMeleeWeapon.getResourceContainer().getReserveAmount();
-        int existingWeaponReserveAmount = existingMeleeWeapon.getResourceContainer().getReserveAmount();
-        int updatedReserveAmount = Math.min(existingWeaponReserveAmount + pickedUpResourceAmount, existingMeleeWeapon.getResourceContainer().getMaxReserveAmount());
-
-        existingMeleeWeapon.getResourceContainer().setReserveAmount(updatedReserveAmount);
-        existingMeleeWeapon.update();
-
-        gamePlayer.setItem(slot, existingMeleeWeapon.getItemStack());
-
-        return PickupDispatchResult.cancelPickup();
-    }
-
-    private PickupDispatchResult assignMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
         ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
 
         if (controller == null) {
-            return PickupDispatchResult.unhandled();
+            return PickupDispatchResult.ignore();
         }
 
         meleeWeapon.assign(gamePlayer);

@@ -22,8 +22,6 @@ import org.bukkit.persistence.PersistentDataType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -159,68 +157,16 @@ class MeleeWeaponInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handlePickupItem does not resupply existing melee weapon when unable to find item slot for existing melee weapon")
-    void handlePickupItem_resupplyExistingMeleeWeaponItemSlotNotFound() {
-        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
-        when(existingMeleeWeapon.getName()).thenReturn(NAME);
-
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
-        when(meleeWeapon.getName()).thenReturn(NAME);
-        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.empty());
-
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
-
-        assertThat(result.dispatched()).isFalse();
-        assertThat(result.cancelEvent()).isFalse();
-        assertThat(result.removeItem()).isFalse();
-
-        verify(existingMeleeWeapon, never()).update();
-        verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "2,2", "100,3" })
-    @DisplayName("handlePickupAction supplies existing melee weapon with resources from picked up melee weapon")
-    void handlePickupAction_resuppliesExistingMeleeWeapon(int pickedUpReserveAmount, int expectedReserveAmount) {
-        ItemStack existingItemStack = new ItemStack(Material.IRON_SWORD);
-        ResourceContainer pickedUpResourceContainer = new ResourceContainer(1, 0, pickedUpReserveAmount, 2);
-        ResourceContainer existingResourceContainer = new ResourceContainer(1, 1, 0, 3);
-
-        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
-        when(existingMeleeWeapon.getName()).thenReturn(NAME);
-        when(existingMeleeWeapon.getResourceContainer()).thenReturn(existingResourceContainer);
-        when(existingMeleeWeapon.getItemStack()).thenReturn(existingItemStack);
-
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
-        when(meleeWeapon.getName()).thenReturn(NAME);
-        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.of(ITEM_SLOT));
-        when(meleeWeapon.getResourceContainer()).thenReturn(pickedUpResourceContainer);
-
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
-
-        assertThat(result.dispatched()).isTrue();
-        assertThat(result.cancelEvent()).isTrue();
-        assertThat(result.removeItem()).isTrue();
-        assertThat(existingResourceContainer.getReserveAmount()).isEqualTo(expectedReserveAmount);
-
-        verify(existingMeleeWeapon).update();
-        verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
-    }
-
-    @Test
-    @DisplayName("handlePickupAction returns unhandled result when unable to find controller for weapon id")
+    @DisplayName("handlePickupAction returns unhandled result when picking up complete melee weapon but unable to find controller")
     void handlePickupAction_controllerNotFound() {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
 
         PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.dispatched()).isFalse();
-        assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
         assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon, never()).assign(gamePlayer);
@@ -230,7 +176,6 @@ class MeleeWeaponInteractionHandlerTest {
     @DisplayName("handlePickupAction assigns existing melee weapon to player")
     void handlePickupAction_assignsExistingMeleeWeapon() {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
 
