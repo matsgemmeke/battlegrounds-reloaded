@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemNotFoundException;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
@@ -168,10 +169,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(meleeWeapon.getName()).thenReturn(NAME);
         when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isFalse();
+        assertThat(result.dispatched()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(existingMeleeWeapon, never()).update();
         verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
@@ -196,10 +198,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.of(ITEM_SLOT));
         when(meleeWeapon.getResourceContainer()).thenReturn(pickedUpResourceContainer);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isTrue();
         assertThat(existingResourceContainer.getReserveAmount()).isEqualTo(expectedReserveAmount);
 
         verify(existingMeleeWeapon).update();
@@ -214,10 +217,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isFalse();
+        assertThat(result.dispatched()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon, never()).assign(gamePlayer);
         verify(meleeWeapon, never()).onPickUp(gamePlayer);
@@ -231,10 +235,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isTrue();
-        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon).assign(gamePlayer);
         verify(meleeWeapon).onPickUp(gamePlayer);
@@ -258,10 +263,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.empty());
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(existingMeleeWeapon, never()).update();
         verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
@@ -287,10 +293,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.of(ITEM_SLOT));
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isTrue();
         assertThat(resourceContainer.getReserveAmount()).isEqualTo(3);
 
         verify(existingMeleeWeapon).update();
@@ -311,10 +318,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenThrow(new ItemNotFoundException("error"));
         when(gamePlayer.getName()).thenReturn(PLAYER_NAME);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isFalse();
+        assertThat(result.dispatched()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(logger).warning("Player TestPlayer picked up item with unrecognized melee weapon name 'Test Melee Weapon' - ignoring pickup");
         verify(meleeWeapon, never()).update();
@@ -336,10 +344,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isFalse();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
 
         verify(meleeWeapon, never()).update();
         verify(gamePlayer, never()).addItem(any(ItemStack.class));
@@ -364,10 +373,11 @@ class MeleeWeaponInteractionHandlerTest {
         when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isTrue();
         assertThat(resourceContainer.getLoadedAmount()).isOne();
         assertThat(resourceContainer.getReserveAmount()).isZero();
 

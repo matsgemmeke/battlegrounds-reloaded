@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.controls.handler;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -68,7 +69,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleChangeFrom returns display result with values from the item controller's action result")
+    @DisplayName("handleChangeFrom returns dispatch result with values from the item controller's action result")
     void handleChangeFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -86,7 +87,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleChangeTo returns display result with values from the item controller's action result")
+    @DisplayName("handleChangeTo returns dispatch result with values from the item controller's action result")
     void handleChangeTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -102,7 +103,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleDropItem returns display result with values from the item controller's action result")
+    @DisplayName("handleDropItem returns dispatch result with values from the item controller's action result")
     void handleDropItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -121,7 +122,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleLeftClick returns display result with values from the item controller's action result")
+    @DisplayName("handleLeftClick returns dispatch result with values from the item controller's action result")
     void handleLeftClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -137,7 +138,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handlePickupItem returns display result with values from the item controller's action result")
+    @DisplayName("handlePickupItem returns dispatch result with values from the item controller's action result")
     void handlePickupItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -146,16 +147,17 @@ class EquipmentInteractionHandlerTest {
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performActionNew(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isFalse();
 
         verify(equipment).setUser(gamePlayer);
     }
 
     @Test
-    @DisplayName("handleRightClick returns display result with values from the item controller's action result")
+    @DisplayName("handleRightClick returns dispatch result with values from the item controller's action result")
     void handleRightClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -171,7 +173,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleSwapFrom returns display result with values from the item controller's action result")
+    @DisplayName("handleSwapFrom returns dispatch result with values from the item controller's action result")
     void handleSwapFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
@@ -187,7 +189,7 @@ class EquipmentInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handleSwapTo returns display result with values from the item controller's action result")
+    @DisplayName("handleSwapTo returns dispatch result with values from the item controller's action result")
     void handleSwapTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 

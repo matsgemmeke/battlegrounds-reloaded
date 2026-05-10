@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.controls.handler;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import org.bukkit.inventory.ItemStack;
 
 public interface ItemInteractionHandler {
@@ -14,7 +15,7 @@ public interface ItemInteractionHandler {
 
     DispatchResult handleLeftClick(GamePlayer gamePlayer, ItemStack itemStack);
 
-    DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack);
+    PickupDispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack);
 
     DispatchResult handleRightClick(GamePlayer gamePlayer, ItemStack itemStack);
 

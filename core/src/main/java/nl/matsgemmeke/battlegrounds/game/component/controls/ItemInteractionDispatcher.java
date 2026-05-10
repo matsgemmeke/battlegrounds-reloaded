@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -47,8 +48,8 @@ public class ItemInteractionDispatcher {
         return this.dispatchInteraction(itemStack, itemInteractionHandler -> itemInteractionHandler.handleLeftClick(gamePlayer, itemStack));
     }
 
-    public DispatchResult dispatchPickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
-        return this.dispatchInteraction(itemStack, itemInteractionHandler -> itemInteractionHandler.handlePickupItem(gamePlayer, itemStack));
+    public PickupDispatchResult dispatchPickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
+        return this.dispatchPickupInteraction(itemStack, itemInteractionHandler -> itemInteractionHandler.handlePickupItem(gamePlayer, itemStack));
     }
 
     public DispatchResult dispatchRightClick(GamePlayer gamePlayer, ItemStack itemStack) {
@@ -92,5 +93,36 @@ public class ItemInteractionDispatcher {
         }
 
         return DispatchResult.unhandled();
+    }
+
+    private PickupDispatchResult dispatchPickupInteraction(ItemStack itemStack, Function<ItemInteractionHandler, PickupDispatchResult> interactionFunction) {
+        ItemMeta itemMeta = itemStack.getItemMeta();
+
+        if (itemMeta == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        PersistentDataContainer data = itemMeta.getPersistentDataContainer();
+        NamespacedKey key = namespacedKeyCreator.create(WEAPON_TYPE_KEY);
+        String weaponTypeValue = data.get(key, PersistentDataType.STRING);
+
+        if (weaponTypeValue == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        WeaponType weaponType = WeaponType.valueOf(weaponTypeValue);
+        ItemInteractionHandler interactionHandler = interactionHandlers.get(weaponType);
+
+        if (interactionHandler == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        PickupDispatchResult result = interactionFunction.apply(interactionHandler);
+
+        if (result.dispatched()) {
+            return result;
+        }
+
+        return PickupDispatchResult.unhandled();
     }
 }

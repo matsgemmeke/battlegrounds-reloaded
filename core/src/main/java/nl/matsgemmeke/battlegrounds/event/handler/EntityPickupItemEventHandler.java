@@ -10,7 +10,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
-import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -68,10 +68,10 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
-        DispatchResult result = dispatcher.dispatchPickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = dispatcher.dispatchPickupItem(gamePlayer, itemStack);
 
-        if (result.cancelEvent()) {
-            player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1);
+        if (result.removeItem()) {
+            player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1.5f);
 
             event.getItem().remove();
         }

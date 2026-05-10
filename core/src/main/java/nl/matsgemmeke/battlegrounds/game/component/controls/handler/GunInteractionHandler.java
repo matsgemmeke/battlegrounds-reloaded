@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -53,10 +54,10 @@ public class GunInteractionHandler implements ItemInteractionHandler {
     }
 
     @Override
-    public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
+    public PickupDispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
         BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> gun.setUser(gamePlayer);
 
-        return this.handleInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
+        return this.handlePickupInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
     }
 
     @Override
@@ -96,5 +97,25 @@ public class GunInteractionHandler implements ItemInteractionHandler {
         consumer.accept(gun, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
+    }
+
+    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Gun, ItemController<GunUser>> consumer) {
+        Gun gun = gunRegistry.getAssignedGun(gamePlayer, itemStack).orElse(null);
+
+        if (gun == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        ItemController<GunUser> controller = itemControllerRegistry.getGunController(gun.getId()).orElse(null);
+
+        if (controller == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+
+        consumer.accept(gun, controller);
+
+        return new PickupDispatchResult(actionResult.performed(), actionResult.cancelEvent(), false);
     }
 }

@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
-import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -123,9 +123,9 @@ class EntityPickupItemEventHandlerTest {
     }
 
     @Test
-    @DisplayName("handle invokes item interaction dispatcher, and does not remove item when result is not handled")
+    @DisplayName("handle invokes item interaction dispatcher, and removes item")
     void handle_successfulWithoutItemRemove() {
-        DispatchResult result = new DispatchResult(false, true);
+        PickupDispatchResult result = PickupDispatchResult.cancelPickup();
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -143,7 +143,8 @@ class EntityPickupItemEventHandlerTest {
 
         assertThat(event.isCancelled()).isTrue();
 
-        verify(item, never()).remove();
+        verify(item).remove();
+        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 2);
     }
 
     @ParameterizedTest
@@ -155,7 +156,7 @@ class EntityPickupItemEventHandlerTest {
     })
     @DisplayName("handle invokes item interaction dispatcher, removes item and cancels event based on event state and result")
     void handle_successfulWithItemRemove(boolean resultCancelEvent, boolean eventCancelled, boolean expectedCancelled) {
-        DispatchResult result = new DispatchResult(true, resultCancelEvent);
+        PickupDispatchResult result = new PickupDispatchResult(true, resultCancelEvent, false);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
         event.setCancelled(eventCancelled);
@@ -175,7 +176,6 @@ class EntityPickupItemEventHandlerTest {
 
         assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
 
-        verify(item).remove();
-        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1);
+        verify(item, never()).remove();
     }
 }

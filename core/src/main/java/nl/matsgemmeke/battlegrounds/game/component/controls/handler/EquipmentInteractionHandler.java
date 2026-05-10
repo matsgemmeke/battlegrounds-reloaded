@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -53,10 +54,10 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
     }
 
     @Override
-    public DispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
+    public PickupDispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
         BiConsumer<Equipment, ItemController<EquipmentUser>> consumer = (equipment, controller) -> equipment.setUser(gamePlayer);
 
-        return this.handleInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
+        return this.handlePickupInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
     }
 
     @Override
@@ -96,5 +97,25 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
         consumer.accept(equipment, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
+    }
+
+    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Equipment, ItemController<EquipmentUser>> consumer) {
+        Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack).orElse(null);
+
+        if (equipment == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        ItemController<EquipmentUser> controller = itemControllerRegistry.getEquipmentController(equipment.getId()).orElse(null);
+
+        if (controller == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
+        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+
+        consumer.accept(equipment, controller);
+
+        return new PickupDispatchResult(actionResult.performed(), actionResult.cancelEvent(), false);
     }
 }

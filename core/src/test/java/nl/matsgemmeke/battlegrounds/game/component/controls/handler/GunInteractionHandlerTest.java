@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.controls.handler;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
@@ -146,10 +147,11 @@ class GunInteractionHandlerTest {
         when(itemControllerRegistry.getGunController(GUN_ID)).thenReturn(Optional.of(controller));
         when(controller.performActionNew(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
-        assertThat(result.handled()).isTrue();
+        assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isFalse();
 
         verify(gun).setUser(gamePlayer);
     }

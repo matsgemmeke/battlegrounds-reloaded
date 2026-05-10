@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.component.controls;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
@@ -183,7 +184,7 @@ class ItemInteractionDispatcherTest {
     @DisplayName("dispatchPickupItem returns handled result from interaction handler")
     void dispatchPickupItem_interactionHandlerHandled() {
         NamespacedKey key = NamespacedKey.fromString("weapon-type");
-        DispatchResult handlerResult = new DispatchResult(true, true);
+        PickupDispatchResult handlerResult = new PickupDispatchResult(true, true, true);
 
         PersistentDataContainer data = mock(PersistentDataContainer.class);
         when(data.get(key, PersistentDataType.STRING)).thenReturn("GUN");
@@ -192,10 +193,9 @@ class ItemInteractionDispatcherTest {
         when(namespacedKeyCreator.create("weapon-type")).thenReturn(key);
         when(itemInteractionHandler.handlePickupItem(gamePlayer, itemStack)).thenReturn(handlerResult);
 
-        DispatchResult result = itemInteractionDispatcher.dispatchPickupItem(gamePlayer, itemStack);
+        PickupDispatchResult result = itemInteractionDispatcher.dispatchPickupItem(gamePlayer, itemStack);
 
-        assertThat(result.handled()).isTrue();
-        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result).isEqualTo(handlerResult);
     }
 
     @Test
