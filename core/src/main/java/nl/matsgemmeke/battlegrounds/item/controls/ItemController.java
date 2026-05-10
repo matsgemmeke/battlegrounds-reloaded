@@ -31,32 +31,7 @@ public class ItemController<T extends ItemUser> {
                 .forEach(Function::cancel);
     }
 
-    @Deprecated
-    public void performAction(Action action, T user) {
-        if (this.isPerformingBlockingFunction()) {
-            return;
-        }
-
-        Set<ActionBinding<T>> bindings = this.bindings.get(action);
-
-        if (bindings == null || bindings.isEmpty()) {
-            return;
-        }
-
-        for (ActionBinding<T> binding : bindings) {
-            Function<T> function = binding.function();
-
-            if (!function.isPerforming()) {
-                FunctionResult result = function.perform(user);
-
-                if (result == FunctionResult.SUCCESS && binding.stopsChain()) {
-                    break;
-                }
-            }
-        }
-    }
-
-    public ActionResult performActionNew(Action action, T user) {
+    public ActionResult performAction(Action action, T user) {
         if (this.isPerformingBlockingFunction()) {
             return ActionResult.ignore();
         }

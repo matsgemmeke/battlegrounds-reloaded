@@ -57,7 +57,7 @@ public class GunInteractionHandler implements ItemInteractionHandler {
     public PickupDispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
         BiConsumer<Gun, ItemController<GunUser>> consumer = (gun, controller) -> gun.setUser(gamePlayer);
 
-        return this.handlePickupInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
+        return this.handlePickupInteraction(gamePlayer, itemStack, consumer);
     }
 
     @Override
@@ -92,14 +92,14 @@ public class GunInteractionHandler implements ItemInteractionHandler {
             return DispatchResult.unhandled();
         }
 
-        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+        ActionResult actionResult = controller.performAction(action, gamePlayer);
 
         consumer.accept(gun, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
 
-    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Gun, ItemController<GunUser>> consumer) {
+    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, BiConsumer<Gun, ItemController<GunUser>> consumer) {
         Gun gun = gunRegistry.getAssignedGun(gamePlayer, itemStack).orElse(null);
 
         if (gun == null) {
@@ -112,7 +112,7 @@ public class GunInteractionHandler implements ItemInteractionHandler {
             return PickupDispatchResult.unhandled();
         }
 
-        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+        ActionResult actionResult = controller.performAction(Action.PICKUP_ITEM, gamePlayer);
 
         consumer.accept(gun, controller);
 

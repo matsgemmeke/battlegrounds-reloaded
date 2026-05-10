@@ -56,7 +56,7 @@ class ItemControllerTest {
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        ActionResult result = controller.performActionNew(Action.LEFT_CLICK, user);
+        ActionResult result = controller.performAction(Action.LEFT_CLICK, user);
 
         assertThat(result.performed()).isTrue();
         assertThat(result.cancelEvent()).isFalse();
@@ -72,7 +72,7 @@ class ItemControllerTest {
         ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, true, false);
 
         controller.bind(Action.LEFT_CLICK, binding);
-        ActionResult result = controller.performActionNew(Action.RIGHT_CLICK, user);
+        ActionResult result = controller.performAction(Action.RIGHT_CLICK, user);
 
         assertThat(result.performed()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
@@ -94,8 +94,8 @@ class ItemControllerTest {
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        ActionResult result1 = controller.performActionNew(Action.LEFT_CLICK, user);
-        ActionResult result2 = controller.performActionNew(Action.LEFT_CLICK, user);
+        ActionResult result1 = controller.performAction(Action.LEFT_CLICK, user);
+        ActionResult result2 = controller.performAction(Action.LEFT_CLICK, user);
 
         assertThat(result1.performed()).isTrue();
         assertThat(result1.cancelEvent()).isTrue();
@@ -121,8 +121,8 @@ class ItemControllerTest {
 
         controller.bind(Action.LEFT_CLICK, binding1);
         controller.bind(Action.LEFT_CLICK, binding2);
-        ActionResult result1 = controller.performActionNew(Action.LEFT_CLICK, user);
-        ActionResult result2 = controller.performActionNew(Action.LEFT_CLICK, user);
+        ActionResult result1 = controller.performAction(Action.LEFT_CLICK, user);
+        ActionResult result2 = controller.performAction(Action.LEFT_CLICK, user);
 
         assertThat(result1.performed()).isTrue();
         assertThat(result1.cancelEvent()).isFalse();

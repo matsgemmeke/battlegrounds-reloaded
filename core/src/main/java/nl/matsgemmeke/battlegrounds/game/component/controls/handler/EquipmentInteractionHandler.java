@@ -57,7 +57,7 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
     public PickupDispatchResult handlePickupItem(GamePlayer gamePlayer, ItemStack itemStack) {
         BiConsumer<Equipment, ItemController<EquipmentUser>> consumer = (equipment, controller) -> equipment.setUser(gamePlayer);
 
-        return this.handlePickupInteraction(gamePlayer, itemStack, Action.PICKUP_ITEM, consumer);
+        return this.handlePickupInteraction(gamePlayer, itemStack, consumer);
     }
 
     @Override
@@ -92,14 +92,14 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
             return DispatchResult.unhandled();
         }
 
-        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+        ActionResult actionResult = controller.performAction(action, gamePlayer);
 
         consumer.accept(equipment, controller);
 
         return new DispatchResult(actionResult.performed(), actionResult.cancelEvent());
     }
 
-    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, Action action, BiConsumer<Equipment, ItemController<EquipmentUser>> consumer) {
+    private PickupDispatchResult handlePickupInteraction(GamePlayer gamePlayer, ItemStack itemStack, BiConsumer<Equipment, ItemController<EquipmentUser>> consumer) {
         Equipment equipment = equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack).orElse(null);
 
         if (equipment == null) {
@@ -112,7 +112,7 @@ public class EquipmentInteractionHandler implements ItemInteractionHandler {
             return PickupDispatchResult.unhandled();
         }
 
-        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+        ActionResult actionResult = controller.performAction(Action.PICKUP_ITEM, gamePlayer);
 
         consumer.accept(equipment, controller);
 

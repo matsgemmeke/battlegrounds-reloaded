@@ -111,7 +111,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
             return DispatchResult.unhandled();
         }
 
-        ActionResult actionResult = controller.performActionNew(action, gamePlayer);
+        ActionResult actionResult = controller.performAction(action, gamePlayer);
 
         consumer.accept(meleeWeapon, controller);
 
@@ -173,7 +173,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
         meleeWeapon.assign(gamePlayer);
 
-        controller.performActionNew(Action.PICKUP_ITEM, gamePlayer);
+        controller.performAction(Action.PICKUP_ITEM, gamePlayer);
 
         return PickupDispatchResult.handled();
     }
@@ -236,7 +236,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         resourceContainer.setLoadedAmount(1);
         resourceContainer.setReserveAmount(0);
 
-        controller.performActionNew(Action.PICKUP_ITEM, gamePlayer);
+        controller.performAction(Action.PICKUP_ITEM, gamePlayer);
 
         meleeWeapon.update();
 
