@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.component.controls.handler;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.component.controls.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemNotFoundException;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.controls;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.handler.ItemInteractionHandler;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;

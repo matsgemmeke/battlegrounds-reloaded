@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.controls;
+package nl.matsgemmeke.battlegrounds.game.component.controls.result;
 
 public record DispatchResult(boolean handled, boolean cancelEvent) {
 
