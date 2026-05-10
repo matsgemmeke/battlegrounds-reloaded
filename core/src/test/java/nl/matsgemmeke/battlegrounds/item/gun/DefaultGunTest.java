@@ -1,9 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
-import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -14,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.item.shoot.ShotPerformer;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.bukkit.*;
 import org.bukkit.inventory.ItemStack;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -282,115 +278,6 @@ class DefaultGunTest {
     }
 
     @Test
-    void onChangeFromCancelsOngoingFunctions() {
-        Function<GunUser> function1 = mock();
-        when(function1.isPerforming()).thenReturn(true);
-
-        Function<GunUser> function2 = mock();
-        ActionBinding<GunUser> binding1 = new ActionBinding<>(function1, 1, false, false, false);
-        ActionBinding<GunUser> binding2 = new ActionBinding<>(function2, 1, false, false, false);
-
-        gun.getController().bind(Action.LEFT_CLICK, binding1);
-        gun.getController().bind(Action.CHANGE_FROM, binding2);
-        gun.onChangeFrom();
-
-        verify(function1).cancel();
-        verify(function2, never()).perform(any());
-    }
-
-    @Test
-    @DisplayName("onChangeFrom performs action on controller when user is not null")
-    void onChangeFrom_performsChangeFromAction() {
-        GunUser user = mock(GunUser.class);
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.CHANGE_FROM, binding);
-        gun.setUser(user);
-        gun.onChangeFrom();
-
-        verify(function).perform(user);
-    }
-
-    @Test
-    @DisplayName("onLeftClick does not interact with controller when user is null")
-    void onLeftClick_nullUser() {
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.LEFT_CLICK, binding);
-        gun.onLeftClick();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    @DisplayName("onLeftClick performs action on controller when user is not null")
-    void onLeftClick_performsLeftClickAction() {
-        GunUser user = mock(GunUser.class);
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.LEFT_CLICK, binding);
-        gun.setUser(user);
-        gun.onLeftClick();
-
-        verify(function).perform(user);
-    }
-
-    @Test
-    @DisplayName("onRightClick does not interact with controller when user is null")
-    void onRightClick_nullUser() {
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.RIGHT_CLICK, binding);
-        gun.onRightClick();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    @DisplayName("onRightClick performs action on controller when user is not null")
-    void onRightClick_performsRightClickAction() {
-        GunUser user = mock(GunUser.class);
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.RIGHT_CLICK, binding);
-        gun.setUser(user);
-        gun.onRightClick();
-
-        verify(function).perform(user);
-    }
-
-    @Test
-    @DisplayName("onSwapFrom does not interact with controller when user is null")
-    void onSwapFrom_nullUser() {
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.SWAP_FROM, binding);
-        gun.onSwapFrom();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    @DisplayName("onSwapFrom performs action on controller when user is not null")
-    void onSwapFrom_performsSwapFromAction() {
-        GunUser user = mock(GunUser.class);
-        Function<GunUser> function = mock();
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.SWAP_FROM, binding);
-        gun.setUser(user);
-        gun.onSwapFrom();
-
-        verify(function).perform(user);
-    }
-
-    @Test
     void reloadActivatesReloadSystemWithGivenPerformerAndUpdatesItem() {
         ResourceContainer resourceContainer = new ResourceContainer(30, 30, 90, 300);
         GunUser user = mock(GunUser.class);
@@ -447,35 +334,6 @@ class DefaultGunTest {
         gun.shoot(performer);
 
         verify(shootHandler).shoot(performer);
-    }
-
-    @Test
-    @DisplayName("onDrop cancels controller functions and unassigns user")
-    void onDrop_cancelsFunctionAndUnassignsUser() {
-        GunUser user = mock(GunUser.class);
-
-        Function<GunUser> function = mock();
-        when(function.isPerforming()).thenReturn(true);
-
-        ActionBinding<GunUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        gun.getController().bind(Action.LEFT_CLICK, binding);
-        gun.setUser(user);
-        gun.onDrop();
-
-        assertThat(gun.getUser()).isNull();
-
-        verify(function).cancel();
-    }
-
-    @Test
-    @DisplayName("onPickup assigns user")
-    void onPickUp_assignsUser() {
-        GunUser user = mock(GunUser.class);
-
-        gun.onPickUp(user);
-
-        assertThat(gun.getUser()).isEqualTo(user);
     }
 
     @Test

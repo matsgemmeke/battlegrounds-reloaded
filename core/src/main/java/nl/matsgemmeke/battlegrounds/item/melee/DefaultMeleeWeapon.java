@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -101,59 +100,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     @Override
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return displayItemTemplate != null && displayItemTemplate.matchesTemplate(itemStack);
-    }
-
-    @Override
-    public void onChangeFrom() {
-        this.performControlAction(Action.CHANGE_FROM);
-    }
-
-    @Override
-    public void onChangeTo() {
-        this.performControlAction(Action.CHANGE_TO);
-    }
-
-    @Override
-    public void onDrop() {
-        if (user == null) {
-            return;
-        }
-
-        controller.cancelAllFunctions();
-        controller.performAction(Action.DROP_ITEM, user);
-    }
-
-    @Override
-    public void onLeftClick() {
-        this.performControlAction(Action.LEFT_CLICK);
-    }
-
-    @Override
-    public void onPickUp(@NotNull MeleeWeaponUser user) {
-        controller.performAction(Action.PICKUP_ITEM, user);
-    }
-
-    @Override
-    public void onRightClick() {
-        this.performControlAction(Action.RIGHT_CLICK);
-    }
-
-    @Override
-    public void onSwapFrom() {
-        this.performControlAction(Action.SWAP_FROM);
-    }
-
-    @Override
-    public void onSwapTo() {
-        this.performControlAction(Action.SWAP_TO);
-    }
-
-    private void performControlAction(Action action) {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(action, user);
     }
 
     @Override

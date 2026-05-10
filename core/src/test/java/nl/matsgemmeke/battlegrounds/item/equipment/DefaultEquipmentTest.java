@@ -1,9 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
-import nl.matsgemmeke.battlegrounds.item.controls.Function;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
@@ -166,34 +163,6 @@ class DefaultEquipmentTest {
         boolean matches = equipment.isMatching(itemStack);
 
         assertFalse(matches);
-    }
-
-    @Test
-    void shouldPerformFunctionWhenLeftClicked() {
-        EquipmentUser user = mock(EquipmentUser.class);
-        Function<EquipmentUser> function = mock();
-        ActionBinding<EquipmentUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getController().bind(Action.LEFT_CLICK, binding);
-        equipment.setUser(user);
-        equipment.onLeftClick();
-
-        verify(function).perform(user);
-    }
-
-    @Test
-    void shouldPerformFunctionWhenRightClicked() {
-        EquipmentUser user = mock(EquipmentUser.class);
-        Function<EquipmentUser> function = mock();
-        ActionBinding<EquipmentUser> binding = new ActionBinding<>(function, 1, false, false, false);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getController().bind(Action.RIGHT_CLICK, binding);
-        equipment.setUser(user);
-        equipment.onRightClick();
-
-        verify(function).perform(user);
     }
 
     @Test

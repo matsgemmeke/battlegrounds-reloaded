@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
@@ -167,72 +166,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
 
     public boolean isUsingScope() {
         return scopeAttachment != null && scopeAttachment.isScoped();
-    }
-
-    public void onChangeFrom() {
-        controller.cancelAllFunctions();
-
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.CHANGE_FROM, user);
-    }
-
-    public void onChangeTo() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.CHANGE_TO, user);
-    }
-
-    public void onDrop() {
-        if (user == null) {
-            return;
-        }
-
-        controller.cancelAllFunctions();
-        controller.performAction(Action.DROP_ITEM, user);
-        user = null;
-    }
-
-    public void onLeftClick() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.LEFT_CLICK, user);
-    }
-
-    public void onRightClick() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.RIGHT_CLICK, user);
-    }
-
-    public void onPickUp(GunUser user) {
-        this.user = user;
-
-        controller.performAction(Action.PICKUP_ITEM, user);
-    }
-
-    public void onSwapFrom() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.SWAP_FROM, user);
-    }
-
-    public void onSwapTo() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.SWAP_TO, user);
     }
 
     @Override

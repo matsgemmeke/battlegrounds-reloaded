@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
@@ -111,41 +110,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     public boolean isMatching(@NotNull ItemStack itemStack) {
         return displayItemTemplate != null && displayItemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
-    }
-
-    public void onChangeFrom() {
-        controller.cancelAllFunctions();
-    }
-
-    public void onChangeTo() {
-    }
-
-    public void onDrop() {
-    }
-
-    public void onLeftClick() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.LEFT_CLICK, user);
-    }
-
-    public void onPickUp(EquipmentUser user) {
-    }
-
-    public void onRightClick() {
-        if (user == null) {
-            return;
-        }
-
-        controller.performAction(Action.RIGHT_CLICK, user);
-    }
-
-    public void onSwapFrom() {
-    }
-
-    public void onSwapTo() {
     }
 
     @Override

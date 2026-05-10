@@ -172,7 +172,6 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         }
 
         meleeWeapon.assign(gamePlayer);
-        meleeWeapon.onPickUp(gamePlayer);
 
         controller.performActionNew(Action.PICKUP_ITEM, gamePlayer);
 

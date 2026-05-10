@@ -144,7 +144,7 @@ class EntityPickupItemEventHandlerTest {
         assertThat(event.isCancelled()).isTrue();
 
         verify(item).remove();
-        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 2);
+        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1.5f);
     }
 
     @ParameterizedTest
