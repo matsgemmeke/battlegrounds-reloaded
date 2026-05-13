@@ -157,7 +157,7 @@ class MeleeWeaponInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handlePickupAction returns unhandled result when picking up complete melee weapon but unable to find controller")
+    @DisplayName("handlePickupAction returns unhandled result when picking up complete melee weapon that the player already has, but unable to find controller")
     void handlePickupAction_controllerNotFound() {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
@@ -173,7 +173,7 @@ class MeleeWeaponInteractionHandlerTest {
     }
 
     @Test
-    @DisplayName("handlePickupAction assigns existing melee weapon to player")
+    @DisplayName("handlePickupAction return cancelled result when picking up complete melee weapon that the player already has")
     void handlePickupAction_assignsExistingMeleeWeapon() {
         when(meleeWeaponRegistry.getUnassignedMeleeWeapon(ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
@@ -182,81 +182,20 @@ class MeleeWeaponInteractionHandlerTest {
         PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
 
         assertThat(result.dispatched()).isTrue();
-        assertThat(result.cancelEvent()).isFalse();
-        assertThat(result.removeItem()).isFalse();
+        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isTrue();
 
         verify(meleeWeapon).assign(gamePlayer);
     }
 
     @Test
-    @DisplayName("handlePickupAction does not add a single resource to an existing melee weapon when unable to find item slot")
-    void handlePickupAction_addSingleResourceExistingMeleeWeaponItemSlotNotFound() {
-        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
-        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
-
-        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
-        when(existingMeleeWeapon.getName()).thenReturn(NAME);
-        when(existingMeleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
-
-        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
-        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
-
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
-        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.empty());
-        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
-
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
-
-        assertThat(result.dispatched()).isTrue();
-        assertThat(result.cancelEvent()).isFalse();
-        assertThat(result.removeItem()).isFalse();
-
-        verify(existingMeleeWeapon, never()).update();
-        verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
-    }
-
-    @Test
-    @DisplayName("handlePickupAction adds a single resource to an existing melee weapon")
-    void handlePickupAction_addsResourceToExistingMeleeWeapon() {
-        ItemStack existingItemStack = new ItemStack(Material.IRON_SWORD);
-        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
-        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
-
-        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
-        when(existingMeleeWeapon.getName()).thenReturn(NAME);
-        when(existingMeleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
-        when(existingMeleeWeapon.getItemStack()).thenReturn(existingItemStack);
-
-        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
-        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
-
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
-        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.of(ITEM_SLOT));
-        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
-
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
-
-        assertThat(result.dispatched()).isTrue();
-        assertThat(result.cancelEvent()).isTrue();
-        assertThat(result.removeItem()).isTrue();
-        assertThat(resourceContainer.getReserveAmount()).isEqualTo(3);
-
-        verify(existingMeleeWeapon).update();
-        verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
-    }
-
-    @Test
-    @DisplayName("handlePickupAction returns unhandled result when picked up item has an unknown name")
-    void handlePickupAction_newMeleeWeaponUnknownName() {
+    @DisplayName("handlePickupAction returns unhandled result when picking up single projectile, but the weapon name is invalid")
+    void handlePickupAction_singleProjectSelfContainedInvalidWeaponName() {
         NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
 
         ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
         when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
 
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
         when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenThrow(new ItemNotFoundException("error"));
         when(gamePlayer.getName()).thenReturn(PLAYER_NAME);
@@ -268,52 +207,21 @@ class MeleeWeaponInteractionHandlerTest {
         assertThat(result.removeItem()).isFalse();
 
         verify(logger).warning("Player TestPlayer picked up item with unrecognized melee weapon name 'Test Melee Weapon' - ignoring pickup");
-        verify(meleeWeapon, never()).update();
         verify(gamePlayer, never()).addItem(any(ItemStack.class));
     }
 
     @Test
-    @DisplayName("handlePickupAction returns unhandled result when unable to find controller of newly created melee weapon")
-    void handlePickupAction_newMeleeWeaponControllerNotFound() {
+    @DisplayName("handlePickupAction returns cancelled result when picking up single projectile that is self contained")
+    void handlePickupAction_singleProjectileSelfContained() {
         NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
 
         ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
         when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
 
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
-        when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
         when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
         when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
-        when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
-
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
-
-        assertThat(result.dispatched()).isTrue();
-        assertThat(result.cancelEvent()).isFalse();
-        assertThat(result.removeItem()).isFalse();
-
-        verify(meleeWeapon, never()).update();
-        verify(gamePlayer, never()).addItem(any(ItemStack.class));
-    }
-
-    @Test
-    @DisplayName("handlePickupAction creates a new melee weapon with 1 resource and assigns it to the player")
-    void handlePickupAction_createsNewMeleeWeaponAssignment() {
-        ItemStack newItemStack = new ItemStack(Material.IRON_SWORD);
-        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
-        ResourceContainer resourceContainer = new ResourceContainer(1, 0, 2, 5);
-
-        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
-        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
-
-        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
-        when(meleeWeaponRegistry.getUnassignedMeleeWeapon(itemStack)).thenReturn(Optional.empty());
+        when(meleeWeapon.isSelfContained()).thenReturn(true);
         when(meleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
-        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
-        when(meleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
-        when(meleeWeapon.getItemStack()).thenReturn(newItemStack);
-        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
         when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
 
         PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
@@ -321,12 +229,127 @@ class MeleeWeaponInteractionHandlerTest {
         assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
         assertThat(result.removeItem()).isTrue();
-        assertThat(resourceContainer.getLoadedAmount()).isOne();
-        assertThat(resourceContainer.getReserveAmount()).isZero();
 
+        verify(meleeWeapon).assign(gamePlayer);
         verify(controller).performAction(Action.PICKUP_ITEM, gamePlayer);
-        verify(meleeWeapon).update();
-        verify(gamePlayer).addItem(newItemStack);
+    }
+
+    @Test
+    @DisplayName("handlePickupAction returns ignore result when picking up single projectile that is not self contained and is already owned by player, but controller cannot be found")
+    void handlePickupAction_singleProjectileNotSelfContainedAlreadyOwnedByPlayerControllerNotFound() {
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
+        when(existingMeleeWeapon.getName()).thenReturn(NAME);
+        when(existingMeleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
+        when(existingMeleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
+
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeapon.isSelfContained()).thenReturn(false);
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
+        when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.empty());
+
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isFalse();
+
+        verify(existingMeleeWeapon, never()).update();
+        verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
+        verify(controller, never()).performAction(any(Action.class), any(GamePlayer.class));
+    }
+
+    @Test
+    @DisplayName("handlePickupAction returns ignore result when picking up single projectile that is not self contained and is already owned by player, but item slot cannot be determined")
+    void handlePickupAction_singleProjectileNotSelfContainedAlreadyOwnedByPlayerItemSlotCannotBeDetermined() {
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
+        when(existingMeleeWeapon.getName()).thenReturn(NAME);
+        when(existingMeleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
+        when(existingMeleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
+
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeapon.isSelfContained()).thenReturn(false);
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
+        when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
+        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.empty());
+
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isFalse();
+        assertThat(result.removeItem()).isFalse();
+
+        verify(existingMeleeWeapon, never()).update();
+        verify(gamePlayer, never()).setItem(anyInt(), any(ItemStack.class));
+        verify(controller, never()).performAction(any(Action.class), any(GamePlayer.class));
+    }
+
+    @Test
+    @DisplayName("handlePickupAction returns cancel result when picking up single projectile that is not self contained and is already owned by player")
+    void handlePickupAction_singleProjectileNotSelfContainedAlreadyOwnedByPlayer() {
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 2, 5);
+        ItemStack existingItemStack = new ItemStack(Material.IRON_SWORD);
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        MeleeWeapon existingMeleeWeapon = mock(MeleeWeapon.class);
+        when(existingMeleeWeapon.getName()).thenReturn(NAME);
+        when(existingMeleeWeapon.getResourceContainer()).thenReturn(resourceContainer);
+        when(existingMeleeWeapon.getId()).thenReturn(MELEE_WEAPON_ID);
+        when(existingMeleeWeapon.getItemStack()).thenReturn(existingItemStack);
+
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeapon.isSelfContained()).thenReturn(false);
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of(existingMeleeWeapon));
+        when(itemControllerRegistry.getMeleeWeaponController(MELEE_WEAPON_ID)).thenReturn(Optional.of(controller));
+        when(gamePlayer.getItemSlot(existingMeleeWeapon)).thenReturn(Optional.of(ITEM_SLOT));
+
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isTrue();
+        assertThat(resourceContainer.getReserveAmount()).isEqualTo(3);
+
+        verify(existingMeleeWeapon).update();
+        verify(gamePlayer).setItem(ITEM_SLOT, existingItemStack);
+        verify(controller).performAction(Action.PICKUP_ITEM, gamePlayer);
+    }
+
+    @Test
+    @DisplayName("handlePickupAction returns ignore result when picking up single projectile that is not self contained and is not owned by player")
+    void handlePickupAction_singleProjectileNotSelfContainedNotOwnedByPlayer() {
+        NamespacedKey weaponNameKey = MockUtils.createNamespacedKey("weapon-name");
+
+        ItemStack itemStack = mock(ItemStack.class, Mockito.RETURNS_DEEP_STUBS);
+        when(itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING)).thenReturn(NAME);
+
+        when(namespacedKeyCreator.create("weapon-name")).thenReturn(weaponNameKey);
+        when(itemCreator.createMeleeWeapon(NAME, gamePlayer)).thenReturn(meleeWeapon);
+        when(meleeWeapon.isSelfContained()).thenReturn(false);
+        when(meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer)).thenReturn(List.of());
+
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
+
+        assertThat(result.dispatched()).isTrue();
+        assertThat(result.cancelEvent()).isTrue();
+        assertThat(result.removeItem()).isFalse();
     }
 
     @Test

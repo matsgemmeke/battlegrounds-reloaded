@@ -48,4 +48,8 @@ public class ResourceContainer {
     public void setMaxReserveAmount(int maxReserveAmount) {
         this.maxReserveAmount = maxReserveAmount;
     }
+
+    public boolean isReserveFull() {
+        return reserveAmount >= maxReserveAmount;
+    }
 }

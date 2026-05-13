@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -32,8 +31,6 @@ class DefaultMeleeWeaponTest {
 
     private static final String NAME = "Combat Knife";
 
-    @Mock
-    private ItemController<MeleeWeaponUser> controller;
     @Mock
     private MeleeWeaponUser user;
     @Mock
@@ -86,6 +83,18 @@ class DefaultMeleeWeaponTest {
         boolean matching = meleeWeapon.isMatching(itemStack);
 
         assertThat(matching).isEqualTo(expectedResult);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "0,true", "1,false" })
+    @DisplayName("isSelfContained returns whether the melee weapon carries only one resource")
+    void isSelfContained(int maxReserveAmount, boolean expectedResult) {
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 0, maxReserveAmount);
+
+        meleeWeapon.setResourceContainer(resourceContainer);
+        boolean selfContained = meleeWeapon.isSelfContained();
+
+        assertThat(selfContained).isEqualTo(expectedResult);
     }
 
     @Test

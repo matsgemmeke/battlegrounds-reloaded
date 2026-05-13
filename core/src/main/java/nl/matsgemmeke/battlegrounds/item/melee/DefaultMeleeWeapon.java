@@ -103,6 +103,11 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     }
 
     @Override
+    public boolean isSelfContained() {
+        return resourceContainer.getMaxReserveAmount() == 0;
+    }
+
+    @Override
     public boolean cancelReload() {
         return reloadSystem.cancelReload();
     }

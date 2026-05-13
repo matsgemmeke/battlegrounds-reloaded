@@ -29,4 +29,13 @@ public interface MeleeWeapon extends Weapon, Reloadable, ThrowableItem {
      * @return the optional with the melee weapon user or empty when there is none
      */
     Optional<MeleeWeaponUser> getUser();
+
+    /**
+     * Returns whether this melee weapon's projectile is self-contained, meaning it functions as a complete weapon on
+     * its own when picked up.
+     *
+     * @return whether this weapon's projectile can be picked up as a standalone weapon, or if it requires the base
+     *         weapon to be present in the player's inventory
+     */
+    boolean isSelfContained();
 }
