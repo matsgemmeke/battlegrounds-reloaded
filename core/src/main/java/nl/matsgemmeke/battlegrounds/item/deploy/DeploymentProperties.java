@@ -12,6 +12,6 @@ public record DeploymentProperties(
         boolean activateEffectOnDestruction,
         boolean removeDeploymentOnDestruction,
         boolean undoEffectOnDestruction,
-        boolean removeDeploymentOnCleanup,
+        boolean removeDeploymentOnReset,
         long manualActivationDelay
 ) { }

@@ -75,13 +75,13 @@ class EquipmentFactoryTest {
         verify(deploymentFactory).create(deploymentPropertiesCaptor.capture(), any(DeploymentState.class), any(ItemEffect.class));
 
         assertThat(deploymentPropertiesCaptor.getValue()).satisfies(properties -> {
-           assertThat(properties.activateEffectOnDestruction()).isTrue();
-           assertThat(properties.destructionParticleEffect()).isNull();
-           assertThat(properties.manualActivationDelay()).isZero();
-           assertThat(properties.manualActivationSounds()).isEmpty();
-           assertThat(properties.removeDeploymentOnCleanup()).isFalse();
-           assertThat(properties.removeDeploymentOnDestruction()).isTrue();
-           assertThat(properties.undoEffectOnDestruction()).isFalse();
+            assertThat(properties.activateEffectOnDestruction()).isTrue();
+            assertThat(properties.destructionParticleEffect()).isNull();
+            assertThat(properties.manualActivationDelay()).isZero();
+            assertThat(properties.manualActivationSounds()).isEmpty();
+            assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+            assertThat(properties.removeDeploymentOnReset()).isFalse();
+            assertThat(properties.undoEffectOnDestruction()).isFalse();
         });
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
@@ -119,8 +119,8 @@ class EquipmentFactoryTest {
             assertThat(properties.destructionParticleEffect()).isNull();
             assertThat(properties.manualActivationDelay()).isEqualTo(5);
             assertThat(properties.manualActivationSounds()).isNotEmpty();
-            assertThat(properties.removeDeploymentOnCleanup()).isTrue();
             assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+            assertThat(properties.removeDeploymentOnReset()).isTrue();
             assertThat(properties.undoEffectOnDestruction()).isFalse();
         });
 

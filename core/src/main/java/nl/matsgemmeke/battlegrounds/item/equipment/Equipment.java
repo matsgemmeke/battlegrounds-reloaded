@@ -1,13 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.item.Cleanable;
+import nl.matsgemmeke.battlegrounds.item.Resettable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
-import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Cleanable {
+public interface Equipment extends Weapon, Resettable {
 
     /**
      * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
@@ -24,21 +23,6 @@ public interface Equipment extends Weapon, Cleanable {
      * @param activator the equipment's activator item
      */
     void setActivator(@Nullable Activator activator);
-
-    /**
-     * Gets the projectile properties associated with this equipment item. Returns null if no properties are set.
-     *
-     * @return the projectile properties of the equipment item or null if not set
-     */
-    @Nullable
-    ProjectileProperties getProjectileProperties();
-
-    /**
-     * Sets the projectile properties associated with this equipment item.
-     *
-     * @param projectileProperties the projectile properties of the equipment item
-     */
-    void setProjectileProperties(@Nullable ProjectileProperties projectileProperties);
 
     /**
      * Gets the user of the equipmemt item. Returns null if the equipment does not have a user.

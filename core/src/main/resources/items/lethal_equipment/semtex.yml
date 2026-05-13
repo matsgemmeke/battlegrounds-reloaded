@@ -16,7 +16,7 @@ deploy:
     activate-effect: false
     remove-deployment: true
     undo-effect: false
-  on-cleanup:
+  on-reset:
     remove-deployment: false
   resistances:
     bullet-damage: 0

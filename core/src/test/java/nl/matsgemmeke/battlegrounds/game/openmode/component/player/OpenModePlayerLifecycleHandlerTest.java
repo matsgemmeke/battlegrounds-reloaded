@@ -83,7 +83,7 @@ class OpenModePlayerLifecycleHandlerTest {
         playerLifecycleHandler.handlePlayerLeave(PLAYER_UNIQUE_ID);
 
         verify(statePersistenceHandler).savePlayerState(gamePlayer);
-        verify(itemLifecycleHandler).cleanupItems(gamePlayer);
+        verify(itemLifecycleHandler).resetItems(gamePlayer);
         verify(playerRegistry).deregister(PLAYER_UNIQUE_ID);
     }
 }

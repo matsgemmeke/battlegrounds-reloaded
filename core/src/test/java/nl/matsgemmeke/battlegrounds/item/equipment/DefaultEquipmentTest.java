@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -40,18 +39,6 @@ class DefaultEquipmentTest {
         equipment.activateDeployment(user);
 
         verify(deployment).activate(user);
-    }
-
-    @Disabled
-    @Test
-    void cleanupDelegatesToDeploymentHandler() {
-//        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-//        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.cleanup();
-
-//        verify(deploymentHandler).cleanupDeployment();
     }
 
     @Test
@@ -193,6 +180,18 @@ class DefaultEquipmentTest {
         equipment.performDeploymentAction(deploymentAction, user);
 
         verify(deployment).processDeploymentResult(deploymentResult);
+    }
+
+    @Test
+    @DisplayName("reset delegates to deployment")
+    void reset() {
+        Deployment deployment = mock(Deployment.class);
+
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeployment(deployment);
+        equipment.reset();
+
+        verify(deployment).reset();
     }
 
     @Test

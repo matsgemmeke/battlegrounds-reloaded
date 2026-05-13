@@ -27,7 +27,7 @@ deploy:
       offset-y: 0.25
       offset-z: 0.25
       block-data: REPEATER
-  on-cleanup:
+  on-reset:
     remove-deployment: false
   throwing:
     cooldown: 30

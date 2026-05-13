@@ -23,7 +23,7 @@ public class DeploymentSpec {
 
     @Required
     @Valid
-    public CleanupPropertiesSpec onCleanup;
+    public ResetPropertiesSpec onReset;
 
     @Valid
     public ThrowPropertiesSpec throwing;

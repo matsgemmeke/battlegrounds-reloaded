@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -37,7 +36,6 @@ public class Deployment {
 
     private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
-    private final DeploymentObjectRegistry deploymentObjectRegistry;
     private final DeploymentProperties properties;
     private final ItemEffect itemEffect;
     private final ParticleEffectSpawner particleEffectSpawner;
@@ -58,7 +56,6 @@ public class Deployment {
     public Deployment(
             AudioEmitter audioEmitter,
             CollisionResultAdapter collisionResultAdapter,
-            DeploymentObjectRegistry deploymentObjectRegistry,
             ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
             @Assisted DeploymentProperties properties,
@@ -67,7 +64,6 @@ public class Deployment {
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionResultAdapter = collisionResultAdapter;
-        this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
         this.properties = properties;
@@ -159,6 +155,15 @@ public class Deployment {
 
         triggerRuns.forEach(triggerRun -> triggerRun.replaceActor(actor));
         itemEffect.getLatestPerformance().ifPresent(latestPerformance -> latestPerformance.changeActor(actor));
+    }
+
+    public void reset() {
+        if (currentDeploymentObject == null || !properties.removeDeploymentOnReset()) {
+            return;
+        }
+
+        pending = false;
+        currentDeploymentObject.remove();
     }
 
     public void scheduleDeploymentCooldown(Deployer deployer, long cooldown) {

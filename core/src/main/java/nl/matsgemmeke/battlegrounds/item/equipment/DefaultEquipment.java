@@ -53,15 +53,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
-    public ProjectileProperties getProjectileProperties() {
-        return projectileProperties;
-    }
-
-    public void setProjectileProperties(@Nullable ProjectileProperties projectileProperties) {
-        this.projectileProperties = projectileProperties;
-    }
-
-    @Nullable
     public EquipmentUser getUser() {
         return user;
     }
@@ -70,12 +61,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.user = user;
     }
 
+    @Override
     public void activateDeployment(EquipmentUser user) {
         deployment.activate(user);
-    }
-
-    public void cleanup() {
-        throw new UnsupportedOperationException();
     }
 
     public boolean isActivatorReady() {
@@ -105,6 +93,11 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         }
 
         deployment.processDeploymentResult(result);
+    }
+
+    @Override
+    public void reset() {
+        deployment.reset();
     }
 
     public boolean update() {

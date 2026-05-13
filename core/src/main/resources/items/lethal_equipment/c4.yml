@@ -30,7 +30,7 @@ deploy:
     activate-effect: false
     remove-deployment: true
     undo-effect: false
-  on-cleanup:
+  on-reset:
     remove-deployment: true
   placing:
     cooldown: 10

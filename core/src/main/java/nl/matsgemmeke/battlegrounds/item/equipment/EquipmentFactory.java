@@ -109,7 +109,7 @@ public class EquipmentFactory {
         boolean activateEffectOnDestruction = deploymentSpec.onDestruction.activateEffect;
         boolean removeDeploymentOnDestruction = deploymentSpec.onDestruction.removeDeployment;
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
-        boolean removeDeploymentOnCleanup = deploymentSpec.onCleanup.removeDeployment;
+        boolean removeDeploymentOnReset = deploymentSpec.onReset.removeDeployment;
 
         List<GameSound> manualActivationSounds = Collections.emptyList();
         long manualActivationDelay = 0L;
@@ -126,7 +126,7 @@ public class EquipmentFactory {
             destructionParticleEffect = particleEffectMapper.map(destructionParticleEffectSpec);
         }
 
-        DeploymentProperties properties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnCleanup, manualActivationDelay);
+        DeploymentProperties properties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnReset, manualActivationDelay);
         DeploymentState state = new IdleState();
         ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 

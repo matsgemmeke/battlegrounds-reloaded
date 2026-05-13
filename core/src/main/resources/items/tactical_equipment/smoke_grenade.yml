@@ -24,7 +24,7 @@ deploy:
     activate-effect: true
     remove-deployment: false
     undo-effect: false
-  on-cleanup:
+  on-reset:
     remove-deployment: false
   throwing:
     cooldown: 30
