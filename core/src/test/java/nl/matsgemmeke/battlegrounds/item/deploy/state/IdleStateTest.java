@@ -42,6 +42,7 @@ class IdleStateTest {
         verify(deployment).setDeployed(true);
         verify(deployment).startTriggerExecutors(deployer, actor);
         verify(deployment).scheduleDeploymentCooldown(deployer, COOLDOWN);
+        verify(deployment).prepareActivator(deployer);
     }
 
     @Test

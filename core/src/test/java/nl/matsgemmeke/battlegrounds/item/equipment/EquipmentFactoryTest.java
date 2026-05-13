@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
@@ -35,7 +34,6 @@ import static org.mockito.Mockito.*;
 class EquipmentFactoryTest {
 
     private static final ItemStack ITEM_STACK_DISPLAY = new ItemStack(Material.STICK);
-    private static final ItemStack ITEM_STACK_ACTIVATOR = new ItemStack(Material.FEATHER);
 
     @Mock
     private DeploymentFactory deploymentFactory;
@@ -59,7 +57,6 @@ class EquipmentFactoryTest {
     void create_withPlayerUser() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemController<EquipmentUser> controller = new ItemController<>();
         Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
@@ -67,7 +64,6 @@ class EquipmentFactoryTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
-        when(controllerFactory.create(eq(spec), any(Equipment.class))).thenReturn(controller);
         when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
@@ -93,6 +89,7 @@ class EquipmentFactoryTest {
         assertThat(equipment.getItemStack()).isEqualTo(ITEM_STACK_DISPLAY);
 
         verify(equipmentRegistry).register(equipment, gamePlayer);
+        verify(controllerFactory).create(eq(spec), any(Equipment.class));
         verify(deployment).addTriggerExecutor(triggerExecutor);
     }
 
@@ -100,7 +97,6 @@ class EquipmentFactoryTest {
     @DisplayName("create returns Equipment instance with activator")
     void create_withActivator() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
-        ItemController<EquipmentUser> controller = new ItemController<>();
         Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
@@ -108,7 +104,6 @@ class EquipmentFactoryTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
-        when(controllerFactory.create(eq(spec), any(Equipment.class))).thenReturn(controller);
         when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
@@ -134,6 +129,8 @@ class EquipmentFactoryTest {
         assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
         verify(equipmentRegistry).register(equipment);
+        verify(controllerFactory).create(eq(spec), any(Equipment.class));
+        verify(deployment).assignActivator(equipment.getActivator());
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

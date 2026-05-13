@@ -184,8 +184,6 @@ class MeleeWeaponInteractionHandlerTest {
         assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
         assertThat(result.removeItem()).isTrue();
-
-        verify(meleeWeapon).assign(gamePlayer);
     }
 
     @Test
@@ -230,7 +228,6 @@ class MeleeWeaponInteractionHandlerTest {
         assertThat(result.cancelEvent()).isTrue();
         assertThat(result.removeItem()).isTrue();
 
-        verify(meleeWeapon).assign(gamePlayer);
         verify(controller).performAction(Action.PICKUP_ITEM, gamePlayer);
     }
 

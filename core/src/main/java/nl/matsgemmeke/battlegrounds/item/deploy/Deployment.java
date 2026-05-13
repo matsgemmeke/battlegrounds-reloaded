@@ -2,12 +2,14 @@ package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
+import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -33,6 +35,7 @@ import java.util.UUID;
  */
 public class Deployment {
 
+    private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
     private final DeploymentObjectRegistry deploymentObjectRegistry;
     private final DeploymentProperties properties;
@@ -41,6 +44,8 @@ public class Deployment {
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
+    @Nullable
+    private Activator activator;
     @Nullable
     private Actor currentActor;
     private boolean deployed;
@@ -51,6 +56,7 @@ public class Deployment {
 
     @Inject
     public Deployment(
+            AudioEmitter audioEmitter,
             CollisionResultAdapter collisionResultAdapter,
             DeploymentObjectRegistry deploymentObjectRegistry,
             ParticleEffectSpawner particleEffectSpawner,
@@ -59,6 +65,7 @@ public class Deployment {
             @Assisted DeploymentState state,
             @Assisted ItemEffect itemEffect
     ) {
+        this.audioEmitter = audioEmitter;
         this.collisionResultAdapter = collisionResultAdapter;
         this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.particleEffectSpawner = particleEffectSpawner;
@@ -88,8 +95,22 @@ public class Deployment {
         this.pending = pending;
     }
 
+    public void activate(Deployer deployer) {
+        audioEmitter.playSounds(properties.manualActivationSounds(), deployer.getDeployLocation());
+
+        deployer.setHeldItem(null);
+
+        Schedule delaySchedule = scheduler.createSingleRunSchedule(properties.manualActivationDelay());
+        delaySchedule.addTask(() -> triggerRuns.forEach(TriggerRun::notifyObservers));
+        delaySchedule.start();
+    }
+
     public void addTriggerExecutor(TriggerExecutor triggerExecutor) {
         triggerExecutors.add(triggerExecutor);
+    }
+
+    public void assignActivator(Activator activator) {
+        this.activator = activator;
     }
 
     public void destroy(Damage damage) {
@@ -116,6 +137,14 @@ public class Deployment {
         if (particleEffect != null) {
             particleEffectSpawner.spawnParticleEffect(particleEffect, currentActor.getLocation());
         }
+    }
+
+    public void prepareActivator(Deployer deployer) {
+        if (activator == null) {
+            return;
+        }
+
+        activator.prepare(deployer);
     }
 
     public void processDeploymentResult(DeploymentResult result) {

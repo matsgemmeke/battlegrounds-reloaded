@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.deploy.activator;
 
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A tool used by items to manually activate effects.
@@ -21,7 +20,7 @@ public interface Activator extends Matchable {
      *
      * @param deployer the deployer who prepares the activator
      */
-    void prepare(@NotNull Deployer deployer);
+    void prepare(Deployer deployer);
 
     /**
      * Removes the activator item from the current user.

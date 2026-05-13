@@ -12,12 +12,10 @@ import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
-import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.DefaultActivator;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.deploy.state.IdleState;
@@ -88,21 +86,21 @@ public class EquipmentFactory {
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
-        Activator activator = null;
+        Deployment deployment = this.createDeployment(spec.deploy, spec.effect);
+        equipment.setDeployment(deployment);
+
         ItemSpec activatorItemSpec = spec.items.activatorItem;
 
         if (activatorItemSpec != null) {
             ItemTemplate activatorItemTemplate = itemTemplateFactory.create(activatorItemSpec);
 
-            activator = new DefaultActivator(activatorItemTemplate);
+            DefaultActivator activator = new DefaultActivator(activatorItemTemplate);
             equipment.setActivator(activator);
+
+            deployment.assignActivator(activator);
         }
 
-        ItemController<EquipmentUser> controller = controllerFactory.create(spec, equipment);
-        equipment.setController(controller);
-
-        Deployment deployment = this.createDeployment(spec.deploy, spec.effect);
-        equipment.setDeployment(deployment);
+        controllerFactory.create(spec, equipment);
 
         return equipment;
     }

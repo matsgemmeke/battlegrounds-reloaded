@@ -30,17 +30,16 @@ class DefaultEquipmentTest {
         equipment = new DefaultEquipment();
     }
 
-    @Disabled
     @Test
     void activateDeploymentActivatesDeploymentHandler() {
-//        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        Deployment deployment = mock(Deployment.class);
         EquipmentUser user = mock(EquipmentUser.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
-//        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.setDeployment(deployment);
         equipment.activateDeployment(user);
 
-//        verify(deploymentHandler).activateDeployment(user);
+        verify(deployment).activate(user);
     }
 
     @Disabled

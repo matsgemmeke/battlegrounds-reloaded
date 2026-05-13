@@ -20,6 +20,7 @@ public class IdleState implements DeploymentState {
         if (result.deploymentObject().isPhysical()) {
             deployment.setDeployed(true);
             deployment.scheduleDeploymentCooldown(deployer, result.cooldown());
+            deployment.prepareActivator(deployer);
 
             return new DeployedState();
         } else {

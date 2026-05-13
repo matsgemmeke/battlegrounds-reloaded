@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
@@ -10,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
@@ -23,17 +21,10 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     private Deployment deployment;
     @Nullable
     private EquipmentUser user;
-    private ItemController<EquipmentUser> controller;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
-    private ItemTemplate throwItemTemplate;
-    @Nullable
     private ProjectileProperties projectileProperties;
-
-    public DefaultEquipment() {
-        this.controller = new ItemController<>();
-    }
 
     @Nullable
     public Activator getActivator() {
@@ -42,14 +33,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     public void setActivator(@Nullable Activator activator) {
         this.activator = activator;
-    }
-
-    public ItemController<EquipmentUser> getController() {
-        return controller;
-    }
-
-    public void setController(ItemController<EquipmentUser> controller) {
-        this.controller = controller;
     }
 
     public Deployment getDeployment() {
@@ -88,7 +71,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public void activateDeployment(EquipmentUser user) {
-        throw new UnsupportedOperationException();
+        deployment.activate(user);
     }
 
     public void cleanup() {
@@ -107,7 +90,7 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return deployment.isDeployed();
     }
 
-    public boolean isMatching(@NotNull ItemStack itemStack) {
+    public boolean isMatching(ItemStack itemStack) {
         return displayItemTemplate != null && displayItemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
     }
