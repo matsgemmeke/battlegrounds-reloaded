@@ -1,0 +1,31 @@
+package nl.matsgemmeke.battlegrounds.storage.stats;
+
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
+import static org.mockito.Mockito.verify;
+
+@ExtendWith(MockitoExtension.class)
+class StatsStorageTest {
+
+    @Mock
+    private DamageEventRepository damageEventRepository;
+    @InjectMocks
+    private StatsStorage statsStorage;
+
+    @Test
+    @DisplayName("saveDamageEvent saves damage event to repository")
+    void saveDamageEvent() {
+        DamageEvent damageEvent = new DamageEvent(null, null, null, 0, null, 0, false, false, null);
+
+        statsStorage.saveDamageEvent(damageEvent);
+
+        verify(damageEventRepository).save(damageEvent);
+    }
+}

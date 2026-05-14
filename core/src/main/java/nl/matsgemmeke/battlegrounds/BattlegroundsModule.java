@@ -106,6 +106,8 @@ import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite.SqliteGunStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -158,6 +160,7 @@ public class BattlegroundsModule implements Module {
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
+        binder.bind(DamageEventRepository.class).toProvider(SqliteDamageEventRepositoryProvider.class).in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
