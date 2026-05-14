@@ -1,25 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.reload;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 
-public class ReloadFunction implements ItemFunction<MeleeWeaponHolder> {
+public class ReloadFunction implements Function<MeleeWeaponUser> {
 
     private final MeleeWeapon meleeWeapon;
 
     public ReloadFunction(MeleeWeapon meleeWeapon) {
         this.meleeWeapon = meleeWeapon;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return meleeWeapon.isReloadAvailable();
-    }
-
-    @Override
-    public boolean isBlocking() {
-        return false;
     }
 
     @Override
@@ -33,12 +24,13 @@ public class ReloadFunction implements ItemFunction<MeleeWeaponHolder> {
     }
 
     @Override
-    public boolean perform(MeleeWeaponHolder holder) {
-        if (!this.isAvailable()) {
-            return false;
+    public FunctionResult perform(MeleeWeaponUser user) {
+        if (!meleeWeapon.isReloadAvailable()) {
+            return FunctionResult.FAILED;
         }
 
-        meleeWeapon.reload(holder);
-        return true;
+        meleeWeapon.reload(user);
+
+        return FunctionResult.SUCCESS;
     }
 }

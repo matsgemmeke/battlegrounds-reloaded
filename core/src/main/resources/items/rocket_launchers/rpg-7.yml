@@ -4,8 +4,14 @@ description: Free-fire shoulder mounted rocket launcher.
 level-unlocked: 1
 price: 3500
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 1
   default-magazine-amount: 1
@@ -17,6 +23,15 @@ item:
   item-flags:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: GUN
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: RPG-7
   unbreakable: true
 reloading:
   type: MANUAL_INSERTION

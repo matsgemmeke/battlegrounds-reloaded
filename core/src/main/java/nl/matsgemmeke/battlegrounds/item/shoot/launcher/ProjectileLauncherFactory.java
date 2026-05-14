@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowProperties;
@@ -23,23 +24,17 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 
 import java.util.List;
-import java.util.UUID;
 
 public class ProjectileLauncherFactory {
-
-    private static final String TEMPLATE_ID_KEY = "template-id";
 
     private final ArrowLauncherFactory arrowLauncherFactory;
     private final FireballLauncherFactory fireballLauncherFactory;
     private final HitscanLauncherFactory hitscanLauncherFactory;
     private final ItemEffectFactory itemEffectFactory;
     private final ItemLauncherFactory itemLauncherFactory;
-    private final NamespacedKeyCreator namespacedKeyCreator;
+    private final ItemTemplateFactory itemTemplateFactory;
     private final ParticleEffectMapper particleEffectMapper;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
@@ -50,7 +45,7 @@ public class ProjectileLauncherFactory {
             HitscanLauncherFactory hitscanLauncherFactory,
             ItemEffectFactory itemEffectFactory,
             ItemLauncherFactory itemLauncherFactory,
-            NamespacedKeyCreator namespacedKeyCreator,
+            ItemTemplateFactory itemTemplateFactory,
             ParticleEffectMapper particleEffectMapper,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
@@ -59,7 +54,7 @@ public class ProjectileLauncherFactory {
         this.hitscanLauncherFactory = hitscanLauncherFactory;
         this.itemEffectFactory = itemEffectFactory;
         this.itemLauncherFactory = itemLauncherFactory;
-        this.namespacedKeyCreator = namespacedKeyCreator;
+        this.itemTemplateFactory = itemTemplateFactory;
         this.particleEffectMapper = particleEffectMapper;
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
@@ -93,12 +88,10 @@ public class ProjectileLauncherFactory {
 
         ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
 
-        if (spec.triggers != null) {
-            for (TriggerSpec triggerSpec : spec.triggers.values()) {
-                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+        for (TriggerSpec triggerSpec : spec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-                arrowLauncher.addTriggerExecutor(triggerExecutor);
-            }
+            arrowLauncher.addTriggerExecutor(triggerExecutor);
         }
 
         return arrowLauncher;
@@ -134,26 +127,17 @@ public class ProjectileLauncherFactory {
         double velocity = spec.velocity;
         int pickupDelay = spec.pickupDelay;
         List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
-
-        NamespacedKey templateKey = namespacedKeyCreator.create(TEMPLATE_ID_KEY);
-        UUID templateId = UUID.randomUUID();
-        Material material = Material.valueOf(spec.item.material);
-
-        ItemTemplate itemTemplate = ItemTemplate.builder(templateKey, templateId, material)
-                .damage(spec.item.damage)
-                .build();
+        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);
 
-        if (spec.triggers != null) {
-            for (TriggerSpec triggerSpec : spec.triggers.values()) {
-                TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
+        for (TriggerSpec triggerSpec : spec.triggers.values()) {
+            TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 
-                itemLauncher.addTriggerExecutor(triggerExecutor);
-            }
+            itemLauncher.addTriggerExecutor(triggerExecutor);
         }
 
         return itemLauncher;

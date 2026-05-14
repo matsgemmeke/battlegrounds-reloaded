@@ -1,69 +1,62 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-public class CookFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class CookFunctionTest {
 
+    @Mock
     private Equipment equipment;
-    private PrimeDeployment deployment;
-
-    @BeforeEach
-    public void setUp() {
-        equipment = mock(Equipment.class);
-        deployment = mock(PrimeDeployment.class);
-    }
-
-    @Test
-    public void isAvailableReturnsTrueWhenEquipmentIsNotAwaitingDeployment() {
-        when(equipment.isAwaitingDeployment()).thenReturn(false);
-
-        CookFunction function = new CookFunction(equipment, deployment);
-        boolean available = function.isAvailable();
-
-        assertTrue(available);
-    }
+    @Mock
+    private EquipmentUser user;
+    @Mock
+    private PrimeDeploymentAction deploymentAction;
+    @InjectMocks
+    private CookFunction function;
 
     @Test
-    public void isAvailableReturnsFalseWhenEquipmentIsAlreadyAwaitingDeployment() {
+    @DisplayName("perform returns FAILED when equipment is already awaiting deployment")
+    void perform_equipmentIsNotAwaitingDeployment() {
         when(equipment.isAwaitingDeployment()).thenReturn(true);
 
-        CookFunction function = new CookFunction(equipment, deployment);
-        boolean available = function.isAvailable();
+        FunctionResult result = function.perform(user);
 
-        assertFalse(available);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    public void performReturnsFalseWhenHolderCannotDeploy() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(false);
+    @DisplayName("perform returns FAILED when user cannot deploy")
+    void perform_userCannotDeploy() {
+        when(equipment.isAwaitingDeployment()).thenReturn(false);
+        when(user.canDeploy()).thenReturn(false);
 
-        CookFunction function = new CookFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isFalse();
-
-        verifyNoInteractions(equipment);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
     }
 
     @Test
-    public void performReturnsTrueAndStartsDeploymentProcess() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-        when(holder.canDeploy()).thenReturn(true);
+    @DisplayName("perform returns SUCCESS and starts deployment process")
+    void perform_startsDeploymentProcess() {
+        when(equipment.isAwaitingDeployment()).thenReturn(false);
+        when(user.canDeploy()).thenReturn(true);
 
-        CookFunction function = new CookFunction(equipment, deployment);
-        boolean performed = function.perform(holder);
+        FunctionResult result = function.perform(user);
 
-        assertThat(performed).isTrue();
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
-        verify(equipment).performDeployment(deployment, holder);
+        verify(equipment).performDeploymentAction(deploymentAction, user);
     }
 }

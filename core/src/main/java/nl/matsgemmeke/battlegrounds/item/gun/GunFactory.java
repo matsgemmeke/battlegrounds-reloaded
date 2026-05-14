@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -29,33 +28,28 @@ import java.util.UUID;
 
 public class GunFactory {
 
-    private static final String ACTION_EXECUTOR_ID_VALUE = "gun";
-
-    private final GunControlsFactory controlsFactory;
+    private final GunControllerFactory controllerFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final ItemTemplateFactory itemTemplateFactory;
-    private final Provider<DefaultGun> defaultGunProvider;
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
 
     @Inject
     public GunFactory(
-            GunControlsFactory controlsFactory,
+            GunControllerFactory controllerFactory,
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             ItemTemplateFactory itemTemplateFactory,
-            Provider<DefaultGun> defaultGunProvider,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory
     ) {
-        this.controlsFactory = controlsFactory;
+        this.controllerFactory = controllerFactory;
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.itemTemplateFactory = itemTemplateFactory;
-        this.defaultGunProvider = defaultGunProvider;
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
@@ -73,7 +67,7 @@ public class GunFactory {
 
     public Gun create(GunSpec spec, GamePlayer gamePlayer) {
         Gun gun = this.createInstance(spec);
-        gun.setHolder(gamePlayer);
+        gun.setUser(gamePlayer);
 
         gunRegistry.register(gun, gamePlayer);
 
@@ -83,11 +77,11 @@ public class GunFactory {
     }
 
     private Gun createInstance(GunSpec spec) {
-        DefaultGun gun = defaultGunProvider.get();
+        DefaultGun gun = new DefaultGun();
         gun.setName(spec.name);
         gun.setDescription(spec.description);
 
-        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item, ACTION_EXECUTOR_ID_VALUE);
+        ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
         itemRepresentation.setPlaceholder(Placeholder.ITEM_NAME, spec.name);
 
@@ -102,9 +96,6 @@ public class GunFactory {
 
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
-
-        ItemControls<GunHolder> controls = controlsFactory.create(spec.controls, gun);
-        gun.setControls(controls);
 
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);
         gun.setShootHandler(shootHandler);
@@ -127,6 +118,8 @@ public class GunFactory {
         }
 
         gun.update();
+
+        controllerFactory.create(spec.controls, gun);
 
         return gun;
     }

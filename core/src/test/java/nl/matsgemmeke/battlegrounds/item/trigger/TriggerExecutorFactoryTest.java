@@ -1,25 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.trigger;
 
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.*;
 import nl.matsgemmeke.battlegrounds.item.trigger.enemy.EnemyProximityTrigger;
 import nl.matsgemmeke.battlegrounds.item.trigger.impl.EntityImpactTrigger;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,41 +38,10 @@ class TriggerExecutorFactoryTest {
         factory = new TriggerExecutorFactory(enemyProximityTriggerProvider, entityImpactTriggerProvider, scheduler);
     }
 
-    static Stream<Arguments> invalidTriggerSpecCases() {
-        return Stream.of(
-                arguments("BLOCK_IMPACT", null, INTERVAL, null, null, "delay"),
-                arguments("BLOCK_IMPACT", DELAY, null, null, null, "interval"),
-                arguments("ENEMY_PROXIMITY", null, INTERVAL, null, RANGE, "delay"),
-                arguments("ENEMY_PROXIMITY", DELAY, null, null, RANGE, "interval"),
-                arguments("ENEMY_PROXIMITY", DELAY, INTERVAL, null, null, "range"),
-                arguments("ENTITY_IMPACT", null, INTERVAL, null, null, "delay"),
-                arguments("ENTITY_IMPACT", DELAY, null, null, null, "interval"),
-                arguments("FLOOR_HIT", null, INTERVAL, null, null, "delay"),
-                arguments("FLOOR_HIT", DELAY, null, null, null, "interval"),
-                arguments("SCHEDULED", null, null, null, null, "offsetDelays")
-        );
-    }
-
-    @ParameterizedTest
-    @MethodSource("invalidTriggerSpecCases")
-    void createThrowsTriggerCreationExceptionWhenRequiredValuesInSpecAreNull(String type, Long delay, Long interval, List<Long> offsetDelays, Double range, String requiredValue) {
-        TriggerSpec spec = new TriggerSpec();
-        spec.type = type;
-        spec.delay = delay;
-        spec.interval = interval;
-        spec.offsetDelays = offsetDelays;
-        spec.range = range;
-
-        String expectedErrorMessage = "Cannot create trigger %s because of invalid spec: Required '%s' value is missing".formatted(type, requiredValue);
-
-        assertThatThrownBy(() -> factory.create(spec))
-                .isInstanceOf(TriggerCreationException.class)
-                .hasMessage(expectedErrorMessage);
-    }
-
     @Test
-    void createReturnsTriggerExecutorWithBlockImpactTriggerInstanceWhenTriggerTypeEqualsBlockImpact() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with BlockImpactTrigger instance")
+    void create_blockImpactTrigger() {
+        BlockImpactTriggerSpec spec = new BlockImpactTriggerSpec();
         spec.type = "BLOCK_IMPACT";
         spec.delay = DELAY;
         spec.interval = INTERVAL;
@@ -88,8 +52,9 @@ class TriggerExecutorFactoryTest {
     }
 
     @Test
-    void createReturnsTriggerExecutorWithEnemyProximityTriggerInstanceWhenTripperTypeEqualsEnemyProximity() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with EnemyProximityTrigger instance")
+    void create_enemyProximityTrigger() {
+        EnemyProximityTriggerSpec spec = new EnemyProximityTriggerSpec();
         spec.type = "ENEMY_PROXIMITY";
         spec.delay = DELAY;
         spec.interval = INTERVAL;
@@ -107,8 +72,9 @@ class TriggerExecutorFactoryTest {
     }
 
     @Test
-    void createReturnsTriggerExecutorWithEntityImpactTriggerInstanceWhenTriggerTypeEqualsEntityImpact() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with EntityImpactTrigger instance")
+    void create_entityImpactTrigger() {
+        EntityImpactTriggerSpec spec = new EntityImpactTriggerSpec();
         spec.type = "ENTITY_IMPACT";
         spec.delay = DELAY;
         spec.interval = INTERVAL;
@@ -119,12 +85,12 @@ class TriggerExecutorFactoryTest {
     }
 
     @Test
-    void createReturnsTriggerExecutorWithFloorHitTriggerInstanceWhenTriggerTypeEqualsFloorHit() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with FloorHitTrigger instance")
+    void create_floorHitTrigger() {
+        FloorHitTriggerSpec spec = new FloorHitTriggerSpec();
         spec.type = "FLOOR_HIT";
         spec.delay = DELAY;
         spec.interval = INTERVAL;
-        spec.range = RANGE;
 
         TriggerExecutor triggerExecutor = factory.create(spec);
 
@@ -132,8 +98,9 @@ class TriggerExecutorFactoryTest {
     }
 
     @Test
-    void createReturnsTriggerExecutorWithScheduledTriggerInstanceWithSingleRunScheduleWhenTriggerTypeEqualsDelayed() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with ScheduledTrigger instance that uses a single run schedule")
+    void create_scheduledTriggerWithSingleRunSchedule() {
+        ScheduledTriggerSpec spec = new ScheduledTriggerSpec();
         spec.type = "SCHEDULED";
         spec.offsetDelays = List.of(DELAY);
 
@@ -143,8 +110,9 @@ class TriggerExecutorFactoryTest {
     }
 
     @Test
-    void createReturnsTriggerExecutorWithScheduledTriggerInstanceWithSequenceScheduleWhenTriggerTypeEqualsDelayed() {
-        TriggerSpec spec = new TriggerSpec();
+    @DisplayName("create returns TriggerExecutor with ScheduledTrigger instance that uses a sequence schedule")
+    void create_scheduledTriggerWithSequenceSchedule() {
+        ScheduledTriggerSpec spec = new ScheduledTriggerSpec();
         spec.type = "SCHEDULED";
         spec.offsetDelays = List.of(10L, 20L);
 

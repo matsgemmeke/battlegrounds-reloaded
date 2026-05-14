@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -8,10 +11,11 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class SpecDeserializerTest {
+class SpecDeserializerTest {
 
     @Test
-    public void deserializeSpecThrowsSpecDeserializationExceptionWhenGivenFileDoesNotExist() {
+    @DisplayName("deserializeSpec throws SpecDeserializationException when given file does not exist")
+    void deserializeSpec_fileDoesNotExist() {
         File file = new File("src/test/resources/does-not-exist.txt");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
@@ -22,7 +26,8 @@ public class SpecDeserializerTest {
     }
 
     @Test
-    public void deserializeSpecReturnsInstanceOfGivenTypeThatIsParsedFromFile() {
+    @DisplayName("deserializeSpec returns instance of given type based on file data")
+    void deserializeSpec_returnsFileDataAsInstance() {
         File file = new File("src/main/resources/items/submachine_guns/mp5.yml");
 
         SpecDeserializer specDeserializer = new SpecDeserializer();
@@ -38,8 +43,16 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.ammo.defaultMagazineAmount).isEqualTo(3);
         assertThat(gunSpec.ammo.maxMagazineAmount).isEqualTo(8);
 
-        assertThat(gunSpec.controls.reload).isEqualTo("LEFT_CLICK");
-        assertThat(gunSpec.controls.shoot).isEqualTo("RIGHT_CLICK");
+        assertThat(gunSpec.controls.reload.action).isEqualTo("LEFT_CLICK");
+        assertThat(gunSpec.controls.reload.priority).isEqualTo(1);
+        assertThat(gunSpec.controls.reload.stopsChain).isFalse();
+        assertThat(gunSpec.controls.reload.blocking).isTrue();
+        assertThat(gunSpec.controls.reload.cancelsEvent).isTrue();
+        assertThat(gunSpec.controls.shoot.action).isEqualTo("RIGHT_CLICK");
+        assertThat(gunSpec.controls.shoot.priority).isEqualTo(1);
+        assertThat(gunSpec.controls.shoot.stopsChain).isFalse();
+        assertThat(gunSpec.controls.shoot.blocking).isTrue();
+        assertThat(gunSpec.controls.shoot.cancelsEvent).isTrue();
         assertThat(gunSpec.controls.scopeUse).isNull();
         assertThat(gunSpec.controls.scopeStop).isNull();
         assertThat(gunSpec.controls.scopeChangeMagnification).isNull();
@@ -52,10 +65,10 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.reloading.duration).isEqualTo(48);
         assertThat(gunSpec.reloading.reloadSounds).isEqualTo("BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44");
 
-        assertThat(gunSpec.shooting.fireMode.type).isEqualTo("FULLY_AUTOMATIC");
-        assertThat(gunSpec.shooting.fireMode.amountOfShots).isNull();
-        assertThat(gunSpec.shooting.fireMode.rateOfFire).isEqualTo(600);
-        assertThat(gunSpec.shooting.fireMode.cycleCooldown).isNull();
+        assertThat(gunSpec.shooting.fireMode).isInstanceOfSatisfying(FullyAutomaticModeSpec.class, fireMode -> {
+            assertThat(fireMode.type).isEqualTo("FULLY_AUTOMATIC");
+            assertThat(fireMode.rateOfFire).isEqualTo(600);
+        });
 
         assertThat(gunSpec.shooting.projectile.type).isEqualTo("HITSCAN");
 
@@ -76,9 +89,8 @@ public class SpecDeserializerTest {
         assertThat(gunSpec.shooting.recoil.vertical).containsExactly(-1.5f, -2.0f, -2.5f);
         assertThat(gunSpec.shooting.recoil.kickbackDuration).isEqualTo(200L);
 
-        assertThat(gunSpec.shooting.spreadPattern.type).isEqualTo("SINGLE_PROJECTILE");
-        assertThat(gunSpec.shooting.spreadPattern.horizontalSpread).isNull();
-        assertThat(gunSpec.shooting.spreadPattern.verticalSpread).isNull();
-        assertThat(gunSpec.shooting.spreadPattern.projectileAmount).isNull();
+        assertThat(gunSpec.shooting.spreadPattern).isInstanceOfSatisfying(SingleProjectileSpreadPatternSpec.class, spreadPattern -> {
+            assertThat(spreadPattern.type).isEqualTo("SINGLE_PROJECTILE");
+        });
     }
 }

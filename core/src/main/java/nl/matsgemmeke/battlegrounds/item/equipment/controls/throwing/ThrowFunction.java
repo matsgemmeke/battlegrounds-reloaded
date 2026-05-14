@@ -1,28 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.throwing.ThrowDeployment;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.ThrowDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class ThrowFunction implements ItemFunction<EquipmentHolder> {
+public class ThrowFunction implements Function<EquipmentUser> {
 
     private final Equipment equipment;
-    private final ThrowDeployment deployment;
+    private final ThrowDeploymentAction deploymentAction;
 
-    public ThrowFunction(Equipment equipment, ThrowDeployment deployment) {
+    public ThrowFunction(Equipment equipment, ThrowDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return !equipment.isDeployed();
-    }
-
-    @Override
-    public boolean isBlocking() {
-        return true;
+        this.deploymentAction = deploymentAction;
     }
 
     @Override
@@ -36,12 +27,13 @@ public class ThrowFunction implements ItemFunction<EquipmentHolder> {
     }
 
     @Override
-    public boolean perform(EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
-            return false;
+    public FunctionResult perform(EquipmentUser user) {
+        if (equipment.isDeployed() || !user.canDeploy()) {
+            return FunctionResult.FAILED;
         }
 
-        equipment.performDeployment(deployment, holder);
-        return true;
+        equipment.performDeploymentAction(deploymentAction, user);
+
+        return FunctionResult.SUCCESS;
     }
 }

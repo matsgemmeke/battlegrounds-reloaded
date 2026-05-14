@@ -9,12 +9,20 @@ ammo:
   max-reserve-amount: 0
 damage:
   melee-damage: 75.0
-items:
-  display-item:
-    material: IRON_SWORD
-    display-name: '&f%name%'
-    damage: 1
-    item-flags:
-      - HIDE_ATTRIBUTES
-      - HIDE_UNBREAKABLE
-    unbreakable: true
+item:
+  material: IRON_SWORD
+  display-name: '&f%name%'
+  damage: 1
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: MELEE_WEAPON
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: Combat Knife
+  unbreakable: true

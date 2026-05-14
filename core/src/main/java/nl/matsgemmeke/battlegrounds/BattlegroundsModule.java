@@ -5,6 +5,9 @@ import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.name.Names;
+import jakarta.validation.ConstraintValidatorFactory;
+import jakarta.validation.Validation;
+import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -17,18 +20,20 @@ import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolverProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.DefaultAudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.controls.*;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DefaultDeploymentInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentInfoProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
@@ -51,11 +56,8 @@ import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamag
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreatorProvider;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffectPerformanceFactory;
@@ -71,10 +73,9 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerforman
 import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenEffectPerformanceFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffectPerformanceFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.sound.SoundEffectFactory;
@@ -82,6 +83,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.stick.StickEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFactory;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistryProvider;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.magazine.MagazineReloadSystemFactory;
@@ -108,6 +111,7 @@ import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
+import nl.matsgemmeke.battlegrounds.validation.GuiceConstraintValidatorFactory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -131,24 +135,25 @@ public class BattlegroundsModule implements Module {
         this.pluginManager = pluginManager;
     }
 
+    @Override
     public void configure(Binder binder) {
         // Instance bindings
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
-        binder.bind(new TypeLiteral<Supplier<ItemControls<MeleeWeaponHolder>>>() {}).toInstance(ItemControls::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
+        binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
-        binder.bind(HitboxResolver.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
-        binder.bind(TaskRunner.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
 
         // Provider bindings
@@ -157,9 +162,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
+        binder.bind(HitboxResolver.class).toProvider(HitboxResolverProvider.class).asEagerSingleton();
+        binder.bind(ItemSpecRegistry.class).toProvider(ItemSpecRegistryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
-        binder.bind(WeaponCreator.class).toProvider(WeaponCreatorProvider.class).in(Singleton.class);
 
         // Game scope bindings
         GameScope gameScope = new GameScope();
@@ -185,18 +191,20 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
         targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
 
-        binder.bind(ActionExecutorRegistry.class).toProvider(ActionExecutorRegistryProvider.class).in(GameScoped.class);
-        binder.bind(ActionInvoker.class).in(GameScoped.class);
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
-        binder.bind(DeploymentInfoProvider.class).to(DefaultDeploymentInfoProvider.class).in(GameScoped.class);
+        binder.bind(DeploymentObjectRegistry.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);
         binder.bind(EventDamageAdapter.class).toProvider(EventDamageAdapterProvider.class).in(GameScoped.class);
+        binder.bind(ExplosionAttributorRegistry.class).in(GameScoped.class);
         binder.bind(GameEntityFinder.class).toProvider(GameEntityFinderProvider.class).in(GameScoped.class);
         binder.bind(GameKey.class).toProvider(GameKeyProvider.class).in(GameScoped.class);
         binder.bind(GunInfoProvider.class).to(DefaultGunInfoProvider.class).in(GameScoped.class);
         binder.bind(GunRegistry.class).to(DefaultGunRegistry.class).in(GameScoped.class);
+        binder.bind(ItemControllerRegistry.class).in(GameScoped.class);
+        binder.bind(ItemCreator.class).in(GameScoped.class);
+        binder.bind(ItemInteractionDispatcher.class).toProvider(ItemInteractionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
         binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
         binder.bind(MobRegistry.class).toProvider(MobRegistryProvider.class).in(GameScoped.class);
@@ -209,22 +217,9 @@ public class BattlegroundsModule implements Module {
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
 
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("Equipment"))
-                .to(EquipmentActionExecutor.class)
-                .in(GameScoped.class);
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("Gun"))
-                .to(GunActionExecutor.class)
-                .in(GameScoped.class);
-        binder.bind(ActionExecutor.class)
-                .annotatedWith(Names.named("MeleeWeapon"))
-                .to(MeleeWeaponActionExecutor.class)
-                .in(GameScoped.class);
-
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
-                .build(DeploymentHandlerFactory.class));
+                .build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
@@ -287,5 +282,21 @@ public class BattlegroundsModule implements Module {
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
         binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
+    }
+
+    @Provides
+    @Singleton
+    public ConstraintValidatorFactory provideConstraintValidatorFactory(Injector injector) {
+        return new GuiceConstraintValidatorFactory(injector);
+    }
+
+    @Provides
+    @Singleton
+    public Validator provideValidator(ConstraintValidatorFactory constraintValidatorFactory) {
+        return Validation.byDefaultProvider()
+                .configure()
+                .constraintValidatorFactory(constraintValidatorFactory)
+                .buildValidatorFactory()
+                .getValidator();
     }
 }

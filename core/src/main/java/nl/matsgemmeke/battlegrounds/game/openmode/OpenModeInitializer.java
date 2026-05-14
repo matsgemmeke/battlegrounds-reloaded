@@ -9,8 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.event.EntityDamageEventHandler;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentActionExecutor;
-import nl.matsgemmeke.battlegrounds.item.gun.GunActionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -25,8 +23,6 @@ public class OpenModeInitializer {
     private final EventDispatcher eventDispatcher;
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
-    private final Provider<EquipmentActionExecutor> equipmentActionExecutorProvider;
-    private final Provider<GunActionExecutor> gunActionExecutorProvider;
     private final Provider<PlayerRegistry> playerRegistryProvider;
     private final Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
     private final Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
@@ -37,8 +33,6 @@ public class OpenModeInitializer {
             EventDispatcher eventDispatcher,
             GameContextProvider gameContextProvider,
             GameScope gameScope,
-            Provider<EquipmentActionExecutor> equipmentActionExecutorProvider,
-            Provider<GunActionExecutor> gunActionExecutorProvider,
             Provider<PlayerRegistry> playerRegistryProvider,
             Provider<StatePersistenceHandler> statePersistenceHandlerProvider,
             Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider
@@ -47,8 +41,6 @@ public class OpenModeInitializer {
         this.eventDispatcher = eventDispatcher;
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.equipmentActionExecutorProvider = equipmentActionExecutorProvider;
-        this.gunActionExecutorProvider = gunActionExecutorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
         this.statePersistenceHandlerProvider = statePersistenceHandlerProvider;
         this.entityDamageEventHandlerProvider = entityDamageEventHandlerProvider;
@@ -61,13 +53,10 @@ public class OpenModeInitializer {
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
         gameContextProvider.assignOpenMode(openMode);
 
-        gameScope.runInScope(gameContext, () -> this.registerComponents(openMode));
+        gameScope.runInScope(gameContext, this::registerComponents);
     }
 
-    private void registerComponents(OpenMode openMode) {
-        openMode.addActionExecutor(equipmentActionExecutorProvider.get());
-        openMode.addActionExecutor(gunActionExecutorProvider.get());
-
+    private void registerComponents() {
         this.registerEventHandlers();
         this.registerPlayers();
     }

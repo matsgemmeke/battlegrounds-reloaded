@@ -36,9 +36,9 @@ public class OpenModeEntity implements GameMob {
         entity.setHealth(health);
     }
 
-    @Nullable
-    public Damage getLastDamage() {
-        return lastDamage;
+    @Override
+    public Optional<Damage> getLastDamage() {
+        return Optional.ofNullable(lastDamage);
     }
 
     @NotNull
@@ -85,7 +85,7 @@ public class OpenModeEntity implements GameMob {
         entity.removePotionEffect(potionEffectType);
     }
 
-    public double damage(@NotNull Damage damage) {
+    public double damage(Damage damage) {
         if (entity.isDead() || entity.getHealth() <= 0.0) {
             return 0.0;
         }
@@ -106,9 +106,5 @@ public class OpenModeEntity implements GameMob {
     @Override
     public Hitbox getHitbox() {
         return hitboxProvider.provideHitbox(entity);
-    }
-
-    public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return false;
     }
 }

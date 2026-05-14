@@ -11,11 +11,8 @@ import java.util.*;
  */
 public class GameContextProvider {
 
-    @NotNull
-    private Map<GameKey, Game> games;
-    @NotNull
+    private final Map<GameKey, Game> games;
     private final Map<GameKey, GameContext> gameContexts;
-    @NotNull
     private final Map<UUID, GameKey> entityGameKeyMap;
 
     public GameContextProvider() {
@@ -91,28 +88,12 @@ public class GameContextProvider {
         return Optional.of(entityGameKeyMap.get(entityId));
     }
 
-    /**
-     * Gets the game keys of all registered games.
-     *
-     * @return all registered game keys
-     */
-    @NotNull
-    public Set<GameKey> getGameKeys() {
-        return games.keySet();
-    }
-
-    /**
-     * Registers a {@link Game} instance to the provider.
-     *
-     * @param gameKey the game key
-     * @param game the game
-     */
-    public void registerGame(@NotNull GameKey gameKey, @NotNull Game game) {
-        games.put(gameKey, game);
-    }
-
     public void registerEntity(UUID uniqueId, GameKey gameKey) {
         entityGameKeyMap.put(uniqueId, gameKey);
+    }
+
+    public void unregisterEntity(UUID uniqueId) {
+        entityGameKeyMap.remove(uniqueId);
     }
 
     /**

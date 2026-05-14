@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.melee.controls.reload;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
-import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponHolder;
+import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,19 +21,10 @@ class ReloadFunctionTest {
 
     @Mock
     private MeleeWeapon meleeWeapon;
+    @Mock
+    private MeleeWeaponUser user;
     @InjectMocks
     private ReloadFunction function;
-
-    @ParameterizedTest
-    @CsvSource({ "true,true", "false,false" })
-    @DisplayName("isAvailable returns whether melee weapon is able to reload")
-    void isAvailable_returnsWhetherMeleeWeaponCanReload(boolean reloadSystemAvailable, boolean expected) {
-        when(meleeWeapon.isReloadAvailable()).thenReturn(reloadSystemAvailable);
-
-        boolean available = function.isAvailable();
-
-        assertThat(available).isEqualTo(expected);
-    }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
@@ -56,26 +48,26 @@ class ReloadFunctionTest {
     }
 
     @Test
-    @DisplayName("perform does not perform reload when melee weapon cannot reload")
+    @DisplayName("perform returns FAILED when melee weapon cannot reload")
     void perform_reloadNotAvailable() {
-        MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
-
         when(meleeWeapon.isReloadAvailable()).thenReturn(false);
 
-        function.perform(holder);
+        FunctionResult result = function.perform(user);
+
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
         verify(meleeWeapon, never()).reload(any(ReloadPerformer.class));
     }
 
     @Test
-    @DisplayName("perform performs reload when melee weapon can reload")
+    @DisplayName("perform returns SUCCESS and performs reload")
     void perform_reloadAvailable() {
-        MeleeWeaponHolder holder = mock(MeleeWeaponHolder.class);
-
         when(meleeWeapon.isReloadAvailable()).thenReturn(true);
 
-        function.perform(holder);
+        FunctionResult result = function.perform(user);
 
-        verify(meleeWeapon).reload(holder);
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
+
+        verify(meleeWeapon).reload(user);
     }
 }

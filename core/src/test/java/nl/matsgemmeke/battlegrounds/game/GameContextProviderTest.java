@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.session.Session;
 import org.junit.jupiter.api.Test;
 
 import java.util.Optional;
-import java.util.Set;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -73,18 +72,6 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void getGameKeysReturnsSetOfAllRegisteredGameKeys() {
-        GameKey gameKey = GameKey.ofSession(1);
-        Session session = mock(Session.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, session);
-        Set<GameKey> gameKeys = contextProvider.getGameKeys();
-
-        assertThat(gameKeys).containsExactly(gameKey);
-    }
-
-    @Test
     public void getGameKeyByEntityIdReturnsEmptyOptionalWhenNoLinkOfGivenEntityIdExists() {
         UUID entityId = UUID.randomUUID();
 
@@ -117,20 +104,6 @@ public class GameContextProviderTest {
     }
 
     @Test
-    public void removeSessionReturnsTrueWhenRemovingRegisteredSession() {
-        int id = 1;
-        GameKey gameKey = GameKey.ofSession(id);
-        Game game = mock(Game.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-
-        boolean removed = contextProvider.removeSession(id);
-
-        assertTrue(removed);
-    }
-
-    @Test
     public void sessionExistsReturnsFalseIfNoSessionsWithTheGivenIdAreRegistered() {
         int id = 1;
 
@@ -138,19 +111,5 @@ public class GameContextProviderTest {
         boolean sessionExists = contextProvider.sessionExists(id);
 
         assertFalse(sessionExists);
-    }
-
-    @Test
-    public void sessionExistsReturnsTrueIfSessionWithGivenIdIsRegistered() {
-        int id = 1;
-        GameKey gameKey = GameKey.ofSession(id);
-        Game game = mock(Game.class);
-
-        GameContextProvider contextProvider = new GameContextProvider();
-        contextProvider.registerGame(gameKey, game);
-
-        boolean sessionExists = contextProvider.sessionExists(id);
-
-        assertTrue(sessionExists);
     }
 }

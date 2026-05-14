@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.projectile;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class ItemProjectileSpec extends ProjectileSpec {
 

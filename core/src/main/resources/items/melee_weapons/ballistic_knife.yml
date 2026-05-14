@@ -3,8 +3,14 @@ description: Spring-action knife launcher. Can fire the blade as a projectile.
 level-unlocked: 15
 price: 200
 controls:
-  reload: LEFT_CLICK
-  throwing: RIGHT_CLICK
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
+  throwing:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   loaded-amount: 1
   max-loaded-amount: 1
@@ -13,15 +19,23 @@ ammo:
 damage:
   melee-damage: 60.0
   throwing-damage: 120.0
-items:
-  display-item:
-    material: IRON_SWORD
-    display-name: '&f%name% %loaded_amount%/%reserve_amount%'
-    damage: 2
-    item-flags:
-      - HIDE_ATTRIBUTES
-      - HIDE_UNBREAKABLE
-    unbreakable: true
+item:
+  material: IRON_SWORD
+  display-name: '&f%name% %loaded_amount%/%reserve_amount%'
+  damage: 2
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: MELEE_WEAPON
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: Ballistic Knife
+  unbreakable: true
 reloading:
   type: MAGAZINE
   duration: 20
@@ -32,6 +46,15 @@ throwing:
     item:
       material: IRON_SWORD
       damage: 2
+      data:
+        weapon-type:
+          key: weapon-type
+          type: STRING
+          value: MELEE_WEAPON
+        weapon-name:
+          key: weapon-name
+          type: STRING
+          value: Ballistic Knife
     velocity: 2.5
     pickup-delay: 20
     launch-sounds: ENTITY_ARROW_SHOOT-1-1.2-0

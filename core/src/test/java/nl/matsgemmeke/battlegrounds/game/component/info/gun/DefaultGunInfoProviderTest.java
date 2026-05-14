@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,7 +35,8 @@ class DefaultGunInfoProviderTest {
     private DefaultGunInfoProvider gunInfoProvider;
 
     @Test
-    void getGunFireSimulationInfoReturnsEmptyOptionalWhenPlayerRegistryDoesNotKnowGivenEntityId() {
+    @DisplayName("getGunFireSimulationInfo returns empty optional when PlayerRegistry does not know given entity id")
+    void getGunFireSimulationInfo_unknownEntityId() {
         when(playerRegistry.findByUniqueId(ENTITY_ID)).thenReturn(Optional.empty());
 
         Optional<GunFireSimulationInfo> gunFireSimulationInfoOptional = gunInfoProvider.getGunFireSimulationInfo(ENTITY_ID);
@@ -43,7 +45,8 @@ class DefaultGunInfoProviderTest {
     }
 
     @Test
-    void getGunFireSimulationInfoReturnsEmptyOptionalWhenFoundGunHolderDoesNotHaveGuns() {
+    @DisplayName("getGunFireSimulationInfo returns empty optional when found gun user does not have any guns registered")
+    void getGunFireSimulationInfo_userWithoutRegisteredGuns() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(playerRegistry.findByUniqueId(ENTITY_ID)).thenReturn(Optional.of(gamePlayer));
@@ -54,7 +57,8 @@ class DefaultGunInfoProviderTest {
     }
 
     @Test
-    void getGunFireSimulationInfoReturnsEmptyOptionalWhenHeldGunIsNotRegistered() {
+    @DisplayName("getGunFireSimulationInfo returns empty optional when first gun is not registered in the component")
+    void getGunFireSimulationInfo_gunNotRegistered() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Gun gun = mock(Gun.class);
@@ -69,7 +73,8 @@ class DefaultGunInfoProviderTest {
     }
 
     @Test
-    void getGunFireSimulationInfoReturnsOptionalWithGunFireSimulationInfoCorrespondingToGunId() {
+    @DisplayName("getGunFireSimulationInfo returns optional with GunFireSimulationInfo corresponding to gun id")
+    void getGunFireSimulationInfo_gunRegistered() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         List<GameSound> shotSounds = Collections.emptyList();
         int rateOfFire = 600;

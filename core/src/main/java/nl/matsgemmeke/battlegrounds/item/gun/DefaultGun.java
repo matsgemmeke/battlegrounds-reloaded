@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -22,8 +20,7 @@ import java.util.Map;
 public class DefaultGun extends BaseWeapon implements Gun {
 
     @Nullable
-    private GunHolder holder;
-    private ItemControls<GunHolder> controls;
+    private GunUser user;
     @Nullable
     private ItemTemplate itemTemplate;
     private RangeProfile rangeProfile;
@@ -35,10 +32,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
     private ScopeAttachment scopeAttachment;
     private ShootHandler shootHandler;
 
-    public DefaultGun() {
-        this.controls = new ItemControls<>();
-    }
-
     @Override
     public ResourceContainer getResourceContainer() {
         return resourceContainer;
@@ -47,24 +40,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
     @Override
     public void setResourceContainer(ResourceContainer resourceContainer) {
         this.resourceContainer = resourceContainer;
-    }
-
-    @NotNull
-    public ItemControls<GunHolder> getControls() {
-        return controls;
-    }
-
-    public void setControls(@NotNull ItemControls<GunHolder> controls) {
-        this.controls = controls;
-    }
-
-    @Nullable
-    public GunHolder getHolder() {
-        return holder;
-    }
-
-    public void setHolder(@Nullable GunHolder holder) {
-        this.holder = holder;
     }
 
     @Nullable
@@ -120,6 +95,15 @@ public class DefaultGun extends BaseWeapon implements Gun {
         this.shootHandler = shootHandler;
     }
 
+    @Nullable
+    public GunUser getUser() {
+        return user;
+    }
+
+    public void setUser(@Nullable GunUser user) {
+        this.user = user;
+    }
+
     public boolean applyScope(@NotNull ScopeUser scopeUser) {
         return scopeAttachment != null && scopeAttachment.applyEffect(scopeUser);
     }
@@ -148,7 +132,7 @@ public class DefaultGun extends BaseWeapon implements Gun {
         return shootHandler.getRateOfFire();
     }
 
-    public boolean isMatching(@NotNull ItemStack itemStack) {
+    public boolean isMatching(ItemStack itemStack) {
         return itemTemplate != null && itemTemplate.matchesTemplate(itemStack);
     }
 
@@ -170,80 +154,16 @@ public class DefaultGun extends BaseWeapon implements Gun {
         return scopeAttachment != null && scopeAttachment.isScoped();
     }
 
-    public void onChangeFrom() {
-        controls.cancelAllFunctions();
-
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.CHANGE_FROM, holder);
-    }
-
-    public void onChangeTo() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.CHANGE_TO, holder);
-    }
-
-    public void onDrop() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, holder);
-        holder = null;
-    }
-
-    public void onLeftClick() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.LEFT_CLICK, holder);
-    }
-
-    public void onRightClick() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.RIGHT_CLICK, holder);
-    }
-
-    public void onPickUp(@NotNull GunHolder holder) {
-        this.holder = holder;
-
-        controls.performAction(Action.PICKUP_ITEM, holder);
-    }
-
-    public void onSwapFrom() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.SWAP_FROM, holder);
-    }
-
-    public void onSwapTo() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.SWAP_TO, holder);
-    }
-
-    public void reload(@NotNull ReloadPerformer performer) {
+    @Override
+    public void reload(ReloadPerformer performer) {
         reloadSystem.performReload(performer, () -> {
             this.update();
             performer.setHeldItem(itemStack);
         });
     }
 
-    public void shoot(@NotNull ShotPerformer performer) {
+    @Override
+    public void shoot(ShotPerformer performer) {
         shootHandler.shoot(performer);
     }
 

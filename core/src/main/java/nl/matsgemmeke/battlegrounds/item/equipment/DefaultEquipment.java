@@ -2,42 +2,29 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DefaultEquipment extends BaseWeapon implements Equipment {
 
     @Nullable
     private Activator activator;
-    private DeploymentHandler deploymentHandler;
+    private Deployment deployment;
     @Nullable
-    private EquipmentHolder holder;
-    @NotNull
-    private ItemControls<EquipmentHolder> controls;
+    private EquipmentUser user;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
-    private ItemTemplate throwItemTemplate;
-    @NotNull
-    private List<DeploymentObject> deploymentObjects;
-    @Nullable
     private ProjectileProperties projectileProperties;
-
-    public DefaultEquipment() {
-        this.controls = new ItemControls<>();
-        this.deploymentObjects = new ArrayList<>();
-    }
 
     @Nullable
     public Activator getActivator() {
@@ -48,35 +35,12 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         this.activator = activator;
     }
 
-    @NotNull
-    public ItemControls<EquipmentHolder> getControls() {
-        return controls;
+    public Deployment getDeployment() {
+        return deployment;
     }
 
-    public void setControls(@NotNull ItemControls<EquipmentHolder> controls) {
-        this.controls = controls;
-    }
-
-    public DeploymentHandler getDeploymentHandler() {
-        return deploymentHandler;
-    }
-
-    public void setDeploymentHandler(DeploymentHandler deploymentHandler) {
-        this.deploymentHandler = deploymentHandler;
-    }
-
-    @NotNull
-    public List<DeploymentObject> getDeploymentObjects() {
-        return deploymentObjects;
-    }
-
-    @Nullable
-    public EquipmentHolder getHolder() {
-        return holder;
-    }
-
-    public void setHolder(@Nullable EquipmentHolder holder) {
-        this.holder = holder;
+    public void setDeployment(Deployment deployment) {
+        this.deployment = deployment;
     }
 
     @Nullable
@@ -89,38 +53,17 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     @Nullable
-    public ProjectileProperties getProjectileProperties() {
-        return projectileProperties;
+    public EquipmentUser getUser() {
+        return user;
     }
 
-    public void setProjectileProperties(@Nullable ProjectileProperties projectileProperties) {
-        this.projectileProperties = projectileProperties;
+    public void setUser(@Nullable EquipmentUser user) {
+        this.user = user;
     }
 
-    @Nullable
-    public ItemTemplate getThrowItemTemplate() {
-        return throwItemTemplate;
-    }
-
-    public void setThrowItemTemplate(@Nullable ItemTemplate throwItemTemplate) {
-        this.throwItemTemplate = throwItemTemplate;
-    }
-
-    public void activateDeployment(EquipmentHolder holder) {
-        deploymentHandler.activateDeployment(holder);
-    }
-
-    public void cleanup() {
-        deploymentHandler.cleanupDeployment();
-    }
-
-    public void destroyDeployment() {
-        deploymentHandler.destroyDeployment();
-    }
-
-    @Nullable
-    public DeploymentObject getDeploymentObject() {
-        return deploymentHandler.getDeploymentObject();
+    @Override
+    public void activateDeployment(EquipmentUser user) {
+        deployment.activate(user);
     }
 
     public boolean isActivatorReady() {
@@ -128,62 +71,33 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     }
 
     public boolean isAwaitingDeployment() {
-        return deploymentHandler.isAwaitingDeployment();
+        return deployment.isPending();
     }
 
     public boolean isDeployed() {
-        return deploymentHandler.isDeployed();
+        return deployment.isDeployed();
     }
 
-    public boolean isMatching(@NotNull ItemStack itemStack) {
+    public boolean isMatching(ItemStack itemStack) {
         return displayItemTemplate != null && displayItemTemplate.matchesTemplate(itemStack)
                 || activator != null && activator.isMatching(itemStack);
     }
 
-    public void onChangeFrom() {
-        controls.cancelAllFunctions();
-    }
+    @Override
+    public void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user) {
+        DestructionListener destructionListener = deployment::destroy;
+        DeploymentResult result = deploymentAction.perform(user, destructionListener).orElse(null);
 
-    public void onChangeTo() {
-    }
-
-    public void onDrop() {
-    }
-
-    public void onLeftClick() {
-        if (holder == null) {
+        if (result == null) {
             return;
         }
 
-        controls.performAction(Action.LEFT_CLICK, holder);
+        deployment.processDeploymentResult(result);
     }
 
-    public void onPickUp(@NotNull EquipmentHolder holder) {
-    }
-
-    public void onRightClick() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(Action.RIGHT_CLICK, holder);
-    }
-
-    public void onSwapFrom() {
-    }
-
-    public void onSwapTo() {
-    }
-
-    public void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder) {
-        DestructionListener destructionListener = () -> deploymentHandler.destroyDeployment();
-        DeploymentResult deploymentResult = deployment.perform(holder, holder.getEntity(), destructionListener).orElse(null);
-
-        if (deploymentResult == null) {
-            return;
-        }
-
-        deploymentHandler.processDeploymentResult(deploymentResult);
+    @Override
+    public void reset() {
+        deployment.reset();
     }
 
     public boolean update() {
@@ -196,7 +110,6 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
         return true;
     }
 
-    @NotNull
     private Map<String, Object> getTemplateValues() {
         Map<String, Object> values = new HashMap<>();
 

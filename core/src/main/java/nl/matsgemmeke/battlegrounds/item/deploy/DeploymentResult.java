@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
+import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 
 /**
- * Describes the result of a deployment performance.
+ * Describes the result of a deployment action.
  *
  * @param deployer         the deployer
  * @param deploymentObject the produced deployment object

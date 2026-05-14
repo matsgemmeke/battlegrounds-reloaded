@@ -1,35 +1,20 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.spread;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.SpreadPatternSpec;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.BuckshotSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SpreadPatternSpec;
 
 public class SpreadPatternFactory {
 
-    @NotNull
-    public SpreadPattern create(@NotNull SpreadPatternSpec spec) {
-        SpreadPatternType spreadPatternType = SpreadPatternType.valueOf(spec.type);
+    public SpreadPattern create(SpreadPatternSpec spreadPatternSpec) {
+        SpreadPatternType spreadPatternType = SpreadPatternType.valueOf(spreadPatternSpec.type);
 
-        switch (spreadPatternType) {
+        return switch (spreadPatternType) {
             case BUCKSHOT -> {
-                int projectileAmount = this.validateSpecVar(spec.projectileAmount, "projectileAmount", spreadPatternType);
-                float horizontalSpread = this.validateSpecVar(spec.horizontalSpread, "horizontalSpread", spreadPatternType);
-                float verticalSpread = this.validateSpecVar(spec.verticalSpread, "verticalSpread", spreadPatternType);
+                BuckshotSpreadPatternSpec spec = (BuckshotSpreadPatternSpec) spreadPatternSpec;
 
-                return new BuckshotSpreadPattern(projectileAmount, horizontalSpread, verticalSpread);
+                yield new BuckshotSpreadPattern(spec.projectileAmount, spec.horizontalSpread, spec.verticalSpread);
             }
-            case SINGLE_PROJECTILE -> {
-                return new SingleProjectileSpreadPattern();
-            }
-            default -> throw new SpreadPatternCreationException("Invalid spread pattern type \"" + spec.type + "\"");
-        }
-    }
-
-    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object spreadPatternType) {
-        if (value == null) {
-            throw new SpreadPatternCreationException("Cannot create spread pattern with type %s because of invalid spec: Required '%s' value is missing".formatted(spreadPatternType, valueName));
-        }
-
-        return value;
+            case SINGLE_PROJECTILE -> new SingleProjectileSpreadPattern();
+        };
     }
 }

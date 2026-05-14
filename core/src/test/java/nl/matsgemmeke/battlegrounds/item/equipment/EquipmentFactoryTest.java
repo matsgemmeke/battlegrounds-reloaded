@@ -5,14 +5,14 @@ import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandler;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentHandlerFactory;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentProperties;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.DefaultActivator;
+import nl.matsgemmeke.battlegrounds.item.deploy.state.DeploymentState;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
-import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.equipment.controls.EquipmentControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
@@ -34,12 +34,11 @@ import static org.mockito.Mockito.*;
 class EquipmentFactoryTest {
 
     private static final ItemStack ITEM_STACK_DISPLAY = new ItemStack(Material.STICK);
-    private static final ItemStack ITEM_STACK_ACTIVATOR = new ItemStack(Material.FEATHER);
 
     @Mock
-    private DeploymentHandlerFactory deploymentHandlerFactory;
+    private DeploymentFactory deploymentFactory;
     @Mock
-    private EquipmentControlsFactory controlsFactory;
+    private EquipmentControllerFactory controllerFactory;
     @Mock
     private EquipmentRegistry equipmentRegistry;
     @Mock
@@ -54,59 +53,84 @@ class EquipmentFactoryTest {
     private EquipmentFactory equipmentFactory;
 
     @Test
-    @DisplayName("create returns Equipment instance with player holder")
-    void create_withPlayerHolder() {
+    @DisplayName("create returns Equipment instance with player user")
+    void create_withPlayerUser() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
-        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
-        when(itemTemplateFactory.create(spec.items.displayItem, "equipment")).thenReturn(displayItemTemplate);
+        when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(triggerExecutorFactory.create(spec.deploy.triggers.get("scheduled"))).thenReturn(triggerExecutor);
 
         Equipment equipment = equipmentFactory.create(spec, gamePlayer);
+
+        ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
+        verify(deploymentFactory).create(deploymentPropertiesCaptor.capture(), any(DeploymentState.class), any(ItemEffect.class));
+
+        assertThat(deploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.activateEffectOnDestruction()).isTrue();
+            assertThat(properties.destructionParticleEffect()).isNull();
+            assertThat(properties.manualActivationDelay()).isZero();
+            assertThat(properties.manualActivationSounds()).isEmpty();
+            assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+            assertThat(properties.removeDeploymentOnReset()).isFalse();
+            assertThat(properties.undoEffectOnDestruction()).isFalse();
+        });
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getName()).isEqualTo("Frag Grenade");
         assertThat(equipment.getItemStack()).isEqualTo(ITEM_STACK_DISPLAY);
 
         verify(equipmentRegistry).register(equipment, gamePlayer);
-        verify(deploymentHandler).addTriggerExecutor(triggerExecutor);
+        verify(controllerFactory).create(eq(spec), any(Equipment.class));
+        verify(deployment).addTriggerExecutor(triggerExecutor);
     }
 
     @Test
     @DisplayName("create returns Equipment instance with activator")
     void create_withActivator() {
         EquipmentSpec spec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
-        ItemControls<EquipmentHolder> controls = new ItemControls<>();
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
+        Deployment deployment = mock(Deployment.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemTemplate activatorItemTemplate = mock(ItemTemplate.class);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(ITEM_STACK_DISPLAY);
 
-        when(controlsFactory.create(eq(spec), any(Equipment.class))).thenReturn(controls);
-        when(deploymentHandlerFactory.create(any(DeploymentProperties.class), eq(itemEffect))).thenReturn(deploymentHandler);
+        when(deploymentFactory.create(any(DeploymentProperties.class), any(DeploymentState.class), eq(itemEffect))).thenReturn(deployment);
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
-        when(itemTemplateFactory.create(spec.items.displayItem, "equipment")).thenReturn(displayItemTemplate);
-        when(itemTemplateFactory.create(spec.items.activatorItem, "equipment")).thenReturn(activatorItemTemplate);
+        when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
+        when(itemTemplateFactory.create(spec.items.activatorItem)).thenReturn(activatorItemTemplate);
 
         Equipment equipment = equipmentFactory.create(spec);
+
+        ArgumentCaptor<DeploymentProperties> deploymentPropertiesCaptor = ArgumentCaptor.forClass(DeploymentProperties.class);
+        verify(deploymentFactory).create(deploymentPropertiesCaptor.capture(), any(DeploymentState.class), any(ItemEffect.class));
+
+        assertThat(deploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.activateEffectOnDestruction()).isFalse();
+            assertThat(properties.destructionParticleEffect()).isNull();
+            assertThat(properties.manualActivationDelay()).isEqualTo(5);
+            assertThat(properties.manualActivationSounds()).isNotEmpty();
+            assertThat(properties.removeDeploymentOnDestruction()).isTrue();
+            assertThat(properties.removeDeploymentOnReset()).isTrue();
+            assertThat(properties.undoEffectOnDestruction()).isFalse();
+        });
 
         assertThat(equipment).isInstanceOf(DefaultEquipment.class);
         assertThat(equipment.getActivator()).isNotNull();
         assertThat(equipment.getActivator()).isInstanceOf(DefaultActivator.class);
 
         verify(equipmentRegistry).register(equipment);
+        verify(controllerFactory).create(eq(spec), any(Equipment.class));
+        verify(deployment).assignActivator(equipment.getActivator());
     }
 
     private EquipmentSpec createEquipmentSpec(String filePath) {

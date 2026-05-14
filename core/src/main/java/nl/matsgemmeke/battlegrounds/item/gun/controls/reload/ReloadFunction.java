@@ -1,41 +1,36 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class ReloadFunction implements ItemFunction<GunHolder> {
+public class ReloadFunction implements Function<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public ReloadFunction(@NotNull Gun gun) {
+    public ReloadFunction(Gun gun) {
         this.gun = gun;
     }
 
-    public boolean isAvailable() {
-        return gun.isReloadAvailable();
-    }
-
-    public boolean isBlocking() {
-        return true;
-    }
-
+    @Override
     public boolean isPerforming() {
         return gun.isReloading();
     }
 
+    @Override
     public boolean cancel() {
         return gun.cancelReload();
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
-        if (!this.isAvailable()) {
-            return false;
+    @Override
+    public FunctionResult perform(GunUser user) {
+        if (!gun.isReloadAvailable()) {
+            return FunctionResult.FAILED;
         }
 
-        gun.reload(holder);
-        return true;
+        gun.reload(user);
+
+        return FunctionResult.SUCCESS;
     }
 }

@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.hitbox;
 
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import org.bukkit.plugin.Plugin;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -21,12 +23,15 @@ class HitboxConfigurationProviderTest {
     @Spy
     private File dataFolder = new File("src/main/resources");
     @Mock
+    private ObjectValidator objectValidator;
+    @Mock
     private Plugin plugin;
     @InjectMocks
     private HitboxConfigurationProvider provider;
 
     @Test
-    void getCreatesNewConfigurationWithConfigFileContent() throws FileNotFoundException {
+    @DisplayName("get creates new HitboxConfiguration instance with config file content")
+    void get_createsHitboxConfiguration() throws FileNotFoundException {
         File hitboxesFile = new File("src/main/resources/hitboxes.yml");
         FileInputStream inputStream = new FileInputStream(hitboxesFile);
 
@@ -35,6 +40,6 @@ class HitboxConfigurationProviderTest {
         HitboxConfiguration configuration = provider.get();
         configuration.load();
 
-        assertThat(configuration.getHitboxDefinition("player", "standing")).isNotEmpty();
+        assertThat(configuration.getHitboxDefinition("player", "standing").getHitboxDefinition()).isNotEmpty();
     }
 }

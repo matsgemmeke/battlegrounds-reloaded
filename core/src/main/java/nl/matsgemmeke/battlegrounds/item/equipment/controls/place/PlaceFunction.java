@@ -1,28 +1,19 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.place;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.place.PlaceDeployment;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.PlaceDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class PlaceFunction implements ItemFunction<EquipmentHolder> {
+public class PlaceFunction implements Function<EquipmentUser> {
 
     private final Equipment equipment;
-    private final PlaceDeployment deployment;
+    private final PlaceDeploymentAction deploymentAction;
 
-    public PlaceFunction(Equipment equipment, PlaceDeployment deployment) {
+    public PlaceFunction(Equipment equipment, PlaceDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
-    }
-
-    @Override
-    public boolean isAvailable() {
-        return !equipment.isDeployed();
-    }
-
-    @Override
-    public boolean isBlocking() {
-        return true;
+        this.deploymentAction = deploymentAction;
     }
 
     @Override
@@ -36,12 +27,13 @@ public class PlaceFunction implements ItemFunction<EquipmentHolder> {
     }
 
     @Override
-    public boolean perform(EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
-            return false;
+    public FunctionResult perform(EquipmentUser user) {
+        if (equipment.isDeployed() || !user.canDeploy()) {
+            return FunctionResult.FAILED;
         }
 
-        equipment.performDeployment(deployment, holder);
-        return true;
+        equipment.performDeploymentAction(deploymentAction, user);
+
+        return FunctionResult.SUCCESS;
     }
 }

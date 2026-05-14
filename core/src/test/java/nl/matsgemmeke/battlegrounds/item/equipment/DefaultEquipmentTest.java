@@ -1,14 +1,15 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.*;
+import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -30,39 +31,14 @@ class DefaultEquipmentTest {
 
     @Test
     void activateDeploymentActivatesDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        Deployment deployment = mock(Deployment.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.activateDeployment(holder);
+        equipment.setDeployment(deployment);
+        equipment.activateDeployment(user);
 
-        verify(deploymentHandler).activateDeployment(holder);
-    }
-
-    @Test
-    void cleanupDelegatesToDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.cleanup();
-
-        verify(deploymentHandler).cleanupDeployment();
-    }
-
-    @Test
-    void getDeploymentObjectReturnsDeploymentObjectFromDeploymentHandler() {
-        DeploymentObject deploymentObject = mock(DeploymentObject.class);
-
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.getDeploymentObject()).thenReturn(deploymentObject);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        DeploymentObject result = equipment.getDeploymentObject();
-
-        assertThat(result).isEqualTo(deploymentObject);
+        verify(deployment).activate(user);
     }
 
     @Test
@@ -98,38 +74,29 @@ class DefaultEquipmentTest {
         assertThat(activatorReady).isTrue();
     }
 
-    @Test
-    void isAwaitingDeploymentReturnsTrueWhenDeploymentHandlerIsAwaitingDeployment() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isAwaitingDeployment()).thenReturn(true);
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isAwaitingDeployment returns whether deployment is pending")
+    void isAwaitingDeployment(boolean pending, boolean expectedAwaitingDeployment) {
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.isPending()).thenReturn(pending);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.setDeployment(deployment);
         boolean awaitingDeployment = equipment.isAwaitingDeployment();
 
-        assertThat(awaitingDeployment).isTrue();
-    }
-
-    @Test
-    void isAwaitingDeploymentReturnsFalseWhenDeploymentHandlerIsNotAwaitingDeployment() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isAwaitingDeployment()).thenReturn(false);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        boolean awaitingDeployment = equipment.isAwaitingDeployment();
-
-        assertThat(awaitingDeployment).isFalse();
+        assertThat(awaitingDeployment).isEqualTo(expectedAwaitingDeployment);
     }
 
     @ParameterizedTest
     @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isDeployed returns whether deployment is deployed")
     void isDeployedReturnsWhetherDeploymentHandlerHasDeployedState(boolean deployed, boolean expectedDeployed) {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        when(deploymentHandler.isDeployed()).thenReturn(deployed);
+        Deployment deployment = mock(Deployment.class);
+        when(deployment.isDeployed()).thenReturn(deployed);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
+        equipment.setDeployment(deployment);
         boolean result = equipment.isDeployed();
 
         assertThat(result).isEqualTo(expectedDeployed);
@@ -185,79 +152,46 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void destroyDeploymentDelegatesToDeploymentHandler() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.destroyDeployment();
-
-        verify(deploymentHandler).destroyDeployment();
-    }
-
-    @Test
-    void shouldPerformFunctionWhenLeftClicked() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-
-        ItemFunction<EquipmentHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getControls().addControl(Action.LEFT_CLICK, function);
-        equipment.setHolder(holder);
-        equipment.onLeftClick();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
-    void shouldPerformFunctionWhenRightClicked() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-
-        ItemFunction<EquipmentHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        DefaultEquipment equipment = new DefaultEquipment();
-        equipment.getControls().addControl(Action.RIGHT_CLICK, function);
-        equipment.setHolder(holder);
-        equipment.onRightClick();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
-    void performDeploymentDoesNothingWhenDeploymentProducesNoDeploymentContext() {
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
-
-        Player player = mock(Player.class);
-        when(holder.getEntity()).thenReturn(player);
-
+    @DisplayName("performDeployment does nothing when deployment action does not produce a deployment result")
+    void performDeployment_deploymentActionWithoutResult() {
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.empty());
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, holder);
+        DeploymentAction deploymentAction = mock(DeploymentAction.class);
+        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.empty());
 
-        verifyNoInteractions(deploymentHandler);
+        equipment.setDeployment(deployment);
+        equipment.performDeploymentAction(deploymentAction, user);
+
+        verifyNoInteractions(deployment);
     }
 
     @Test
-    void performDeploymentCallsDeploymentHandlerWhenDeploymentProducesDeploymentContext() {
+    @DisplayName("performDeployment calls deployment when deployment action produces result")
+    void performDeployment_deploymentActionWithResult() {
+        Deployment deployment = mock(Deployment.class);
         DeploymentResult deploymentResult = new DeploymentResult(null, null, null, 0L);
-        DeploymentHandler deploymentHandler = mock(DeploymentHandler.class);
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+        EquipmentUser user = mock(EquipmentUser.class);
 
-        Player player = mock(Player.class);
-        when(holder.getEntity()).thenReturn(player);
+        DeploymentAction deploymentAction = mock(DeploymentAction.class);
+        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
+        equipment.setDeployment(deployment);
+        equipment.performDeploymentAction(deploymentAction, user);
+
+        verify(deployment).processDeploymentResult(deploymentResult);
+    }
+
+    @Test
+    @DisplayName("reset delegates to deployment")
+    void reset() {
         Deployment deployment = mock(Deployment.class);
-        when(deployment.perform(eq(holder), eq(player), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
 
-        equipment.setDeploymentHandler(deploymentHandler);
-        equipment.performDeployment(deployment, holder);
+        DefaultEquipment equipment = new DefaultEquipment();
+        equipment.setDeployment(deployment);
+        equipment.reset();
 
-        verify(deploymentHandler).processDeploymentResult(deploymentResult);
+        verify(deployment).reset();
     }
 
     @Test
@@ -270,20 +204,21 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void createNewItemStackFromTemplateWhenUpdatingAndSetHeldItemOfHolder() {
-        EquipmentHolder holder = mock(EquipmentHolder.class);
+    @DisplayName("update creates new ItemStack from display item template and sets held item of user")
+    void update_success() {
+        EquipmentUser user = mock(EquipmentUser.class);
         ItemStack itemStack = new ItemStack(Material.SHEARS);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setHolder(holder);
+        equipment.setUser(user);
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.setName("test");
         equipment.setItemStack(itemStack);
         boolean updated = equipment.update();
 
-        assertTrue(updated);
+        assertThat(updated).isTrue();
     }
 }

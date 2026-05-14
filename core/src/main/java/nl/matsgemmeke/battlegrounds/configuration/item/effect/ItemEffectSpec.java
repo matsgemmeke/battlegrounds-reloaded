@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public abstract class ItemEffectSpec {
 

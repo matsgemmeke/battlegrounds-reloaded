@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.game.damage.Target;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -12,7 +11,7 @@ import java.util.UUID;
 /**
  * An entity object which holds information and can perform actions in Battlegrounds.
  */
-public interface GameEntity extends Target, DamageTarget {
+public interface GameEntity extends DamageTarget {
 
     /**
      * Gets the hitbox of the entity.

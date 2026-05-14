@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -280,110 +278,9 @@ class DefaultGunTest {
     }
 
     @Test
-    void onChangeFromCancelsOngoingFunctions() {
-        ItemFunction<GunHolder> function1 = mock();
-        when(function1.isPerforming()).thenReturn(true);
-
-        ItemFunction<GunHolder> function2 = mock();
-
-        gun.getControls().addControl(Action.LEFT_CLICK, function1);
-        gun.getControls().addControl(Action.CHANGE_FROM, function2);
-        gun.onChangeFrom();
-
-        verify(function1).cancel();
-        verify(function2, never()).perform(any());
-    }
-
-    @Test
-    void onChangeFromExecutesCorrespondingFunctionWhenHolderIsNotNull() {
-        GunHolder holder = mock(GunHolder.class);
-
-        ItemFunction<GunHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        gun.getControls().addControl(Action.CHANGE_FROM, function);
-        gun.setHolder(holder);
-        gun.onChangeFrom();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
-    void onLeftClickDoesNotInteractWithControlsWhenHolderIsNull() {
-        ItemFunction<GunHolder> function = mock();
-
-        gun.getControls().addControl(Action.LEFT_CLICK, function);
-        gun.onLeftClick();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    void onLeftClickExecutesCorrespondingFunctionWhenHolderIsNotNull() {
-        GunHolder holder = mock(GunHolder.class);
-
-        ItemFunction<GunHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        gun.getControls().addControl(Action.LEFT_CLICK, function);
-        gun.setHolder(holder);
-        gun.onLeftClick();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
-    void onRightClickDoesNotInteractWithControlsWhenHolderIsNull() {
-        ItemFunction<GunHolder> function = mock();
-
-        gun.getControls().addControl(Action.RIGHT_CLICK, function);
-        gun.onRightClick();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    void onRightClickExecutesCorrespondingFunctionWhenHolderIsNotNull() {
-        GunHolder holder = mock(GunHolder.class);
-
-        ItemFunction<GunHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        gun.getControls().addControl(Action.RIGHT_CLICK, function);
-        gun.setHolder(holder);
-        gun.onRightClick();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
-    void onSwapFromDoesNotInteractWithControlsWhenHolderIsNull() {
-        ItemFunction<GunHolder> function = mock();
-
-        gun.getControls().addControl(Action.SWAP_FROM, function);
-        gun.onSwapFrom();
-
-        verifyNoInteractions(function);
-    }
-
-    @Test
-    void onSwapFromExecutesCorrespondingFunctionWhenHolderIsNotNull() {
-        GunHolder holder = mock(GunHolder.class);
-
-        ItemFunction<GunHolder> function = mock();
-        when(function.isAvailable()).thenReturn(true);
-
-        gun.getControls().addControl(Action.SWAP_FROM, function);
-        gun.setHolder(holder);
-        gun.onSwapFrom();
-
-        verify(function).perform(holder);
-    }
-
-    @Test
     void reloadActivatesReloadSystemWithGivenPerformerAndUpdatesItem() {
         ResourceContainer resourceContainer = new ResourceContainer(30, 30, 90, 300);
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         ReloadPerformer performer = mock(ReloadPerformer.class);
@@ -391,7 +288,7 @@ class DefaultGunTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        gun.setHolder(holder);
+        gun.setUser(user);
         gun.setItemTemplate(itemTemplate);
         gun.setName("test");
         gun.setReloadSystem(reloadSystem);
@@ -437,31 +334,6 @@ class DefaultGunTest {
         gun.shoot(performer);
 
         verify(shootHandler).shoot(performer);
-    }
-
-    @Test
-    void onDropCancelsFunctionsAndResetsHolderWhenDropped() {
-        GunHolder holder = mock(GunHolder.class);
-
-        ItemFunction<GunHolder> function = mock();
-        when(function.isPerforming()).thenReturn(true);
-
-        gun.getControls().addControl(Action.LEFT_CLICK, function);
-        gun.setHolder(holder);
-        gun.onDrop();
-
-        assertThat(gun.getHolder()).isNull();
-
-        verify(function).cancel();
-    }
-
-    @Test
-    void onPickUpSetHolder() {
-        GunHolder holder = mock(GunHolder.class);
-
-        gun.onPickUp(holder);
-
-        assertThat(gun.getHolder()).isEqualTo(holder);
     }
 
     @Test

@@ -1,18 +1,28 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,64 +31,72 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class EntityPickupItemEventHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class EntityPickupItemEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
+    private GamePlayer gamePlayer;
+    @Mock
     private GameScope gameScope;
+    @Mock
     private Item item;
-    private Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
+    @Mock
+    private ItemInteractionDispatcher itemInteractionDispatcher;
+    @Mock
+    private Player player;
+    @Mock
+    private PlayerRegistry playerRegistry;
+    @Mock
+    private Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    @Mock
+    private Provider<PlayerRegistry> playerRegistryProvider;
+
+    private EntityPickupItemEventHandler eventHandler;
 
     @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        item = mock(Item.class);
-        actionExecutorRegistryProvider = mock();
+    void setUp() {
+        eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, itemInteractionDispatcherProvider, playerRegistryProvider);
     }
 
     @Test
-    public void handleShouldDoNothingIfEntityIsNoPlayer() {
+    @DisplayName("handle does nothing when entity is not a player")
+    void handle_entityIsNoPlayer() {
         Zombie zombie = mock(Zombie.class);
-
         EntityPickupItemEvent event = new EntityPickupItemEvent(zombie, item, 0);
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
     }
 
     @Test
-    public void handleShouldDoNothingIfPlayerIsNotInAnyGame() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+    @DisplayName("handle does nothing when player is not in any game")
+    void handle_playerNotInGame() {
+        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
 
-        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
-
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
     }
 
     @Test
-    public void handleThrowsEventHandlingExceptionWhenUnableToFindGameContextForPlayerGameKey() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
+    @DisplayName("handle throws EventHandlingException when unable to find game context for player game key")
+    void handle_playerGameKeyHasNoGameContext() {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -86,86 +104,78 @@ public class EntityPickupItemEventHandlerTest {
     }
 
     @Test
-    public void handleDoesNothingWhenNoActionExecutorIsFoundForEventItemStack() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.empty());
-
+    @DisplayName("handle does nothing when event player is not registered")
+    void handle_itemStackHasNoActionExecutor() {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
 
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
     }
 
     @Test
-    public void handleInvokesActionExecutorAndCancelsEventAccordingToActionResult() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        ActionExecutor actionExecutor = mock(ActionExecutor.class);
-        when(actionExecutor.handlePickupItemAction(player, ITEM_STACK)).thenReturn(false);
-
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
-
+    @DisplayName("handle invokes item interaction dispatcher, and removes item")
+    void handle_successfulWithoutItemRemove() {
+        PickupDispatchResult result = PickupDispatchResult.cancelPickup();
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
+        when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
+        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, ITEM_STACK)).thenReturn(result);
 
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isTrue();
+
+        verify(item).remove();
+        verify(player).playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1.5f);
     }
 
-    @Test
-    public void handleInvokesActionExecutorAndDoesNotCancelEventAccordingToActionResult() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        ActionExecutor actionExecutor = mock(ActionExecutor.class);
-        when(actionExecutor.handlePickupItemAction(player, ITEM_STACK)).thenReturn(true);
-
-        ActionExecutorRegistry actionExecutorRegistry = mock(ActionExecutorRegistry.class);
-        when(actionExecutorRegistry.getActionExecutor(ITEM_STACK)).thenReturn(Optional.of(actionExecutor));
+    @ParameterizedTest
+    @CsvSource({
+            "true,false,true",
+            "true,true,true",
+            "false,true,true",
+            "false,false,false"
+    })
+    @DisplayName("handle invokes item interaction dispatcher, removes item and cancels event based on event state and result")
+    void handle_successfulWithItemRemove(boolean resultCancelEvent, boolean eventCancelled, boolean expectedCancelled) {
+        PickupDispatchResult result = new PickupDispatchResult(true, resultCancelEvent, false);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        event.setCancelled(eventCancelled);
 
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(actionExecutorRegistryProvider.get()).thenReturn(actionExecutorRegistry);
         when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
+        when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
+        when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
+        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, ITEM_STACK)).thenReturn(result);
 
-        doAnswer(invocation -> {
-            ((Runnable) invocation.getArgument(1)).run();
-            return null;
-        }).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        EntityPickupItemEventHandler eventHandler = new EntityPickupItemEventHandler(gameContextProvider, gameScope, actionExecutorRegistryProvider);
         eventHandler.handle(event);
 
-        assertThat(event.isCancelled()).isFalse();
+        assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
+
+        verify(item, never()).remove();
     }
 }

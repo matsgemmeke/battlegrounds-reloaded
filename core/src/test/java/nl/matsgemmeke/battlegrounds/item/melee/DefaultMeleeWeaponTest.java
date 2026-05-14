@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -34,9 +32,7 @@ class DefaultMeleeWeaponTest {
     private static final String NAME = "Combat Knife";
 
     @Mock
-    private ItemControls<MeleeWeaponHolder> controls;
-    @Mock
-    private MeleeWeaponHolder holder;
+    private MeleeWeaponUser user;
     @Mock
     private ReloadSystem reloadSystem;
     @Captor
@@ -47,6 +43,23 @@ class DefaultMeleeWeaponTest {
     @BeforeEach
     void setUp() {
         meleeWeapon = new DefaultMeleeWeapon();
+    }
+
+    @Test
+    @DisplayName("assign sets the user")
+    void assign_setUser() {
+        meleeWeapon.assign(user);
+
+        assertThat(meleeWeapon.getUser()).hasValue(user);
+    }
+
+    @Test
+    @DisplayName("unassign sets the user to null")
+    void unassign_removesUser() {
+        meleeWeapon.assign(user);
+        meleeWeapon.unassign();
+
+        assertThat(meleeWeapon.getUser()).isEmpty();
     }
 
     @Test
@@ -72,136 +85,16 @@ class DefaultMeleeWeaponTest {
         assertThat(matching).isEqualTo(expectedResult);
     }
 
-    @Test
-    void onChangeFromDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onChangeFrom();
+    @ParameterizedTest
+    @CsvSource({ "0,true", "1,false" })
+    @DisplayName("isSelfContained returns whether the melee weapon carries only one resource")
+    void isSelfContained(int maxReserveAmount, boolean expectedResult) {
+        ResourceContainer resourceContainer = new ResourceContainer(1, 1, 0, maxReserveAmount);
 
-        verifyNoInteractions(controls);
-    }
+        meleeWeapon.setResourceContainer(resourceContainer);
+        boolean selfContained = meleeWeapon.isSelfContained();
 
-    @Test
-    void onChangeFromPerformsChangeFromActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onChangeFrom();
-
-        verify(controls).performAction(Action.CHANGE_FROM, holder);
-    }
-
-    @Test
-    void onChangeToDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onChangeTo();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onChangeToPerformsChangeToActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onChangeTo();
-
-        verify(controls).performAction(Action.CHANGE_TO, holder);
-    }
-
-    @Test
-    void onDropDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onDrop();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onDropPerformsDropActionOnControlsAndCancelsOtherFunctions() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onDrop();
-
-        assertThat(meleeWeapon.getHolder()).isEmpty();
-
-        verify(controls).cancelAllFunctions();
-        verify(controls).performAction(Action.DROP_ITEM, holder);
-    }
-
-    @Test
-    void onLeftClickDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onLeftClick();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onLeftClickPerformsLeftClickActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onLeftClick();
-
-        verify(controls).performAction(Action.LEFT_CLICK, holder);
-    }
-
-    @Test
-    void onPickupPerformsPickupActionOnControlsAndSetsHolder() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onPickUp(holder);
-
-        assertThat(meleeWeapon.getHolder()).hasValue(holder);
-
-        verify(controls).performAction(Action.PICKUP_ITEM, holder);
-    }
-
-    @Test
-    void onRightClickDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onRightClick();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onRightClickPerformsRightClickActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onRightClick();
-
-        verify(controls).performAction(Action.RIGHT_CLICK, holder);
-    }
-
-    @Test
-    void onSwapFromDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onSwapFrom();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onSwapFromPerformsSwapFromActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onSwapFrom();
-
-        verify(controls).performAction(Action.SWAP_FROM, holder);
-    }
-
-    @Test
-    void onSwapToDoesNotPerformActionWhenHolderIsNull() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.onSwapTo();
-
-        verifyNoInteractions(controls);
-    }
-
-    @Test
-    void onSwapToPerformsSwapToActionOnControls() {
-        meleeWeapon.setControls(controls);
-        meleeWeapon.setHolder(holder);
-        meleeWeapon.onSwapTo();
-
-        verify(controls).performAction(Action.SWAP_TO, holder);
+        assertThat(selfContained).isEqualTo(expectedResult);
     }
 
     @Test
@@ -285,17 +178,23 @@ class DefaultMeleeWeaponTest {
 
     @Test
     void performThrowDoesNothingWhenThrowHandlerIsNull() {
-        assertThatCode(() -> meleeWeapon.performThrow(holder)).doesNotThrowAnyException();
+        assertThatCode(() -> meleeWeapon.performThrow(user)).doesNotThrowAnyException();
     }
 
     @Test
-    void performThrowDelegatesToThrowHandler() {
+    @DisplayName("performThrow deletes to ThrowHandler and unassigns user when no more resources are left")
+    void performThrow_delegatesToThrowHandler() {
+        ResourceContainer resourceContainer = new ResourceContainer(1, 0, 0, 1);
         ThrowHandler throwHandler = mock(ThrowHandler.class);
 
+        meleeWeapon.setResourceContainer(resourceContainer);
         meleeWeapon.configureThrowHandler(throwHandler);
-        meleeWeapon.performThrow(holder);
+        meleeWeapon.assign(user);
+        meleeWeapon.performThrow(user);
 
-        verify(throwHandler).performThrow(holder);
+        assertThat(meleeWeapon.getUser()).isEmpty();
+
+        verify(throwHandler).performThrow(user);
     }
 
     @Test

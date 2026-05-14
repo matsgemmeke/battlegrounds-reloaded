@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.item.*;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -14,6 +16,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -37,13 +40,15 @@ class GiveWeaponCommandTest {
     @Mock
     private GameScope gameScope;
     @Mock
+    private ItemSpecRegistry itemSpecRegistry;
+    @Mock
     private Player player;
     @Mock
     private Provider<PlayerRegistry> playerRegistryProvider;
     @Mock
-    private Translator translator;
+    private Provider<ItemCreator> itemCreatorProvider;
     @Mock
-    private WeaponCreator weaponCreator;
+    private Translator translator;
 
     private GiveWeaponCommand command;
 
@@ -51,11 +56,12 @@ class GiveWeaponCommandTest {
     void setUp() {
         when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
 
-        command = new GiveWeaponCommand(gameContextProvider, gameScope, playerRegistryProvider, translator, weaponCreator);
+        command = new GiveWeaponCommand(gameContextProvider, gameScope, itemSpecRegistry, translator, itemCreatorProvider, playerRegistryProvider);
     }
 
     @Test
-    void executeThrowsUnknownGameKeyExceptionWhenOpenModeGameKeyIsNotRegistered() {
+    @DisplayName("execute throws UnknownGameKeyException when open mode game key is not registered")
+    void execute_openModeGameKeyNotRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> command.execute(player, ARGS))
@@ -64,13 +70,14 @@ class GiveWeaponCommandTest {
     }
 
     @Test
-    void executeSendsErrorMessageToPlayerGivenArgsDoNoFormExistingWeaponName() {
+    @DisplayName("execute sends error message to player when given args do not form a valid weapon name")
+    void execute_invalidWeaponName() {
         GameContext gameContext = mock(GameContext.class);
         String message = "message";
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(false);
         when(translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.exists("test weapon")).thenReturn(false);
 
         command.execute(player, ARGS);
 
@@ -78,23 +85,20 @@ class GiveWeaponCommandTest {
     }
 
     @Test
-    void executeThrowsIllegalStateExceptionWhenUnableToFindGamePlayerInstanceForGivenPlayer() {
+    @DisplayName("execute throws IllegalStateException when unable to find GamePlayer instance for given player")
+    void execute_unknownPlayer() {
         GameContext gameContext = mock(GameContext.class);
 
         PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
         when(playerRegistry.findByUniqueId(UNIQUE_ID)).thenReturn(Optional.empty());
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(true);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getName()).thenReturn("TestPlayer");
         when(player.getUniqueId()).thenReturn(UNIQUE_ID);
-        when(weaponCreator.exists("test weapon")).thenReturn(true);
 
-        doAnswer(invocation -> {
-            Runnable runnable = invocation.getArgument(1);
-            runnable.run();
-            return null;
-        }).when(gameScope).runInScope(eq(gameContext), any());
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
         assertThatThrownBy(() -> command.execute(player, ARGS))
                 .isInstanceOf(IllegalStateException.class)
@@ -102,7 +106,8 @@ class GiveWeaponCommandTest {
     }
 
     @Test
-    void executeGivesAssignedWeaponToPlayer() {
+    @DisplayName("execute gives assigned weapon to player")
+    void execute_givesWeaponToPlayer() {
         String message = "weapon given: %bg_weapon%";
         GameContext gameContext = mock(GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
@@ -118,18 +123,17 @@ class GiveWeaponCommandTest {
         when(weapon.getItemStack()).thenReturn(itemStack);
         when(weapon.getName()).thenReturn("test");
 
+        ItemCreator itemCreator = mock(ItemCreator.class);
+        when(itemCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
+
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(itemCreatorProvider.get()).thenReturn(itemCreator);
+        when(itemSpecRegistry.exists("test weapon")).thenReturn(true);
         when(player.getUniqueId()).thenReturn(UNIQUE_ID);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
-        when(weaponCreator.exists("test weapon")).thenReturn(true);
-        when(weaponCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
 
-        doAnswer(invocation -> {
-            Runnable runnable = invocation.getArgument(1);
-            runnable.run();
-            return null;
-        }).when(gameScope).runInScope(eq(gameContext), any());
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
         command.execute(player, ARGS);
 

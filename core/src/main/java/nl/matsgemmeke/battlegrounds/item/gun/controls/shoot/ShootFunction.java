@@ -1,42 +1,37 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.shoot;
 
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class ShootFunction implements ItemFunction<GunHolder> {
+public class ShootFunction implements Function<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public ShootFunction(@NotNull Gun gun) {
+    public ShootFunction(Gun gun) {
         this.gun = gun;
     }
 
-    public boolean isAvailable() {
-        return gun.canShoot();
-    }
-
-    public boolean isBlocking() {
-        return true;
-    }
-
+    @Override
     public boolean isPerforming() {
         return gun.isShooting();
     }
 
+    @Override
     public boolean cancel() {
         gun.cancelShooting();
         return true;
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
-        if (!this.isAvailable()) {
-            return false;
+    @Override
+    public FunctionResult perform(GunUser user) {
+        if (!gun.canShoot()) {
+            return FunctionResult.FAILED;
         }
 
-        gun.shoot(holder);
-        return true;
+        gun.shoot(user);
+
+        return FunctionResult.SUCCESS;
     }
 }

@@ -62,18 +62,17 @@
                             <shadedPattern>nl.matsgemmeke.libs.google</shadedPattern>
                         </relocation>
                         <relocation>
-                            <pattern>jakarta</pattern>
-                            <shadedPattern>nl.matsgemmeke.libs.jakarta</shadedPattern>
-                        </relocation>
-                        <relocation>
-                            <pattern>javax</pattern>
-                            <shadedPattern>nl.matsgemmeke.libs.javax</shadedPattern>
-                        </relocation>
-                        <relocation>
                             <pattern>com.j256.ormlite</pattern>
                             <shadedPattern>nl.matsgemmeke.libs.ormlite</shadedPattern>
                         </relocation>
+                        <relocation>
+                            <pattern>org.hibernate</pattern>
+                            <shadedPattern>nl.matsgemmeke.libs.hibernate</shadedPattern>
+                        </relocation>
                     </relocations>
+                    <transformers>
+                        <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
+                    </transformers>
                 </configuration>
                 <executions>
                     <execution>

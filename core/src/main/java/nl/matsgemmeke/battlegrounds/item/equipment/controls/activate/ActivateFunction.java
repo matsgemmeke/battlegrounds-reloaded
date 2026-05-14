@@ -1,41 +1,36 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.activate;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class ActivateFunction implements ItemFunction<EquipmentHolder> {
+public class ActivateFunction implements Function<EquipmentUser> {
 
-    @NotNull
     private final Equipment equipment;
 
-    public ActivateFunction(@NotNull Equipment equipment) {
+    public ActivateFunction(Equipment equipment) {
         this.equipment = equipment;
     }
 
-    public boolean isAvailable() {
-        return equipment.isActivatorReady();
-    }
-
-    public boolean isBlocking() {
-        return false;
-    }
-
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return false;
     }
 
-    public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
-            return false;
+    @Override
+    public FunctionResult perform(EquipmentUser user) {
+        if (!equipment.isActivatorReady() || !user.canDeploy()) {
+            return FunctionResult.FAILED;
         }
 
-        equipment.activateDeployment(holder);
-        return true;
+        equipment.activateDeployment(user);
+
+        return FunctionResult.SUCCESS;
     }
 }

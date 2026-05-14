@@ -2,7 +2,10 @@ name: Claymore
 equipment-type: LETHAL
 description: Anti-personnel mine that triggers a proximity-based explosion.
 controls:
-  throwing: LEFT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:
@@ -23,7 +26,7 @@ deploy:
       offset-y: 0.25
       offset-z: 0.25
       particle: BLOCK_CRACK
-  on-cleanup:
+  on-reset:
     remove-deployment: false
   resistances:
     fire-damage: 0
@@ -54,6 +57,15 @@ items:
     item-flags:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
+    data:
+      weapon-type:
+        key: weapon-type
+        type: STRING
+        value: EQUIPMENT
+      weapon-name:
+        key: weapon-name
+        type: STRING
+        value: Claymore
     unbreakable: true
   throw-item:
     material: SHEARS

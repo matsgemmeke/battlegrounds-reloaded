@@ -4,8 +4,14 @@ description: Semi-automatic pistol. Versatile and strong overall with a large ma
 level-unlocked: 1
 price: 750
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 20
   default-magazine-amount: 3
@@ -17,6 +23,15 @@ item:
   item-flags:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: GUN
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: Five-seven
   unbreakable: true
 reloading:
   type: MAGAZINE

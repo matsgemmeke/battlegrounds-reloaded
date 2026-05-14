@@ -8,27 +8,22 @@ import nl.matsgemmeke.battlegrounds.game.component.item.ItemLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
 
-    @NotNull
     private final BattlegroundsConfiguration configuration;
-    @NotNull
     private final ItemLifecycleHandler itemLifecycleHandler;
-    @NotNull
     private final PlayerRegistry playerRegistry;
-    @NotNull
     private final StatePersistenceHandler statePersistenceHandler;
 
     @Inject
     public OpenModePlayerLifecycleHandler(
-            @NotNull BattlegroundsConfiguration configuration,
-            @NotNull ItemLifecycleHandler itemLifecycleHandler,
-            @NotNull PlayerRegistry playerRegistry,
-            @NotNull StatePersistenceHandler statePersistenceHandler
+            BattlegroundsConfiguration configuration,
+            ItemLifecycleHandler itemLifecycleHandler,
+            PlayerRegistry playerRegistry,
+            StatePersistenceHandler statePersistenceHandler
     ) {
         this.configuration = configuration;
         this.itemLifecycleHandler = itemLifecycleHandler;
@@ -36,6 +31,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         this.statePersistenceHandler = statePersistenceHandler;
     }
 
+    @Override
     public void handlePlayerJoin(Player player) {
         if (playerRegistry.isRegistered(player.getUniqueId())) {
             return;
@@ -49,6 +45,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         statePersistenceHandler.loadPlayerState(gamePlayer);
     }
 
+    @Override
     public void handlePlayerLeave(UUID uniqueId) {
         GamePlayer gamePlayer = playerRegistry.findByUniqueId(uniqueId).orElse(null);
 
@@ -57,7 +54,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
         }
 
         statePersistenceHandler.savePlayerState(gamePlayer);
-        itemLifecycleHandler.cleanupItems(gamePlayer);
+        itemLifecycleHandler.resetItems(gamePlayer);
         playerRegistry.deregister(uniqueId);
     }
 }

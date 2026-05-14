@@ -8,6 +8,7 @@ import com.j256.ormlite.table.TableUtils;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.sql.SQLException;
@@ -22,8 +23,10 @@ import static org.mockito.Mockito.*;
 class SqliteMeleeWeaponStateRepositoryTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
-    private static final String MELEE_WEAPON_NAME = "Test Melee Weapon";
-    private static final int MELEE_WEAPON_ITEM_SLOT = 7;
+    private static final String NAME = "Test Melee Weapon";
+    private static final int LOADED_AMOUNT = 1;
+    private static final int RESERVE_AMOUNT = 2;
+    private static final int ITEM_SLOT = 7;
 
     private Dao<MeleeWeapon, Integer> meleeWeaponDao;
 
@@ -37,7 +40,8 @@ class SqliteMeleeWeaponStateRepositoryTest {
     }
 
     @Test
-    void deleteByPlayerUuidDeletesDataFromDao() throws SQLException {
+    @DisplayName("deleteByPlayerUuid deletes data from DAO")
+    void deleteByPlayerUuid_successful() throws SQLException {
         int id = 1;
         MeleeWeapon meleeWeapon = this.createMeleeWeapon(id);
 
@@ -52,7 +56,8 @@ class SqliteMeleeWeaponStateRepositoryTest {
     }
 
     @Test
-    void deleteByPlayerUuidThrowsPlayerStateStorageExceptionWhenFailingToDeleteData() throws SQLException {
+    @DisplayName("deleteByPlayerUuid throws PlayerStateStorageException when failing to delete data")
+    void deleteByPlayerUuid_error() throws SQLException {
         Dao<MeleeWeapon, Integer> meleeWeaponDao = mock(RETURNS_DEEP_STUBS);
         when(meleeWeaponDao.queryBuilder().where().eq("player_uuid", PLAYER_UUID.toString()).prepare()).thenThrow(new SQLException("error"));
 
@@ -64,7 +69,8 @@ class SqliteMeleeWeaponStateRepositoryTest {
     }
 
     @Test
-    void findByPlayerUuidReturnsEquipmentStatesWithDataFromDao() throws SQLException {
+    @DisplayName("findByPlayerUuid returns melee weapon states from DAO")
+    void findByPlayerUuid_successful() throws SQLException {
         int id = 1;
         MeleeWeapon meleeWeapon = this.createMeleeWeapon(id);
 
@@ -75,13 +81,16 @@ class SqliteMeleeWeaponStateRepositoryTest {
 
         assertThat(meleeWeaponStates).satisfiesExactly(meleeWeaponState -> {
             assertThat(meleeWeaponState.playerUuid()).isEqualTo(PLAYER_UUID);
-            assertThat(meleeWeaponState.meleeWeaponName()).isEqualTo(MELEE_WEAPON_NAME);
-            assertThat(meleeWeaponState.itemSlot()).isEqualTo(MELEE_WEAPON_ITEM_SLOT);
+            assertThat(meleeWeaponState.meleeWeaponName()).isEqualTo(NAME);
+            assertThat(meleeWeaponState.loadedAmount()).isEqualTo(LOADED_AMOUNT);
+            assertThat(meleeWeaponState.reserveAmount()).isEqualTo(RESERVE_AMOUNT);
+            assertThat(meleeWeaponState.itemSlot()).isEqualTo(ITEM_SLOT);
         });
     }
 
     @Test
-    void findByPlayerUuidThrowsPlayerStateStorageExceptionWhenFailingToReadData() throws SQLException {
+    @DisplayName("findByPlayerUuid throws PlayerStateStorageException when failing to read data")
+    void findByPlayerUuid_error() throws SQLException {
         Dao<MeleeWeapon, Integer> meleeWeaponDao = mock(RETURNS_DEEP_STUBS);
         when(meleeWeaponDao.queryBuilder().where().eq("player_uuid", PLAYER_UUID.toString()).prepare()).thenThrow(new SQLException("error"));
 
@@ -93,24 +102,26 @@ class SqliteMeleeWeaponStateRepositoryTest {
     }
 
     @Test
-    void saveSavesDataFromGivenEquipmentStatesToDao() throws SQLException {
-        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, MELEE_WEAPON_NAME, MELEE_WEAPON_ITEM_SLOT);
+    @DisplayName("save saves data from given melee weapon states to DAO")
+    void save_successful() throws SQLException {
+        MeleeWeaponState meleeWeaponState = new MeleeWeaponState(PLAYER_UUID, NAME, LOADED_AMOUNT, RESERVE_AMOUNT, ITEM_SLOT);
         List<MeleeWeaponState> meleeWeaponStates = List.of(meleeWeaponState);
 
         SqliteMeleeWeaponStateRepository repository = new SqliteMeleeWeaponStateRepository(meleeWeaponDao);
         repository.save(meleeWeaponStates);
 
-        List<MeleeWeapon> savedMeleeWeapons = meleeWeaponDao.queryForAll();
-
-        assertThat(savedMeleeWeapons).satisfiesExactly(meleeWeapon -> {
+        assertThat(meleeWeaponDao.queryForAll()).satisfiesExactly(meleeWeapon -> {
             assertThat(meleeWeapon.getPlayerUuid()).isEqualTo(PLAYER_UUID.toString());
-            assertThat(meleeWeapon.getMeleeWeaponName()).isEqualTo(MELEE_WEAPON_NAME);
-            assertThat(meleeWeapon.getItemSlot()).isEqualTo(MELEE_WEAPON_ITEM_SLOT);
+            assertThat(meleeWeapon.getMeleeWeaponName()).isEqualTo(NAME);
+            assertThat(meleeWeapon.getLoadedAmount()).isEqualTo(LOADED_AMOUNT);
+            assertThat(meleeWeapon.getReserveAmount()).isEqualTo(RESERVE_AMOUNT);
+            assertThat(meleeWeapon.getItemSlot()).isEqualTo(ITEM_SLOT);
         });
     }
 
     @Test
-    void saveThrowsStateStorageExceptionWhenFailingToSaveData() throws SQLException {
+    @DisplayName("save throws PlayerStateStorageException when failing to save data")
+    void save_error() throws SQLException {
         Dao<MeleeWeapon, Integer> meleeWeaponDao = mock(RETURNS_DEEP_STUBS);
         when(meleeWeaponDao.create(anyCollection())).thenThrow(new SQLException("error"));
 
@@ -125,8 +136,10 @@ class SqliteMeleeWeaponStateRepositoryTest {
         MeleeWeapon meleeWeapon = new MeleeWeapon();
         meleeWeapon.setId(id);
         meleeWeapon.setPlayerUuid(PLAYER_UUID.toString());
-        meleeWeapon.setMeleeWeaponName(MELEE_WEAPON_NAME);
-        meleeWeapon.setItemSlot(MELEE_WEAPON_ITEM_SLOT);
+        meleeWeapon.setMeleeWeaponName(NAME);
+        meleeWeapon.setLoadedAmount(LOADED_AMOUNT);
+        meleeWeapon.setReserveAmount(RESERVE_AMOUNT);
+        meleeWeapon.setItemSlot(ITEM_SLOT);
         return meleeWeapon;
     }
 }

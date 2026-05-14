@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.item;
 
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import jakarta.validation.Valid;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 
@@ -10,17 +11,25 @@ public class ParticleEffectSpec {
     @Required
     @EnumValue(type = Particle.class)
     public String particle;
+
     @Required
     public Integer count;
+
     @Required
     public Double offsetX;
+
     @Required
     public Double offsetY;
+
     @Required
     public Double offsetZ;
+
     @Required
     public Double extra;
+
     @EnumValue(type = Material.class)
     public String blockData;
+
+    @Valid
     public DustOptionsSpec dustOptions;
 }

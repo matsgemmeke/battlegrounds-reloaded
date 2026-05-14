@@ -6,12 +6,13 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.item.creator.WeaponCreator;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
+import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerState;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorage;
 import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
@@ -30,25 +31,28 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
 
     private final EquipmentRegistry equipmentRegistry;
     private final GunRegistry gunRegistry;
+    private final ItemCreator itemCreator;
+    private final ItemSpecRegistry itemSpecRegistry;
     private final Logger logger;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final PlayerRegistry playerRegistry;
     private final PlayerStateStorage playerStateStorage;
-    private final WeaponCreator weaponCreator;
 
     @Inject
     public OpenModeStatePersistenceHandler(
             EquipmentRegistry equipmentRegistry,
             GunRegistry gunRegistry,
+            ItemCreator itemCreator,
+            ItemSpecRegistry itemSpecRegistry,
             @Named("Battlegrounds") Logger logger,
             MeleeWeaponRegistry meleeWeaponRegistry,
             PlayerRegistry playerRegistry,
-            PlayerStateStorage playerStateStorage,
-            WeaponCreator weaponCreator
+            PlayerStateStorage playerStateStorage
     ) {
+        this.itemCreator = itemCreator;
+        this.itemSpecRegistry = itemSpecRegistry;
         this.logger = logger;
         this.playerStateStorage = playerStateStorage;
-        this.weaponCreator = weaponCreator;
         this.equipmentRegistry = equipmentRegistry;
         this.gunRegistry = gunRegistry;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
@@ -67,12 +71,12 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     private void loadGunState(GamePlayer gamePlayer, GunState gunState) {
         String gunName = gunState.gunName();
 
-        if (!weaponCreator.gunExists(gunName)) {
+        if (itemSpecRegistry.getGunSpec(gunName).isEmpty()) {
             logger.severe("Attempted to load gun '%s' from the open mode of player %s, but it does not exist anymore".formatted(gunName, gamePlayer.getName()));
             return;
         }
 
-        Gun gun = weaponCreator.createGun(gunName, gamePlayer);
+        Gun gun = itemCreator.createGun(gunName, gamePlayer);
         gun.getResourceContainer().setLoadedAmount(gunState.magazineAmmo());
         gun.getResourceContainer().setReserveAmount(gunState.reserveAmmo());
         gun.update();
@@ -84,12 +88,12 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     private void loadEquipmentState(GamePlayer gamePlayer, EquipmentState equipmentState) {
         String equipmentName = equipmentState.equipmentName();
 
-        if (!weaponCreator.equipmentExists(equipmentName)) {
+        if (itemSpecRegistry.getEquipmentSpec(equipmentName).isEmpty()) {
             logger.severe("Attempted to load equipment '%s' from the open mode of player %s, but it does not exist anymore".formatted(equipmentName, gamePlayer.getName()));
             return;
         }
 
-        Equipment equipment = weaponCreator.createEquipment(equipmentName, gamePlayer);
+        Equipment equipment = itemCreator.createEquipment(equipmentName, gamePlayer);
         equipment.update();
 
         Player player = gamePlayer.getEntity();
@@ -99,12 +103,14 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     private void loadMeleeWeaponState(GamePlayer gamePlayer, MeleeWeaponState meleeWeaponState) {
         String meleeWeaponName = meleeWeaponState.meleeWeaponName();
 
-        if (!weaponCreator.meleeWeaponExists(meleeWeaponName)) {
+        if (itemSpecRegistry.getMeleeWeaponSpec(meleeWeaponName).isEmpty()) {
             logger.severe("Attempted to load melee weapon '%s' from the open mode of player %s, but it does not exist anymore".formatted(meleeWeaponName, gamePlayer.getName()));
             return;
         }
 
-        MeleeWeapon meleeWeapon = weaponCreator.createMeleeWeapon(meleeWeaponName, gamePlayer);
+        MeleeWeapon meleeWeapon = itemCreator.createMeleeWeapon(meleeWeaponName, gamePlayer);
+        meleeWeapon.getResourceContainer().setLoadedAmount(meleeWeaponState.loadedAmount());
+        meleeWeapon.getResourceContainer().setReserveAmount(meleeWeaponState.reserveAmount());
         meleeWeapon.update();
 
         Player player = gamePlayer.getEntity();
@@ -117,7 +123,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
                 .map(gun -> this.convertToGunState(gamePlayer, gun))
                 .flatMap(Optional::stream)
                 .toList();
-        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedEquipment(gamePlayer).stream()
+        List<EquipmentState> equipmentStates = equipmentRegistry.getAssignedEquipmentList(gamePlayer).stream()
                 .map(equipment -> this.convertToEquipmentState(gamePlayer, equipment))
                 .flatMap(Optional::stream)
                 .toList();
@@ -154,43 +160,48 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     private Optional<GunState> convertToGunState(GamePlayer gamePlayer, Gun gun) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String gunName = gun.getName();
-        int magazineAmmo = gun.getResourceContainer().getLoadedAmount();
-        int reserveAmmo = gun.getResourceContainer().getReserveAmount();
         ItemStack itemStack = gun.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String gunName = gun.getName();
+        int magazineAmmo = gun.getResourceContainer().getLoadedAmount();
+        int reserveAmmo = gun.getResourceContainer().getReserveAmount();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(gun);
         return itemSlot.map(itemSlotValue -> new GunState(uniqueId, gunName, magazineAmmo, reserveAmmo, itemSlotValue));
     }
 
     private Optional<EquipmentState> convertToEquipmentState(GamePlayer gamePlayer, Equipment equipment) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String equipmentName = equipment.getName();
         ItemStack itemStack = equipment.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String equipmentName = equipment.getName();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(equipment);
         return itemSlot.map(integer -> new EquipmentState(uniqueId, equipmentName, integer));
     }
 
     private Optional<MeleeWeaponState> convertToMeleeWeaponState(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
-        UUID uniqueId = gamePlayer.getUniqueId();
-        String equipmentName = meleeWeapon.getName();
         ItemStack itemStack = meleeWeapon.getItemStack();
 
         if (itemStack == null) {
             return Optional.empty();
         }
 
+        UUID uniqueId = gamePlayer.getUniqueId();
+        String equipmentName = meleeWeapon.getName();
+        int loadedAmount = meleeWeapon.getResourceContainer().getLoadedAmount();
+        int reserveAmount = meleeWeapon.getResourceContainer().getReserveAmount();
+
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(meleeWeapon);
-        return itemSlot.map(integer -> new MeleeWeaponState(uniqueId, equipmentName, integer));
+        return itemSlot.map(itemSlotValue -> new MeleeWeaponState(uniqueId, equipmentName, loadedAmount, reserveAmount, itemSlotValue));
     }
 }

@@ -2,8 +2,18 @@ name: Smoke Grenade
 equipment-type: TACTICAL
 description: Device that creates a smoke screen when detonated.
 controls:
-  throwing: LEFT_CLICK
-  cook: RIGHT_CLICK
+  throwing:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
+  cook:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  drop:
+    action: DROP_ITEM
+    blocking: true
+    cancels-event: true
 deploy:
   health: 50.0
   triggers:
@@ -14,13 +24,17 @@ deploy:
     activate-effect: true
     remove-deployment: false
     undo-effect: false
-  on-cleanup:
+  on-reset:
     remove-deployment: false
   throwing:
-    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
     cooldown: 30
     throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
     velocity: 1.2
+  cooking:
+    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+  dropping:
+    velocity: 1.0
+    cooldown: 30
 effect:
   type: SMOKE_SCREEN
   activation-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
@@ -46,10 +60,21 @@ items:
     item-flags:
       - HIDE_ATTRIBUTES
       - HIDE_UNBREAKABLE
+    data:
+      weapon-type:
+        key: weapon-type
+        type: STRING
+        value: EQUIPMENT
+      weapon-name:
+        key: weapon-name
+        type: STRING
+        value: Smoke Grenade
     unbreakable: true
   throw-item:
     material: SHEARS
-    display-name: '&f%name%'
+    damage: 7
+  drop-item:
+    material: SHEARS
     damage: 7
 projectile-effects:
   bounce:

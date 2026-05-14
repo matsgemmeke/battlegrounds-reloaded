@@ -2,14 +2,17 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.inventory.ItemStack;
@@ -20,15 +23,23 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
-    private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
+    private final Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
-    public EntityPickupItemEventHandler(GameContextProvider gameContextProvider, GameScope gameScope, Provider<ActionExecutorRegistry> actionExecutorRegistryProvider) {
+    public EntityPickupItemEventHandler(
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
+    ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
+        this.itemInteractionDispatcherProvider = itemInteractionDispatcherProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
+    @Override
     public void handle(EntityPickupItemEvent event) {
         if (!(event.getEntity() instanceof Player player)) {
             return;
@@ -49,15 +60,22 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
     }
 
     private void performAction(EntityPickupItemEvent event, Player player, ItemStack itemStack) {
-        ActionExecutorRegistry actionExecutorRegistry = actionExecutorRegistryProvider.get();
-        ActionExecutor actionExecutor = actionExecutorRegistry.getActionExecutor(itemStack).orElse(null);
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(player.getUniqueId()).orElse(null);
 
-        if (actionExecutor == null) {
+        if (gamePlayer == null) {
             return;
         }
 
-        boolean performAction = actionExecutor.handlePickupItemAction(player, itemStack);
+        ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
+        PickupDispatchResult result = dispatcher.dispatchPickupItem(gamePlayer, itemStack);
 
-        event.setCancelled(event.isCancelled() || !performAction);
+        if (result.removeItem()) {
+            player.playSound(player, Sound.ENTITY_ITEM_PICKUP, 1, 1.5f);
+
+            event.getItem().remove();
+        }
+
+        event.setCancelled(event.isCancelled() || result.cancelEvent());
     }
 }

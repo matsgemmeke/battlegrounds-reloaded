@@ -4,8 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -17,10 +16,8 @@ import nl.matsgemmeke.battlegrounds.item.throwing.ThrowHandlerFactory;
 
 public class MeleeWeaponFactory {
 
-    private static final String ACTION_EXECUTOR_ID_VALUE = "melee-weapon";
-
     private final ItemTemplateFactory itemTemplateFactory;
-    private final MeleeWeaponControlsFactory controlsFactory;
+    private final MeleeWeaponControllerFactory controllerFactory;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ThrowHandlerFactory throwHandlerFactory;
@@ -28,13 +25,13 @@ public class MeleeWeaponFactory {
     @Inject
     public MeleeWeaponFactory(
             ItemTemplateFactory itemTemplateFactory,
-            MeleeWeaponControlsFactory controlsFactory,
+            MeleeWeaponControllerFactory controllerFactory,
             MeleeWeaponRegistry meleeWeaponRegistry,
             ReloadSystemFactory reloadSystemFactory,
             ThrowHandlerFactory throwHandlerFactory
     ) {
         this.itemTemplateFactory = itemTemplateFactory;
-        this.controlsFactory = controlsFactory;
+        this.controllerFactory = controllerFactory;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
         this.reloadSystemFactory = reloadSystemFactory;
         this.throwHandlerFactory = throwHandlerFactory;
@@ -48,22 +45,13 @@ public class MeleeWeaponFactory {
         return meleeWeapon;
     }
 
-    public MeleeWeapon create(MeleeWeaponSpec spec, MeleeWeaponHolder holder) {
-        MeleeWeapon meleeWeapon = this.createInstance(spec);
-        meleeWeapon.setHolder(holder);
-
-        meleeWeaponRegistry.register(meleeWeapon, holder);
-
-        return meleeWeapon;
-    }
-
     private MeleeWeapon createInstance(MeleeWeaponSpec spec) {
         DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon();
         meleeWeapon.setName(spec.name);
         meleeWeapon.setDescription(spec.description);
         meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
 
-        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem, ACTION_EXECUTOR_ID_VALUE);
+        ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.item);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
 
         ItemRepresentation itemRepresentation = new ItemRepresentation(displayItemTemplate);
@@ -77,16 +65,6 @@ public class MeleeWeaponFactory {
         ResourceContainer resourceContainer = new ResourceContainer(maxLoadedAmount, loadedAmount, defaultReserveAmount, maxReserveAmount);
         meleeWeapon.setResourceContainer(resourceContainer);
 
-        ItemControls<MeleeWeaponHolder> controls;
-
-        if (spec.controls != null) {
-            controls = controlsFactory.create(spec.controls, meleeWeapon);
-        } else {
-            controls = new ItemControls<>();
-        }
-
-        meleeWeapon.setControls(controls);
-
         if (spec.reloading != null) {
             ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
             meleeWeapon.setReloadSystem(reloadSystem);
@@ -97,7 +75,12 @@ public class MeleeWeaponFactory {
             meleeWeapon.configureThrowHandler(throwHandler);
         }
 
+        if (spec.controls != null) {
+            controllerFactory.create(spec.controls, meleeWeapon);
+        }
+
         meleeWeapon.update();
+
         return meleeWeapon;
     }
 }

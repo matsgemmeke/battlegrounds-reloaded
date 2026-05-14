@@ -4,8 +4,14 @@ description: Fully automatic with high rate of fire. Effective at medium range.
 level-unlocked: 5
 price: 2250
 controls:
-  shoot: RIGHT_CLICK
-  reload: LEFT_CLICK
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
 ammo:
   magazine-size: 30
   default-magazine-amount: 3
@@ -17,6 +23,15 @@ item:
   item-flags:
     - HIDE_ATTRIBUTES
     - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: GUN
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: FAMAS
   unbreakable: true
 reloading:
   type: MAGAZINE

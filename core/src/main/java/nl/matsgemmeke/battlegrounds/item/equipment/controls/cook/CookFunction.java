@@ -1,45 +1,39 @@
 package nl.matsgemmeke.battlegrounds.item.equipment.controls.cook;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
-import nl.matsgemmeke.battlegrounds.item.deploy.prime.PrimeDeployment;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.PrimeDeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
-import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 
-public class CookFunction implements ItemFunction<EquipmentHolder> {
+public class CookFunction implements Function<EquipmentUser> {
 
-    @NotNull
     private final Equipment equipment;
-    @NotNull
-    private final PrimeDeployment deployment;
+    private final PrimeDeploymentAction deploymentAction;
 
-    public CookFunction(@NotNull Equipment equipment, @NotNull PrimeDeployment deployment) {
+    public CookFunction(Equipment equipment, PrimeDeploymentAction deploymentAction) {
         this.equipment = equipment;
-        this.deployment = deployment;
+        this.deploymentAction = deploymentAction;
     }
 
-    public boolean isAvailable() {
-        return !equipment.isAwaitingDeployment();
-    }
-
-    public boolean isBlocking() {
-        return false;
-    }
-
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return false;
     }
 
-    public boolean perform(@NotNull EquipmentHolder holder) {
-        if (!holder.canDeploy()) {
-            return false;
+    @Override
+    public FunctionResult perform(EquipmentUser user) {
+        if (equipment.isAwaitingDeployment() || !user.canDeploy()) {
+            return FunctionResult.FAILED;
         }
 
-        equipment.performDeployment(deployment, holder);
-        return true;
+        equipment.performDeploymentAction(deploymentAction, user);
+
+        return FunctionResult.SUCCESS;
     }
 }

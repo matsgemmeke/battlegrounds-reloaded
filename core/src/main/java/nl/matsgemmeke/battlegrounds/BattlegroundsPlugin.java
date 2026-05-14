@@ -40,9 +40,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         try {
             this.startPlugin();
-        } catch (StartupFailedException e) {
-            logger.severe("An error occurred while enabling Battlegrounds v" + this.getDescription().getVersion());
-            logger.severe(e.getMessage());
+        } catch (StartupFailedException ex) {
+            logger.severe("An error occurred while enabling Battlegrounds v%s: %s".formatted(this.getDescription().getVersion(), ex.getMessage()));
             pluginManager.disablePlugin(this);
             return;
         }

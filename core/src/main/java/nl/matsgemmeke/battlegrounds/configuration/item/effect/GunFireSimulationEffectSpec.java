@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class GunFireSimulationEffectSpec extends ItemEffectSpec {
 

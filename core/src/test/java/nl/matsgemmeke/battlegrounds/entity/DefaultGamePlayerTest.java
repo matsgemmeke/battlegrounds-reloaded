@@ -42,6 +42,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class DefaultGamePlayerTest {
 
+    private static final int ITEM_SLOT = 5;
+    private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
+
     @Mock
     private InternalsProvider internals;
     @Mock
@@ -52,23 +55,25 @@ class DefaultGamePlayerTest {
     private DefaultGamePlayer gamePlayer;
 
     @Test
-    void getLastDamageReturnsNullIfPlayerHasNotTakenDamageYet() {
-        Damage lastDamage = gamePlayer.getLastDamage();
+    @DisplayName("getLastDamage returns empty optional when player has not taken damage yet")
+    void getLastDamage_noDamageYet() {
+        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
 
-        assertThat(lastDamage).isNull();
+        assertThat(lastDamageOptional).isEmpty();
     }
 
     @Test
-    void getLastDamageReturnsLastDamageDealtToPlayer() {
+    @DisplayName("getLastDamage returns optional with last damage dealt to player")
+    void getLastDamage_returnsLastDamage() {
         Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
 
         when(player.getHealth()).thenReturn(20.0);
         when(player.isDead()).thenReturn(false);
 
         gamePlayer.damage(damage);
-        Damage lastDamage = gamePlayer.getLastDamage();
+        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
 
-        assertThat(lastDamage).isEqualTo(damage);
+        assertThat(lastDamageOptional).hasValue(damage);
     }
 
     @Test
@@ -231,6 +236,18 @@ class DefaultGamePlayerTest {
     }
 
     @Test
+    @DisplayName("addItem adds given item stack to player's inventory")
+    void addItem_addsItemToInventory() {
+        PlayerInventory inventory = mock(PlayerInventory.class);
+
+        when(player.getInventory()).thenReturn(inventory);
+
+        gamePlayer.addItem(ITEM_STACK);
+
+        verify(inventory).addItem(ITEM_STACK);
+    }
+
+    @Test
     void getHeldItemReturnsItemInMainHand() {
         ItemStack itemStack = new ItemStack(Material.STONE);
 
@@ -305,6 +322,34 @@ class DefaultGamePlayerTest {
         Optional<Integer> itemSlot = gamePlayer.getItemSlot(item);
 
         assertThat(itemSlot).isEmpty();
+    }
+
+    @Test
+    @DisplayName("hasItem returns whether player has any item stack that matches with given item")
+    void hasItem_returnsWhetherItemMatchesWithAnyItemStack() {
+        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack[] contents = new ItemStack[] { null, itemStack, null };
+
+        Matchable item = mock(Matchable.class);
+        when(item.isMatching(itemStack)).thenReturn(true);
+
+        when(player.getInventory().getContents()).thenReturn(contents);
+
+        boolean hasItem = gamePlayer.hasItem(item);
+
+        assertThat(hasItem).isTrue();
+    }
+
+    @Test
+    @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
+    void setItem_setsItemInPlayerInventory() {
+        PlayerInventory playerInventory = mock(PlayerInventory.class);
+
+        when(player.getInventory()).thenReturn(playerInventory);
+
+        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
+
+        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
     }
 
     @Test

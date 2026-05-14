@@ -2,8 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.RecoilSpec;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.configuration.item.recoil.RecoilSpec;
 
 import java.util.Optional;
 import java.util.Timer;
@@ -13,11 +12,10 @@ import java.util.Timer;
  */
 public class RecoilFactory {
 
-    @NotNull
     private final BattlegroundsConfiguration config;
 
     @Inject
-    public RecoilFactory(@NotNull BattlegroundsConfiguration config) {
+    public RecoilFactory(BattlegroundsConfiguration config) {
         this.config = config;
     }
 
@@ -27,7 +25,7 @@ public class RecoilFactory {
      * @param spec the specification
      * @return a new recoil instance
      */
-    public Recoil create(@NotNull RecoilSpec spec) {
+    public Recoil create(RecoilSpec spec) {
         RecoilType recoilType = RecoilType.valueOf(spec.type);
 
         Float[] horizontalRecoilValues = spec.horizontal;

@@ -1,11 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.component.damage;
 
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
-import org.jetbrains.annotations.NotNull;
 
 public interface DamageProcessor {
 
@@ -38,12 +35,4 @@ public interface DamageProcessor {
      * @param damageContext the damage context
      */
     void processDamage(DamageContext damageContext);
-
-    /**
-     * Processes damage to be caused to a {@link DeploymentObject}.
-     *
-     * @param deploymentObject the deployment object to damage
-     * @param damage the damage to apply
-     */
-    void processDeploymentObjectDamage(@NotNull DeploymentObject deploymentObject, @NotNull Damage damage);
 }

@@ -1,76 +1,82 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import nl.matsgemmeke.battlegrounds.TaskRunner;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
+import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-public class RemoveSessionCommandTest {
+@ExtendWith(MockitoExtension.class)
+class RemoveSessionCommandTest {
 
+    private static final int SESSION_ID = 1;
+    private static final String MESSAGE = "hello";
+
+    @Mock
     private CommandSender sender;
-    private GameContextProvider contextProvider;
-    private TaskRunner taskRunner;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
+    private Schedule schedule;
+    @Mock
+    private Scheduler scheduler;
+    @Mock
     private Translator translator;
 
+    private RemoveSessionCommand command;
+
     @BeforeEach
-    public void setUp() {
-        this.sender = mock(CommandSender.class);
-        this.contextProvider = mock(GameContextProvider.class);
-        this.taskRunner = mock(TaskRunner.class);
-        this.translator = mock(Translator.class);
-
+    void setUp() {
+        when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
         when(translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath())).thenReturn(new TextTemplate("description"));
+
+        command = new RemoveSessionCommand(gameContextProvider, scheduler, translator);
     }
 
     @Test
-    public void executeAddsSenderToConfirmListUponFirstExecutingCommand() {
-        int gameId = 1;
-        String confirmMessage = "confirm removal";
+    @DisplayName("execute adds command sender to confirm list upon first executing the command")
+    void execute_firstExecution() {
+        when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(confirmMessage));
+        command.execute(sender, SESSION_ID);
 
-        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
-        command.execute(sender, gameId);
-
-        verify(sender).sendMessage(confirmMessage);
-        verify(taskRunner).runTaskLater(any(Runnable.class), anyLong());
+        verify(sender).sendMessage(MESSAGE);
+        verify(scheduler).createSingleRunSchedule(200L);
     }
 
     @Test
-    public void executeRemovesSession() {
-        int sessionId = 1;
-        String message = "hello";
-
-        when(contextProvider.removeSession(sessionId)).thenReturn(true);
+    @DisplayName("execute notifies command sender when failing to remove session")
+    void execute_sessionRemovalFailed() {
+        when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(false);
         when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.SESSION_REMOVED.getPath())).thenReturn(new TextTemplate(message));
+        when(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
-        command.execute(sender, sessionId);
-        command.execute(sender, sessionId);
+        command.execute(sender, SESSION_ID);
+        command.execute(sender, SESSION_ID);
 
-        verify(sender).sendMessage(message);
+        verify(sender).sendMessage(MESSAGE);
     }
 
     @Test
-    public void executeNotifiesSenderWhenFailingToCreateSession() {
-        int sessionId = 1;
-        String message = "hello";
-
-        when(contextProvider.removeSession(sessionId)).thenReturn(false);
+    @DisplayName("execute removes session and notifies command sender")
+    void execute_successfulSessionRemoval() {
+        when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(message));
+        when(translator.translate(TranslationKey.SESSION_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        RemoveSessionCommand command = new RemoveSessionCommand(contextProvider, taskRunner, translator);
-        command.execute(sender, sessionId);
-        command.execute(sender, sessionId);
+        command.execute(sender, SESSION_ID);
+        command.execute(sender, SESSION_ID);
 
-        verify(sender).sendMessage(message);
+        verify(sender).sendMessage(MESSAGE);
     }
 }

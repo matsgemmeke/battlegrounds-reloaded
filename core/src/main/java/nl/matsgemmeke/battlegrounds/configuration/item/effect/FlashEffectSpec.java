@@ -1,7 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
+import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.PotionEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class FlashEffectSpec extends ItemEffectSpec {
 
@@ -18,5 +19,6 @@ public class FlashEffectSpec extends ItemEffectSpec {
     public Boolean spreadFire;
 
     @Required
+    @Valid
     public PotionEffectSpec potionEffect;
 }

@@ -1,21 +1,25 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.type.ActionConfigurationValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import jakarta.validation.Valid;
+import nl.matsgemmeke.battlegrounds.configuration.item.controls.ControlSpec;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class ControlsSpec {
 
     @Required
-    @EnumValue(type = ActionConfigurationValue.class)
-    public String reload;
+    @Valid
+    public ControlSpec reload;
+
     @Required
-    @EnumValue(type = ActionConfigurationValue.class)
-    public String shoot;
-    @EnumValue(type = ActionConfigurationValue.class)
-    public String scopeUse;
-    @EnumValue(type = ActionConfigurationValue.class)
-    public String scopeStop;
-    @EnumValue(type = ActionConfigurationValue.class)
-    public String scopeChangeMagnification;
+    @Valid
+    public ControlSpec shoot;
+
+    @Valid
+    public ControlSpec scopeUse;
+
+    @Valid
+    public ControlSpec scopeStop;
+
+    @Valid
+    public ControlSpec scopeChangeMagnification;
 }

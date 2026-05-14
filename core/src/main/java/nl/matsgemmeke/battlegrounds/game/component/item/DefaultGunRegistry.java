@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,9 +13,7 @@ import java.util.concurrent.ConcurrentMap;
 
 public class DefaultGunRegistry implements GunRegistry {
 
-    @NotNull
-    private final ConcurrentMap<GunHolder, List<Gun>> assignedGuns;
-    @NotNull
+    private final ConcurrentMap<GunUser, List<Gun>> assignedGuns;
     private final List<Gun> unassignedGuns;
 
     public DefaultGunRegistry() {
@@ -24,32 +21,35 @@ public class DefaultGunRegistry implements GunRegistry {
         this.unassignedGuns = new ArrayList<>();
     }
 
-    public void assign(Gun gun, GunHolder holder) {
+    @Override
+    public void assign(Gun gun, GunUser user) {
         if (!unassignedGuns.contains(gun)) {
             return;
         }
 
         unassignedGuns.remove(gun);
-        assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
+        assignedGuns.computeIfAbsent(user, h -> new ArrayList<>()).add(gun);
     }
 
+    @Override
     public void unassign(Gun gun) {
-        GunHolder holder = gun.getHolder();
+        GunUser user = gun.getUser();
 
-        if (holder == null || !assignedGuns.containsKey(holder)) {
+        if (user == null || !assignedGuns.containsKey(user)) {
             return;
         }
 
-        assignedGuns.get(holder).remove(gun);
+        assignedGuns.get(user).remove(gun);
         unassignedGuns.add(gun);
     }
 
-    public Optional<Gun> getAssignedGun(GunHolder holder, ItemStack itemStack) {
-        if (!assignedGuns.containsKey(holder)) {
+    @Override
+    public Optional<Gun> getAssignedGun(GunUser user, ItemStack itemStack) {
+        if (!assignedGuns.containsKey(user)) {
             return Optional.empty();
         }
 
-        for (Gun gun : assignedGuns.get(holder)) {
+        for (Gun gun : assignedGuns.get(user)) {
             if (gun.isMatching(itemStack)) {
                 return Optional.of(gun);
             }
@@ -58,10 +58,12 @@ public class DefaultGunRegistry implements GunRegistry {
         return Optional.empty();
     }
 
-    public List<Gun> getAssignedGuns(GunHolder holder) {
-        return assignedGuns.getOrDefault(holder, Collections.emptyList());
+    @Override
+    public List<Gun> getAssignedGuns(GunUser user) {
+        return assignedGuns.getOrDefault(user, Collections.emptyList());
     }
 
+    @Override
     public Optional<Gun> getUnassignedGun(ItemStack itemStack) {
         for (Gun gun : unassignedGuns) {
             if (gun.isMatching(itemStack)) {
@@ -72,11 +74,13 @@ public class DefaultGunRegistry implements GunRegistry {
         return Optional.empty();
     }
 
+    @Override
     public void register(Gun gun) {
         unassignedGuns.add(gun);
     }
 
-    public void register(Gun gun, GunHolder holder) {
-        assignedGuns.computeIfAbsent(holder, h -> new ArrayList<>()).add(gun);
+    @Override
+    public void register(Gun gun, GunUser user) {
+        assignedGuns.computeIfAbsent(user, h -> new ArrayList<>()).add(gun);
     }
 }

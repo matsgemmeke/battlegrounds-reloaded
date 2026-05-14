@@ -2,47 +2,50 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.item.ActionExecutorRegistry;
-import nl.matsgemmeke.battlegrounds.item.ActionExecutor;
+import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
+import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
 public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEvent> {
 
-    @NotNull
     private final GameContextProvider gameContextProvider;
-    @NotNull
     private final GameScope gameScope;
-    @NotNull
-    private final Provider<ActionExecutorRegistry> actionExecutorRegistryProvider;
+    private final Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider;
+    private final Provider<PlayerRegistry> playerRegistryProvider;
 
     @Inject
     public PlayerInteractEventHandler(
-            @NotNull GameContextProvider gameContextProvider,
-            @NotNull GameScope gameScope,
-            @NotNull Provider<ActionExecutorRegistry> actionExecutorRegistryProvider
+            GameContextProvider gameContextProvider,
+            GameScope gameScope,
+            Provider<ItemInteractionDispatcher> itemInteractionDispatcherProvider,
+            Provider<PlayerRegistry> playerRegistryProvider
     ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.actionExecutorRegistryProvider = actionExecutorRegistryProvider;
+        this.itemInteractionDispatcherProvider = itemInteractionDispatcherProvider;
+        this.playerRegistryProvider = playerRegistryProvider;
     }
 
-    public void handle(@NotNull PlayerInteractEvent event) {
+    @Override
+    public void handle(PlayerInteractEvent event) {
         ItemStack itemStack = event.getItem();
+        Action action = event.getAction();
 
-        if (itemStack == null) {
+        if (itemStack == null || action == Action.PHYSICAL) {
             return;
         }
 
@@ -57,27 +60,27 @@ public class PlayerInteractEventHandler implements EventHandler<PlayerInteractEv
         GameContext gameContext = gameContextProvider.getGameContext(gameKey)
                 .orElseThrow(() -> new EventHandlingException("Unable to process PlayerInteractEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
-        gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack));
+        gameScope.runInScope(gameContext, () -> this.performAction(event, playerId, itemStack, action));
     }
 
-    private void performAction(PlayerInteractEvent event, Player player, ItemStack itemStack) {
-        ActionExecutorRegistry actionExecutorRegistry = actionExecutorRegistryProvider.get();
-        ActionExecutor actionExecutor = actionExecutorRegistry.getActionExecutor(itemStack).orElse(null);
+    private void performAction(PlayerInteractEvent event, UUID playerId, ItemStack itemStack, Action action) {
+        PlayerRegistry playerRegistry = playerRegistryProvider.get();
+        GamePlayer gamePlayer = playerRegistry.findByUniqueId(playerId).orElse(null);
 
-        if (actionExecutor == null) {
+        if (gamePlayer == null) {
             return;
         }
 
-        Action action = event.getAction();
-        boolean actionPerformed = true;
+        ItemInteractionDispatcher dispatcher = itemInteractionDispatcherProvider.get();
+        DispatchResult result;
 
         if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
-            actionPerformed = actionExecutor.handleLeftClickAction(player, itemStack);
-        } else if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
-            actionPerformed = actionExecutor.handleRightClickAction(player, itemStack);
+            result = dispatcher.dispatchLeftClick(gamePlayer, itemStack);
+        } else {
+            result = dispatcher.dispatchRightClick(gamePlayer, itemStack);
         }
 
-        if (!actionPerformed) {
+        if (result.cancelEvent()) {
             event.setUseItemInHand(Result.DENY);
         }
     }

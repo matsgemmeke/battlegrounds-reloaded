@@ -1,9 +1,11 @@
 package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -13,135 +15,140 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.Mockito.*;
 
-public class DefaultGunRegistryTest {
+class DefaultGunRegistryTest {
 
-    @Test
-    public void assignDoesNothingWhenGivenGunIsNotRegistered() {
-        GunHolder holder = mock(GunHolder.class);
+    private DefaultGunRegistry gunRegistry;
 
-        Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(holder);
-
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        gunRegistry.assign(gun, holder);
-
-        assertThat(gunRegistry.getAssignedGuns(holder)).isEmpty();
+    @BeforeEach
+    void setUp() {
+        gunRegistry = new DefaultGunRegistry();
     }
 
     @Test
-    public void assignAddsGivenGunToAssignedListOfGivenHolder() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("assign does nothing when given gun is not registered")
+    void assign_gunNotRegistered() {
+        GunUser user = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(holder);
+        when(gun.getUser()).thenReturn(user);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        gunRegistry.assign(gun, user);
+
+        assertThat(gunRegistry.getAssignedGuns(user)).isEmpty();
+    }
+
+    @Test
+    @DisplayName("assign adds given gun to assigned list of given user")
+    void assign_gunRegistered() {
+        GunUser user = mock(GunUser.class);
+
+        Gun gun = mock(Gun.class);
+        when(gun.getUser()).thenReturn(user);
+
         gunRegistry.register(gun);
-        gunRegistry.assign(gun, holder);
+        gunRegistry.assign(gun, user);
 
-        assertThat(gunRegistry.getAssignedGuns(holder)).containsExactly(gun);
+        assertThat(gunRegistry.getAssignedGuns(user)).containsExactly(gun);
     }
 
-
     @Test
-    public void unassignDoesNothingWhenGivenGunHasNoHolder() {
+    @DisplayName("unassign does nothing when given gun has no user")
+    void unassign_gunHasNoUser() {
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(null);
-
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
+        when(gun.getUser()).thenReturn(null);
 
         // Add better assertions once more methods are exposed
         assertThatCode(() -> gunRegistry.unassign(gun)).doesNotThrowAnyException();
     }
 
     @Test
-    public void unassignDoesNothingWhenGivenGunHolderIsNotRegistered() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("unassign does nothing when given user is not registered")
+    void unassign_gunUserNotRegistered() {
+        GunUser user = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(holder);
+        when(gun.getUser()).thenReturn(user);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
         gunRegistry.unassign(gun);
 
-        assertThat(gunRegistry.getAssignedGuns(holder)).isEmpty();
+        assertThat(gunRegistry.getAssignedGuns(user)).isEmpty();
     }
 
     @Test
-    public void unassignRemovesGivenGunFromGivenHolder() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("unassign removes given gun from given user")
+    void unassign_gunUserRegistered() {
+        GunUser user = mock(GunUser.class);
 
         Gun gun = mock(Gun.class);
-        when(gun.getHolder()).thenReturn(holder);
+        when(gun.getUser()).thenReturn(user);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        gunRegistry.register(gun, holder);
+        gunRegistry.register(gun, user);
         gunRegistry.unassign(gun);
 
-        assertThat(gunRegistry.getAssignedGuns(holder)).isEmpty();
+        assertThat(gunRegistry.getAssignedGuns(user)).isEmpty();
     }
 
     @Test
-    public void getAssignedGunReturnsEmptyOptionalWhenGivenHolderHasNoGunsRegistered() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("getAssignedGun returns empty optional when given user has no guns registered")
+    void getAssignedGun_userWithoutRegisteredGuns() {
+        GunUser user = mock(GunUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(user, itemStack);
 
         assertThat(gunOptional).isEmpty();
     }
 
     @Test
-    public void getAssignedGunReturnsEmptyOptionalWhenNoAssignedGunsOfGivenHolderMatch() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("getAssignedGun returns empty optional when no assigned guns of given user match")
+    void getAssignedGun_noMatchingGuns() {
+        GunUser user = mock(GunUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(false);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        gunRegistry.register(gun, holder);
-        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+        gunRegistry.register(gun, user);
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(user, itemStack);
 
         assertThat(gunOptional).isEmpty();
     }
 
     @Test
-    public void getAssignedGunReturnsOptionalWithMatchingGunAssignedToGivenHolder() {
-        GunHolder holder = mock(GunHolder.class);
+    @DisplayName("getAssignedGun returns optional with matching assigned to given user")
+    void getAssignedGun_returnsMatchingGun() {
+        GunUser user = mock(GunUser.class);
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        gunRegistry.register(gun, holder);
-        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(holder, itemStack);
+        gunRegistry.register(gun, user);
+        Optional<Gun> gunOptional = gunRegistry.getAssignedGun(user, itemStack);
 
         assertThat(gunOptional).hasValue(gun);
     }
 
     @Test
-    public void getAssignedGunsReturnsAssignedItemsForGivenHolder() {
+    @DisplayName("getAssignedGuns returns assigned guns to given user")
+    void getAssignedGuns_returnsAssignedGuns() {
         Gun gun = mock(Gun.class);
-        GunHolder holder = mock(GunHolder.class);
+        GunUser user = mock(GunUser.class);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
-        gunRegistry.register(gun, holder);
-        List<Gun> assignedItems = gunRegistry.getAssignedGuns(holder);
+        gunRegistry.register(gun, user);
+        List<Gun> assignedItems = gunRegistry.getAssignedGuns(user);
 
         assertThat(assignedItems).containsExactly(gun);
     }
 
     @Test
-    public void getUnassignedGunReturnsEmptyOptionalWhenNoUnassignedGunsMatch() {
+    @DisplayName("getUnassignedGuns returns empty optional when none of the unassigned guns match")
+    void getUnassignedGun_noMatches() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(false);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
         gunRegistry.register(gun);
         Optional<Gun> gunOptional = gunRegistry.getUnassignedGun(itemStack);
 
@@ -149,13 +156,13 @@ public class DefaultGunRegistryTest {
     }
 
     @Test
-    public void getUnassignedGunReturnsOptionalWithMatchingUnassignedGun() {
+    @DisplayName("getUnassignedGuns returns optional with matching unassigned gun")
+    void getUnassignedGun_returnsMatchingGun() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
 
-        DefaultGunRegistry gunRegistry = new DefaultGunRegistry();
         gunRegistry.register(gun);
         Optional<Gun> gunOptional = gunRegistry.getUnassignedGun(itemStack);
 

@@ -2,12 +2,15 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.BlockImpactTriggerSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow.ArrowProperties;
@@ -22,10 +25,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
-import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -45,7 +45,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectileLauncherFactoryTest {
 
-    private static final String TEMPLATE_ID_KEY = "template-id";
     private static final double VELOCITY = 2.0;
     private static final int PICKUP_DELAY = 100;
 
@@ -60,7 +59,7 @@ class ProjectileLauncherFactoryTest {
     @Mock
     private ItemLauncherFactory itemLauncherFactory;
     @Mock
-    private NamespacedKeyCreator namespacedKeyCreator;
+    private ItemTemplateFactory itemTemplateFactory;
     @Spy
     private ParticleEffectMapper particleEffectMapper;
     @Mock
@@ -173,14 +172,10 @@ class ProjectileLauncherFactoryTest {
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
         ItemLauncher itemLauncher = mock(ItemLauncher.class);
+        ItemTemplate itemTemplate = mock(ItemTemplate.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         TriggerSpec triggerSpec = this.createTriggerSpec();
         ItemSpec itemSpec = this.createItemSpec();
-
-        Plugin plugin = mock(Plugin.class);
-        when(plugin.getName()).thenReturn("Battlegrounds");
-
-        NamespacedKey templateKey = new NamespacedKey(plugin, TEMPLATE_ID_KEY);
 
         ItemProjectileSpec projectileSpec = new ItemProjectileSpec();
         projectileSpec.type = "ITEM";
@@ -192,7 +187,7 @@ class ProjectileLauncherFactoryTest {
 
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
         when(itemLauncherFactory.create(any(ItemLaunchProperties.class), eq(itemEffect))).thenReturn(itemLauncher);
-        when(namespacedKeyCreator.create(TEMPLATE_ID_KEY)).thenReturn(templateKey);
+        when(itemTemplateFactory.create(itemSpec)).thenReturn(itemTemplate);
         when(triggerExecutorFactory.create(projectileSpec.triggers.get("impact"))).thenReturn(triggerExecutor);
 
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
@@ -201,6 +196,7 @@ class ProjectileLauncherFactoryTest {
         verify(itemLauncherFactory).create(propertiesCaptor.capture(), eq(itemEffect));
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
             assertThat(properties.launchSounds()).isEmpty();
             assertThat(properties.velocity()).isEqualTo(VELOCITY);
         });
@@ -229,7 +225,7 @@ class ProjectileLauncherFactoryTest {
     }
 
     private TriggerSpec createTriggerSpec() {
-        TriggerSpec triggerSpec = new TriggerSpec();
+        BlockImpactTriggerSpec triggerSpec = new BlockImpactTriggerSpec();
         triggerSpec.type = "BLOCK_IMPACT";
         triggerSpec.delay = 5L;
         triggerSpec.interval = 1L;

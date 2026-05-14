@@ -1,100 +1,74 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.reload;
 
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class ReloadFunctionTest {
+@ExtendWith(MockitoExtension.class)
+class ReloadFunctionTest {
 
+    @Mock
     private Gun gun;
+    @Mock
+    private GunUser user;
+    @InjectMocks
+    private ReloadFunction function;
 
-    @BeforeEach
-    public void setUp() {
-        gun = mock(Gun.class);
-    }
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("isPerforming returns whether gun is reloading")
+    void isPerforming_returnsWhetherGunIsReloading(boolean reloading, boolean expectedPerforming) {
+        when(gun.isReloading()).thenReturn(reloading);
 
-    @Test
-    public void isAvailableReturnsFalseIfGunCannotPerformReload() {
-        when(gun.isReloadAvailable()).thenReturn(false);
-
-        ReloadFunction function = new ReloadFunction(gun);
-        boolean available = function.isAvailable();
-
-        assertFalse(available);
-    }
-
-    @Test
-    public void isAvailableReturnsTrueIfGunCanReload() {
-        when(gun.isReloadAvailable()).thenReturn(true);
-
-        ReloadFunction function = new ReloadFunction(gun);
-        boolean available = function.isAvailable();
-
-        assertTrue(available);
-    }
-
-    @Test
-    public void isPerformingReturnsTrueIfGunIsReloading() {
-        when(gun.isReloading()).thenReturn(true);
-
-        ReloadFunction function = new ReloadFunction(gun);
         boolean performing = function.isPerforming();
 
-        assertTrue(performing);
+        assertThat(performing).isEqualTo(expectedPerforming);
     }
 
     @Test
-    public void isPerformingReturnsFalseIfGunIsNotReloading() {
-        when(gun.isReloading()).thenReturn(false);
-
-        ReloadFunction function = new ReloadFunction(gun);
-        boolean performing = function.isPerforming();
-
-        assertFalse(performing);
-    }
-
-    @Test
-    public void cancelCancelsGunReloadOperation() {
+    @DisplayName("cancel cancels gun reload operation")
+    void cancel_cancelsReload() {
         when(gun.cancelReload()).thenReturn(true);
 
-        ReloadFunction function = new ReloadFunction(gun);
         boolean cancelled = function.cancel();
 
-        assertTrue(cancelled);
+        assertThat(cancelled).isTrue();
 
         verify(gun).cancelReload();
     }
 
     @Test
-    public void performReturnsFalseIfGunIsNotAvailable() {
+    @DisplayName("performs returns FAILED when gun reload is not available")
+    void perform_gunNotAvailable() {
         when(gun.isReloadAvailable()).thenReturn(false);
 
-        GunHolder holder = mock(GunHolder.class);
+        FunctionResult result = function.perform(user);
 
-        ReloadFunction function = new ReloadFunction(gun);
-        boolean performed = function.perform(holder);
+        assertThat(result).isEqualTo(FunctionResult.FAILED);
 
-        assertFalse(performed);
-
-        verify(gun, never()).reload(any(GunHolder.class));
+        verify(gun, never()).reload(any(GunUser.class));
     }
 
     @Test
-    public void performReturnsTrueAndPerformsReload() {
-        GunHolder holder = mock(GunHolder.class);
-
+    @DisplayName("performs returns SUCCESS and performs reload")
+    void perform_performsReload() {
         when(gun.isReloadAvailable()).thenReturn(true);
 
-        ReloadFunction function = new ReloadFunction(gun);
-        boolean performed = function.perform(holder);
+        FunctionResult result = function.perform(user);
 
-        assertTrue(performed);
+        assertThat(result).isEqualTo(FunctionResult.SUCCESS);
 
-        verify(gun).reload(holder);
+        verify(gun).reload(user);
     }
 }

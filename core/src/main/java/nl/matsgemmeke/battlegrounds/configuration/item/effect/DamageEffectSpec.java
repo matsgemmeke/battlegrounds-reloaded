@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
+import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.HitboxMultiplierSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.RangeProfileSpec;
-import nl.matsgemmeke.battlegrounds.configuration.validation.EnumValue;
-import nl.matsgemmeke.battlegrounds.configuration.validation.Required;
+import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class DamageEffectSpec extends ItemEffectSpec {
 
@@ -12,9 +13,11 @@ public class DamageEffectSpec extends ItemEffectSpec {
     public String damageType;
 
     @Required
+    @Valid
     public RangeProfileSpec range;
 
     @Required
+    @Valid
     public HitboxMultiplierSpec hitboxMultipliers;
 
     private enum DamageType {

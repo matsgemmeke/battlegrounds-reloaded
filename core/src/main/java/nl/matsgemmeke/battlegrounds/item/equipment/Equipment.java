@@ -1,18 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.item.Cleanable;
-import nl.matsgemmeke.battlegrounds.item.Interactable;
-import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.Resettable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeployableItem;
-import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentObject;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
-import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactable<EquipmentHolder> {
+public interface Equipment extends Weapon, Resettable {
 
     /**
      * Gets the activator item used to activate the equipment. Returns null if the equipment does not utilize an
@@ -31,65 +25,27 @@ public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactab
     void setActivator(@Nullable Activator activator);
 
     /**
-     * Gets the holder of the equipmemt item. Returns null if the equipment does not have a holder.
+     * Gets the user of the equipmemt item. Returns null if the equipment does not have a user.
      *
-     * @return the equipment holder or null if it does not have one
+     * @return the equipment user or null if it does not have one
      */
     @Nullable
-    EquipmentHolder getHolder();
+    EquipmentUser getUser();
 
     /**
-     * Sets the holder of the equipment item.
+     * Sets the user of the equipment item.
      *
-     * @param holder the equipment holder
+     * @param user the equipment user
      */
-    void setHolder(@Nullable EquipmentHolder holder);
-
-    /**
-     * Gets the projectile properties associated with this equipment item. Returns null if no properties are set.
-     *
-     * @return the projectile properties of the equipment item or null if not set
-     */
-    @Nullable
-    ProjectileProperties getProjectileProperties();
-
-    /**
-     * Sets the projectile properties associated with this equipment item.
-     *
-     * @param projectileProperties the projectile properties of the equipment item
-     */
-    void setProjectileProperties(@Nullable ProjectileProperties projectileProperties);
-
-    /**
-     * Gets the item template to be used for throwing the equipment. Returns null if no template is set for throwing.
-     *
-     * @return the item template for throwing the equipment or null if not set
-     */
-    @Nullable
-    ItemTemplate getThrowItemTemplate();
-
-    /**
-     * Sets the item template to be used for throwing the equipment.
-     *
-     * @param itemTemplate the item template for throwing the equipment
-     */
-    void setThrowItemTemplate(@Nullable ItemTemplate itemTemplate);
+    void setUser(@Nullable EquipmentUser user);
 
     /**
      * Immediately activates the deployment object in the current deployment process. This method does not have any
      * effects if no deployments have taken place before invoking.
      *
-     * @param holder the holder that activates the deployment
+     * @param user the user that activates the deployment
      */
-    void activateDeployment(EquipmentHolder holder);
-
-    /**
-     * Retrieves the deployment object associated with the equipment item if it has been deployed.
-     *
-     * @return the deployment object if deployed, or {@code null} if not deployed
-     */
-    @Nullable
-    DeploymentObject getDeploymentObject();
+    void activateDeployment(EquipmentUser user);
 
     /**
      * Gets whether the equipment's activator is ready for use. Returns {@code true} if the equipment has an activator
@@ -104,10 +60,10 @@ public interface Equipment extends Weapon, Cleanable, DeployableItem, Interactab
     boolean isDeployed();
 
     /**
-     * Performs a deployment on the equipment item.
+     * Performs a deployment action on the equipment item.
      *
-     * @param deployment the deployment instance
-     * @param holder the holder that performs the deployment
+     * @param deploymentAction the deployment action
+     * @param user             the user that performs the deployment action
      */
-    void performDeployment(@NotNull Deployment deployment, @NotNull EquipmentHolder holder);
+    void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user);
 }

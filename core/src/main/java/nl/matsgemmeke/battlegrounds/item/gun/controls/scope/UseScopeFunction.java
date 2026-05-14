@@ -1,41 +1,36 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls.scope;
 
-import nl.matsgemmeke.battlegrounds.item.controls.ItemFunction;
+import nl.matsgemmeke.battlegrounds.item.controls.Function;
+import nl.matsgemmeke.battlegrounds.item.controls.FunctionResult;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
-import nl.matsgemmeke.battlegrounds.item.gun.GunHolder;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 
-public class UseScopeFunction implements ItemFunction<GunHolder> {
+public class UseScopeFunction implements Function<GunUser> {
 
-    @NotNull
     private final Gun gun;
 
-    public UseScopeFunction(@NotNull Gun gun) {
+    public UseScopeFunction(Gun gun) {
         this.gun = gun;
     }
 
-    public boolean isAvailable() {
-        return !gun.isUsingScope();
-    }
-
-    public boolean isBlocking() {
-        return false;
-    }
-
+    @Override
     public boolean isPerforming() {
         return false;
     }
 
+    @Override
     public boolean cancel() {
         return gun.cancelScope();
     }
 
-    public boolean perform(@NotNull GunHolder holder) {
-        if (!this.isAvailable()) {
-            return false;
+    @Override
+    public FunctionResult perform(GunUser user) {
+        if (gun.isUsingScope()) {
+            return FunctionResult.FAILED;
         }
 
-        gun.applyScope(holder);
-        return true;
+        gun.applyScope(user);
+
+        return FunctionResult.SUCCESS;
     }
 }

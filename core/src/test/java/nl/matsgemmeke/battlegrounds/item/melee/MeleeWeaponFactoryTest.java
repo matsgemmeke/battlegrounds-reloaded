@@ -1,13 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.melee;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.melee.ControlsSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
-import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControlsFactory;
+import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -37,7 +34,7 @@ class MeleeWeaponFactoryTest {
     @Mock
     private ItemTemplateFactory itemTemplateFactory;
     @Mock
-    private MeleeWeaponControlsFactory controlsFactory;
+    private MeleeWeaponControllerFactory controllerFactory;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
@@ -48,21 +45,21 @@ class MeleeWeaponFactoryTest {
     private MeleeWeaponFactory meleeWeaponFactory;
 
     @Test
-    @DisplayName("create returns MeleeWeapon without assigned holder")
-    void create_withoutHolder() {
+    @DisplayName("create returns MeleeWeapon without assigned user")
+    void create_withoutUser() {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(ITEM_STACK);
 
-        when(itemTemplateFactory.create(spec.items.displayItem, "melee-weapon")).thenReturn(itemTemplate);
+        when(itemTemplateFactory.create(spec.item)).thenReturn(itemTemplate);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
         assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
             assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
             assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
-            assertThat(meleeWeapon.getHolder()).isEmpty();
+            assertThat(meleeWeapon.getUser()).isEmpty();
             assertThat(meleeWeapon.getItemStack()).isEqualTo(ITEM_STACK);
             assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
             assertThat(meleeWeapon.getReloadSystem()).isNull();
@@ -80,26 +77,19 @@ class MeleeWeaponFactoryTest {
     @Test
     @DisplayName("create returns MeleeWeapon with controls")
     void create_withControls() {
-        ItemControls<MeleeWeaponHolder> controls = new ItemControls<>();
-
-        ControlsSpec controlsSpec = new ControlsSpec();
-        controlsSpec.throwing = "RIGHT_CLICK";
-
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
-        spec.controls = controlsSpec;
-
-        when(controlsFactory.create(eq(controlsSpec), any(MeleeWeapon.class))).thenReturn(controls);
+        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("ballistic_knife");
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
         assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
-            assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
-            assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
-            assertThat(meleeWeapon.getHolder()).isEmpty();
-            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
+            assertThat(meleeWeapon.getName()).isEqualTo("Ballistic Knife");
+            assertThat(meleeWeapon.getDescription()).isEqualTo("Spring-action knife launcher. Can fire the blade as a projectile.");
+            assertThat(meleeWeapon.getUser()).isEmpty();
+            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(60.0);
             assertThat(meleeWeapon.getReloadSystem()).isNull();
         });
 
+        verify(controllerFactory).create(eq(spec.controls), any(MeleeWeapon.class));
         verify(meleeWeaponRegistry).register(result);
     }
 
@@ -118,7 +108,7 @@ class MeleeWeaponFactoryTest {
         assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
             assertThat(meleeWeapon.getName()).isEqualTo("Ballistic Knife");
             assertThat(meleeWeapon.getDescription()).isEqualTo("Spring-action knife launcher. Can fire the blade as a projectile.");
-            assertThat(meleeWeapon.getHolder()).isEmpty();
+            assertThat(meleeWeapon.getUser()).isEmpty();
             assertThat(meleeWeapon.getAttackDamage()).isEqualTo(60.0);
             assertThat(meleeWeapon.getReloadSystem()).isEqualTo(reloadSystem);
         });
@@ -139,31 +129,12 @@ class MeleeWeaponFactoryTest {
         assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
             assertThat(meleeWeapon.getName()).isEqualTo("Tomahawk");
             assertThat(meleeWeapon.getDescription()).isEqualTo("Retrievable throwing hatchet that causes instant death on impact.");
-            assertThat(meleeWeapon.getHolder()).isEmpty();
+            assertThat(meleeWeapon.getUser()).isEmpty();
             assertThat(meleeWeapon.getAttackDamage()).isEqualTo(50.0);
             assertThat(meleeWeapon.getReloadSystem()).isNull();
         });
 
         verify(meleeWeaponRegistry).register(result);
-    }
-
-    @Test
-    @DisplayName("create return MeleeWeapon with assigned holder")
-    void create_withHolder() {
-        MeleeWeaponSpec spec = this.createMeleeWeaponSpec("combat_knife");
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-
-        MeleeWeapon result = meleeWeaponFactory.create(spec, gamePlayer);
-
-        assertThat(result).isInstanceOfSatisfying(DefaultMeleeWeapon.class, meleeWeapon -> {
-            assertThat(meleeWeapon.getName()).isEqualTo("Combat Knife");
-            assertThat(meleeWeapon.getDescription()).isEqualTo("Standard issue military knife. Fast, quiet and deadly.");
-            assertThat(meleeWeapon.getHolder()).hasValue(gamePlayer);
-            assertThat(meleeWeapon.getAttackDamage()).isEqualTo(75.0);
-            assertThat(meleeWeapon.getReloadSystem()).isNull();
-        });
-
-        verify(meleeWeaponRegistry).register(result, gamePlayer);
     }
 
     private MeleeWeaponSpec createMeleeWeaponSpec(String fileName) {

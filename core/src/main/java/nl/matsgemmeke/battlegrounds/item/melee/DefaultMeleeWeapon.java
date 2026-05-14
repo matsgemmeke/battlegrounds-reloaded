@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.Action;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemControls;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -20,21 +18,16 @@ import java.util.Optional;
 public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     private double attackDamage;
-    private ItemControls<MeleeWeaponHolder> controls;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
     private ItemTemplate throwItemTemplate;
     @Nullable
-    private MeleeWeaponHolder holder;
+    private MeleeWeaponUser user;
     private ReloadSystem reloadSystem;
     private ResourceContainer resourceContainer;
     @Nullable
     private ThrowHandler throwHandler;
-
-    public DefaultMeleeWeapon() {
-        this.controls = new ItemControls<>();
-    }
 
     @Override
     public double getAttackDamage() {
@@ -45,30 +38,12 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         this.attackDamage = attackDamage;
     }
 
-    public ItemControls<MeleeWeaponHolder> getControls() {
-        return controls;
-    }
-
-    public void setControls(ItemControls<MeleeWeaponHolder> controls) {
-        this.controls = controls;
-    }
-
     public Optional<ItemTemplate> getDisplayItemTemplate() {
         return Optional.ofNullable(displayItemTemplate);
     }
 
     public void setDisplayItemTemplate(@Nullable ItemTemplate displayItemTemplate) {
         this.displayItemTemplate = displayItemTemplate;
-    }
-
-    @Override
-    public Optional<MeleeWeaponHolder> getHolder() {
-        return Optional.ofNullable(holder);
-    }
-
-    @Override
-    public void setHolder(@Nullable MeleeWeaponHolder holder) {
-        this.holder = holder;
     }
 
     public ReloadSystem getReloadSystem() {
@@ -89,8 +64,23 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         this.resourceContainer = resourceContainer;
     }
 
+    @Override
+    public Optional<MeleeWeaponUser> getUser() {
+        return Optional.ofNullable(user);
+    }
+
     public void configureThrowHandler(ThrowHandler throwHandler) {
         this.throwHandler = throwHandler;
+    }
+
+    @Override
+    public void assign(MeleeWeaponUser user) {
+        this.user = user;
+    }
+
+    @Override
+    public void unassign() {
+        user = null;
     }
 
     @Override
@@ -99,59 +89,8 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     }
 
     @Override
-    public void onChangeFrom() {
-        this.performControlAction(Action.CHANGE_FROM);
-    }
-
-    @Override
-    public void onChangeTo() {
-        this.performControlAction(Action.CHANGE_TO);
-    }
-
-    @Override
-    public void onDrop() {
-        if (holder == null) {
-            return;
-        }
-
-        controls.cancelAllFunctions();
-        controls.performAction(Action.DROP_ITEM, holder);
-        holder = null;
-    }
-
-    @Override
-    public void onLeftClick() {
-        this.performControlAction(Action.LEFT_CLICK);
-    }
-
-    @Override
-    public void onPickUp(@NotNull MeleeWeaponHolder holder) {
-        this.holder = holder;
-
-        controls.performAction(Action.PICKUP_ITEM, holder);
-    }
-
-    @Override
-    public void onRightClick() {
-        this.performControlAction(Action.RIGHT_CLICK);
-    }
-
-    @Override
-    public void onSwapFrom() {
-        this.performControlAction(Action.SWAP_FROM);
-    }
-
-    @Override
-    public void onSwapTo() {
-        this.performControlAction(Action.SWAP_TO);
-    }
-
-    private void performControlAction(Action action) {
-        if (holder == null) {
-            return;
-        }
-
-        controls.performAction(action, holder);
+    public boolean isSelfContained() {
+        return resourceContainer.getMaxReserveAmount() == 0;
     }
 
     @Override
@@ -186,6 +125,11 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
         }
 
         throwHandler.performThrow(performer);
+
+        if (resourceContainer.getLoadedAmount() + resourceContainer.getReserveAmount() <= 0) {
+            // The melee weapon is out of resources, so we unassign the user
+            user = null;
+        }
     }
 
     @Override

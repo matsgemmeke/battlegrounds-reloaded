@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.projectile.ProjectileEffectSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.*;
+import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -16,33 +15,25 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class ProjectileEffectFactory {
 
-    @NotNull
     private final ParticleEffectMapper particleEffectMapper;
-    @NotNull
     private final SoundEffectFactory soundEffectFactory;
-    @NotNull
     private final StickEffectFactory stickEffectFactory;
-    @NotNull
     private final TrailEffectFactory trailEffectFactory;
-    @NotNull
     private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
     public ProjectileEffectFactory(
-            @NotNull ParticleEffectMapper particleEffectMapper,
-            @NotNull SoundEffectFactory soundEffectFactory,
-            @NotNull StickEffectFactory stickEffectFactory,
-            @NotNull TrailEffectFactory trailEffectFactory,
-            @NotNull TriggerExecutorFactory triggerExecutorFactory
+            ParticleEffectMapper particleEffectMapper,
+            SoundEffectFactory soundEffectFactory,
+            StickEffectFactory stickEffectFactory,
+            TrailEffectFactory trailEffectFactory,
+            TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
@@ -51,78 +42,51 @@ public class ProjectileEffectFactory {
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
-    public ProjectileEffect create(ProjectileEffectSpec spec) {
-        ProjectileEffectType type = ProjectileEffectType.valueOf(spec.type);
+    public ProjectileEffect create(ProjectileEffectSpec projectileEffectSpec) {
+        ProjectileEffectType type = ProjectileEffectType.valueOf(projectileEffectSpec.type);
 
-        switch (type) {
+        return switch (type) {
             case BOUNCE -> {
-                int amountOfBounces = this.validateSpecVar(spec.maxActivations, "maxActivations", type);
-                double horizontalFriction = this.validateSpecVar(spec.horizontalFriction, "horizontalFriction", type);
-                double verticalFriction = this.validateSpecVar(spec.verticalFriction, "verticalFriction", type);
-                Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
-
-                BounceProperties properties = new BounceProperties(amountOfBounces, horizontalFriction, verticalFriction);
+                BounceEffectSpec spec = (BounceEffectSpec) projectileEffectSpec;
+                BounceProperties properties = new BounceProperties(spec.maxActivations, spec.horizontalFriction, spec.verticalFriction);
 
                 BounceEffect bounceEffect = new BounceEffect(properties);
-                this.addTriggers(bounceEffect, triggerSpecs.values());
+                this.addTriggers(bounceEffect, spec.triggers.values());
 
-                return bounceEffect;
+                yield bounceEffect;
             }
             case SOUND -> {
+                SoundEffectSpec spec = (SoundEffectSpec) projectileEffectSpec;
                 List<GameSound> sounds = DefaultGameSound.parseSounds(spec.sounds);
-                Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
 
                 ProjectileEffect soundEffect = soundEffectFactory.create(sounds);
-                this.addTriggers(soundEffect, triggerSpecs.values());
+                this.addTriggers(soundEffect, spec.triggers.values());
 
-                return soundEffect;
-
+                yield soundEffect;
             }
             case STICK -> {
+                StickEffectSpec spec = (StickEffectSpec) projectileEffectSpec;
                 List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds);
-                Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
 
                 ProjectileEffect stickEffect = stickEffectFactory.create(stickSounds);
-                this.addTriggers(stickEffect, triggerSpecs.values());
+                this.addTriggers(stickEffect, spec.triggers.values());
 
-                return stickEffect;
+                yield stickEffect;
             }
             case TRAIL -> {
-                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", type);
-                Integer maxActivations = this.validateSpecVar(spec.maxActivations, "maxActivations", type);
-                Map<String, TriggerSpec> triggerSpecs = this.validateSpecVar(spec.triggers, "triggers", type);
-
-                ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
-                TrailProperties properties = new TrailProperties(particleEffect, maxActivations);
+                TrailEffectSpec spec = (TrailEffectSpec) projectileEffectSpec;
+                ParticleEffect particleEffect = particleEffectMapper.map(spec.particleEffect);
+                TrailProperties properties = new TrailProperties(particleEffect, spec.maxActivations);
 
                 ProjectileEffect trailEffect = trailEffectFactory.create(properties);
-                this.addTriggers(trailEffect, triggerSpecs.values());
+                this.addTriggers(trailEffect, spec.triggers.values());
 
-                return trailEffect;
+                yield trailEffect;
             }
-            default -> throw new ProjectileEffectCreationException("Unknown projectile effect type '%s'".formatted(spec.type));
-        }
+        };
     }
 
-    /**
-     * Acts as a double check to validate the presence of nullable specification variables.
-     *
-     * @param value                the specification value
-     * @param valueName            the name of the value, to create error messages
-     * @param projectileEffectType the name of the projectile effect type, to create error messages
-     * @return the given value
-     * @throws ProjectileEffectCreationException if the value is null
-     * @param <T> the value type
-     */
-    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object projectileEffectType) {
-        if (value == null) {
-            throw new ProjectileEffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(projectileEffectType, valueName));
-        }
-
-        return value;
-    }
-
-    private void addTriggers(@NotNull ProjectileEffect projectileEffect, @NotNull Collection<TriggerSpec> triggerSpecs) {
+    private void addTriggers(ProjectileEffect projectileEffect, Collection<TriggerSpec> triggerSpecs) {
         for (TriggerSpec triggerSpec : triggerSpecs) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);
 

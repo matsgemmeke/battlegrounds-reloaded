@@ -1,0 +1,30 @@
+package nl.matsgemmeke.battlegrounds.item.deploy.object;
+
+import org.bukkit.entity.Entity;
+
+/**
+ * Represents an object that is produced as a result of a deployment action.
+ */
+public interface DeploymentObject {
+
+    /**
+     * Returns whether the deployment object has a physical embodiment.
+     *
+     * @return whether the deployment object is physical
+     */
+    boolean isPhysical();
+
+    /**
+     * Gets whether the object matches with a given entity. Returns {@code true} if the object encapsulates the given
+     * entity, otherwise {@code false}.
+     *
+     * @param entity the entity
+     * @return whether the object matches with the entity
+     */
+    boolean matchesEntity(Entity entity);
+
+    /**
+     * Removes the deployment object.
+     */
+    void remove();
+}

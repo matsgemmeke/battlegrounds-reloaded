@@ -75,9 +75,9 @@ public class DefaultGamePlayer implements GamePlayer {
         player.setHealth(health);
     }
 
-    @Nullable
-    public Damage getLastDamage() {
-        return lastDamage;
+    @Override
+    public Optional<Damage> getLastDamage() {
+        return Optional.ofNullable(lastDamage);
     }
 
     @NotNull
@@ -195,6 +195,11 @@ public class DefaultGamePlayer implements GamePlayer {
         return player.getEyeLocation();
     }
 
+    @Override
+    public void addItem(ItemStack itemStack) {
+        player.getInventory().addItem(itemStack);
+    }
+
     @NotNull
     public ItemStack getHeldItem() {
         return player.getInventory().getItemInMainHand();
@@ -204,13 +209,7 @@ public class DefaultGamePlayer implements GamePlayer {
         player.getInventory().setItemInMainHand(itemStack);
     }
 
-    @Override
-    public Hitbox getHitbox() {
-        return hitboxProvider.provideHitbox(player);
-    }
-
-    @NotNull
-    public Optional<Integer> getItemSlot(@NotNull Matchable item) {
+    public Optional<Integer> getItemSlot(Matchable item) {
         Inventory inventory = player.getInventory();
         ItemStack[] contents = inventory.getContents();
 
@@ -222,6 +221,21 @@ public class DefaultGamePlayer implements GamePlayer {
         }
 
         return Optional.empty();
+    }
+
+    @Override
+    public boolean hasItem(Matchable item) {
+        return this.getItemSlot(item).isPresent();
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack itemStack) {
+        player.getInventory().setItem(slot, itemStack);
+    }
+
+    @Override
+    public Hitbox getHitbox() {
+        return hitboxProvider.provideHitbox(player);
     }
 
     @NotNull
@@ -249,10 +263,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public Location getThrowDirection() {
         return player.getEyeLocation();
-    }
-
-    public boolean isImmuneTo(@NotNull DamageType damageType) {
-        return false;
     }
 
     public <T extends Projectile> T launchProjectile(Class<? extends T> projectileClass, Vector velocity) {
