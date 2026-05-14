@@ -123,24 +123,24 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
         // Check if the picked up item is a complete melee weapon, or a single projectile
         if (meleeWeapon != null) {
-            return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
+            return this.assignCompleteMeleeWeapon(gamePlayer, meleeWeapon);
         } else {
             return this.handlePickupItemSingleProjectile(gamePlayer, itemStack);
         }
     }
 
-    private PickupDispatchResult assignMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+    private PickupDispatchResult assignCompleteMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
         ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
 
         if (controller == null) {
             return PickupDispatchResult.ignore();
         }
 
-        gamePlayer.addItem(meleeWeapon.getItemStack());
+        meleeWeapon.assign(gamePlayer);
 
         controller.performAction(Action.PICKUP_ITEM, gamePlayer);
 
-        return PickupDispatchResult.cancelPickup();
+        return PickupDispatchResult.handled();
     }
 
     private PickupDispatchResult handlePickupItemSingleProjectile(GamePlayer gamePlayer, ItemStack itemStack) {
@@ -156,7 +156,7 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         }
 
         if (meleeWeapon.isSelfContained()) {
-            return this.assignMeleeWeapon(gamePlayer, meleeWeapon);
+            return this.assignNewMeleeWeapon(gamePlayer, meleeWeapon);
         }
 
         MeleeWeapon existingMeleeWeapon = meleeWeaponRegistry.getAssignedMeleeWeapons(gamePlayer).stream()
@@ -170,6 +170,20 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
         } else {
             return PickupDispatchResult.ignore();
         }
+    }
+
+    private PickupDispatchResult assignNewMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon meleeWeapon) {
+        ItemController<MeleeWeaponUser> controller = itemControllerRegistry.getMeleeWeaponController(meleeWeapon.getId()).orElse(null);
+
+        if (controller == null) {
+            return PickupDispatchResult.ignore();
+        }
+
+        gamePlayer.addItem(meleeWeapon.getItemStack());
+
+        controller.performAction(Action.PICKUP_ITEM, gamePlayer);
+
+        return PickupDispatchResult.cancelPickup();
     }
 
     private PickupDispatchResult addSingleResourceExistingMeleeWeapon(GamePlayer gamePlayer, MeleeWeapon existingMeleeWeapon) {
