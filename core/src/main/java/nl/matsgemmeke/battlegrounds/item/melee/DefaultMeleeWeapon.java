@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.melee;
 
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
@@ -19,7 +18,6 @@ import java.util.Optional;
 public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     private double attackDamage;
-    private ItemController<MeleeWeaponUser> controller;
     @Nullable
     private ItemTemplate displayItemTemplate;
     @Nullable
@@ -31,10 +29,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
     @Nullable
     private ThrowHandler throwHandler;
 
-    public DefaultMeleeWeapon() {
-        this.controller = new ItemController<>();
-    }
-
     @Override
     public double getAttackDamage() {
         return attackDamage;
@@ -42,14 +36,6 @@ public class DefaultMeleeWeapon extends BaseWeapon implements MeleeWeapon {
 
     public void setAttackDamage(double attackDamage) {
         this.attackDamage = attackDamage;
-    }
-
-    public ItemController<MeleeWeaponUser> getController() {
-        return controller;
-    }
-
-    public void setController(ItemController<MeleeWeaponUser> controller) {
-        this.controller = controller;
     }
 
     public Optional<ItemTemplate> getDisplayItemTemplate() {

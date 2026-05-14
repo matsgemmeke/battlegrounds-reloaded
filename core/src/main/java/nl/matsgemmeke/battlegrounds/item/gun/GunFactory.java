@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.*;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -98,9 +97,6 @@ public class GunFactory {
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
-        ItemController<GunUser> controller = controllerFactory.create(spec.controls, gun);
-        gun.setController(controller);
-
         ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);
         gun.setShootHandler(shootHandler);
 
@@ -122,6 +118,8 @@ public class GunFactory {
         }
 
         gun.update();
+
+        controllerFactory.create(spec.controls, gun);
 
         return gun;
     }

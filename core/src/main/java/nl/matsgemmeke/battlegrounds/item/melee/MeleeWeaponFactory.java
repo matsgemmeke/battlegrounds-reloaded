@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -66,16 +65,6 @@ public class MeleeWeaponFactory {
         ResourceContainer resourceContainer = new ResourceContainer(maxLoadedAmount, loadedAmount, defaultReserveAmount, maxReserveAmount);
         meleeWeapon.setResourceContainer(resourceContainer);
 
-        ItemController<MeleeWeaponUser> controller;
-
-        if (spec.controls != null) {
-            controller = controllerFactory.create(spec.controls, meleeWeapon);
-        } else {
-            controller = new ItemController<>();
-        }
-
-        meleeWeapon.setController(controller);
-
         if (spec.reloading != null) {
             ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
             meleeWeapon.setReloadSystem(reloadSystem);
@@ -86,7 +75,12 @@ public class MeleeWeaponFactory {
             meleeWeapon.configureThrowHandler(throwHandler);
         }
 
+        if (spec.controls != null) {
+            controllerFactory.create(spec.controls, meleeWeapon);
+        }
+
         meleeWeapon.update();
+
         return meleeWeapon;
     }
 }

@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.controls.MeleeWeaponControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystemFactory;
@@ -78,10 +77,7 @@ class MeleeWeaponFactoryTest {
     @Test
     @DisplayName("create returns MeleeWeapon with controls")
     void create_withControls() {
-        ItemController<MeleeWeaponUser> controller = new ItemController<>();
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("ballistic_knife");
-
-        when(controllerFactory.create(eq(spec.controls), any(MeleeWeapon.class))).thenReturn(controller);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
@@ -93,6 +89,7 @@ class MeleeWeaponFactoryTest {
             assertThat(meleeWeapon.getReloadSystem()).isNull();
         });
 
+        verify(controllerFactory).create(eq(spec.controls), any(MeleeWeapon.class));
         verify(meleeWeaponRegistry).register(result);
     }
 

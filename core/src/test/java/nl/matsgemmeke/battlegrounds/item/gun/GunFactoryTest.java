@@ -9,7 +9,6 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
@@ -66,9 +65,6 @@ class GunFactoryTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        ItemController<GunUser> controller = new ItemController<>();
-        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
-
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
 
@@ -95,6 +91,7 @@ class GunFactoryTest {
         assertThat(gun.getResourceContainer().getReserveAmount()).isEqualTo(90);
         assertThat(gun.getResourceContainer().getMaxReserveAmount()).isEqualTo(240);
 
+        verify(controllerFactory).create(eq(spec.controls), any(Gun.class));
         verify(gunRegistry).register(gun);
     }
 
@@ -108,9 +105,6 @@ class GunFactoryTest {
 
         GunSpec spec = this.createGunSpec();
         spec.scope = scopeSpec;
-
-        ItemController<GunUser> controller = new ItemController<>();
-        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
@@ -126,6 +120,7 @@ class GunFactoryTest {
         assertThat(gun).isInstanceOf(DefaultGun.class);
         assertThat(gun.getScopeAttachment()).isNotNull();
 
+        verify(controllerFactory).create(eq(spec.controls), any(Gun.class));
         verify(gunRegistry).register(gun);
     }
 
@@ -134,9 +129,6 @@ class GunFactoryTest {
     void create_withAssignedPlayer() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         GunSpec spec = this.createGunSpec();
-
-        ItemController<GunUser> controller = new ItemController<>();
-        when(controllerFactory.create(eq(spec.controls), any(Gun.class))).thenReturn(controller);
 
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
@@ -158,6 +150,7 @@ class GunFactoryTest {
         assertThat(gun).isInstanceOf(DefaultGun.class);
         assertThat(gun.getUser()).isEqualTo(gamePlayer);
 
+        verify(controllerFactory).create(eq(spec.controls), any(Gun.class));
         verify(gunRegistry).register(gun, gamePlayer);
     }
 

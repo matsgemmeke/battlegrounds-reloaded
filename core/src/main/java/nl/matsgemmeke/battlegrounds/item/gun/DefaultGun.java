@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.gun;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
-import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.recoil.Recoil;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadPerformer;
 import nl.matsgemmeke.battlegrounds.item.reload.ReloadSystem;
@@ -22,7 +21,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
 
     @Nullable
     private GunUser user;
-    private ItemController<GunUser> controller;
     @Nullable
     private ItemTemplate itemTemplate;
     private RangeProfile rangeProfile;
@@ -34,10 +32,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
     private ScopeAttachment scopeAttachment;
     private ShootHandler shootHandler;
 
-    public DefaultGun() {
-        this.controller = new ItemController<>();
-    }
-
     @Override
     public ResourceContainer getResourceContainer() {
         return resourceContainer;
@@ -46,14 +40,6 @@ public class DefaultGun extends BaseWeapon implements Gun {
     @Override
     public void setResourceContainer(ResourceContainer resourceContainer) {
         this.resourceContainer = resourceContainer;
-    }
-
-    public ItemController<GunUser> getController() {
-        return controller;
-    }
-
-    public void setController(ItemController<GunUser> controller) {
-        this.controller = controller;
     }
 
     @Nullable
