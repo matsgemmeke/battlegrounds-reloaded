@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
@@ -47,7 +48,7 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
 
         double meleeDamageAmount = meleeWeapon.getAttackDamage() * damagerGamePlayer.getAttackStrength();
 
-        Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE);
+        Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE, HitboxComponentType.TORSO);
         DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, damage);
 
         damageProcessor.processDamage(damageContext);

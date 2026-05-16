@@ -118,6 +118,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import java.io.File;
+import java.time.Clock;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
@@ -140,6 +141,7 @@ public class BattlegroundsModule implements Module {
     @Override
     public void configure(Binder binder) {
         // Instance bindings
+        binder.bind(Clock.class).toInstance(Clock.systemUTC());
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);

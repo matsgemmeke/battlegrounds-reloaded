@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributor;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
@@ -87,6 +88,6 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         double distance = sourceLocation.distance(targetLocation);
         double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
 
-        return new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
+        return new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE, HitboxComponentType.TORSO);
     }
 }

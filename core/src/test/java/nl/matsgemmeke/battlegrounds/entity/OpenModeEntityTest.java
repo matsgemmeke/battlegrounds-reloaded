@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -48,7 +49,7 @@ class OpenModeEntityTest {
     @Test
     @DisplayName("getLastDamage returns optional with last damage dealt to entity")
     void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(entity.getHealth()).thenReturn(20.0);
         when(entity.isDead()).thenReturn(false);
@@ -131,7 +132,7 @@ class OpenModeEntityTest {
     void damageReturnsDealtDamageAndLowersHealth(double damageAmount, double expectedDamageDealt, double health, double expectedHealth) {
         when(entity.getHealth()).thenReturn(health);
 
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = openModeEntity.damage(damage);
 
@@ -144,7 +145,7 @@ class OpenModeEntityTest {
     void damageDoesNotApplyDamageIfEntityIsDead() {
         when(entity.isDead()).thenReturn(true);
 
-        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
@@ -158,7 +159,7 @@ class OpenModeEntityTest {
     void damageDoesNotApplyDamageIfHealthIsBelowZero() {
         when(entity.getHealth()).thenReturn(0.0);
 
-        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);

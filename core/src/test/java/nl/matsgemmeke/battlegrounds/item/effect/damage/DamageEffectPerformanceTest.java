@@ -16,6 +16,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -117,6 +118,7 @@ class DamageEffectPerformanceTest {
     }
 
     @Test
+    @DisplayName("perform causes damage for limb hitbox component as fallback when no hitbox component")
     void performCausesDefaultDamageToHitDamageTargetWhenNoHitboxComponentWasHit() {
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1, 0, 0);
@@ -141,8 +143,9 @@ class DamageEffectPerformanceTest {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
             assertThat(damageContext.damage()).satisfies(damage -> {
-                assertThat(damage.amount()).isEqualTo(10.0);
+                assertThat(damage.amount()).isEqualTo(5.0);
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
+                assertThat(damage.hitboxComponentType()).isEqualTo(HitboxComponentType.LIMBS);
             });
         });
 

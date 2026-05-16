@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
@@ -210,7 +211,7 @@ class CombustionEffectPerformanceTest {
 
         verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, actorLocation);
         verify(repeatingSchedule, times(2)).stop();
-        verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.FIRE_DAMAGE));
+        verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.FIRE_DAMAGE, HitboxComponentType.TORSO));
         verify((Removable) actor).remove();
     }
 

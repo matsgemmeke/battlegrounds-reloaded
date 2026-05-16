@@ -1,10 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
-import org.bukkit.event.entity.EntityDamageEvent;
-import org.jetbrains.annotations.NotNull;
-
-import java.util.Optional;
-
 public enum DamageType {
 
     /**
@@ -35,18 +30,4 @@ public enum DamageType {
      * Damage caused by a projectile.
      */
     PROJECTILE_DAMAGE;
-
-    public static Optional<DamageType> map(@NotNull EntityDamageEvent.DamageCause cause) {
-        switch (cause) {
-            case ENTITY_ATTACK -> {
-                return Optional.of(MELEE_DAMAGE);
-            }
-            case ENTITY_EXPLOSION -> {
-                return Optional.of(EXPLOSIVE_DAMAGE);
-            }
-            default -> {
-                return Optional.empty();
-            }
-        }
-    }
 }

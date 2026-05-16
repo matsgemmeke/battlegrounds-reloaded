@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -66,7 +67,7 @@ class ItemDeploymentObjectTest {
     @Test
     @DisplayName("getLastDamage returns optional with last damage dealt to item")
     void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
@@ -135,7 +136,7 @@ class ItemDeploymentObjectTest {
 
     @Test
     void damageReturnsZeroWhenItemDoesNotExist() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(true);
 
@@ -146,7 +147,7 @@ class ItemDeploymentObjectTest {
 
     @Test
     void damageReturnsZeroWhenItemIsNotValid() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(false);
@@ -175,7 +176,7 @@ class ItemDeploymentObjectTest {
             DamageType damageType,
             Map<DamageType, Double> resistances
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
@@ -204,7 +205,7 @@ class ItemDeploymentObjectTest {
             double expectedHealth,
             DamageType damageType
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);

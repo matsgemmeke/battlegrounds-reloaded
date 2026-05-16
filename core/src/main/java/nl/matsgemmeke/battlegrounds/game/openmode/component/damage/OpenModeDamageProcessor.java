@@ -5,18 +5,27 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
+import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class OpenModeDamageProcessor implements DamageProcessor {
 
+    private final Clock clock;
     private final GameKey gameKey;
     private final List<DamageModifier> damageModifiers;
+    private final StatsStorage statsStorage;
 
     @Inject
-    public OpenModeDamageProcessor(GameKey gameKey) {
+    public OpenModeDamageProcessor(GameKey gameKey, Clock clock, StatsStorage statsStorage) {
         this.gameKey = gameKey;
+        this.clock = clock;
+        this.statsStorage = statsStorage;
         this.damageModifiers = new ArrayList<>();
     }
 
@@ -26,7 +35,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
 
     public boolean isDamageAllowed(GameKey gameKey) {
         // Damage in open mode is allowed if both entities are in open mode
-        return gameKey == this.gameKey;
+        return gameKey.equals(this.gameKey);
     }
 
     public boolean isDamageAllowedWithoutContext() {
@@ -45,6 +54,21 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         DamageTarget target = damageContext.target();
         Damage damage = damageContext.damage();
 
-        target.damage(damage);
+        double finalDamageAmount = target.damage(damage);
+
+        UUID damagerId = damageContext.source().getUniqueId();
+        UUID victimId = damageContext.target().getUniqueId();
+        // TODO: real value
+        String item = "TestWeapon";
+        String hitbox = damageContext.damage().hitboxComponentType().name();
+        // TODO: real value
+        double distance = 10.0;
+        boolean kill = target.getHealth() <= 0;
+        // TODO: real value
+        boolean friendlyFire = false;
+        Instant timestamp = Instant.now(clock);
+        DamageEvent damageEvent = new DamageEvent(damagerId, victimId, item, finalDamageAmount, hitbox, distance, kill, friendlyFire, timestamp);
+
+        statsStorage.saveDamageEvent(damageEvent);
     }
 }

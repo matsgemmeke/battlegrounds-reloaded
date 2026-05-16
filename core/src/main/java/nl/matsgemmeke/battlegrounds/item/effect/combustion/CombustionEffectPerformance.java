@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
@@ -100,7 +101,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
             double distance = location.distance(targetLocation);
             double damageAmount = rangeProfile.getDamageByDistance(distance);
-            Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE);
+            Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE, HitboxComponentType.TORSO);
 
             target.damage(damage);
         }

@@ -1,56 +1,86 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
+import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.List;
+import java.util.UUID;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OpenModeDamageProcessorTest {
 
+    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final UUID SOURCE_ID = UUID.randomUUID();
+    private static final UUID TARGET_ID = UUID.randomUUID();
+
+    @Spy
+    private Clock clock = Clock.fixed(Instant.parse("2026-05-14T13:00:00.00Z"), ZoneOffset.UTC);
+    @Spy
+    private GameKey gameKey = GAME_KEY;
     @Mock
-    private GameKey gameKey;
+    private StatsStorage statsStorage;
     @InjectMocks
     private OpenModeDamageProcessor damageProcessor;
 
-    @Test
-    void isDamageAllowedReturnsFalseWhenGivenGameKeyIsDifferent() {
-        GameKey otherGameKey = GameKey.ofSession(1);
-
-        boolean allowed = damageProcessor.isDamageAllowed(otherGameKey);
-
-        assertFalse(allowed);
+    static List<Arguments> isDamageAllowedArguments() {
+        return List.of(
+                arguments(GameKey.ofSession(1), false),
+                arguments(GAME_KEY, true)
+        );
     }
 
-    @Test
-    void isDamageAllowedReturnsTrueWhenGivenGameKeyIsSame() {
+    @ParameterizedTest
+    @MethodSource("isDamageAllowedArguments")
+    @DisplayName("isDamageAllowed returns false when given game key is different")
+    void isDamageAllowed(GameKey gameKey, boolean expectedAllowed) {
         boolean allowed = damageProcessor.isDamageAllowed(gameKey);
 
-        assertTrue(allowed);
+        assertThat(allowed).isEqualTo(expectedAllowed);
     }
 
     @Test
-    void isDamageAllowedWithoutContextAlwaysReturnTrue() {
+    @DisplayName("isDamageAllowedWithoutContext always returns true")
+    void isDamageAllowedWithoutContext() {
         boolean allowed = damageProcessor.isDamageAllowedWithoutContext();
 
         assertThat(allowed).isTrue();
     }
 
     @Test
-    void processDamageAppliesDamageModifiersAndDamagesTarget() {
+    @DisplayName("processDamage performs the damage pipeline")
+    void processDamage() {
+        Damage originalDamage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
+        Damage modifiedDamage = new Damage(20.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
+
         DamageSource source = mock(DamageSource.class);
+        when(source.getUniqueId()).thenReturn(SOURCE_ID);
+
         DamageTarget target = mock(DamageTarget.class);
-        Damage originalDamage = new Damage(10.0, DamageType.BULLET_DAMAGE);
-        Damage modifiedDamage = new Damage(20.0, DamageType.BULLET_DAMAGE);
+        when(target.getUniqueId()).thenReturn(TARGET_ID);
+        when(target.getHealth()).thenReturn(0.0);
+        when(target.damage(modifiedDamage)).thenReturn(30.0);
 
         DamageContext originalDamageContext = new DamageContext(source, target, originalDamage);
         DamageContext modifiedDamageContext = new DamageContext(source, target, modifiedDamage);
@@ -60,6 +90,21 @@ class OpenModeDamageProcessorTest {
 
         damageProcessor.addDamageModifier(damageModifier);
         damageProcessor.processDamage(originalDamageContext);
+
+        ArgumentCaptor<DamageEvent> damageEventCaptor = ArgumentCaptor.forClass(DamageEvent.class);
+        verify(statsStorage).saveDamageEvent(damageEventCaptor.capture());
+
+        assertThat(damageEventCaptor.getValue()).satisfies(damageEvent -> {
+            assertThat(damageEvent.damagerId()).isEqualTo(SOURCE_ID);
+            assertThat(damageEvent.victimId()).isEqualTo(TARGET_ID);
+            assertThat(damageEvent.item()).isEqualTo("TestWeapon");
+            assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
+            assertThat(damageEvent.hitbox()).isEqualTo("TORSO");
+            assertThat(damageEvent.distance()).isEqualTo(10.0);
+            assertThat(damageEvent.kill()).isTrue();
+            assertThat(damageEvent.friendlyFire()).isFalse();
+            assertThat(damageEvent.timestamp()).isEqualTo("2026-05-14T13:00:00.00Z");
+        });
 
         verify(target).damage(modifiedDamage);
     }

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -59,7 +60,7 @@ class BlockDeploymentObjectTest {
     @Test
     @DisplayName("getLastDamage returns optional with last damage dealt to block")
     void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         deploymentObject.damage(damage);
         Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
@@ -97,7 +98,7 @@ class BlockDeploymentObjectTest {
             DamageType damageType,
             Map<DamageType, Double> resistances
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         deploymentObject.setHealth(health);
         resistances.forEach(deploymentObject::addResistance);
@@ -109,7 +110,7 @@ class BlockDeploymentObjectTest {
 
     @Test
     void damageReturnsDealtDamageAndCallsDestructionListenerWhenHealthIsBelowZero() {
-        Damage damage = new Damage(20.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(20.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         deploymentObject.setHealth(10.0);
         double damageDealt = deploymentObject.damage(damage);

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
@@ -65,7 +66,7 @@ class DefaultGamePlayerTest {
     @Test
     @DisplayName("getLastDamage returns optional with last damage dealt to player")
     void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(player.getHealth()).thenReturn(20.0);
         when(player.isDead()).thenReturn(false);
@@ -178,7 +179,7 @@ class DefaultGamePlayerTest {
     void damageAppliesNoDamageWhenPlayerIsDead() {
         when(player.isDead()).thenReturn(true);
 
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 
@@ -192,7 +193,7 @@ class DefaultGamePlayerTest {
         when(player.getHealth()).thenReturn(0.0);
         when(player.isDead()).thenReturn(false);
 
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 
@@ -215,7 +216,7 @@ class DefaultGamePlayerTest {
         when(player.getHealth()).thenReturn(health);
         when(player.isDead()).thenReturn(false);
 
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 

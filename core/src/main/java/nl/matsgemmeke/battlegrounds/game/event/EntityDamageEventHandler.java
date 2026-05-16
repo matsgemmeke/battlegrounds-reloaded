@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.event;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
@@ -24,7 +25,7 @@ public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent>
     public void handle(EntityDamageEvent event) {
         for (DamageTarget damageTarget : deploymentObjectRegistry.getDamageableDeploymentObjects()) {
             if (damageTarget.getUniqueId().equals(event.getEntity().getUniqueId())) {
-                Damage damage = new Damage(event.getDamage(), DamageType.ENVIRONMENTAL_DAMAGE);
+                Damage damage = new Damage(event.getDamage(), DamageType.ENVIRONMENTAL_DAMAGE, HitboxComponentType.TORSO);
                 DamageContext damageContext = new DamageContext(null, damageTarget, damage);
 
                 damageProcessor.processDamage(damageContext);

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -55,8 +56,8 @@ class DeploymentTest {
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
     private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(MANUAL_ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, MANUAL_ACTIVATION_DELAY);
 
-    private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE);
-    private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE);
+    private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
+    private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE, HitboxComponentType.TORSO);
 
     @Mock
     private AudioEmitter audioEmitter;
