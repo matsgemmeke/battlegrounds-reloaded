@@ -51,6 +51,7 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
@@ -158,6 +159,7 @@ public class BattlegroundsModule implements Module {
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
+        binder.bind(DamageEventTracker.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);

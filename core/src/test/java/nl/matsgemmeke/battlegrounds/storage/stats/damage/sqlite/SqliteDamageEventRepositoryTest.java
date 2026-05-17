@@ -55,8 +55,8 @@ class SqliteDamageEventRepositoryTest {
 
         assertThat(damageEventEntities).satisfiesExactly(damageEventEntity -> {
             assertThat(damageEventEntity.getGameKey()).isEqualTo(GAME_KEY);
-            assertThat(damageEventEntity.getDamagerId()).isEqualTo(DAMAGER_ID.toString());
-            assertThat(damageEventEntity.getVictimId()).isEqualTo(VICTIM_ID.toString());
+            assertThat(damageEventEntity.getDamagerId()).isEqualTo(DAMAGER_ID);
+            assertThat(damageEventEntity.getVictimId()).isEqualTo(VICTIM_ID);
             assertThat(damageEventEntity.getItem()).isEqualTo(ITEM);
             assertThat(damageEventEntity.getDamageAmount()).isEqualTo(DAMAGE_AMOUNT);
             assertThat(damageEventEntity.getHitbox()).isEqualTo(HITBOX);

@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
+import java.util.UUID;
+
 @DatabaseTable(tableName = "damage_event")
 public class DamageEventEntity {
 
@@ -11,9 +13,9 @@ public class DamageEventEntity {
     @DatabaseField(columnName = "game_key", canBeNull = false)
     private String gameKey;
     @DatabaseField(columnName = "damager_id", canBeNull = false)
-    private String damagerId;
+    private UUID damagerId;
     @DatabaseField(columnName = "victim_id", canBeNull = false)
-    private String victimId;
+    private UUID victimId;
     @DatabaseField(columnName = "item", canBeNull = false)
     private String item;
     @DatabaseField(columnName = "damage_amount", canBeNull = false)
@@ -48,19 +50,19 @@ public class DamageEventEntity {
         this.gameKey = gameKey;
     }
 
-    public String getDamagerId() {
+    public UUID getDamagerId() {
         return damagerId;
     }
 
-    public void setDamagerId(String damagerId) {
+    public void setDamagerId(UUID damagerId) {
         this.damagerId = damagerId;
     }
 
-    public String getVictimId() {
+    public UUID getVictimId() {
         return victimId;
     }
 
-    public void setVictimId(String victimId) {
+    public void setVictimId(UUID victimId) {
         this.victimId = victimId;
     }
 
