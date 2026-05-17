@@ -3,14 +3,10 @@ package nl.matsgemmeke.battlegrounds.job;
 import com.google.inject.Inject;
 
 import java.time.Clock;
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class JobService {
-
-    private final static long HOUR_MILLIS_PERIOD = 60 * 60 * 1000;
 
     private final Clock clock;
     private final ScheduledExecutorService scheduledExecutorService;
@@ -21,11 +17,11 @@ public class JobService {
         this.scheduledExecutorService = scheduledExecutorService;
     }
 
-    public void schedule(Job job) {
-        LocalDateTime now = LocalDateTime.now(clock);
-        LocalDateTime nextHour = now.plusHours(1).truncatedTo(ChronoUnit.HOURS);
-        long millisToNextHour = now.until(nextHour, ChronoUnit.MILLIS);
+    public void schedule(Job job, long periodMillis) {
+        long nowMillis = clock.millis();
+        long millisIntoPeriod = nowMillis % periodMillis;
+        long initialDelay = periodMillis - millisIntoPeriod;
 
-        scheduledExecutorService.scheduleAtFixedRate(job, millisToNextHour, HOUR_MILLIS_PERIOD, TimeUnit.MILLISECONDS);
+        scheduledExecutorService.scheduleAtFixedRate(job, initialDelay, periodMillis, TimeUnit.MILLISECONDS);
     }
 }

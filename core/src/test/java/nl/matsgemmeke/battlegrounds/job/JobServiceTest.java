@@ -1,8 +1,9 @@
 package nl.matsgemmeke.battlegrounds.job;
 
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -21,19 +22,25 @@ import static org.mockito.Mockito.verify;
 class JobServiceTest {
 
     @Spy
-    private Clock clock = Clock.fixed(Instant.parse("2026-05-17T13:30:00.00Z"), ZoneOffset.UTC);
+    private Clock clock = Clock.fixed(Instant.parse("2026-05-17T13:00:30.00Z"), ZoneOffset.UTC);
     @Mock
     private ScheduledExecutorService scheduledExecutorService;
     @InjectMocks
     private JobService jobService;
 
-    @Test
-    @DisplayName("schedule schedules given job to run every 1 hour")
-    void schedule() {
+    @ParameterizedTest
+    @CsvSource({
+            "5000,5000", // 5-second period, 5-second initial delay
+            "60000,30000", // 1-minute period, 30-second initial delay
+            "300000,270000", // 5-minute period, 4-minute and 30-second initial delay
+            "3600000,3570000" // 1-hour period, 59-minute and 30-second initial delay
+    })
+    @DisplayName("schedule schedules given job to run every given period, with a matching initial delay")
+    void schedule(long periodMillis, long expectedInitialDelay) {
         Job job = mock(Job.class);
 
-        jobService.schedule(job);
+        jobService.schedule(job, periodMillis);
 
-        verify(scheduledExecutorService).scheduleAtFixedRate(job, 1800000L, 3600000L, TimeUnit.MILLISECONDS);
+        verify(scheduledExecutorService).scheduleAtFixedRate(job, expectedInitialDelay, periodMillis, TimeUnit.MILLISECONDS);
     }
 }

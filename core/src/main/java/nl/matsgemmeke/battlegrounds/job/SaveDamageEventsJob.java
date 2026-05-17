@@ -30,7 +30,7 @@ public class SaveDamageEventsJob implements Job {
             if (!savedEvents.isEmpty()) {
                 String eventNoun = TextUtil.pluralize(savedEvents.size(), "event", "events");
 
-                logger.info("Saved %s damage %s to the database".formatted(savedEvents.size(), eventNoun));
+                logger.info("[Battlegrounds] Saved %s damage %s to the database".formatted(savedEvents.size(), eventNoun));
             }
         });
     }
