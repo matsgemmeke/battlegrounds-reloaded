@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
-import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 
 import java.time.Clock;
@@ -17,15 +16,15 @@ import java.util.UUID;
 public class OpenModeDamageProcessor implements DamageProcessor {
 
     private final Clock clock;
+    private final DamageEventTracker damageEventTracker;
     private final GameKey gameKey;
     private final List<DamageModifier> damageModifiers;
-    private final StatsStorage statsStorage;
 
     @Inject
-    public OpenModeDamageProcessor(GameKey gameKey, Clock clock, StatsStorage statsStorage) {
+    public OpenModeDamageProcessor(GameKey gameKey, Clock clock, DamageEventTracker damageEventTracker) {
         this.gameKey = gameKey;
         this.clock = clock;
-        this.statsStorage = statsStorage;
+        this.damageEventTracker = damageEventTracker;
         this.damageModifiers = new ArrayList<>();
     }
 
@@ -49,8 +48,6 @@ public class OpenModeDamageProcessor implements DamageProcessor {
             damageContext = damageModifier.apply(damageContext);
         }
 
-        System.out.println("processing damage " + damageContext);
-
         DamageTarget target = damageContext.target();
         Damage damage = damageContext.damage();
 
@@ -69,6 +66,6 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         Instant timestamp = Instant.now(clock);
         DamageEvent damageEvent = new DamageEvent(damagerId, victimId, item, finalDamageAmount, hitbox, distance, kill, friendlyFire, timestamp);
 
-        statsStorage.saveDamageEvent(damageEvent);
+        damageEventTracker.add(damageEvent);
     }
 }

@@ -4,7 +4,6 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.game.damage.modifier.DamageModifier;
-import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -37,10 +36,10 @@ class OpenModeDamageProcessorTest {
 
     @Spy
     private Clock clock = Clock.fixed(Instant.parse("2026-05-14T13:00:00.00Z"), ZoneOffset.UTC);
+    @Mock
+    private DamageEventTracker damageEventTracker;
     @Spy
     private GameKey gameKey = GAME_KEY;
-    @Mock
-    private StatsStorage statsStorage;
     @InjectMocks
     private OpenModeDamageProcessor damageProcessor;
 
@@ -92,7 +91,7 @@ class OpenModeDamageProcessorTest {
         damageProcessor.processDamage(originalDamageContext);
 
         ArgumentCaptor<DamageEvent> damageEventCaptor = ArgumentCaptor.forClass(DamageEvent.class);
-        verify(statsStorage).saveDamageEvent(damageEventCaptor.capture());
+        verify(damageEventTracker).add(damageEventCaptor.capture());
 
         assertThat(damageEventCaptor.getValue()).satisfies(damageEvent -> {
             assertThat(damageEvent.damagerId()).isEqualTo(SOURCE_ID);

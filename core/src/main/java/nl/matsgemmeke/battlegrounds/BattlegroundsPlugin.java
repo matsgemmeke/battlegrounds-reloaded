@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
+import nl.matsgemmeke.battlegrounds.job.JobService;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,6 +22,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -58,8 +60,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         this.setUpInternalsProvider();
         this.setUpLogging();
 
+        BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
-        BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, logger, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, this, pluginManager);
 
         injector = Guice.createInjector(module);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);

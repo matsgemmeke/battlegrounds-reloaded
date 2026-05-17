@@ -14,8 +14,6 @@ public class StatsStorage {
     }
 
     public void saveDamageEvent(DamageEvent damageEvent) {
-        System.out.println("Saving damage event " + damageEvent);
-
         damageEventRepository.save(damageEvent);
     }
 }
