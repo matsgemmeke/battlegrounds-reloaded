@@ -28,6 +28,7 @@ public class SqliteDamageEventRepository implements DamageEventRepository {
 
     private DamageEventEntity convertDamageEventToDamageEventEntity(DamageEvent damageEvent) {
         DamageEventEntity damageEventEntity = new DamageEventEntity();
+        damageEventEntity.setGameKey(damageEvent.gameKey());
         damageEventEntity.setDamagerId(damageEvent.damagerId().toString());
         damageEventEntity.setVictimId(damageEvent.victimId().toString());
         damageEventEntity.setItem(damageEvent.item());

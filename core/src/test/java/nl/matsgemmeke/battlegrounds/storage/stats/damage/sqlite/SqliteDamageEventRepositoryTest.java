@@ -22,6 +22,7 @@ import static org.mockito.Mockito.*;
 
 class SqliteDamageEventRepositoryTest {
 
+    private static final String GAME_KEY = "OPEN-MODE";
     private static final UUID DAMAGER_ID = UUID.randomUUID();
     private static final UUID VICTIM_ID = UUID.randomUUID();
     private static final String ITEM = "MP5";
@@ -53,6 +54,7 @@ class SqliteDamageEventRepositoryTest {
         List<DamageEventEntity> damageEventEntities = damageEventDao.queryForAll();
 
         assertThat(damageEventEntities).satisfiesExactly(damageEventEntity -> {
+            assertThat(damageEventEntity.getGameKey()).isEqualTo(GAME_KEY);
             assertThat(damageEventEntity.getDamagerId()).isEqualTo(DAMAGER_ID.toString());
             assertThat(damageEventEntity.getVictimId()).isEqualTo(VICTIM_ID.toString());
             assertThat(damageEventEntity.getItem()).isEqualTo(ITEM);
@@ -80,6 +82,6 @@ class SqliteDamageEventRepositoryTest {
     }
 
     private DamageEvent createDamageEvent() {
-        return new DamageEvent(DAMAGER_ID, VICTIM_ID, ITEM, DAMAGE_AMOUNT, HITBOX, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP);
+        return new DamageEvent(GAME_KEY, DAMAGER_ID, VICTIM_ID, ITEM, DAMAGE_AMOUNT, HITBOX, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP);
     }
 }

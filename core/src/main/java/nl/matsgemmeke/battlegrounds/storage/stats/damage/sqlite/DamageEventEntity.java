@@ -8,6 +8,8 @@ public class DamageEventEntity {
 
     @DatabaseField(columnName = "id", generatedId = true)
     private int id;
+    @DatabaseField(columnName = "game_key", canBeNull = false)
+    private String gameKey;
     @DatabaseField(columnName = "damager_id", canBeNull = false)
     private String damagerId;
     @DatabaseField(columnName = "victim_id", canBeNull = false)
@@ -36,6 +38,14 @@ public class DamageEventEntity {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getGameKey() {
+        return gameKey;
+    }
+
+    public void setGameKey(String gameKey) {
+        this.gameKey = gameKey;
     }
 
     public String getDamagerId() {

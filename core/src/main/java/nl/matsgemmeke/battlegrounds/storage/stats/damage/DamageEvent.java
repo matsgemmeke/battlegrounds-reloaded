@@ -4,6 +4,7 @@ import java.time.Instant;
 import java.util.UUID;
 
 public record DamageEvent(
+        String gameKey,
         UUID damagerId,
         UUID victimId,
         String item,

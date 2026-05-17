@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.game.event;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
@@ -17,7 +18,7 @@ public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent>
     private final DeploymentObjectRegistry deploymentObjectRegistry;
 
     @Inject
-    public EntityDamageEventHandler(DamageProcessor damageProcessor, DeploymentObjectRegistry deploymentObjectRegistry) {
+    public EntityDamageEventHandler(DamageProcessor damageProcessor, DeploymentObjectRegistry deploymentObjectRegistry, GameKey gameKey) {
         this.damageProcessor = damageProcessor;
         this.deploymentObjectRegistry = deploymentObjectRegistry;
     }

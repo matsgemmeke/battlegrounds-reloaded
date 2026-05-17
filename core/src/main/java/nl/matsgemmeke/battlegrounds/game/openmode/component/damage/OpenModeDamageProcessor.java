@@ -53,6 +53,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
 
         double finalDamageAmount = target.damage(damage);
 
+        String gameKey = this.gameKey.toString();
         UUID damagerId = damageContext.source().getUniqueId();
         UUID victimId = damageContext.target().getUniqueId();
         // TODO: real value
@@ -64,7 +65,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         // TODO: real value
         boolean friendlyFire = false;
         Instant timestamp = Instant.now(clock);
-        DamageEvent damageEvent = new DamageEvent(damagerId, victimId, item, finalDamageAmount, hitbox, distance, kill, friendlyFire, timestamp);
+        DamageEvent damageEvent = new DamageEvent(gameKey, damagerId, victimId, item, finalDamageAmount, hitbox, distance, kill, friendlyFire, timestamp);
 
         damageEventTracker.add(damageEvent);
     }
