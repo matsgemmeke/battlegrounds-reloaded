@@ -457,17 +457,6 @@ class DefaultGamePlayerTest {
     }
 
     @Test
-    void getAudioPlayLocationReturnsPlayersLocation() {
-        Location location = new Location(null, 1.0, 1.0, 1.0);
-
-        when(player.getLocation()).thenReturn(location);
-
-        Location result = gamePlayer.getAudioPlayLocation();
-
-        assertThat(result).isEqualTo(location);
-    }
-
-    @Test
     void getShootingDirectionReturnSlightlyAlteredEyeLocation() {
         Location eyeLocation = new Location(null, 1.0, 1.0, 1.0);
 
