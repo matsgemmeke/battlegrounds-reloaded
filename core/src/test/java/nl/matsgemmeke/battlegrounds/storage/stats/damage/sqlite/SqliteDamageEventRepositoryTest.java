@@ -49,7 +49,9 @@ class SqliteDamageEventRepositoryTest {
     @Test
     @DisplayName("save saves data from given damage event to dao")
     void save_successful() throws SQLException {
-        damageEventRepository.save(this.createDamageEvent());
+        DamageEvent damageEvent = this.createDamageEvent();
+
+        damageEventRepository.save(List.of(damageEvent));
 
         List<DamageEventEntity> damageEventEntities = damageEventDao.queryForAll();
 
@@ -70,12 +72,14 @@ class SqliteDamageEventRepositoryTest {
     @Test
     @DisplayName("save throws DamageEventStorageException when failing to save data")
     void save_errorOnSave() throws SQLException {
+        DamageEvent damageEvent = this.createDamageEvent();
+
         Dao<DamageEventEntity, Integer> damageEventDao = mock(RETURNS_DEEP_STUBS);
-        when(damageEventDao.create(any(DamageEventEntity.class))).thenThrow(new SQLException("error"));
+        when(damageEventDao.create(anyCollection())).thenThrow(new SQLException("error"));
 
         SqliteDamageEventRepository damageEventRepository = new SqliteDamageEventRepository(damageEventDao);
 
-        assertThatThrownBy(() -> damageEventRepository.save(this.createDamageEvent()))
+        assertThatThrownBy(() -> damageEventRepository.save(List.of(damageEvent)))
                 .isInstanceOf(DamageEventStorageException.class)
                 .cause()
                 .hasMessage("error");

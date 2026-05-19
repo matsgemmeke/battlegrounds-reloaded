@@ -4,6 +4,8 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 
+import java.util.Collection;
+
 public class StatsStorage {
 
     private final DamageEventRepository damageEventRepository;
@@ -13,7 +15,7 @@ public class StatsStorage {
         this.damageEventRepository = damageEventRepository;
     }
 
-    public void saveDamageEvent(DamageEvent damageEvent) {
-        damageEventRepository.save(damageEvent);
+    public void saveDamageEvents(Collection<DamageEvent> damageEvents) {
+        damageEventRepository.save(damageEvents);
     }
 }

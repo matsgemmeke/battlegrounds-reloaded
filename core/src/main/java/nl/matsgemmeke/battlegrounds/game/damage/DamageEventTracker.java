@@ -19,7 +19,7 @@ public class DamageEventTracker {
         pending.add(damageEvent);
     }
 
-    public List<DamageEvent> saveAll() {
+    public List<DamageEvent> getTrackedDamageEvents() {
         List<DamageEvent> batch = new ArrayList<>();
 
         while (!pending.isEmpty()) {

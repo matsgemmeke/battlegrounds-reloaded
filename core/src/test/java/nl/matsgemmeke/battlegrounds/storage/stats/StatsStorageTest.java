@@ -9,6 +9,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -23,9 +25,10 @@ class StatsStorageTest {
     @DisplayName("saveDamageEvent saves damage event to repository")
     void saveDamageEvent() {
         DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, 0, false, false, null);
+        List<DamageEvent> damageEvents = List.of(damageEvent);
 
-        statsStorage.saveDamageEvent(damageEvent);
+        statsStorage.saveDamageEvents(damageEvents);
 
-        verify(damageEventRepository).save(damageEvent);
+        verify(damageEventRepository).save(damageEvents);
     }
 }
