@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventStorageException;
 
 import java.sql.SQLException;
+import java.util.Collection;
 
 public class SqliteDamageEventRepository implements DamageEventRepository {
 
@@ -16,11 +17,13 @@ public class SqliteDamageEventRepository implements DamageEventRepository {
     }
 
     @Override
-    public void save(DamageEvent damageEvent) {
-        DamageEventEntity damageEventEntity = this.convertDamageEventToDamageEventEntity(damageEvent);
+    public void save(Collection<DamageEvent> damageEvents) {
+        Collection<DamageEventEntity> damageEventEntities = damageEvents.stream()
+                .map(this::convertDamageEventToDamageEventEntity)
+                .toList();
 
         try {
-            damageEventDao.create(damageEventEntity);
+            damageEventDao.create(damageEventEntities);
         } catch (SQLException ex) {
             throw new DamageEventStorageException("An error occurred while saving damage event", ex);
         }

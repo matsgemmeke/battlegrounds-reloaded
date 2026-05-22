@@ -6,21 +6,11 @@ import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A player who participates in a {@link Game}.
  */
 public interface GamePlayer extends GameEntity, EquipmentUser, GunUser, MeleeWeaponUser, PotionEffectReceiver {
-
-    /**
-     * Gets the {@link Player} entity of the object.
-     *
-     * @return the player entity
-     */
-    @NotNull
-    Player getEntity();
 
     /**
      * Gets whether the player is passive and cannot inflict or take damage from the plugin's custom items.

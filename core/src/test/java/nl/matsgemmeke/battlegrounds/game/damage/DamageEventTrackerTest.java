@@ -13,12 +13,12 @@ class DamageEventTrackerTest {
     private final DamageEventTracker damageEventTracker = new DamageEventTracker();
 
     @Test
-    @DisplayName("saveAll returns list of damage events that were saved")
-    void saveAll() {
+    @DisplayName("getTrackedDamageEvents returns list of damage events that were tracked")
+    void getTrackedDamageEvents() {
         DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, 0, false, false, null);
 
         damageEventTracker.add(damageEvent);
-        List<DamageEvent> savedEvents = damageEventTracker.saveAll();
+        List<DamageEvent> savedEvents = damageEventTracker.getTrackedDamageEvents();
 
         assertThat(savedEvents).containsExactly(damageEvent);
     }
