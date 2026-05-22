@@ -10,10 +10,13 @@ import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
+import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -49,7 +52,8 @@ class OpenModeEventDamageAdapterTest {
     private OpenModeEventDamageAdapter eventDamageAdapter;
 
     @Test
-    void processMeleeDamageReturnsOriginalDamageWhenGivenDamagerIsNoRegisteredGamePlayer() {
+    @DisplayName("processMeleeDamage returns original damage when given damager not a registered player")
+    void processMeleeDamager_damagerNotRegistered() {
         GamePlayer victimGamePlayer = mock(GamePlayer.class);
 
         Entity damager = mock(Entity.class);
@@ -69,7 +73,8 @@ class OpenModeEventDamageAdapterTest {
     }
 
     @Test
-    void processMeleeDamageReturnsOriginalDamageWhenGivenVictimIsNoRegisteredGameEntity() {
+    @DisplayName("processMeleeDamage returns original damage when given victim not a registered entity")
+    void processMeleeDamage_victimNotRegistered() {
         GamePlayer damagerGamePlayer = mock(GamePlayer.class);
 
         Entity victim = mock(Entity.class);
@@ -89,7 +94,8 @@ class OpenModeEventDamageAdapterTest {
     }
 
     @Test
-    void processMeleeDamageReturnsOriginalDamageWhenDamagerHeldItemStackIsNoRegisteredMeleeWeapon() {
+    @DisplayName("processMeleeDamage returns original damage when damager held item is not a registered melee weapon")
+    void processMeleeDamage_victimHeldItemIsNoMeleeWeapon() {
         GamePlayer victimGamePlayer = mock(GamePlayer.class);
 
         GamePlayer damagerGamePlayer = mock(GamePlayer.class);
@@ -113,12 +119,19 @@ class OpenModeEventDamageAdapterTest {
     }
 
     @Test
-    void processMeleeDamageCreatesDamageEventForDamageProcessor() {
-        GameMob victimGameMob = mock(GameMob.class);
+    @DisplayName("processMeleeDamage creates damage event for damage processor")
+    void processMeleeDamage_successful() {
+        World world = mock(World.class);
+        Location damagerLocation = new Location(world, 0, 0, 0);
+        Location victimLocation = new Location(world, 10, 0, 0);
 
         GamePlayer damagerGamePlayer = mock(GamePlayer.class);
         when(damagerGamePlayer.getAttackStrength()).thenReturn(DAMAGER_ATTACK_STRENGTH);
         when(damagerGamePlayer.getHeldItem()).thenReturn(ITEM_STACK);
+        when(damagerGamePlayer.getLocation()).thenReturn(damagerLocation);
+
+        GameMob victimGameMob = mock(GameMob.class);
+        when(victimGameMob.getLocation()).thenReturn(victimLocation);
 
         LivingEntity victim = mock(LivingEntity.class);
         when(victim.getUniqueId()).thenReturn(VICTIM_UNIQUE_ID);
@@ -148,6 +161,7 @@ class OpenModeEventDamageAdapterTest {
                assertThat(damage.amount()).isEqualTo(MELEE_WEAPON_DAMAGE);
                assertThat(damage.type()).isEqualTo(DamageType.MELEE_DAMAGE);
             });
+            assertThat(damageContext.distance()).isEqualTo(10.0);
         });
     }
 }

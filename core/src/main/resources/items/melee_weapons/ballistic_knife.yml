@@ -71,10 +71,10 @@ throwing:
         long-range:
           damage: 120.0
           distance: 5.0
-      hitbox-multipliers:
+      hitbox-damage-profile:
         head: 1.0
-        body: 1.0
-        legs: 1.0
+        torso: 1.0
+        limbs: 1.0
     triggers:
       impact:
         type: ENTITY_IMPACT

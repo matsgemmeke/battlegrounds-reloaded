@@ -15,7 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.HitboxMultiplierProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.HitboxDamageProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -27,7 +27,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
+import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import org.jetbrains.annotations.Nullable;
@@ -36,7 +36,7 @@ import java.util.List;
 
 public class ItemEffectFactory {
 
-    private final HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
+    private final HitboxDamageProfileMapper hitboxDamageProfileMapper;
     private final ParticleEffectMapper particleEffectMapper;
     private final Provider<CombustionEffect> combustionEffectProvider;
     private final Provider<DamageEffect> damageEffectProvider;
@@ -50,7 +50,7 @@ public class ItemEffectFactory {
 
     @Inject
     public ItemEffectFactory(
-            HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper,
+            HitboxDamageProfileMapper hitboxDamageProfileMapper,
             ParticleEffectMapper particleEffectMapper,
             Provider<CombustionEffect> combustionEffectProvider,
             Provider<DamageEffect> damageEffectProvider,
@@ -62,7 +62,7 @@ public class ItemEffectFactory {
             Provider<SoundNotificationEffect> soundNotificationEffectProvider,
             RangeProfileMapper rangeProfileMapper
     ) {
-        this.hitboxMultiplierProfileMapper = hitboxMultiplierProfileMapper;
+        this.hitboxDamageProfileMapper = hitboxDamageProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
         this.combustionEffectProvider = combustionEffectProvider;
         this.damageEffectProvider = damageEffectProvider;
@@ -106,9 +106,9 @@ public class ItemEffectFactory {
 
                 DamageType damageType = DamageType.valueOf(spec.damageType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
-                HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
+                HitboxDamageProfile hitboxDamageProfile = hitboxDamageProfileMapper.map(spec.hitboxDamageProfile);
 
-                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxMultiplierProfile);
+                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxDamageProfile);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
                 damageEffect.setProperties(properties);

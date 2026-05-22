@@ -27,7 +27,7 @@ public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent>
         for (DamageTarget damageTarget : deploymentObjectRegistry.getDamageableDeploymentObjects()) {
             if (damageTarget.getUniqueId().equals(event.getEntity().getUniqueId())) {
                 Damage damage = new Damage(event.getDamage(), DamageType.ENVIRONMENTAL_DAMAGE, HitboxComponentType.TORSO);
-                DamageContext damageContext = new DamageContext(null, damageTarget, damage);
+                DamageContext damageContext = new DamageContext(null, damageTarget, damage, 0);
 
                 damageProcessor.processDamage(damageContext);
             }

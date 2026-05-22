@@ -32,17 +32,30 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     @Override
     public void start() {
         CollisionResult collisionResult = currentContext.getCollisionResult();
-        DamageTarget hitTarget = collisionResult.getHitTarget().orElse(null);
+        DamageTarget damageTarget = collisionResult.getHitTarget().orElse(null);
         Location hitLocation = collisionResult.getHitLocation().orElse(null);
 
-        if (hitTarget == null || hitLocation == null) {
+        if (damageTarget == null || hitLocation == null) {
             return;
         }
 
         Location startingLocation = currentContext.getStartingLocation();
         DamageSource damageSource = currentContext.getDamageSource();
-        Damage damage = this.createDamage(hitTarget, hitLocation, startingLocation);
-        DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
+        double distance = startingLocation.distance(hitLocation);
+
+        Hitbox hitbox = damageTarget.getHitbox();
+        HitboxComponentType hitboxComponentType = hitbox.getIntersectedHitboxComponent(hitLocation)
+                .map(HitboxComponent::type)
+                .orElse(HitboxComponentType.LIMBS);
+
+        double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
+        double hitboxDamageModifier = this.getHitboxDamageModifier(hitboxComponentType);
+        double totalDamageAmount = distanceDamageAmount * hitboxDamageModifier;
+
+        DamageType damageType = properties.damageType();
+        Damage damage = new Damage(totalDamageAmount, damageType, hitboxComponentType);
+
+        DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 
@@ -51,27 +64,11 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private Damage createDamage(DamageTarget target, Location hitLocation, Location startingLocation) {
-        Hitbox hitbox = target.getHitbox();
-        HitboxComponentType hitboxComponentType = hitbox.getIntersectedHitboxComponent(hitLocation)
-                .map(HitboxComponent::type)
-                .orElse(HitboxComponentType.LIMBS);
-
-        double damageMultiplier = this.getHitboxDamageMultiplier(hitboxComponentType);
-        double distance = hitLocation.distance(startingLocation);
-        double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
-        double totalDamageAmount = distanceDamageAmount * damageMultiplier;
-
-        DamageType damageType = properties.damageType();
-
-        return new Damage(totalDamageAmount, damageType, hitboxComponentType);
-    }
-
-    private double getHitboxDamageMultiplier(HitboxComponentType hitboxComponentType) {
+    private double getHitboxDamageModifier(HitboxComponentType hitboxComponentType) {
         return switch (hitboxComponentType) {
-            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
-            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
-            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
+            case HEAD -> properties.hitboxDamageProfile().headDamageModifier();
+            case TORSO -> properties.hitboxDamageProfile().torsoDamageModifier();
+            case LIMBS -> properties.hitboxDamageProfile().limbsDamageMultiplier();
         };
     }
 }

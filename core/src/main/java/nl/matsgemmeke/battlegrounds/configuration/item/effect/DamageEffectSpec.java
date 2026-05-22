@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
 import jakarta.validation.Valid;
-import nl.matsgemmeke.battlegrounds.configuration.item.HitboxMultiplierSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.HitboxDamageProfileSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.RangeProfileSpec;
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
@@ -18,7 +18,7 @@ public class DamageEffectSpec extends ItemEffectSpec {
 
     @Required
     @Valid
-    public HitboxMultiplierSpec hitboxMultipliers;
+    public HitboxDamageProfileSpec hitboxDamageProfile;
 
     private enum DamageType {
         BULLET_DAMAGE,

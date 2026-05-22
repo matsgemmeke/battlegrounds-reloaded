@@ -59,8 +59,7 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         // TODO: real value
         String item = "TestWeapon";
         String hitbox = damageContext.damage().hitboxComponentType().name();
-        // TODO: real value
-        double distance = 10.0;
+        double distance = damageContext.distance();
         boolean kill = target.getHealth() <= 0;
         // TODO: real value
         boolean friendlyFire = false;

@@ -59,9 +59,12 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
         for (DamageTarget damageTarget : targetFinder.findTargets(query)) {
             Location damageTargetLocation = damageTarget.getLocation();
-            Damage damage = this.getDamageForTargetLocation(actorLocation, damageTargetLocation);
+            double distance = actorLocation.distance(damageTargetLocation);
 
-            DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage);
+            double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
+            Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE, HitboxComponentType.TORSO);
+
+            DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage, distance);
             damageProcessor.processDamage(damageContext);
         }
 
@@ -82,12 +85,5 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
         explosionAttributorRegistry.removeAttributor(attributor);
         armorStand.remove();
-    }
-
-    private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {
-        double distance = sourceLocation.distance(targetLocation);
-        double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
-
-        return new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE, HitboxComponentType.TORSO);
     }
 }

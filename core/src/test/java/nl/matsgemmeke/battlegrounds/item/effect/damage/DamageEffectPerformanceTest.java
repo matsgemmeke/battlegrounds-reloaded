@@ -35,8 +35,8 @@ class DamageEffectPerformanceTest {
 
     private static final DamageType DAMAGE_TYPE = DamageType.BULLET_DAMAGE;
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(10.0, 1.0, 5.0, 2.0, 2.5, 3.0);
-    private static final HitboxMultiplierProfile HITBOX_MULTIPLIER_PROFILE = new HitboxMultiplierProfile(2.0, 1.0, 0.5);
-    private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_MULTIPLIER_PROFILE);
+    private static final HitboxDamageProfile HITBOX_DAMAGE_PROFILE = new HitboxDamageProfile(2.0, 1.0, 0.5);
+    private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_DAMAGE_PROFILE);
 
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
@@ -53,14 +53,16 @@ class DamageEffectPerformanceTest {
     }
 
     @Test
-    void isPerformingAlwaysReturnsFalse() {
+    @DisplayName("isPerforming always returns false")
+    void isPerforming() {
         boolean performing = effectPerformance.isPerforming();
 
         assertThat(performing).isFalse();
     }
 
     @Test
-    void performCausesNoDamageWhenHitDamageTargetIsNull() {
+    @DisplayName("perform causes no damage when hit damage target is null")
+    void perform_damageTargetIsNull() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
 
@@ -71,7 +73,8 @@ class DamageEffectPerformanceTest {
     }
 
     @Test
-    void performCausesNoDamageWhenHitLocationIsNull() {
+    @DisplayName("perform causes no damage when hit location is null")
+    void perform_hitLocationIsNull() {
         DamageTarget hitTarget = mock(DamageTarget.class);
         CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
@@ -84,7 +87,8 @@ class DamageEffectPerformanceTest {
 
     @ParameterizedTest
     @CsvSource(value = { "HEAD,20.0", "TORSO,10.0", "LIMBS,5.0" })
-    void performCausesDamageToHitDamageTargetByHitHitboxComponentType(HitboxComponentType hitboxComponentType, double expectedDamage) {
+    @DisplayName("perform causes damage to hit damage target by hit hitbox component type")
+    void perform_damageByHitboxComponentType(HitboxComponentType hitboxComponentType, double expectedDamage) {
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
@@ -106,12 +110,13 @@ class DamageEffectPerformanceTest {
         verify(damageProcessor).processDamage(damageContextCaptor.capture());
 
         assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(damageContext -> {
-                    assertThat(damageContext.source()).isEqualTo(damageSource);
-                    assertThat(damageContext.target()).isEqualTo(target);
-                    assertThat(damageContext.damage()).satisfies(damage -> {
-                        assertThat(damage.amount()).isEqualTo(expectedDamage);
-                        assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
-                    });
+            assertThat(damageContext.source()).isEqualTo(damageSource);
+            assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.damage()).satisfies(damage -> {
+                assertThat(damage.amount()).isEqualTo(expectedDamage);
+                assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
+            });
+            assertThat(damageContext.distance()).isOne();
         });
 
         verify((Removable) actor).remove();
@@ -119,7 +124,7 @@ class DamageEffectPerformanceTest {
 
     @Test
     @DisplayName("perform causes damage for limb hitbox component as fallback when no hitbox component")
-    void performCausesDefaultDamageToHitDamageTargetWhenNoHitboxComponentWasHit() {
+    void perform_fallbackDamage() {
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
@@ -147,6 +152,7 @@ class DamageEffectPerformanceTest {
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
                 assertThat(damage.hitboxComponentType()).isEqualTo(HitboxComponentType.LIMBS);
             });
+            assertThat(damageContext.distance()).isOne();
         });
 
         verify((Removable) actor).remove();

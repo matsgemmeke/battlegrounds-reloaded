@@ -33,6 +33,8 @@ class OpenModeDamageProcessorTest {
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final UUID TARGET_ID = UUID.randomUUID();
+    private static final double ORIGINAL_DAMAGE = 10.0;
+    private static final double MODIFIED_DAMAGE = 20.0;
 
     @Spy
     private Clock clock = Clock.fixed(Instant.parse("2026-05-14T13:00:00.00Z"), ZoneOffset.UTC);
@@ -81,8 +83,8 @@ class OpenModeDamageProcessorTest {
         when(target.getHealth()).thenReturn(0.0);
         when(target.damage(modifiedDamage)).thenReturn(30.0);
 
-        DamageContext originalDamageContext = new DamageContext(source, target, originalDamage);
-        DamageContext modifiedDamageContext = new DamageContext(source, target, modifiedDamage);
+        DamageContext originalDamageContext = new DamageContext(source, target, originalDamage, ORIGINAL_DAMAGE);
+        DamageContext modifiedDamageContext = new DamageContext(source, target, modifiedDamage, MODIFIED_DAMAGE);
 
         DamageModifier damageModifier = mock(DamageModifier.class);
         when(damageModifier.apply(originalDamageContext)).thenReturn(modifiedDamageContext);
@@ -99,7 +101,7 @@ class OpenModeDamageProcessorTest {
             assertThat(damageEvent.item()).isEqualTo("TestWeapon");
             assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
             assertThat(damageEvent.hitbox()).isEqualTo("TORSO");
-            assertThat(damageEvent.distance()).isEqualTo(10.0);
+            assertThat(damageEvent.distance()).isEqualTo(MODIFIED_DAMAGE);
             assertThat(damageEvent.kill()).isTrue();
             assertThat(damageEvent.friendlyFire()).isFalse();
             assertThat(damageEvent.timestamp()).isEqualTo("2026-05-14T13:00:00.00Z");

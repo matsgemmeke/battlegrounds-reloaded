@@ -78,6 +78,7 @@ class EntityDamageEventHandlerTest {
                assertThat(damage.type()).isEqualTo(DamageType.ENVIRONMENTAL_DAMAGE);
                assertThat(damage.amount()).isEqualTo(DAMAGE_AMOUNT);
             });
+            assertThat(damageContext.distance()).isZero();
         });
     }
 }
