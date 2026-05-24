@@ -9,6 +9,7 @@ public record DamageEvent(
         UUID victimId,
         String item,
         double damageAmount,
+        String damageType,
         String hitbox,
         double distance,
         boolean kill,

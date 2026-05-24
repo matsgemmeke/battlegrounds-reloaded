@@ -20,6 +20,8 @@ public class DamageEventEntity {
     private String item;
     @DatabaseField(columnName = "damage_amount", canBeNull = false)
     private double damageAmount;
+    @DatabaseField(columnName = "damage_type", canBeNull = false)
+    private String damageType;
     @DatabaseField(columnName = "hitbox", canBeNull = false)
     private String hitbox;
     @DatabaseField(columnName = "distance", canBeNull = false)
@@ -80,6 +82,14 @@ public class DamageEventEntity {
 
     public void setDamageAmount(double damageAmount) {
         this.damageAmount = damageAmount;
+    }
+
+    public String getDamageType() {
+        return damageType;
+    }
+
+    public void setDamageType(String damageType) {
+        this.damageType = damageType;
     }
 
     public String getHitbox() {

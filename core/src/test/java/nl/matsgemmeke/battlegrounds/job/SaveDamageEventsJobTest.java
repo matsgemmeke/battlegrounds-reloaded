@@ -40,7 +40,7 @@ class SaveDamageEventsJobTest {
     @Test
     @DisplayName("run saves all damage events in DamageEventTracker in a separate thread")
     void run() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, 0, false, false, null);
+        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
 
         when(damageEventTracker.getTrackedDamageEvents()).thenReturn(List.of(damageEvent));
 

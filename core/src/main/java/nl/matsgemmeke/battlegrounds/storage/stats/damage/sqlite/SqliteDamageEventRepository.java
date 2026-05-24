@@ -36,6 +36,7 @@ public class SqliteDamageEventRepository implements DamageEventRepository {
         damageEventEntity.setVictimId(damageEvent.victimId());
         damageEventEntity.setItem(damageEvent.item());
         damageEventEntity.setDamageAmount(damageEvent.damageAmount());
+        damageEventEntity.setDamageType(damageEvent.damageType());
         damageEventEntity.setHitbox(damageEvent.hitbox());
         damageEventEntity.setDistance(damageEvent.distance());
         damageEventEntity.setKill(damageEvent.kill());

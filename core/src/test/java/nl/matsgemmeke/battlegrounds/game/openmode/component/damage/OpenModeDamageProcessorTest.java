@@ -100,6 +100,7 @@ class OpenModeDamageProcessorTest {
             assertThat(damageEvent.victimId()).isEqualTo(TARGET_ID);
             assertThat(damageEvent.item()).isEqualTo("TestWeapon");
             assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
+            assertThat(damageEvent.damageType()).isEqualTo("BULLET_DAMAGE");
             assertThat(damageEvent.hitbox()).isEqualTo("TORSO");
             assertThat(damageEvent.distance()).isEqualTo(MODIFIED_DAMAGE);
             assertThat(damageEvent.kill()).isTrue();

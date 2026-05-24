@@ -15,7 +15,7 @@ class DamageEventTrackerTest {
     @Test
     @DisplayName("getTrackedDamageEvents returns list of damage events that were tracked")
     void getTrackedDamageEvents() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, 0, false, false, null);
+        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
 
         damageEventTracker.add(damageEvent);
         List<DamageEvent> savedEvents = damageEventTracker.getTrackedDamageEvents();

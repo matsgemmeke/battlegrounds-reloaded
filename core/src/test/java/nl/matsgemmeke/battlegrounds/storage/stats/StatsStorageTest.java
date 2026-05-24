@@ -24,7 +24,7 @@ class StatsStorageTest {
     @Test
     @DisplayName("saveDamageEvent saves damage event to repository")
     void saveDamageEvent() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, 0, false, false, null);
+        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
         List<DamageEvent> damageEvents = List.of(damageEvent);
 
         statsStorage.saveDamageEvents(damageEvents);

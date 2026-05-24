@@ -27,6 +27,7 @@ class SqliteDamageEventRepositoryTest {
     private static final UUID VICTIM_ID = UUID.randomUUID();
     private static final String ITEM = "MP5";
     private static final double DAMAGE_AMOUNT = 10.0;
+    private static final String DAMAGE_TYPE = "BULLET";
     private static final String HITBOX = "BODY";
     private static final double DISTANCE = 20.0;
     private static final boolean KILL = true;
@@ -86,6 +87,6 @@ class SqliteDamageEventRepositoryTest {
     }
 
     private DamageEvent createDamageEvent() {
-        return new DamageEvent(GAME_KEY, DAMAGER_ID, VICTIM_ID, ITEM, DAMAGE_AMOUNT, HITBOX, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP);
+        return new DamageEvent(GAME_KEY, DAMAGER_ID, VICTIM_ID, ITEM, DAMAGE_AMOUNT, DAMAGE_TYPE, HITBOX, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP);
     }
 }
