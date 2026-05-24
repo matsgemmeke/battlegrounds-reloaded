@@ -40,8 +40,8 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         }
 
         Location startingLocation = currentContext.getStartingLocation();
-        DamageSource damageSource = currentContext.getDamageSource();
-        double distance = startingLocation.distance(hitLocation);
+        Location targetLocation = damageTarget.getLocation();
+        double distance = startingLocation.distance(targetLocation);
 
         Hitbox hitbox = damageTarget.getHitbox();
         HitboxComponentType hitboxComponentType = hitbox.getIntersectedHitboxComponent(hitLocation)
@@ -55,7 +55,7 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         DamageType damageType = properties.damageType();
         Damage damage = new Damage(totalDamageAmount, damageType, hitboxComponentType);
 
-        DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage, distance);
+        DamageContext damageContext = new DamageContext(currentContext.getDamageSource(), damageTarget, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 

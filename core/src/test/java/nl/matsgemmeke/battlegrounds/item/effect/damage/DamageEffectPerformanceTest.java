@@ -92,12 +92,14 @@ class DamageEffectPerformanceTest {
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
+        Location targetLocation = new Location(world, 2, 0, 0);
         HitboxComponent hitboxComponent = new HitboxComponent(hitboxComponentType, 0, 0, 0, 0, 0, 0);
 
         Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(hitLocation)).thenReturn(Optional.of(hitboxComponent));
 
         DamageTarget target = mock(DamageTarget.class);
+        when(target.getLocation()).thenReturn(targetLocation);
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
@@ -128,11 +130,13 @@ class DamageEffectPerformanceTest {
         World world = mock(World.class);
         Location startingLocation = new Location(world, 1, 0, 0);
         Location hitLocation = new Location(world, 2, 0, 0);
+        Location targetLocation = new Location(world, 2, 0, 0);
 
         Hitbox hitbox = mock(Hitbox.class);
         when(hitbox.getIntersectedHitboxComponent(hitLocation)).thenReturn(Optional.empty());
 
         DamageTarget target = mock(DamageTarget.class);
+        when(target.getLocation()).thenReturn(targetLocation);
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
