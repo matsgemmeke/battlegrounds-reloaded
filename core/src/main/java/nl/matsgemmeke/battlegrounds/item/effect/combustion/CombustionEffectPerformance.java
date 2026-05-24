@@ -6,8 +6,11 @@ import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -32,6 +35,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     private final AudioEmitter audioEmitter;
     private final CollisionDetector collisionDetector;
     private final CombustionProperties properties;
+    private final DamageProcessor damageProcessor;
     private final MetadataValueEditor metadataValueEditor;
     private final Random random;
     private final Scheduler scheduler;
@@ -44,6 +48,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     public CombustionEffectPerformance(
             AudioEmitter audioEmitter,
             CollisionDetector collisionDetector,
+            DamageProcessor damageProcessor,
             MetadataValueEditor metadataValueEditor,
             Scheduler scheduler,
             TargetFinder targetFinder,
@@ -51,6 +56,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     ) {
         this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
+        this.damageProcessor = damageProcessor;
         this.metadataValueEditor = metadataValueEditor;
         this.scheduler = scheduler;
         this.targetFinder = targetFinder;
@@ -66,7 +72,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
     @Override
     public void start() {
-        UUID uniqueId = currentContext.getDamageSource().getUniqueId();
+        DamageSource damageSource = currentContext.getDamageSource();
         Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
         World world = actor.getWorld();
@@ -75,7 +81,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
 
         currentRadius = properties.minSize();
 
-        this.inflictDamage(uniqueId, actorLocation);
+        this.inflictDamage(damageSource, actorLocation);
 
         schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, properties.growthInterval());
         schedule.addTask(() -> this.increaseFireCircleRadius(actorLocation, world));
@@ -92,18 +98,21 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private void inflictDamage(UUID entityId, Location location) {
+    private void inflictDamage(DamageSource damageSource, Location actorLocation) {
+        UUID damageSourceId = damageSource.getUniqueId();
         RangeProfile rangeProfile = properties.rangeProfile();
         double damageRange = rangeProfile.longRangeDistance();
 
-        for (GameEntity target : targetFinder.findTargets(entityId, location, damageRange)) {
+        for (GameEntity target : targetFinder.findTargets(damageSourceId, actorLocation, damageRange)) {
             Location targetLocation = target.getLocation();
 
-            double distance = location.distance(targetLocation);
+            double distance = actorLocation.distance(targetLocation);
             double damageAmount = rangeProfile.getDamageByDistance(distance);
             Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE, HitboxComponentType.TORSO);
 
-            target.damage(damage);
+            DamageContext damageContext = new DamageContext(damageSource, target, damage, distance);
+
+            damageProcessor.processDamage(damageContext);
         }
     }
 

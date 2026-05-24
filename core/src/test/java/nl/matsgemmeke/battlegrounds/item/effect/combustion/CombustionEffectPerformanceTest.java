@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.effect.combustion;
 
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
+import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
@@ -72,6 +73,8 @@ class CombustionEffectPerformanceTest {
     @Mock
     private CollisionDetector collisionDetector;
     @Mock
+    private DamageProcessor damageProcessor;
+    @Mock
     private DamageSource damageSource;
     @Mock
     private MetadataValueEditor metadataValueEditor;
@@ -84,7 +87,7 @@ class CombustionEffectPerformanceTest {
 
     @BeforeEach
     void setUp() {
-        performance = new CombustionEffectPerformance(audioEmitter, collisionDetector, metadataValueEditor, scheduler, targetFinder, PROPERTIES);
+        performance = new CombustionEffectPerformance(audioEmitter, collisionDetector, damageProcessor, metadataValueEditor, scheduler, targetFinder, PROPERTIES);
     }
 
     @Test
@@ -159,22 +162,24 @@ class CombustionEffectPerformanceTest {
         when(scheduler.createSingleRunSchedule(longThat(duration -> duration >= MIN_DURATION && duration <= MAX_DURATION))).thenReturn(cancelSchedule);
         when(targetFinder.findTargets(DAMAGE_SOURCE_ID, actorLocation, LONG_RANGE_DISTANCE)).thenReturn(List.of(target));
 
+        doAnswer(MockUtils.answerRunScheduleTask(3)).when(repeatingSchedule).addTask(any(ScheduleTask.class));
+        doAnswer(MockUtils.answerRunScheduleTask()).when(cancelSchedule).addTask(any(ScheduleTask.class));
+
         performance.setContext(context);
         performance.start();
 
-        ArgumentCaptor<ScheduleTask> scheduleTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(repeatingSchedule).addTask(scheduleTaskCaptor.capture());
+        ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
+        verify(damageProcessor).processDamage(damageContextCaptor.capture());
 
-        // Simulate the task running three times to exceed the max size
-        ScheduleTask task = scheduleTaskCaptor.getValue();
-        task.run();
-        task.run();
-        task.run();
-
-        ArgumentCaptor<ScheduleTask> cancelTaskCaptor = ArgumentCaptor.forClass(ScheduleTask.class);
-        verify(cancelSchedule).addTask(cancelTaskCaptor.capture());
-
-        cancelTaskCaptor.getValue().run();
+        assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
+            assertThat(damageContext.source()).isEqualTo(damageSource);
+            assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.damage()).satisfies(damage -> {
+                assertThat(damage.amount()).isEqualTo(LONG_RANGE_DAMAGE);
+                assertThat(damage.type()).isEqualTo(DamageType.FIRE_DAMAGE);
+            });
+            assertThat(damageContext.distance()).isEqualTo(6.0);
+        });
 
         verify(middleBlock).setType(Material.FIRE);
         verify(middleBlock).setType(Material.AIR);
@@ -211,7 +216,6 @@ class CombustionEffectPerformanceTest {
 
         verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, actorLocation);
         verify(repeatingSchedule, times(2)).stop();
-        verify(target).damage(new Damage(LONG_RANGE_DAMAGE, DamageType.FIRE_DAMAGE, HitboxComponentType.TORSO));
         verify((Removable) actor).remove();
     }
 
