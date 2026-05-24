@@ -38,8 +38,6 @@ public class HitscanLauncher implements ProjectileLauncher {
     private static final int MAX_STEPS = 1000;
     // The distance interval (in blocks) at which particles are spawned along the hitscan path.
     private static final double PARTICLE_PER_STEPS = 5;
-    private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.2;
-    private static final double FINDING_RANGE_ENTITIES = 0.1;
 
     private final AudioEmitter audioEmitter;
     private final CollisionDetector collisionDetector;
@@ -122,7 +120,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(block, null, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, projectileLocation, world);
+            this.startPerformance(collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
@@ -135,15 +133,15 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(null, hitTarget, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, hitLocation, world);
+            this.startPerformance(collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, World world) {
-        StaticActor actor = new StaticActor(startingLocation, world);
+    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, Location hitLocation, World world) {
+        StaticActor actor = new StaticActor(hitLocation, world);
         ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
 
         itemEffect.startPerformance(context);
