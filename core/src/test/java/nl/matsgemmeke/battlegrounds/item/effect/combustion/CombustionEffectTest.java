@@ -33,6 +33,8 @@ class CombustionEffectTest {
 
     private static final CombustionProperties PROPERTIES = new CombustionProperties(null, null, 1, 2, 0.1, 5L, 10, 20, false, false);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
@@ -98,6 +100,6 @@ class CombustionEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
     }
 }

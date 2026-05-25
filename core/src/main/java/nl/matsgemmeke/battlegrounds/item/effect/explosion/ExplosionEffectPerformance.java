@@ -48,7 +48,7 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         DamageSource damageSource = currentContext.getDamageSource();
         Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
-        World world = actor.getWorld();
+        World actorWorld = actor.getWorld();
 
         double maxDistance = properties.rangeProfile().longRangeDistance();
 
@@ -61,10 +61,11 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
             Location damageTargetLocation = damageTarget.getLocation();
             double distance = actorLocation.distance(damageTargetLocation);
 
+            String itemName = currentContext.getItemName();
             double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
             Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE, HitboxComponentType.TORSO);
 
-            DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage, distance);
+            DamageContext damageContext = new DamageContext(damageSource, damageTarget, itemName, damage, distance);
             damageProcessor.processDamage(damageContext);
         }
 
@@ -73,7 +74,7 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
             removableActor.remove();
         }
 
-        ArmorStand armorStand = world.spawn(actorLocation, ArmorStand.class);
+        ArmorStand armorStand = actorWorld.spawn(actorLocation, ArmorStand.class);
         armorStand.setInvisible(true);
         armorStand.setInvulnerable(true);
         armorStand.setMarker(true);
@@ -81,7 +82,7 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         ExplosionAttributor attributor = new ExplosionAttributor(armorStand.getUniqueId());
         explosionAttributorRegistry.addAttributor(attributor);
 
-        world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks(), armorStand);
+        actorWorld.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks(), armorStand);
 
         explosionAttributorRegistry.removeAttributor(attributor);
         armorStand.remove();

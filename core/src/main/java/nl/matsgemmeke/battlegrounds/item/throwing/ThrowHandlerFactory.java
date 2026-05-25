@@ -16,9 +16,9 @@ public class ThrowHandlerFactory {
         this.projectileLauncherFactory = projectileLauncherFactory;
     }
 
-    public ThrowHandler create(ThrowingSpec spec, ItemRepresentation itemRepresentation, ResourceContainer resourceContainer) {
+    public ThrowHandler create(ThrowingSpec spec, ItemRepresentation itemRepresentation, ResourceContainer resourceContainer, String itemName) {
         ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(spec.projectile);
 
-        return new ThrowHandler(itemRepresentation, projectileLauncher, resourceContainer);
+        return new ThrowHandler(itemRepresentation, projectileLauncher, resourceContainer, itemName);
     }
 }

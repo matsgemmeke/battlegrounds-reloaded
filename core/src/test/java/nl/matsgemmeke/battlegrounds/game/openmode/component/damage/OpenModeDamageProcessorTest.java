@@ -33,8 +33,10 @@ class OpenModeDamageProcessorTest {
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final UUID TARGET_ID = UUID.randomUUID();
+    private static final String ITEM_NAME = "Test Item";
     private static final double ORIGINAL_DAMAGE = 10.0;
     private static final double MODIFIED_DAMAGE = 20.0;
+    private static final double DISTANCE = 5.0;
 
     @Spy
     private Clock clock = Clock.fixed(Instant.parse("2026-05-14T13:00:00.00Z"), ZoneOffset.UTC);
@@ -72,8 +74,8 @@ class OpenModeDamageProcessorTest {
     @Test
     @DisplayName("processDamage performs the damage pipeline")
     void processDamage() {
-        Damage originalDamage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
-        Damage modifiedDamage = new Damage(20.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
+        Damage originalDamage = new Damage(ORIGINAL_DAMAGE, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
+        Damage modifiedDamage = new Damage(MODIFIED_DAMAGE, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         DamageSource source = mock(DamageSource.class);
         when(source.getUniqueId()).thenReturn(SOURCE_ID);
@@ -83,8 +85,8 @@ class OpenModeDamageProcessorTest {
         when(target.getHealth()).thenReturn(0.0);
         when(target.damage(modifiedDamage)).thenReturn(30.0);
 
-        DamageContext originalDamageContext = new DamageContext(source, target, originalDamage, ORIGINAL_DAMAGE);
-        DamageContext modifiedDamageContext = new DamageContext(source, target, modifiedDamage, MODIFIED_DAMAGE);
+        DamageContext originalDamageContext = new DamageContext(source, target, ITEM_NAME, originalDamage, DISTANCE);
+        DamageContext modifiedDamageContext = new DamageContext(source, target, ITEM_NAME, modifiedDamage, DISTANCE);
 
         DamageModifier damageModifier = mock(DamageModifier.class);
         when(damageModifier.apply(originalDamageContext)).thenReturn(modifiedDamageContext);
@@ -98,11 +100,11 @@ class OpenModeDamageProcessorTest {
         assertThat(damageEventCaptor.getValue()).satisfies(damageEvent -> {
             assertThat(damageEvent.damagerId()).isEqualTo(SOURCE_ID);
             assertThat(damageEvent.victimId()).isEqualTo(TARGET_ID);
-            assertThat(damageEvent.item()).isEqualTo("TestWeapon");
+            assertThat(damageEvent.item()).isEqualTo(ITEM_NAME);
             assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
             assertThat(damageEvent.damageType()).isEqualTo("BULLET_DAMAGE");
             assertThat(damageEvent.hitbox()).isEqualTo("TORSO");
-            assertThat(damageEvent.distance()).isEqualTo(MODIFIED_DAMAGE);
+            assertThat(damageEvent.distance()).isEqualTo(DISTANCE);
             assertThat(damageEvent.kill()).isTrue();
             assertThat(damageEvent.friendlyFire()).isFalse();
             assertThat(damageEvent.timestamp()).isEqualTo("2026-05-14T13:00:00.00Z");

@@ -42,6 +42,7 @@ public class Deployment {
     private final Scheduler scheduler;
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
+    private final String itemName;
     @Nullable
     private Activator activator;
     @Nullable
@@ -58,6 +59,7 @@ public class Deployment {
             CollisionResultAdapter collisionResultAdapter,
             ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
+            @Assisted String itemName,
             @Assisted DeploymentProperties properties,
             @Assisted DeploymentState state,
             @Assisted ItemEffect itemEffect
@@ -66,6 +68,7 @@ public class Deployment {
         this.collisionResultAdapter = collisionResultAdapter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
+        this.itemName = itemName;
         this.properties = properties;
         this.state = state;
         this.itemEffect = itemEffect;
@@ -190,7 +193,7 @@ public class Deployment {
 
     private void activateEffect(TriggerResult triggerResult, DamageSource damageSource, Actor actor, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
-        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext effectContext = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(effectContext);
     }

@@ -32,9 +32,11 @@ import static org.mockito.Mockito.mock;
 class SmokeScreenEffectTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
+
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
-    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
 
     @Mock
     private GameContextProvider gameContextProvider;
@@ -98,6 +100,6 @@ class SmokeScreenEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
     }
 }

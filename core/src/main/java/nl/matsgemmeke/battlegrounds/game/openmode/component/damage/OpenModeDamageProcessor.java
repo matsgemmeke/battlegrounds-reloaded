@@ -56,13 +56,11 @@ public class OpenModeDamageProcessor implements DamageProcessor {
         String gameKey = this.gameKey.toString();
         UUID damagerId = damageContext.source().getUniqueId();
         UUID victimId = damageContext.target().getUniqueId();
-        // TODO: real value
-        String item = "TestWeapon";
+        String item = damageContext.itemName();
         String damageType = damageContext.damage().type().name();
         String hitbox = damageContext.damage().hitboxComponentType().name();
         double distance = damageContext.distance();
         boolean kill = target.getHealth() <= 0;
-        // TODO: real value
         boolean friendlyFire = false;
         Instant timestamp = Instant.now(clock);
         DamageEvent damageEvent = new DamageEvent(gameKey, damagerId, victimId, item, finalDamageAmount, damageType, hitbox, distance, kill, friendlyFire, timestamp);

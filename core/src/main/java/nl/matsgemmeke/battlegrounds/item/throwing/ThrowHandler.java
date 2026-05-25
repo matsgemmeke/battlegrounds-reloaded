@@ -18,11 +18,13 @@ public class ThrowHandler {
     private final ItemRepresentation itemRepresentation;
     private final ProjectileLauncher projectileLauncher;
     private final ResourceContainer resourceContainer;
+    private final String itemName;
 
-    public ThrowHandler(ItemRepresentation itemRepresentation, ProjectileLauncher projectileLauncher, ResourceContainer resourceContainer) {
+    public ThrowHandler(ItemRepresentation itemRepresentation, ProjectileLauncher projectileLauncher, ResourceContainer resourceContainer, String itemName) {
         this.itemRepresentation = itemRepresentation;
         this.projectileLauncher = projectileLauncher;
         this.resourceContainer = resourceContainer;
+        this.itemName = itemName;
     }
 
     public void performThrow(ThrowPerformer performer) {
@@ -38,7 +40,7 @@ public class ThrowHandler {
         Location direction = performer.getThrowDirection();
         Supplier<Location> soundLocationSupplier = performer::getThrowDirection;
         World world = direction.getWorld();
-        LaunchContext launchContext = new LaunchContext(performer, performer, direction, soundLocationSupplier, world);
+        LaunchContext launchContext = new LaunchContext(itemName, performer, performer, direction, soundLocationSupplier, world);
 
         projectileLauncher.launch(launchContext);
 

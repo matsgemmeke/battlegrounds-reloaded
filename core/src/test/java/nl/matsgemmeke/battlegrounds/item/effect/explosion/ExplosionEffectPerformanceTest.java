@@ -32,6 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ExplosionEffectPerformanceTest {
 
+    // Property variables
     private static final boolean BREAK_BLOCKS = false;
     private static final boolean SET_FIRE = false;
     private static final double LONG_RANGE_DAMAGE = 25.0;
@@ -41,9 +42,12 @@ class ExplosionEffectPerformanceTest {
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
     private static final float POWER = 1.0F;
-    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
     private static final ExplosionProperties PROPERTIES = new ExplosionProperties(RANGE_PROFILE, POWER, SET_FIRE, BREAK_BLOCKS);
+
+    // Context variables
+    private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
+    private static final String ITEM_NAME = "Test Item";
 
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final UUID ARMOR_STAND_ID = UUID.randomUUID();
@@ -78,7 +82,7 @@ class ExplosionEffectPerformanceTest {
 
         when(world.spawn(actorLocation, ArmorStand.class)).thenReturn(armorStand);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
 
         performance.setContext(context);
         performance.start();
@@ -103,7 +107,7 @@ class ExplosionEffectPerformanceTest {
         when(actor.getLocation()).thenReturn(actorLocation);
         when(actor.getWorld()).thenReturn(world);
 
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
 
         DamageTarget damageTarget = mock(GameEntity.class);
         when(damageTarget.getLocation()).thenReturn(damageTargetLocation);
@@ -132,6 +136,7 @@ class ExplosionEffectPerformanceTest {
         assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(damageTarget);
+            assertThat(damageContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(damageContext.damage()).satisfies(damage -> {
                 assertThat(damage.type()).isEqualTo(DamageType.EXPLOSIVE_DAMAGE);
                 assertThat(damage.amount()).isEqualTo(LONG_RANGE_DAMAGE);

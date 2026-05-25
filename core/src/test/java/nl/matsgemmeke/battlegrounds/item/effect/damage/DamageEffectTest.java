@@ -33,6 +33,7 @@ class DamageEffectTest {
 
     private static final DamageProperties PROPERTIES = new DamageProperties(null, null, null);
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
@@ -153,6 +154,6 @@ class DamageEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
     }
 }

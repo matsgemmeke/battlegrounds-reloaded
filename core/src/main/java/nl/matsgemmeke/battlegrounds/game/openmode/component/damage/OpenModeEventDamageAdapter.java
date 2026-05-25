@@ -46,10 +46,12 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
             return new EventDamageResult(damageAmount);
         }
 
+        String itemName = meleeWeapon.getName();
         double meleeDamageAmount = meleeWeapon.getAttackDamage() * damagerGamePlayer.getAttackStrength();
         Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE, HitboxComponentType.TORSO);
         double distance = damagerGamePlayer.getLocation().distance(victimGameEntity.getLocation());
-        DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, damage, distance);
+
+        DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, itemName, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 

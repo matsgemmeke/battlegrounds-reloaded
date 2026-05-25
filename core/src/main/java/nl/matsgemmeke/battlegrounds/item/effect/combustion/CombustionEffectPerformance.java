@@ -73,18 +73,20 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     @Override
     public void start() {
         DamageSource damageSource = currentContext.getDamageSource();
+        String itemName = currentContext.getItemName();
+
         Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
-        World world = actor.getWorld();
+        World actorWorld = actor.getWorld();
 
         audioEmitter.playSounds(properties.combustionSounds(), actorLocation);
 
         currentRadius = properties.minSize();
 
-        this.inflictDamage(damageSource, actorLocation);
+        this.inflictDamage(damageSource, actorLocation, itemName);
 
         schedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, properties.growthInterval());
-        schedule.addTask(() -> this.increaseFireCircleRadius(actorLocation, world));
+        schedule.addTask(() -> this.increaseFireCircleRadius(actorLocation, actorWorld));
         schedule.start();
 
         long duration = this.getRandomDuration(properties.minDuration(), properties.maxDuration());
@@ -98,7 +100,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private void inflictDamage(DamageSource damageSource, Location actorLocation) {
+    private void inflictDamage(DamageSource damageSource, Location actorLocation, String itemName) {
         UUID damageSourceId = damageSource.getUniqueId();
         RangeProfile rangeProfile = properties.rangeProfile();
         double damageRange = rangeProfile.longRangeDistance();
@@ -110,7 +112,7 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
             double damageAmount = rangeProfile.getDamageByDistance(distance);
             Damage damage = new Damage(damageAmount, DamageType.FIRE_DAMAGE, HitboxComponentType.TORSO);
 
-            DamageContext damageContext = new DamageContext(damageSource, target, damage, distance);
+            DamageContext damageContext = new DamageContext(damageSource, target, itemName, damage, distance);
 
             damageProcessor.processDamage(damageContext);
         }

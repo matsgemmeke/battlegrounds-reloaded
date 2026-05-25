@@ -43,6 +43,8 @@ class ItemLauncherTest {
     private static final int PICKUP_DELAY = 100;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STICK);
     private static final long GAME_SOUND_DELAY = 5L;
+
+    private static final String ITEM_NAME = "Test Item";
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
     @Mock
@@ -76,7 +78,7 @@ class ItemLauncherTest {
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
-        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
         itemLauncher.launch(launchContext);
@@ -110,7 +112,7 @@ class ItemLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
-        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
@@ -118,10 +120,11 @@ class ItemLauncherTest {
         itemLauncher.addTriggerExecutor(triggerExecutor);
         itemLauncher.launch(launchContext);
 
-        ArgumentCaptor<ItemEffectContext> effectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
-        verify(itemEffect).startPerformance(effectContextCaptor.capture());
+        ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
+        verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
-        assertThat(effectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+        assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getItemName()).isEqualTo(ITEM_NAME);
             assertThat(itemEffectContext.getActor()).isInstanceOf(ItemActor.class);
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);

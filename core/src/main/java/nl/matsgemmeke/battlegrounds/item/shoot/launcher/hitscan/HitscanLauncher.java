@@ -78,6 +78,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         boolean hit;
         int steps = 0;
 
+        String itemName = context.itemName();
         DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
         World world = context.world();
@@ -86,7 +87,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         this.scheduleSoundPlayTasks(properties.launchSounds(), context.soundLocationSupplier());
 
         do {
-            hit = this.processProjectileStep(damageSource, startingLocation, world, direction, steps);
+            hit = this.processProjectileStep(itemName, damageSource, startingLocation, world, direction, steps);
             steps++;
         } while (!hit && steps < MAX_STEPS);
     }
@@ -101,7 +102,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         }
     }
 
-    private boolean processProjectileStep(DamageSource damageSource, Location startingLocation, World world, Vector direction, int steps) {
+    private boolean processProjectileStep(String itemName, DamageSource damageSource, Location startingLocation, World world, Vector direction, int steps) {
         double distance = DISTANCE_START + steps * DISTANCE_STEP;
 
         Vector vector = direction.clone().multiply(distance);
@@ -120,7 +121,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(block, null, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, startingLocation, hitLocation, world);
+            this.startPerformance(itemName, collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
@@ -133,16 +134,16 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(null, hitTarget, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, startingLocation, hitLocation, world);
+            this.startPerformance(itemName, collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, Location hitLocation, World world) {
+    private void startPerformance(String itemName, CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, Location hitLocation, World world) {
         StaticActor actor = new StaticActor(hitLocation, world);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(context);
     }

@@ -42,8 +42,10 @@ class FireballLauncherTest {
     private static final double VELOCITY = 2.0;
     private static final long GAME_SOUND_DELAY = 5L;
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
-    private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
     private static final UUID FIREBALL_UNIQUE_ID = UUID.randomUUID();
+
+    private static final String ITEM_NAME = "Test Item";
+    private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
     @Mock
     private AudioEmitter audioEmitter;
@@ -78,7 +80,7 @@ class FireballLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         FireballProperties properties = new FireballProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
-        LaunchContext context = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(projectileSource.launchProjectile(eq(SmallFireball.class), any(Vector.class))).thenReturn(fireball);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
@@ -117,7 +119,7 @@ class FireballLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         FireballProperties properties = new FireballProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
-        LaunchContext context = new LaunchContext(damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(projectileHitResult, fireball)).thenReturn(collisionResult);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
@@ -131,6 +133,7 @@ class FireballLauncherTest {
         verify(itemEffect).startPerformance(itemEffectContextCaptor.capture());
 
         assertThat(itemEffectContextCaptor.getValue()).satisfies(itemEffectContext -> {
+            assertThat(itemEffectContext.getItemName()).isEqualTo(ITEM_NAME);
             assertThat(itemEffectContext.getCollisionResult()).isEqualTo(collisionResult);
             assertThat(itemEffectContext.getDamageSource()).isEqualTo(damageSource);
             assertThat(itemEffectContext.getActor()).satisfies(actor -> {

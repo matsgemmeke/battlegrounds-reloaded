@@ -38,6 +38,8 @@ class DamageEffectPerformanceTest {
     private static final HitboxDamageProfile HITBOX_DAMAGE_PROFILE = new HitboxDamageProfile(2.0, 1.0, 0.5);
     private static final DamageProperties PROPERTIES = new DamageProperties(DAMAGE_TYPE, RANGE_PROFILE, HITBOX_DAMAGE_PROFILE);
 
+    private static final String ITEM_NAME = "Test Item";
+
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
     @Mock
@@ -64,7 +66,7 @@ class DamageEffectPerformanceTest {
     @DisplayName("perform causes no damage when hit damage target is null")
     void perform_damageTargetIsNull() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, null, actor);
 
         effectPerformance.setContext(context);
         effectPerformance.start();
@@ -77,7 +79,7 @@ class DamageEffectPerformanceTest {
     void perform_hitLocationIsNull() {
         DamageTarget hitTarget = mock(DamageTarget.class);
         CollisionResult collisionResult = new CollisionResult(null, hitTarget, null);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, null);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, null, actor);
 
         effectPerformance.setContext(context);
         effectPerformance.start();
@@ -103,7 +105,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
 
         effectPerformance.setContext(context);
         effectPerformance.start();
@@ -114,6 +116,7 @@ class DamageEffectPerformanceTest {
         assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(damageContext -> {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(damageContext.damage()).satisfies(damage -> {
                 assertThat(damage.amount()).isEqualTo(expectedDamage);
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);
@@ -140,7 +143,7 @@ class DamageEffectPerformanceTest {
         when(target.getHitbox()).thenReturn(hitbox);
 
         CollisionResult collisionResult = new CollisionResult(null, target, hitLocation);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
 
         effectPerformance.setContext(context);
         effectPerformance.start();
@@ -151,6 +154,7 @@ class DamageEffectPerformanceTest {
         assertThat(damageContextCaptor.getAllValues()).satisfiesExactly(damageContext -> {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(damageContext.damage()).satisfies(damage -> {
                 assertThat(damage.amount()).isEqualTo(5.0);
                 assertThat(damage.type()).isEqualTo(DamageType.BULLET_DAMAGE);

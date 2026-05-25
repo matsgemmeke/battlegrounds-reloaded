@@ -36,6 +36,9 @@ class ExplosionEffectTest {
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
+    private static final Location STARTING_LOCATION = new Location(null, 1, 1, 1);
+    private static final String ITEM_NAME = "Test Item";
+
     @Mock
     private ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory;
     @Mock
@@ -93,11 +96,10 @@ class ExplosionEffectTest {
     private static ItemEffectContext createContext() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         Actor actor = mock(Actor.class);
-        Location startingLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, STARTING_LOCATION, actor);
     }
 }

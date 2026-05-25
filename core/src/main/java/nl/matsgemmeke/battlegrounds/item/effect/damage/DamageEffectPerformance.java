@@ -52,10 +52,12 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         double hitboxDamageModifier = this.getHitboxDamageModifier(hitboxComponentType);
         double totalDamageAmount = distanceDamageAmount * hitboxDamageModifier;
 
+        DamageSource damageSource = currentContext.getDamageSource();
+        String itemName = currentContext.getItemName();
         DamageType damageType = properties.damageType();
         Damage damage = new Damage(totalDamageAmount, damageType, hitboxComponentType);
 
-        DamageContext damageContext = new DamageContext(currentContext.getDamageSource(), damageTarget, damage, distance);
+        DamageContext damageContext = new DamageContext(damageSource, damageTarget, itemName, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 

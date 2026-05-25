@@ -5,5 +5,5 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
 
 public interface DeploymentFactory {
 
-    Deployment create(DeploymentProperties properties, DeploymentState state, ItemEffect itemEffect);
+    Deployment create(String itemName, DeploymentProperties properties, DeploymentState state, ItemEffect itemEffect);
 }

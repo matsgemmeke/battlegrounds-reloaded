@@ -63,6 +63,7 @@ class CombustionEffectPerformanceTest {
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
     private static final CombustionProperties PROPERTIES = new CombustionProperties(COMBUSTION_SOUNDS, RANGE_PROFILE, MIN_SIZE, MAX_SIZE, GROWTH, GROWTH_INTERVAL, MIN_DURATION, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
 
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
@@ -174,6 +175,7 @@ class CombustionEffectPerformanceTest {
         assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
             assertThat(damageContext.source()).isEqualTo(damageSource);
             assertThat(damageContext.target()).isEqualTo(target);
+            assertThat(damageContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(damageContext.damage()).satisfies(damage -> {
                 assertThat(damage.amount()).isEqualTo(LONG_RANGE_DAMAGE);
                 assertThat(damage.type()).isEqualTo(DamageType.FIRE_DAMAGE);
@@ -252,6 +254,6 @@ class CombustionEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

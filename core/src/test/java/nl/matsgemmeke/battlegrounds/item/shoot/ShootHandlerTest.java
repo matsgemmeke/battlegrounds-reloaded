@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.spread.SpreadPattern;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ShootHandlerTest {
+
+    private static final String ITEM_NAME = "Test Item";
 
     @Mock
     private FireMode fireMode;
@@ -45,7 +48,7 @@ class ShootHandlerTest {
     @BeforeEach
     void setUp() {
         resourceContainer = new ResourceContainer(20, 10, 10, 20);
-        shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, resourceContainer, itemRepresentation, recoil);
+        shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, resourceContainer, itemRepresentation, ITEM_NAME, recoil);
     }
 
     @Test
@@ -61,7 +64,8 @@ class ShootHandlerTest {
     @DisplayName("shoot starts fire mode with observers that activate shots")
     void shoot_startsFireMode() {
         ItemStack itemStack = new ItemStack(Material.IRON_HOE);
-        Location shootingDirection = new Location(null, 1, 1, 1, 90.0f, 0.0f);
+        World world = mock(World.class);
+        Location shootingDirection = new Location(world, 1, 1, 1, 90.0f, 0.0f);
 
         ShotPerformer performer = mock(ShotPerformer.class);
         when(performer.getShootingDirection()).thenReturn(shootingDirection);
@@ -81,8 +85,10 @@ class ShootHandlerTest {
         verify(projectileLauncher).launch(launchContextCaptor.capture());
 
         assertThat(launchContextCaptor.getValue()).satisfies(launchContext -> {
+            assertThat(launchContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(launchContext.damageSource()).isEqualTo(performer);
             assertThat(launchContext.direction()).isEqualTo(shootingDirection);
+            assertThat(launchContext.world()).isEqualTo(world);
         });
 
         verify(fireMode).startCycle();

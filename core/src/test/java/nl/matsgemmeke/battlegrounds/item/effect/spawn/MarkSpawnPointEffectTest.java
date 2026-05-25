@@ -87,6 +87,6 @@ class MarkSpawnPointEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(null, collisionResult, damageSource, startingLocation, actor);
     }
 }

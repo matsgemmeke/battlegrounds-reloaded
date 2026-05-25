@@ -8,7 +8,8 @@ import java.util.List;
 
 public record DeploymentProperties(
         List<GameSound> manualActivationSounds,
-        @Nullable ParticleEffect destructionParticleEffect,
+        @Nullable
+        ParticleEffect destructionParticleEffect,
         boolean activateEffectOnDestruction,
         boolean removeDeploymentOnDestruction,
         boolean undoEffectOnDestruction,

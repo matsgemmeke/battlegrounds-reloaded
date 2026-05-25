@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.event;
 
-import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
+import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.Entity;
@@ -29,8 +28,6 @@ class EntityDamageEventHandlerTest {
     private static final UUID DEPLOYMENT_OBJECT_UNIQUE_ID = UUID.randomUUID();
 
     @Mock
-    private DamageProcessor damageProcessor;
-    @Mock
     private DeploymentObjectRegistry deploymentObjectRegistry;
     @InjectMocks
     private EntityDamageEventHandler eventHandler;
@@ -50,7 +47,7 @@ class EntityDamageEventHandlerTest {
 
         eventHandler.handle(event);
 
-        verifyNoInteractions(damageProcessor);
+        verify(deploymentObject, never()).damage(any(Damage.class));
     }
 
     @Test
@@ -68,17 +65,12 @@ class EntityDamageEventHandlerTest {
 
         eventHandler.handle(event);
 
-        ArgumentCaptor<DamageContext> damageContextCaptor = ArgumentCaptor.forClass(DamageContext.class);
-        verify(damageProcessor).processDamage(damageContextCaptor.capture());
+        ArgumentCaptor<Damage> damageCaptor = ArgumentCaptor.forClass(Damage.class);
+        verify(deploymentObject).damage(damageCaptor.capture());
 
-        assertThat(damageContextCaptor.getValue()).satisfies(damageContext -> {
-            assertThat(damageContext.source()).isNull();
-            assertThat(damageContext.target()).isEqualTo(deploymentObject);
-            assertThat(damageContext.damage()).satisfies(damage -> {
-               assertThat(damage.type()).isEqualTo(DamageType.ENVIRONMENTAL_DAMAGE);
-               assertThat(damage.amount()).isEqualTo(DAMAGE_AMOUNT);
-            });
-            assertThat(damageContext.distance()).isZero();
+        assertThat(damageCaptor.getValue()).satisfies(damage -> {
+            assertThat(damage.type()).isEqualTo(DamageType.ENVIRONMENTAL_DAMAGE);
+            assertThat(damage.amount()).isEqualTo(DAMAGE_AMOUNT);
         });
     }
 }
