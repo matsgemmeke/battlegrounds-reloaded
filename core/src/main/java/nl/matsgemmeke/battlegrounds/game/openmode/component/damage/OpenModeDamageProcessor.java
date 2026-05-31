@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
@@ -53,17 +55,18 @@ public class OpenModeDamageProcessor implements DamageProcessor {
 
         double finalDamageAmount = target.damage(damage);
 
-        String gameKey = this.gameKey.toString();
         UUID damagerId = damageContext.source().getUniqueId();
+        EntityKey damagerEntityKey = damageContext.source().getEntityKey();
         UUID victimId = damageContext.target().getUniqueId();
+        EntityKey victimEntityKey = damageContext.target().getEntityKey();
         String item = damageContext.itemName();
-        String damageType = damageContext.damage().type().name();
-        String hitbox = damageContext.damage().hitboxComponentType().name();
+        DamageType damageType = damageContext.damage().type();
+        HitboxComponentType hitboxComponentType = damageContext.damage().hitboxComponentType();
         double distance = damageContext.distance();
         boolean kill = target.getHealth() <= 0;
         boolean friendlyFire = false;
         Instant timestamp = Instant.now(clock);
-        DamageEvent damageEvent = new DamageEvent(gameKey, damagerId, victimId, item, finalDamageAmount, damageType, hitbox, distance, kill, friendlyFire, timestamp);
+        DamageEvent damageEvent = new DamageEvent(gameKey, damagerId, damagerEntityKey, victimId, victimEntityKey, item, finalDamageAmount, damageType, hitboxComponentType, distance, kill, friendlyFire, timestamp);
 
         damageEventTracker.add(damageEvent);
     }

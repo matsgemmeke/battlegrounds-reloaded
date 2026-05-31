@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -46,6 +47,11 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
         this.entityHealth = ENTITY_HEALTH;
         this.resistances = new HashMap<>();
         this.uniqueId = UUID.randomUUID();
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return EntityKey.custom("deployment_object");
     }
 
     @Override

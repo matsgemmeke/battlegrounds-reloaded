@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.damage;
 
+import nl.matsgemmeke.battlegrounds.fixture.DamageEventFixture;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +16,7 @@ class DamageEventTrackerTest {
     @Test
     @DisplayName("getTrackedDamageEvents returns list of damage events that were tracked")
     void getTrackedDamageEvents() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
+        DamageEvent damageEvent = DamageEventFixture.createDefault();
 
         damageEventTracker.add(damageEvent);
         List<DamageEvent> savedEvents = damageEventTracker.getTrackedDamageEvents();

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.storage.stats;
 
+import nl.matsgemmeke.battlegrounds.fixture.DamageEventFixture;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,7 @@ class StatsStorageTest {
     @Test
     @DisplayName("saveDamageEvent saves damage event to repository")
     void saveDamageEvent() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
+        DamageEvent damageEvent = DamageEventFixture.createDefault();
         List<DamageEvent> damageEvents = List.of(damageEvent);
 
         statsStorage.saveDamageEvents(damageEvents);

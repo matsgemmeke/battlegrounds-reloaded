@@ -14,8 +14,12 @@ public class DamageEventEntity {
     private String gameKey;
     @DatabaseField(columnName = "damager_id", canBeNull = false)
     private UUID damagerId;
+    @DatabaseField(columnName = "damager_entity_key", canBeNull = false)
+    private String damagerEntityKey;
     @DatabaseField(columnName = "victim_id", canBeNull = false)
     private UUID victimId;
+    @DatabaseField(columnName = "victim_entity_key", canBeNull = false)
+    private String victimEntityKey;
     @DatabaseField(columnName = "item", canBeNull = false)
     private String item;
     @DatabaseField(columnName = "damage_amount", canBeNull = false)
@@ -60,12 +64,28 @@ public class DamageEventEntity {
         this.damagerId = damagerId;
     }
 
+    public String getDamagerEntityKey() {
+        return damagerEntityKey;
+    }
+
+    public void setDamagerEntityKey(String damagerEntityKey) {
+        this.damagerEntityKey = damagerEntityKey;
+    }
+
     public UUID getVictimId() {
         return victimId;
     }
 
     public void setVictimId(UUID victimId) {
         this.victimId = victimId;
+    }
+
+    public String getVictimEntityKey() {
+        return victimEntityKey;
+    }
+
+    public void setVictimEntityKey(String victimEntityKey) {
+        this.victimEntityKey = victimEntityKey;
     }
 
     public String getItem() {

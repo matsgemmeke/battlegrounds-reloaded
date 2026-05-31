@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -31,7 +32,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
     private final DestructionListener destructionListener;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Map<DamageType, Double> resistances;
-    private final Material material;
     private final UUID uniqueId;
     @Nullable
     private Damage lastDamage;
@@ -39,11 +39,15 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
 
     public BlockDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.block = block;
-        this.material = material;
         this.hitboxProvider = hitboxProvider;
         this.destructionListener = destructionListener;
         this.resistances = new HashMap<>();
         this.uniqueId = UUID.randomUUID();
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return EntityKey.custom("deployment_object");
     }
 
     @Override

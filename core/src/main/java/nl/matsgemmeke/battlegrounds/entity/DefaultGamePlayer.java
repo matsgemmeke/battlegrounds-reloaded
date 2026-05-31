@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSourceType;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
@@ -60,6 +59,11 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public void setCanDeploy(boolean canDeploy) {
         this.canDeploy = canDeploy;
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return EntityKey.fromEntityType(player.getType());
     }
 
     @Override
@@ -185,11 +189,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public float getAttackStrength() {
         return player.getAttackCooldown();
-    }
-
-    @Override
-    public DamageSourceType getDamageSourceType() {
-        return DamageSourceType.PLAYER;
     }
 
     @Override

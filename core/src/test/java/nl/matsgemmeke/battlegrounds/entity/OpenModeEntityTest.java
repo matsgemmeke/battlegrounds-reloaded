@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -37,6 +38,16 @@ class OpenModeEntityTest {
     private LivingEntity entity;
     @InjectMocks
     private OpenModeEntity openModeEntity;
+
+    @Test
+    @DisplayName("getEntityKey returns entity key with minecraft entity")
+    void getEntityKey() {
+        when(entity.getType()).thenReturn(EntityType.ZOMBIE);
+
+        EntityKey entityKey = openModeEntity.getEntityKey();
+
+        assertThat(entityKey.getValue()).isEqualTo("minecraft:zombie");
+    }
 
     @Test
     @DisplayName("getLastDamage returns null when entity has not taken damage")

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.job;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.fixture.DamageEventFixture;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.scheduling.TaskRunner;
 import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
@@ -40,7 +41,7 @@ class SaveDamageEventsJobTest {
     @Test
     @DisplayName("run saves all damage events in DamageEventTracker in a separate thread")
     void run() {
-        DamageEvent damageEvent = new DamageEvent(null, null, null, null, 0, null, null, 0, false, false, null);
+        DamageEvent damageEvent = DamageEventFixture.createDefault();
 
         when(damageEventTracker.getTrackedDamageEvents()).thenReturn(List.of(damageEvent));
 

@@ -98,12 +98,13 @@ class OpenModeDamageProcessorTest {
         verify(damageEventTracker).add(damageEventCaptor.capture());
 
         assertThat(damageEventCaptor.getValue()).satisfies(damageEvent -> {
+            assertThat(damageEvent.gameKey()).isEqualTo(gameKey);
             assertThat(damageEvent.damagerId()).isEqualTo(SOURCE_ID);
             assertThat(damageEvent.victimId()).isEqualTo(TARGET_ID);
             assertThat(damageEvent.item()).isEqualTo(ITEM_NAME);
             assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
-            assertThat(damageEvent.damageType()).isEqualTo("BULLET_DAMAGE");
-            assertThat(damageEvent.hitbox()).isEqualTo("TORSO");
+            assertThat(damageEvent.damageType()).isEqualTo(DamageType.BULLET_DAMAGE);
+            assertThat(damageEvent.hitboxComponentType()).isEqualTo(HitboxComponentType.TORSO);
             assertThat(damageEvent.distance()).isEqualTo(DISTANCE);
             assertThat(damageEvent.kill()).isTrue();
             assertThat(damageEvent.friendlyFire()).isFalse();

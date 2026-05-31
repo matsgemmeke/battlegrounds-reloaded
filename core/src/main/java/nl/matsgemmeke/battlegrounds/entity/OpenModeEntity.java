@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.entity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
@@ -26,6 +25,11 @@ public class OpenModeEntity implements GameMob {
     public OpenModeEntity(LivingEntity entity, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
         this.hitboxProvider = hitboxProvider;
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return EntityKey.fromEntityType(entity.getType());
     }
 
     public double getHealth() {

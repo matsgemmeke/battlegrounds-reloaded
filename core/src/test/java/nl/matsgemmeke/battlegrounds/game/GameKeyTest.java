@@ -1,24 +1,51 @@
 package nl.matsgemmeke.battlegrounds.game;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class GameKeyTest {
+class GameKeyTest {
 
-    @Test
-    public void toStringReturnsCorrectValueForSessionKeys() {
-        GameKey gameKey = GameKey.ofSession(1);
-        String value = gameKey.toString();
+    @ParameterizedTest
+    @ValueSource(strings = { "OPEN-MODE", "SESSION-1" })
+    @DisplayName("parse returns game key of open mode when given value equals OPEN-MODE")
+    void parse_successful(String value) {
+        GameKey gameKey = GameKey.parse(value);
 
-        assertEquals("SESSION-1", value);
+        assertThat(gameKey).isNotNull();
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "invalid,Unknown GameKey format: invalid",
+            "SESSION-invalid,Invalid SESSION id: invalid"
+    })
+    void parse_invalidValue(String value, String expectedExceptionMessage) {
+        assertThatThrownBy(() -> GameKey.parse(value))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage(expectedExceptionMessage);
     }
 
     @Test
-    public void toStringReturnsCorrectValueForOpenModeKeys() {
+    @DisplayName("toString returns value for session keys")
+    void toString_session() {
+        GameKey gameKey = GameKey.ofSession(1);
+        String value = gameKey.toString();
+
+        assertThat(value).isEqualTo("SESSION-1");
+    }
+
+    @Test
+    @DisplayName("toString returns value for open mode key")
+    void toString_openMode() {
         GameKey gameKey = GameKey.ofOpenMode();
         String value = gameKey.toString();
 
-        assertEquals("OPEN-MODE", value);
+        assertThat(value).isEqualTo("OPEN-MODE");
     }
 }

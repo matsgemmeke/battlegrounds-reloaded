@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -47,6 +48,14 @@ class BlockDeploymentObjectTest {
     @BeforeEach
     void setUp() {
         deploymentObject = new BlockDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
+    }
+
+    @Test
+    @DisplayName("getEntityKey returns entity key for deployment object")
+    void getEntityKey() {
+        EntityKey entityKey = deploymentObject.getEntityKey();
+
+        assertThat(entityKey.getValue()).isEqualTo("battlegrounds:deployment_object");
     }
 
     @Test
