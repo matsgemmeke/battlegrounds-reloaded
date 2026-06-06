@@ -3,9 +3,10 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 import nl.matsgemmeke.battlegrounds.item.BaseWeapon;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import nl.matsgemmeke.battlegrounds.item.projectile.ProjectileProperties;
 import org.bukkit.inventory.ItemStack;
@@ -86,7 +87,9 @@ public class DefaultEquipment extends BaseWeapon implements Equipment {
     @Override
     public void performDeploymentAction(DeploymentAction deploymentAction, EquipmentUser user) {
         DestructionListener destructionListener = deployment::destroy;
-        DeploymentResult result = deploymentAction.perform(user, destructionListener).orElse(null);
+        DeploymentContext context = new DeploymentContext(name, user, destructionListener);
+
+        DeploymentResult result = deploymentAction.perform(context).orElse(null);
 
         if (result == null) {
             return;

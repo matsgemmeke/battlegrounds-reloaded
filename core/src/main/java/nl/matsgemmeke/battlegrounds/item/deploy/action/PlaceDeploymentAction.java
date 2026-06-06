@@ -39,11 +39,12 @@ public class PlaceDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(DeploymentContext context) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
 
+        Deployer deployer = context.deployer();
         List<Block> targetBlocks = deployer.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
 
         if (targetBlocks.size() != 2 || !targetBlocks.get(1).getType().isOccluding()) {
@@ -61,6 +62,7 @@ public class PlaceDeploymentAction implements DeploymentAction {
         this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+        DestructionListener destructionListener = context.destructionListener();
 
         BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());

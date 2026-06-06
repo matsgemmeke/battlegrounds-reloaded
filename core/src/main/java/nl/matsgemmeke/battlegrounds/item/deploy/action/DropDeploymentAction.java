@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
@@ -39,13 +39,14 @@ public class DropDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(DeploymentContext context) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment drop action without properties configured");
         }
 
+        Deployer deployer = context.deployer();
         Location deployLocation = deployer.getDeployLocation();
-        Vector velocity = deployer.getDeployLocation().getDirection().multiply(properties.velocity());
+        Vector velocity = deployLocation.getDirection().multiply(properties.velocity());
         ItemStack itemStack = properties.itemTemplate().createItemStack();
         World world = deployer.getWorld();
 
@@ -54,6 +55,7 @@ public class DropDeploymentAction implements DeploymentAction {
         item.setVelocity(velocity);
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+        DestructionListener destructionListener = context.destructionListener();
 
         ItemDeploymentObject deploymentObject = new ItemDeploymentObject(item, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());

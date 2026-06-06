@@ -42,21 +42,23 @@ public class ThrowDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(DeploymentContext context) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
 
+        Deployer deployer = context.deployer();
         Location deployLocation = deployer.getDeployLocation();
-        Vector velocity = deployer.getDeployLocation().getDirection().multiply(properties.velocity());
-        ItemStack itemStack = properties.itemTemplate().createItemStack();
+        Vector velocity = deployLocation.getDirection().multiply(properties.velocity());
         World world = deployer.getWorld();
+        ItemStack itemStack = properties.itemTemplate().createItemStack();
 
         Item item = world.dropItem(deployLocation, itemStack);
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);
         item.setVelocity(velocity);
 
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+        DestructionListener destructionListener = context.destructionListener();
 
         ItemDeploymentObject deploymentObject = new ItemDeploymentObject(item, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
