@@ -50,11 +50,6 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
     }
 
     @Override
-    public EntityKey getEntityKey() {
-        return EntityKey.custom("deployment_object");
-    }
-
-    @Override
     public double getHealth() {
         return health;
     }

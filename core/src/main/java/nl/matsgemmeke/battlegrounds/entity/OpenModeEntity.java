@@ -27,11 +27,6 @@ public class OpenModeEntity implements GameMob {
         this.hitboxProvider = hitboxProvider;
     }
 
-    @Override
-    public EntityKey getEntityKey() {
-        return EntityKey.fromEntityType(entity.getType());
-    }
-
     public double getHealth() {
         return entity.getHealth();
     }

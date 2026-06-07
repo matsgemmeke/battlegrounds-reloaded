@@ -1,16 +1,20 @@
 package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
+import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
@@ -29,23 +33,32 @@ class DefaultPlayerRegistryTest {
     @Mock
     private DefaultGamePlayerFactory gamePlayerFactory;
     @Mock
+    private EntityKeyRegistry entityKeyRegistry;
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Spy
+    private GameKey gameKey = GAME_KEY;
     @Mock
     private HitboxProvider<Player> hitboxProvider;
     @Mock
     private HitboxResolver hitboxResolver;
-
+    @InjectMocks
     private DefaultPlayerRegistry playerRegistry;
 
-    @BeforeEach
-    void setUp() {
-        playerRegistry = new DefaultPlayerRegistry(gamePlayerFactory, gameContextProvider, GAME_KEY, hitboxResolver);
+    @Test
+    @DisplayName("findByUniqueId returns empty optional when given unique id is not registered")
+    void findByUniqueId_notRegistered() {
+        Optional<GamePlayer> gamePlayerOptional = playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID);
+
+        assertThat(gamePlayerOptional).isEmpty();
     }
 
     @Test
-    void findByUniqueIdReturnsMatchingEntity() {
+    @DisplayName("findByUniqueId returns optional with matching player")
+    void findByUniqueId_successful() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
+        when(player.getType()).thenReturn(EntityType.PLAYER);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
@@ -60,8 +73,10 @@ class DefaultPlayerRegistryTest {
     }
 
     @Test
-    void getAllReturnsPlayersFromStorage() {
+    @DisplayName("getAll returns all instances from the registry")
+    void getAll() {
         Player player = mock(Player.class);
+        when(player.getType()).thenReturn(EntityType.PLAYER);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
@@ -76,9 +91,19 @@ class DefaultPlayerRegistryTest {
     }
 
     @Test
-    void isRegisteredReturnsTrueIfStorageContainsEntryWithGivenUUID() {
+    @DisplayName("isRegistered returns false when given unique is not registered")
+    void isRegistered_givenUniqueIdNotRegistered() {
+        boolean registered = playerRegistry.isRegistered(PLAYER_UNIQUE_ID);
+
+        assertThat(registered).isFalse();
+    }
+
+    @Test
+    @DisplayName("isRegistered returns true when given unique is registered")
+    void isRegistered_givenUniqueIdRegistered() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
+        when(player.getType()).thenReturn(EntityType.PLAYER);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
@@ -93,11 +118,13 @@ class DefaultPlayerRegistryTest {
     }
 
     @Test
-    void deregisterRemovesGivenPlayerUuidFromPlayerContainer() {
+    @DisplayName("deregister removes player with matching unique id from registry")
+    void deregister() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
+        when(player.getType()).thenReturn(EntityType.PLAYER);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
@@ -109,11 +136,13 @@ class DefaultPlayerRegistryTest {
     }
 
     @Test
-    void registerEntityCreatesNewInstanceOfGamePlayerAndRegisterToGameStorage() {
+    @DisplayName("register creates new instance of GamePlayer and registers it")
+    void register() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
+        when(player.getType()).thenReturn(EntityType.PLAYER);
 
         when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
@@ -123,5 +152,6 @@ class DefaultPlayerRegistryTest {
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
 
         verify(gameContextProvider).registerEntity(PLAYER_UNIQUE_ID, GAME_KEY);
+        verify(entityKeyRegistry).register(eq(PLAYER_UNIQUE_ID), argThat(entityKey -> entityKey.getValue().equals("minecraft:player")));
     }
 }

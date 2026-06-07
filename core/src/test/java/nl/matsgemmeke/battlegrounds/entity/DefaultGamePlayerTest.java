@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.inventory.ItemStack;
@@ -55,16 +54,6 @@ class DefaultGamePlayerTest {
     private Player player;
     @InjectMocks
     private DefaultGamePlayer gamePlayer;
-
-    @Test
-    @DisplayName("getEntityKey returns entity key with minecraft player entity")
-    void getEntityKey() {
-        when(player.getType()).thenReturn(EntityType.PLAYER);
-
-        EntityKey entityKey = gamePlayer.getEntityKey();
-
-        assertThat(entityKey.getValue()).isEqualTo("minecraft:player");
-    }
 
     @Test
     @DisplayName("getLastDamage returns empty optional when player has not taken damage yet")

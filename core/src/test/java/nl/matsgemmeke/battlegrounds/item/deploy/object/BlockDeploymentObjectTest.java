@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
-import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -34,8 +33,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BlockDeploymentObjectTest {
 
-    private static final Material MATERIAL = Material.WARPED_BUTTON;
-
     @Mock
     private Block block;
     @Mock
@@ -47,15 +44,7 @@ class BlockDeploymentObjectTest {
 
     @BeforeEach
     void setUp() {
-        deploymentObject = new BlockDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
-    }
-
-    @Test
-    @DisplayName("getEntityKey returns entity key for deployment object")
-    void getEntityKey() {
-        EntityKey entityKey = deploymentObject.getEntityKey();
-
-        assertThat(entityKey.getValue()).isEqualTo("battlegrounds:deployment_object");
+        deploymentObject = new BlockDeploymentObject(block, hitboxProvider, destructionListener);
     }
 
     @Test

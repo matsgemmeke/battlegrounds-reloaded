@@ -5,12 +5,10 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -38,16 +36,6 @@ class OpenModeEntityTest {
     private LivingEntity entity;
     @InjectMocks
     private OpenModeEntity openModeEntity;
-
-    @Test
-    @DisplayName("getEntityKey returns entity key with minecraft entity")
-    void getEntityKey() {
-        when(entity.getType()).thenReturn(EntityType.ZOMBIE);
-
-        EntityKey entityKey = openModeEntity.getEntityKey();
-
-        assertThat(entityKey.getValue()).isEqualTo("minecraft:zombie");
-    }
 
     @Test
     @DisplayName("getLastDamage returns null when entity has not taken damage")
@@ -130,7 +118,6 @@ class OpenModeEntityTest {
         verify(entity).removePotionEffect(PotionEffectType.SPEED);
     }
 
-    @NotNull
     static Stream<Arguments> damageScenarios() {
         return Stream.of(
                 arguments(50.0, 50.0, 20.0, 10.0),

@@ -19,7 +19,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -40,8 +39,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         this.playerRegistry = playerRegistry;
     }
 
-    @NotNull
-    public List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+    public List<GameEntity> findEnemyTargets(UUID entityId, Location location, double range) {
         Collection<Entity> entities = this.findTargetEntities(location, range);
         List<GameEntity> targets = new ArrayList<>();
 
@@ -119,8 +117,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    @NotNull
-    public List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+    public List<GameEntity> findTargets(UUID entityId, Location location, double range) {
         Collection<Entity> entities = this.findTargetEntities(location, range);
         List<GameEntity> targets = new ArrayList<>();
 
@@ -143,8 +140,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    @NotNull
-    private Collection<Entity> findTargetEntities(@NotNull Location location, double range) {
+    private Collection<Entity> findTargetEntities(Location location, double range) {
         World world = location.getWorld();
 
         if (world == null) {

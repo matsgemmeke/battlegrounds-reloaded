@@ -33,7 +33,9 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
 
     @Override
     public void handlePlayerJoin(Player player) {
-        if (playerRegistry.isRegistered(player.getUniqueId())) {
+        UUID playerId = player.getUniqueId();
+
+        if (playerRegistry.isRegistered(playerId)) {
             return;
         }
 

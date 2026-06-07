@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -18,13 +20,21 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
 
     private final DefaultGamePlayerFactory gamePlayerFactory;
     private final EntityContainer<GamePlayer> playerContainer;
+    private final EntityKeyRegistry entityKeyRegistry;
     private final GameContextProvider gameContextProvider;
     private final GameKey gameKey;
     private final HitboxResolver hitboxResolver;
 
     @Inject
-    public DefaultPlayerRegistry(DefaultGamePlayerFactory gamePlayerFactory, GameContextProvider gameContextProvider, GameKey gameKey, HitboxResolver hitboxResolver) {
+    public DefaultPlayerRegistry(
+            DefaultGamePlayerFactory gamePlayerFactory,
+            EntityKeyRegistry entityKeyRegistry,
+            GameContextProvider gameContextProvider,
+            GameKey gameKey,
+            HitboxResolver hitboxResolver
+    ) {
         this.gamePlayerFactory = gamePlayerFactory;
+        this.entityKeyRegistry = entityKeyRegistry;
         this.gameContextProvider = gameContextProvider;
         this.gameKey = gameKey;
         this.hitboxResolver = hitboxResolver;
@@ -54,12 +64,15 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     @Override
     public GamePlayer register(Player player) {
         HitboxProvider<Player> hitboxProvider = hitboxResolver.resolveHitboxProvider(player);
+        UUID playerId = player.getUniqueId();
 
-        UUID uniqueId = player.getUniqueId();
-        gameContextProvider.registerEntity(uniqueId, gameKey);
+        gameContextProvider.registerEntity(playerId, gameKey);
 
         GamePlayer gamePlayer = gamePlayerFactory.create(player, hitboxProvider);
         playerContainer.addEntity(gamePlayer);
+
+        EntityKey entityKey = EntityKey.fromEntityType(player.getType());
+        entityKeyRegistry.register(playerId, entityKey);
 
         return gamePlayer;
     }

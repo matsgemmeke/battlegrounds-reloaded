@@ -62,11 +62,6 @@ public class DefaultGamePlayer implements GamePlayer {
     }
 
     @Override
-    public EntityKey getEntityKey() {
-        return EntityKey.fromEntityType(player.getType());
-    }
-
-    @Override
     public double getHealth() {
         return player.getHealth();
     }

@@ -64,7 +64,7 @@ public class PlaceDeploymentAction implements DeploymentAction {
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
         DestructionListener destructionListener = context.destructionListener();
 
-        BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
+        BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
 
         properties.resistances().forEach(deploymentObject::addResistance);
