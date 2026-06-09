@@ -9,8 +9,6 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -19,37 +17,33 @@ public class OpenModeEntity implements GameMob {
 
     private final HitboxProvider<LivingEntity> hitboxProvider;
     private final LivingEntity entity;
-    @Nullable
-    private Damage lastDamage;
 
     public OpenModeEntity(LivingEntity entity, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
         this.hitboxProvider = hitboxProvider;
     }
 
+    @Override
     public double getHealth() {
         return entity.getHealth();
     }
 
+    @Override
     public void setHealth(double health) {
         entity.setHealth(health);
     }
 
     @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.ofNullable(lastDamage);
-    }
-
-    @NotNull
     public Location getLocation() {
         return entity.getLocation();
     }
 
-    @NotNull
+    @Override
     public String getName() {
         return entity.getName();
     }
 
+    @Override
     public UUID getUniqueId() {
         return entity.getUniqueId();
     }
@@ -59,7 +53,7 @@ public class OpenModeEntity implements GameMob {
         return entity.getVelocity();
     }
 
-    @NotNull
+    @Override
     public World getWorld() {
         return entity.getWorld();
     }
@@ -84,12 +78,11 @@ public class OpenModeEntity implements GameMob {
         entity.removePotionEffect(potionEffectType);
     }
 
+    @Override
     public double damage(Damage damage) {
         if (entity.isDead() || entity.getHealth() <= 0.0) {
             return 0.0;
         }
-
-        lastDamage = damage;
 
         // Divide by 5 to convert to hearts value
         double finalHealth = Math.max(entity.getHealth() - damage.amount() / 5, 0.0);

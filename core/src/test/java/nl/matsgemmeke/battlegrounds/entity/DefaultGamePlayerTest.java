@@ -56,28 +56,6 @@ class DefaultGamePlayerTest {
     private DefaultGamePlayer gamePlayer;
 
     @Test
-    @DisplayName("getLastDamage returns empty optional when player has not taken damage yet")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to player")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
-
-        when(player.getHealth()).thenReturn(20.0);
-        when(player.isDead()).thenReturn(false);
-
-        gamePlayer.damage(damage);
-        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
-
-    @Test
     void getUniqueIdReturnsPlayerUUID() {
         UUID playerUniqueId = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(playerUniqueId);

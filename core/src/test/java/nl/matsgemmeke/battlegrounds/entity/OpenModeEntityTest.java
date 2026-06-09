@@ -38,28 +38,6 @@ class OpenModeEntityTest {
     private OpenModeEntity openModeEntity;
 
     @Test
-    @DisplayName("getLastDamage returns null when entity has not taken damage")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to entity")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
-
-        when(entity.getHealth()).thenReturn(20.0);
-        when(entity.isDead()).thenReturn(false);
-
-        openModeEntity.damage(damage);
-        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
-
-    @Test
     @DisplayName("getVelocity returns entity's velocity")
     void getVelocity_returnsEntityVelocity() {
         Vector entityVelocity = new Vector();

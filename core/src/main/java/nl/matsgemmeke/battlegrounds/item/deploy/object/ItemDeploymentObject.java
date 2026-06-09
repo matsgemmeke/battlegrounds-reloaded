@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
-import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -15,11 +14,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Item;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -35,8 +32,6 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
     private final Item item;
     private final Map<DamageType, Double> resistances;
     private final UUID uniqueId;
-    @Nullable
-    private Damage lastDamage;
     private double entityHealth;
     private double health;
 
@@ -57,11 +52,6 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
     @Override
     public void setHealth(double health) {
         this.health = health;
-    }
-
-    @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.ofNullable(lastDamage);
     }
 
     @Override
@@ -113,8 +103,6 @@ public class ItemDeploymentObject implements DeploymentObject, DamageTarget, Pro
         if (item.isDead() || !item.isValid()) {
             return 0.0;
         }
-
-        lastDamage = damage;
 
         double damageAmount = damage.amount();
         DamageType damageType = damage.type();

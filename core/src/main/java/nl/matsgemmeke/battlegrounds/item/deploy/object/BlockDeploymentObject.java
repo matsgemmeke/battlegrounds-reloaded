@@ -12,7 +12,6 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,8 +31,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Map<DamageType, Double> resistances;
     private final UUID uniqueId;
-    @Nullable
-    private Damage lastDamage;
     private double health;
 
     public BlockDeploymentObject(Block block, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
@@ -55,11 +52,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
     }
 
     @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.ofNullable(lastDamage);
-    }
-
-    @Override
     public Location getLocation() {
         return block.getLocation().add(BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET, BLOCK_CENTER_OFFSET);
     }
@@ -75,8 +67,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
 
     @Override
     public double damage(Damage damage) {
-        lastDamage = damage;
-
         double damageAmount = damage.amount();
 
         if (resistances != null && resistances.containsKey(damage.type())) {
@@ -111,6 +101,7 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
         return false;
     }
 
+    @Override
     public void remove() {
         block.setType(Material.AIR);
     }

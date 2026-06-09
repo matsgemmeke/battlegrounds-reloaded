@@ -37,8 +37,6 @@ public class DefaultGamePlayer implements GamePlayer {
     private final Set<ItemEffect> effects;
     private boolean canDeploy;
     private boolean passive;
-    @Nullable
-    private Damage lastDamage;
     private int previousFoodLevel;
 
     @Inject
@@ -69,11 +67,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public void setHealth(double health) {
         player.setHealth(health);
-    }
-
-    @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.ofNullable(lastDamage);
     }
 
     @Override
@@ -167,8 +160,6 @@ public class DefaultGamePlayer implements GamePlayer {
         if (player.isDead() || player.getHealth() <= 0.0) {
             return 0.0;
         }
-
-        lastDamage = damage;
 
         // Divide by 5 to convert to hearts value
         double finalHealth = Math.max(player.getHealth() - damage.amount() / 5, 0.0);
