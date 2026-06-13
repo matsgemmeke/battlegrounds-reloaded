@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
-import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
@@ -24,7 +23,6 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -48,8 +46,6 @@ class OpenModeDamageProcessorTest {
     private Clock clock = Clock.fixed(Instant.parse("2026-05-14T13:00:00.00Z"), ZoneOffset.UTC);
     @Mock
     private DamageEventTracker damageEventTracker;
-    @Mock
-    private EntityKeyRegistry entityKeyRegistry;
     @Spy
     private GameKey gameKey = GAME_KEY;
     @InjectMocks
@@ -80,45 +76,6 @@ class OpenModeDamageProcessorTest {
     }
 
     @Test
-    @DisplayName("processDamage does not perform the damage pipeline when no entity key is found for damager")
-    void processDamage_damagerWithoutEntityKey() {
-        DamageSource source = mock(DamageSource.class);
-        when(source.getUniqueId()).thenReturn(DAMAGER_ID);
-
-        DamageTarget target = mock(DamageTarget.class);
-        when(target.getUniqueId()).thenReturn(VICTIM_ID);
-
-        DamageContext damageContext = new DamageContext(source, target, ITEM_NAME, NORMAL_DAMAGE, DISTANCE);
-
-        when(entityKeyRegistry.getEntityKey(DAMAGER_ID)).thenReturn(Optional.empty());
-
-        damageProcessor.processDamage(damageContext);
-
-        verifyNoInteractions(damageEventTracker);
-    }
-
-    @Test
-    @DisplayName("processDamage does not perform the damage pipeline when no entity key is found for victim")
-    void processDamage_victimWithoutEntityKey() {
-        EntityKey damagerEntityKey = EntityKey.fromEntityType(EntityType.PLAYER);
-
-        DamageSource source = mock(DamageSource.class);
-        when(source.getUniqueId()).thenReturn(DAMAGER_ID);
-
-        DamageTarget target = mock(DamageTarget.class);
-        when(target.getUniqueId()).thenReturn(VICTIM_ID);
-
-        DamageContext damageContext = new DamageContext(source, target, ITEM_NAME, NORMAL_DAMAGE, DISTANCE);
-
-        when(entityKeyRegistry.getEntityKey(DAMAGER_ID)).thenReturn(Optional.of(damagerEntityKey));
-        when(entityKeyRegistry.getEntityKey(VICTIM_ID)).thenReturn(Optional.empty());
-
-        damageProcessor.processDamage(damageContext);
-
-        verifyNoInteractions(damageEventTracker);
-    }
-
-    @Test
     @DisplayName("processDamage performs the damage pipeline")
     void processDamage_successful() {
         EntityKey damagerEntityKey = EntityKey.fromEntityType(EntityType.PLAYER);
@@ -126,20 +83,19 @@ class OpenModeDamageProcessorTest {
 
         DamageSource source = mock(DamageSource.class);
         when(source.getUniqueId()).thenReturn(DAMAGER_ID);
+        when(source.getEntityKey()).thenReturn(damagerEntityKey);
 
         DamageTarget target = mock(DamageTarget.class);
         when(target.getUniqueId()).thenReturn(VICTIM_ID);
         when(target.getHealth()).thenReturn(0.0);
         when(target.damage(HIGH_DAMAGE)).thenReturn(30.0);
+        when(target.getEntityKey()).thenReturn(victimEntityKey);
 
         DamageContext originalDamageContext = new DamageContext(source, target, ITEM_NAME, NORMAL_DAMAGE, DISTANCE);
         DamageContext modifiedDamageContext = new DamageContext(source, target, ITEM_NAME, HIGH_DAMAGE, DISTANCE);
 
         DamageModifier damageModifier = mock(DamageModifier.class);
         when(damageModifier.apply(originalDamageContext)).thenReturn(modifiedDamageContext);
-
-        when(entityKeyRegistry.getEntityKey(DAMAGER_ID)).thenReturn(Optional.of(damagerEntityKey));
-        when(entityKeyRegistry.getEntityKey(VICTIM_ID)).thenReturn(Optional.of(victimEntityKey));
 
         damageProcessor.addDamageModifier(damageModifier);
         damageProcessor.processDamage(originalDamageContext);
