@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -57,10 +58,11 @@ public class ThrowDeploymentAction implements DeploymentAction {
         item.setPickupDelay(DEFAULT_PICKUP_DELAY);
         item.setVelocity(velocity);
 
+        EntityKey entityKey = EntityKey.custom(context.itemName());
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
         DestructionListener destructionListener = context.destructionListener();
 
-        ItemDeploymentObject deploymentObject = new ItemDeploymentObject(item, hitboxProvider, destructionListener);
+        ItemDeploymentObject deploymentObject = new ItemDeploymentObject(item, entityKey, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
 
         properties.resistances().forEach(deploymentObject::addResistance);

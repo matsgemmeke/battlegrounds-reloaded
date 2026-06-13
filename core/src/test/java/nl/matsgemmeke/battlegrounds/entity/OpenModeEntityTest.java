@@ -123,7 +123,6 @@ class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
         assertThat(damageDealt).isZero();
@@ -137,7 +136,6 @@ class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
         assertThat(damageDealt).isZero();

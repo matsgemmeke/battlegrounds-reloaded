@@ -31,6 +31,7 @@ public class DefaultGamePlayer implements GamePlayer {
     private static final float SPRINTING_ACCURACY = 0.5f;
     private static final int OPERATING_FOOD_LEVEL = 6;
 
+    private final EntityKey entityKey;
     private final HitboxProvider<Player> hitboxProvider;
     private final InternalsProvider internals;
     private final Player player;
@@ -40,8 +41,14 @@ public class DefaultGamePlayer implements GamePlayer {
     private int previousFoodLevel;
 
     @Inject
-    public DefaultGamePlayer(InternalsProvider internals, @Assisted Player player, @Assisted HitboxProvider<Player> hitboxProvider) {
+    public DefaultGamePlayer(
+            InternalsProvider internals,
+            @Assisted Player player,
+            @Assisted EntityKey entityKey,
+            @Assisted HitboxProvider<Player> hitboxProvider
+    ) {
         this.player = player;
+        this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
         this.internals = internals;
         this.effects = new HashSet<>();
@@ -57,6 +64,11 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public void setCanDeploy(boolean canDeploy) {
         this.canDeploy = canDeploy;
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return entityKey;
     }
 
     @Override

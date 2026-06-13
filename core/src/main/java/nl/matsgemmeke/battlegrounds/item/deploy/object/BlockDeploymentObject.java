@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -15,7 +16,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -28,17 +28,24 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
 
     private final Block block;
     private final DestructionListener destructionListener;
+    private final EntityKey entityKey;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Map<DamageType, Double> resistances;
     private final UUID uniqueId;
     private double health;
 
-    public BlockDeploymentObject(Block block, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
+    public BlockDeploymentObject(Block block, EntityKey entityKey, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.block = block;
+        this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
         this.destructionListener = destructionListener;
         this.resistances = new HashMap<>();
         this.uniqueId = UUID.randomUUID();
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return entityKey;
     }
 
     @Override

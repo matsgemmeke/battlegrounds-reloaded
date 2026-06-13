@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
-import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -12,9 +12,7 @@ import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collection;
@@ -32,8 +30,6 @@ class DefaultPlayerRegistryTest {
 
     @Mock
     private DefaultGamePlayerFactory gamePlayerFactory;
-    @Mock
-    private EntityKeyRegistry entityKeyRegistry;
     @Mock
     private GameContextProvider gameContextProvider;
     @Spy
@@ -63,7 +59,7 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(EntityKey.class), eq(hitboxProvider))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
@@ -81,7 +77,7 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(EntityKey.class), eq(hitboxProvider))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
@@ -108,7 +104,7 @@ class DefaultPlayerRegistryTest {
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
 
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(EntityKey.class), eq(hitboxProvider))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
@@ -126,7 +122,7 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(EntityKey.class), eq(hitboxProvider))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         playerRegistry.register(player);
@@ -144,14 +140,17 @@ class DefaultPlayerRegistryTest {
         when(player.getUniqueId()).thenReturn(PLAYER_UNIQUE_ID);
         when(player.getType()).thenReturn(EntityType.PLAYER);
 
-        when(gamePlayerFactory.create(player, hitboxProvider)).thenReturn(gamePlayer);
+        when(gamePlayerFactory.create(eq(player), any(EntityKey.class), eq(hitboxProvider))).thenReturn(gamePlayer);
         when(hitboxResolver.resolveHitboxProvider(player)).thenReturn(hitboxProvider);
 
         GamePlayer createdGamePlayer = playerRegistry.register(player);
 
+        ArgumentCaptor<EntityKey> entityKeyCaptor = ArgumentCaptor.forClass(EntityKey.class);
+        verify(gamePlayerFactory).create(eq(player), entityKeyCaptor.capture(), eq(hitboxProvider));
+
         assertThat(createdGamePlayer).isEqualTo(gamePlayer);
+        assertThat(entityKeyCaptor.getValue().getValue()).isEqualTo("minecraft:player");
 
         verify(gameContextProvider).registerEntity(PLAYER_UNIQUE_ID, GAME_KEY);
-        verify(entityKeyRegistry).register(eq(PLAYER_UNIQUE_ID), argThat(entityKey -> entityKey.getValue().equals("minecraft:player")));
     }
 }

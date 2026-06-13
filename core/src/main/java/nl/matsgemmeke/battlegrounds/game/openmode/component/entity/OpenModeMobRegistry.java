@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
-import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
@@ -17,13 +16,11 @@ import java.util.UUID;
 
 public class OpenModeMobRegistry implements MobRegistry {
 
-    private final EntityKeyRegistry entityKeyRegistry;
     private final HitboxResolver hitboxResolver;
     private final Map<UUID, GameMob> mobs;
 
     @Inject
-    public OpenModeMobRegistry(EntityKeyRegistry entityKeyRegistry, HitboxResolver hitboxResolver) {
-        this.entityKeyRegistry = entityKeyRegistry;
+    public OpenModeMobRegistry(HitboxResolver hitboxResolver) {
         this.hitboxResolver = hitboxResolver;
         this.mobs = new HashMap<>();
     }
@@ -42,13 +39,11 @@ public class OpenModeMobRegistry implements MobRegistry {
             return existingMob;
         }
 
+        EntityKey entityKey = EntityKey.fromEntityType(entity.getType());
         HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
+        OpenModeEntity openModeEntity = new OpenModeEntity(entity, entityKey, hitboxProvider);
 
         mobs.put(uniqueId, openModeEntity);
-
-        EntityKey entityKey = EntityKey.fromEntityType(entity.getType());
-        entityKeyRegistry.register(uniqueId, entityKey);
 
         return openModeEntity;
     }

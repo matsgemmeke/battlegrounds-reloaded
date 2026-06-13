@@ -15,12 +15,19 @@ import java.util.UUID;
 
 public class OpenModeEntity implements GameMob {
 
+    private final EntityKey entityKey;
     private final HitboxProvider<LivingEntity> hitboxProvider;
     private final LivingEntity entity;
 
-    public OpenModeEntity(LivingEntity entity, HitboxProvider<LivingEntity> hitboxProvider) {
+    public OpenModeEntity(LivingEntity entity, EntityKey entityKey, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
+        this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return entityKey;
     }
 
     @Override

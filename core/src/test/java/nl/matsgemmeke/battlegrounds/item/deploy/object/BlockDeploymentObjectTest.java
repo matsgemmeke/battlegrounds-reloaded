@@ -11,7 +11,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +18,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -38,13 +38,8 @@ class BlockDeploymentObjectTest {
     private DestructionListener destructionListener;
     @Mock
     private HitboxProvider<StaticBoundingBox> hitboxProvider;
-
+    @InjectMocks
     private BlockDeploymentObject deploymentObject;
-
-    @BeforeEach
-    void setUp() {
-        deploymentObject = new BlockDeploymentObject(block, hitboxProvider, destructionListener);
-    }
 
     @Test
     @DisplayName("getLocation returns center location of block")

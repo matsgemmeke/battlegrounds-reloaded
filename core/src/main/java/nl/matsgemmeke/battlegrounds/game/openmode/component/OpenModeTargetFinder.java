@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
-import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.entity.*;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
@@ -56,8 +53,9 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
                 HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
-                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
+                GameEntity target = new OpenModeEntity(livingEntity, entityKey, hitboxProvider);
 
                 targets.add(target);
             }
@@ -130,8 +128,9 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
                 HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
-                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
+                GameEntity target = new OpenModeEntity(livingEntity, entityKey, hitboxProvider);
 
                 targets.add(target);
             }

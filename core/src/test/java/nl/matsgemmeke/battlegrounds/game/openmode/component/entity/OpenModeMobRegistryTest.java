@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
-import nl.matsgemmeke.battlegrounds.entity.EntityKeyRegistry;
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -24,8 +23,6 @@ class OpenModeMobRegistryTest {
 
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
-    @Mock
-    private EntityKeyRegistry entityKeyRegistry;
     @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
@@ -74,8 +71,6 @@ class OpenModeMobRegistryTest {
 
         assertThat(gameMob2.getUniqueId()).isEqualTo(UNIQUE_ID);
         assertThat(gameMob2).isEqualTo(gameMob1);
-
-        verify(entityKeyRegistry).register(eq(UNIQUE_ID), argThat(entityKey -> entityKey.getValue().equals("minecraft:zombie")));
     }
 
     @Test
@@ -92,7 +87,5 @@ class OpenModeMobRegistryTest {
         GameMob gameMob = mobRegistry.register(livingEntity);
 
         assertThat(gameMob.getUniqueId()).isEqualTo(UNIQUE_ID);
-
-        verify(entityKeyRegistry).register(eq(UNIQUE_ID), argThat(entityKey -> entityKey.getValue().equals("minecraft:zombie")));
     }
 }
