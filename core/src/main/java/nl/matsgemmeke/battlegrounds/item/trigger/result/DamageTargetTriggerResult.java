@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.trigger.result;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import org.bukkit.Location;
 
 /**

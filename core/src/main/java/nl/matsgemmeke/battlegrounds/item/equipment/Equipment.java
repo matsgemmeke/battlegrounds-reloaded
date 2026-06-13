@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.Resettable;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.jetbrains.annotations.Nullable;
 

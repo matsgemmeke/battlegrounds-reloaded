@@ -2,12 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.ProjectileActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -78,6 +78,7 @@ public class ArrowLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
+        String itemName = context.itemName();
         DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
@@ -95,19 +96,19 @@ public class ArrowLauncher implements ProjectileLauncher {
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, arrow, actor, damageSource, startingLocation));
+            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, arrow, itemName, actor, damageSource, startingLocation));
             triggerRun.start();
         }
 
         projectileRegistry.register(arrow.getUniqueId());
-        projectileHitActionRegistry.registerProjectileHitAction(arrow, projectileHitResult -> this.processProjectileHit(projectileHitResult, arrow, actor, damageSource, startingLocation));
+        projectileHitActionRegistry.registerProjectileHitAction(arrow, projectileHitResult -> this.processProjectileHit(projectileHitResult, arrow, itemName, actor, damageSource, startingLocation));
 
         this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
-    private void processTriggerResult(TriggerResult triggerResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
+    private void processTriggerResult(TriggerResult triggerResult, Arrow arrow, String itemName, Actor actor, DamageSource damageSource, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(context);
         projectileRegistry.unregister(arrow.getUniqueId());
@@ -118,9 +119,9 @@ public class ArrowLauncher implements ProjectileLauncher {
         }
     }
 
-    private void processProjectileHit(ProjectileHitResult projectileHitResult, Arrow arrow, Actor actor, DamageSource damageSource, Location startingLocation) {
+    private void processProjectileHit(ProjectileHitResult projectileHitResult, Arrow arrow, String itemName, Actor actor, DamageSource damageSource, Location startingLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(projectileHitResult, arrow);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(context);
         projectileRegistry.unregister(arrow.getUniqueId());

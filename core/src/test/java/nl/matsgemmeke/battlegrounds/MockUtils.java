@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
-import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.Plugin;
 import org.mockito.stubbing.Answer;
@@ -49,18 +48,18 @@ public final class MockUtils {
         };
     }
 
-    public static Answer<Void> answerRunProjectileHitAction(Location hitLocation) {
-        return invocation -> {
-            ProjectileHitAction projectileHitAction = invocation.getArgument(1);
-//            projectileHitAction.onProjectileHit(hitLocation);
-            return null;
-        };
-    }
-
     public static Answer<Void> answerRunProjectileHitAction(ProjectileHitResult projectileHitResult) {
         return invocation -> {
             ProjectileHitAction projectileHitAction = invocation.getArgument(1);
             projectileHitAction.onProjectileHit(projectileHitResult);
+            return null;
+        };
+    }
+
+    public static Answer<Void> answerRunRunnable() {
+        return invocation -> {
+            Runnable runnable = invocation.getArgument(0);
+            runnable.run();
             return null;
         };
     }

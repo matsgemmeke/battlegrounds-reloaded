@@ -38,7 +38,8 @@ public class PrimeDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(DeploymentContext context) {
+        Deployer deployer = context.deployer();
         UUID deployerUniqueId = deployer.getUniqueId();
         GameEntity gameEntity = gameEntityFinder.findGameEntityByUniqueId(deployerUniqueId).orElse(null);
 

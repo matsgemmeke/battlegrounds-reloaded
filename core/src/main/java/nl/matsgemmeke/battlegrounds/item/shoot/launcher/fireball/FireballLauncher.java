@@ -2,12 +2,12 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.StaticActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -73,6 +73,7 @@ public class FireballLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
+        String itemName = context.itemName();
         DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
@@ -88,7 +89,7 @@ public class FireballLauncher implements ProjectileLauncher {
         schedule.start();
 
         projectileRegistry.register(fireball.getUniqueId());
-        projectileHitActionRegistry.registerProjectileHitAction(fireball, projectileHitResult -> this.onHit(projectileHitResult, damageSource, startingLocation, fireball, schedule));
+        projectileHitActionRegistry.registerProjectileHitAction(fireball, projectileHitResult -> this.onHit(projectileHitResult, itemName, damageSource, startingLocation, fireball, schedule));
 
         this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
@@ -101,13 +102,13 @@ public class FireballLauncher implements ProjectileLauncher {
         });
     }
 
-    private void onHit(ProjectileHitResult projectileHitResult, DamageSource damageSource, Location startingLocation, Fireball fireball, Schedule schedule) {
+    private void onHit(ProjectileHitResult projectileHitResult, String itemName, DamageSource damageSource, Location startingLocation, Fireball fireball, Schedule schedule) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(projectileHitResult, fireball);
         Location fireballLocation = fireball.getLocation();
         World fireballWorld = fireball.getWorld();
 
         StaticActor actor = new StaticActor(fireballLocation, fireballWorld);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        ItemEffectContext context = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(context);
 

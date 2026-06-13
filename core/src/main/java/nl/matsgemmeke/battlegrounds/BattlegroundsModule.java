@@ -51,6 +51,7 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
@@ -106,6 +107,8 @@ import nl.matsgemmeke.battlegrounds.storage.state.gun.GunStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.sqlite.SqliteGunStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateRepository;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
+import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
@@ -114,20 +117,26 @@ import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import nl.matsgemmeke.battlegrounds.validation.GuiceConstraintValidatorFactory;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
+import java.time.Clock;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.function.Supplier;
 import java.util.logging.Logger;
 
 public class BattlegroundsModule implements Module {
 
+    private final BukkitScheduler bukkitScheduler;
     private final File dataFolder;
     private final InternalsProvider internals;
     private final Logger logger;
     private final Plugin plugin;
     private final PluginManager pluginManager;
 
-    public BattlegroundsModule(File dataFolder, InternalsProvider internals, Logger logger, Plugin plugin, PluginManager pluginManager) {
+    public BattlegroundsModule(BukkitScheduler bukkitScheduler, File dataFolder, InternalsProvider internals, Logger logger, Plugin plugin, PluginManager pluginManager) {
+        this.bukkitScheduler = bukkitScheduler;
         this.dataFolder = dataFolder;
         this.internals = internals;
         this.logger = logger;
@@ -138,6 +147,8 @@ public class BattlegroundsModule implements Module {
     @Override
     public void configure(Binder binder) {
         // Instance bindings
+        binder.bind(BukkitScheduler.class).toInstance(bukkitScheduler);
+        binder.bind(Clock.class).toInstance(Clock.systemUTC());
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(Plugin.class).toInstance(plugin);
@@ -148,6 +159,7 @@ public class BattlegroundsModule implements Module {
 
         // Singleton bindings
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
+        binder.bind(DamageEventTracker.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
         binder.bind(GameContextProvider.class).in(Singleton.class);
         binder.bind(MetadataValueEditor.class).in(Singleton.class);
@@ -158,6 +170,7 @@ public class BattlegroundsModule implements Module {
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
+        binder.bind(DamageEventRepository.class).toProvider(SqliteDamageEventRepositoryProvider.class).in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
@@ -166,6 +179,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(ItemSpecRegistry.class).toProvider(ItemSpecRegistryProvider.class).in(Singleton.class);
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
+        binder.bind(ScheduledExecutorService.class).toProvider(Executors::newSingleThreadScheduledExecutor);
 
         // Game scope bindings
         GameScope gameScope = new GameScope();

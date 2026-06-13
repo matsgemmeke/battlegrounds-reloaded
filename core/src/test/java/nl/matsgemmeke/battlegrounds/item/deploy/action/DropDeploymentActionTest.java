@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
@@ -32,6 +33,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class DropDeploymentActionTest {
 
+    private static final String ITEM_NAME = "Test Item";
     private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.0;
     private static final long COOLDOWN = 10L;
@@ -51,7 +53,9 @@ class DropDeploymentActionTest {
     @Test
     @DisplayName("perform throws IllegalStateException when no properties are configured")
     void perform_withoutProperties() {
-        assertThatThrownBy(() -> deploymentAction.perform(deployer, destructionListener))
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, destructionListener);
+
+        assertThatThrownBy(() -> deploymentAction.perform(context))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment drop action without properties configured");
     }
@@ -67,13 +71,14 @@ class DropDeploymentActionTest {
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
 
         DropDeploymentProperties properties = new DropDeploymentProperties(itemTemplate, resistances, HEALTH, VELOCITY, COOLDOWN);
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, destructionListener);
 
         when(deployer.getDeployLocation()).thenReturn(deployLocation);
         when(deployer.getWorld()).thenReturn(world);
         when(world.dropItem(deployLocation, ITEM_STACK)).thenReturn(item);
 
         deploymentAction.configureProperties(properties);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

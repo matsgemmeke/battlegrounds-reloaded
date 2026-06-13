@@ -77,9 +77,12 @@ public class GunFactory {
     }
 
     private Gun createInstance(GunSpec spec) {
+        String name = spec.name;
+        String description = spec.description;
+
         DefaultGun gun = new DefaultGun();
-        gun.setName(spec.name);
-        gun.setDescription(spec.description);
+        gun.setName(name);
+        gun.setDescription(description);
 
         ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
         ItemRepresentation itemRepresentation = new ItemRepresentation(itemTemplate);
@@ -97,7 +100,7 @@ public class GunFactory {
         ReloadSystem reloadSystem = reloadSystemFactory.create(spec.reloading, resourceContainer);
         gun.setReloadSystem(reloadSystem);
 
-        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation);
+        ShootHandler shootHandler = shootHandlerFactory.create(spec.shooting, resourceContainer, itemRepresentation, name);
         gun.setShootHandler(shootHandler);
 
         ScopeSpec scopeSpec = spec.scope;

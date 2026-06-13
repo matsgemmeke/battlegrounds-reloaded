@@ -2,8 +2,13 @@ package nl.matsgemmeke.battlegrounds.item.effect.damage;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.damage.*;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
@@ -12,9 +17,6 @@ import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import org.bukkit.Location;
 
 public class DamageEffectPerformance extends BaseItemEffectPerformance {
-
-    // We use this multiplier when we try to damage a target, but the origin location falls outside the target's hitbox
-    private static final double DEFAULT_DAMAGE_MULTIPLIER = 1.0;
 
     private final DamageProcessor damageProcessor;
     private final DamageProperties properties;
@@ -34,17 +36,32 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
     @Override
     public void start() {
         CollisionResult collisionResult = currentContext.getCollisionResult();
-        DamageTarget hitTarget = collisionResult.getHitTarget().orElse(null);
+        DamageTarget damageTarget = collisionResult.getHitTarget().orElse(null);
         Location hitLocation = collisionResult.getHitLocation().orElse(null);
 
-        if (hitTarget == null || hitLocation == null) {
+        if (damageTarget == null || hitLocation == null) {
             return;
         }
 
         Location startingLocation = currentContext.getStartingLocation();
+        Location targetLocation = damageTarget.getLocation();
+        double distance = startingLocation.distance(targetLocation);
+
+        Hitbox hitbox = damageTarget.getHitbox();
+        HitboxComponentType hitboxComponentType = hitbox.getIntersectedHitboxComponent(hitLocation)
+                .map(HitboxComponent::type)
+                .orElse(HitboxComponentType.LIMBS);
+
+        double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
+        double hitboxDamageModifier = this.getHitboxDamageModifier(hitboxComponentType);
+        double totalDamageAmount = distanceDamageAmount * hitboxDamageModifier;
+
         DamageSource damageSource = currentContext.getDamageSource();
-        Damage damage = this.createDamage(hitTarget, hitLocation, startingLocation);
-        DamageContext damageContext = new DamageContext(damageSource, hitTarget, damage);
+        String itemName = currentContext.getItemName();
+        DamageType damageType = properties.damageType();
+        Damage damage = new Damage(totalDamageAmount, damageType, hitboxComponentType);
+
+        DamageContext damageContext = new DamageContext(damageSource, damageTarget, itemName, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 
@@ -53,29 +70,11 @@ public class DamageEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private Damage createDamage(DamageTarget target, Location hitLocation, Location startingLocation) {
-        Hitbox hitbox = target.getHitbox();
-        double damageMultiplier = this.getHitboxDamageMultiplier(hitbox, hitLocation);
-        double distance = hitLocation.distance(startingLocation);
-        double distanceDamageAmount = properties.rangeProfile().getDamageByDistance(distance);
-        double totalDamageAmount = distanceDamageAmount * damageMultiplier;
-
-        DamageType damageType = properties.damageType();
-
-        return new Damage(totalDamageAmount, damageType);
-    }
-
-    private double getHitboxDamageMultiplier(Hitbox hitbox, Location hitLocation) {
-        HitboxComponent hitboxComponent = hitbox.getIntersectedHitboxComponent(hitLocation).orElse(null);
-
-        if (hitboxComponent == null) {
-            return DEFAULT_DAMAGE_MULTIPLIER;
-        }
-
-        return switch (hitboxComponent.type()) {
-            case HEAD -> properties.hitboxMultiplierProfile().headshotDamageMultiplier();
-            case TORSO -> properties.hitboxMultiplierProfile().bodyDamageMultiplier();
-            case LIMBS -> properties.hitboxMultiplierProfile().legsDamageMultiplier();
+    private double getHitboxDamageModifier(HitboxComponentType hitboxComponentType) {
+        return switch (hitboxComponentType) {
+            case HEAD -> properties.hitboxDamageProfile().headDamageModifier();
+            case TORSO -> properties.hitboxDamageProfile().torsoDamageModifier();
+            case LIMBS -> properties.hitboxDamageProfile().limbsDamageMultiplier();
         };
     }
 }

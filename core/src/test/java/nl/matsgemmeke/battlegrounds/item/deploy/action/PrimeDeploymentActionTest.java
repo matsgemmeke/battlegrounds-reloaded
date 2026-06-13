@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PrimeDeploymentActionTest {
 
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DEPLOYER_UNIQUE_ID = UUID.randomUUID();
     private static final DestructionListener LISTENER = damage -> {};
 
@@ -45,9 +47,11 @@ class PrimeDeploymentActionTest {
         Deployer deployer = mock(Deployer.class);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
 
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, LISTENER);
+
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.empty());
 
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).isEmpty();
     }
@@ -62,9 +66,11 @@ class PrimeDeploymentActionTest {
         when(deployer.getHeldItem()).thenReturn(itemStack);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
 
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, LISTENER);
+
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);
@@ -87,10 +93,12 @@ class PrimeDeploymentActionTest {
         when(deployer.getHeldItem()).thenReturn(itemStack);
         when(deployer.getUniqueId()).thenReturn(DEPLOYER_UNIQUE_ID);
 
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, LISTENER);
+
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
         deploymentAction.configurePrimeSounds(primeSounds);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, LISTENER);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

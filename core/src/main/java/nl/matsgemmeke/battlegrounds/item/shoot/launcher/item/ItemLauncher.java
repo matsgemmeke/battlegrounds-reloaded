@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -65,6 +65,7 @@ public class ItemLauncher implements ProjectileLauncher {
 
     @Override
     public void launch(LaunchContext context) {
+        String itemName = context.itemName();
         DamageSource damageSource = context.damageSource();
         UUID damageSourceId = damageSource.getUniqueId();
         World world = context.world();
@@ -84,17 +85,17 @@ public class ItemLauncher implements ProjectileLauncher {
 
         for (TriggerExecutor triggerExecutor : triggerExecutors) {
             TriggerRun triggerRun = triggerExecutor.createTriggerRun(triggerContext);
-            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, damageSource, actor, dropLocation));
+            triggerRun.addObserver(triggerResult -> this.processTriggerResult(triggerResult, itemName, damageSource, actor, dropLocation));
             triggerRun.start();
         }
 
         this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
-    private void processTriggerResult(TriggerResult triggerResult, DamageSource damageSource, ItemActor actor, Location dropLocation) {
+    private void processTriggerResult(TriggerResult triggerResult, String itemName, DamageSource damageSource, ItemActor actor, Location dropLocation) {
         CollisionResult collisionResult = collisionResultAdapter.adapt(triggerResult);
 
-        ItemEffectContext effectContext = new ItemEffectContext(collisionResult, damageSource, actor, dropLocation);
+        ItemEffectContext effectContext = new ItemEffectContext(itemName, collisionResult, damageSource, dropLocation, actor);
         itemEffect.startPerformance(effectContext);
     }
 

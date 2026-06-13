@@ -2,14 +2,14 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.*;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.HitboxTargetCondition;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.actor.StaticActor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -38,8 +38,6 @@ public class HitscanLauncher implements ProjectileLauncher {
     private static final int MAX_STEPS = 1000;
     // The distance interval (in blocks) at which particles are spawned along the hitscan path.
     private static final double PARTICLE_PER_STEPS = 5;
-    private static final double FINDING_RANGE_DEPLOYMENT_OBJECTS = 0.2;
-    private static final double FINDING_RANGE_ENTITIES = 0.1;
 
     private final AudioEmitter audioEmitter;
     private final CollisionDetector collisionDetector;
@@ -80,6 +78,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         boolean hit;
         int steps = 0;
 
+        String itemName = context.itemName();
         DamageSource damageSource = context.damageSource();
         Location startingLocation = context.direction();
         World world = context.world();
@@ -88,7 +87,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         this.scheduleSoundPlayTasks(properties.launchSounds(), context.soundLocationSupplier());
 
         do {
-            hit = this.processProjectileStep(damageSource, startingLocation, world, direction, steps);
+            hit = this.processProjectileStep(itemName, damageSource, startingLocation, world, direction, steps);
             steps++;
         } while (!hit && steps < MAX_STEPS);
     }
@@ -103,7 +102,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         }
     }
 
-    private boolean processProjectileStep(DamageSource damageSource, Location startingLocation, World world, Vector direction, int steps) {
+    private boolean processProjectileStep(String itemName, DamageSource damageSource, Location startingLocation, World world, Vector direction, int steps) {
         double distance = DISTANCE_START + steps * DISTANCE_STEP;
 
         Vector vector = direction.clone().multiply(distance);
@@ -122,7 +121,7 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(block, null, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, projectileLocation, world);
+            this.startPerformance(itemName, collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
@@ -135,16 +134,16 @@ public class HitscanLauncher implements ProjectileLauncher {
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(null, hitTarget, hitLocation);
 
-            this.startPerformance(collisionResult, damageSource, hitLocation, world);
+            this.startPerformance(itemName, collisionResult, damageSource, startingLocation, hitLocation, world);
             return true;
         }
 
         return false;
     }
 
-    private void startPerformance(CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, World world) {
-        StaticActor actor = new StaticActor(startingLocation, world);
-        ItemEffectContext context = new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+    private void startPerformance(String itemName, CollisionResult collisionResult, DamageSource damageSource, Location startingLocation, Location hitLocation, World world) {
+        StaticActor actor = new StaticActor(hitLocation, world);
+        ItemEffectContext context = new ItemEffectContext(itemName, collisionResult, damageSource, startingLocation, actor);
 
         itemEffect.startPerformance(context);
     }

@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
@@ -35,6 +36,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ThrowDeploymentActionTest {
 
+    private static final String ITEM_NAME = "Test Item";
     private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.5;
     private static final long COOLDOWN = 10L;
@@ -51,8 +53,9 @@ class ThrowDeploymentActionTest {
     @Test
     void performThrowsIllegalStateExceptionWhenNoPropertiesAreConfigured() {
         Deployer deployer = mock(Deployer.class);
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, destructionListener);
 
-        assertThatThrownBy(() -> deploymentAction.perform(deployer, destructionListener))
+        assertThatThrownBy(() -> deploymentAction.perform(context))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Cannot perform deployment without properties configured");
     }
@@ -68,8 +71,6 @@ class ThrowDeploymentActionTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(itemStack);
 
-        ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
-
         World world = mock(World.class);
         Location deployLocation = new Location(world, 0, 0, 0, 100.0f, 0);
 
@@ -80,8 +81,11 @@ class ThrowDeploymentActionTest {
         Item item = mock(Item.class);
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
+        ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
+        DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, destructionListener);
+
         deploymentAction.configureProperties(properties);
-        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(deployer, destructionListener);
+        Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
             assertThat(deploymentResult.deployer()).isEqualTo(deployer);

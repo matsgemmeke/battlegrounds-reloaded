@@ -1,16 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,11 +18,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -32,43 +32,18 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BlockDeploymentObjectTest {
 
-    private static final Material MATERIAL = Material.WARPED_BUTTON;
-
     @Mock
     private Block block;
     @Mock
     private DestructionListener destructionListener;
     @Mock
     private HitboxProvider<StaticBoundingBox> hitboxProvider;
-
+    @InjectMocks
     private BlockDeploymentObject deploymentObject;
 
-    @BeforeEach
-    void setUp() {
-        deploymentObject = new BlockDeploymentObject(block, MATERIAL, hitboxProvider, destructionListener);
-    }
-
     @Test
-    @DisplayName("getLastDamage returns empty optional when block has not taken damage")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to block")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
-
-        deploymentObject.damage(damage);
-        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
-
-    @Test
-    void getLocationReturnsCenterLocationOfBlock() {
+    @DisplayName("getLocation returns center location of block")
+    void getLocation() {
         Location location = new Location(null, 1, 2, 3);
         when(block.getLocation()).thenReturn(location);
 
@@ -89,7 +64,8 @@ class BlockDeploymentObjectTest {
 
     @ParameterizedTest
     @MethodSource("damageScenarios")
-    void damageReturnsDealtDamageAndLowersHealth(
+    @DisplayName("damage returns dealt damage and lowers health")
+    void damage_lowersHealth(
             double damageAmount,
             double expectedDamageDealt,
             double health,
@@ -97,7 +73,7 @@ class BlockDeploymentObjectTest {
             DamageType damageType,
             Map<DamageType, Double> resistances
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         deploymentObject.setHealth(health);
         resistances.forEach(deploymentObject::addResistance);
@@ -108,8 +84,9 @@ class BlockDeploymentObjectTest {
     }
 
     @Test
-    void damageReturnsDealtDamageAndCallsDestructionListenerWhenHealthIsBelowZero() {
-        Damage damage = new Damage(20.0, DamageType.BULLET_DAMAGE);
+    @DisplayName("damage returns dealt damage and calls destruction listener when health is zero or less")
+    void damage_destroyed() {
+        Damage damage = new Damage(20.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         deploymentObject.setHealth(10.0);
         double damageDealt = deploymentObject.damage(damage);
@@ -121,7 +98,8 @@ class BlockDeploymentObjectTest {
     }
 
     @Test
-    void getHitboxReturnsHitboxFromCurrentBoundingBox() {
+    @DisplayName("getHitbox returns hitbox from current bounding box")
+    void getHitbox() {
         Location blockLocation = new Location(null, 1, 2, 3);
         Hitbox hitbox = new Hitbox(null, null);
 
@@ -144,7 +122,8 @@ class BlockDeploymentObjectTest {
     }
 
     @Test
-    void matchesEntityAlwaysReturnsFalse() {
+    @DisplayName("matchesEntity always returns false")
+    void matchesEntity() {
         Entity entity = mock(Entity.class);
 
         boolean matches = deploymentObject.matchesEntity(entity);
@@ -153,7 +132,8 @@ class BlockDeploymentObjectTest {
     }
 
     @Test
-    void removeRemovesBlock() {
+    @DisplayName("remove sets block to air")
+    void remove() {
         deploymentObject.remove();
 
         verify(block).setType(Material.AIR);

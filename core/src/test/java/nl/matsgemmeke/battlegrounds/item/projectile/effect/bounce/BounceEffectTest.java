@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectPerformanceException;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;

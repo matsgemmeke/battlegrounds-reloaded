@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -35,6 +35,9 @@ class ExplosionEffectTest {
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
+
+    private static final Location STARTING_LOCATION = new Location(null, 1, 1, 1);
+    private static final String ITEM_NAME = "Test Item";
 
     @Mock
     private ExplosionEffectPerformanceFactory explosionEffectPerformanceFactory;
@@ -93,11 +96,10 @@ class ExplosionEffectTest {
     private static ItemEffectContext createContext() {
         CollisionResult collisionResult = new CollisionResult(null, null, null);
         Actor actor = mock(Actor.class);
-        Location startingLocation = new Location(null, 1, 1, 1);
 
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, STARTING_LOCATION, actor);
     }
 }

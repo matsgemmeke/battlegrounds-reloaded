@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -51,6 +51,7 @@ class SmokeScreenEffectPerformanceTest {
     private static final double MAX_SIZE = 5.0;
     private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(PARTICLE_EFFECT, ACTIVATION_SOUNDS, MIN_DURATION, MAX_DURATION, 1.0, MIN_SIZE, MAX_SIZE, 0.0, GROWTH_INTERVAL);
 
+    private static final String ITEM_NAME = "Test Item";
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
 
     @Mock(extraInterfaces = Removable.class)
@@ -254,6 +255,6 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

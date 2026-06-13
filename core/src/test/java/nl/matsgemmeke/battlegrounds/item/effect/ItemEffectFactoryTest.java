@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.effect;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
@@ -18,7 +18,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
+import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import org.bukkit.Particle;
@@ -38,7 +38,7 @@ import static org.mockito.Mockito.*;
 class ItemEffectFactoryTest {
 
     @Spy
-    private HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
+    private HitboxDamageProfileMapper hitboxDamageProfileMapper;
     @Spy
     private ParticleEffectMapper particleEffectMapper;
     @Mock
@@ -64,7 +64,7 @@ class ItemEffectFactoryTest {
 
     @BeforeEach
     void setUp() {
-        itemEffectFactory = new ItemEffectFactory(hitboxMultiplierProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, soundNotificationEffectProvider, rangeProfileMapper);
+        itemEffectFactory = new ItemEffectFactory(hitboxDamageProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, soundNotificationEffectProvider, rangeProfileMapper);
     }
 
     @Test
@@ -115,13 +115,13 @@ class ItemEffectFactoryTest {
     @Test
     void createInstanceForDamageEffectType() {
         DamageEffect damageEffect = mock(DamageEffect.class);
-        HitboxMultiplierSpec hitboxMultiplierSpec = this.createHitboxMultiplierSpec();
+        HitboxDamageProfileSpec hitboxDamageProfileSpec = this.createHitboxDamageProfileSpec();
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         DamageEffectSpec spec = new DamageEffectSpec();
         spec.type = "DAMAGE";
         spec.range = rangeProfileSpec;
-        spec.hitboxMultipliers = hitboxMultiplierSpec;
+        spec.hitboxDamageProfile = hitboxDamageProfileSpec;
         spec.damageType = "BULLET_DAMAGE";
 
         when(damageEffectProvider.get()).thenReturn(damageEffect);
@@ -141,10 +141,10 @@ class ItemEffectFactoryTest {
                assertThat(rangeProfile.longRangeDamage()).isEqualTo(10.0);
                assertThat(rangeProfile.longRangeDistance()).isEqualTo(1.5);
             });
-            assertThat(properties.hitboxMultiplierProfile()).satisfies(hitboxMultiplierProfile -> {
-                assertThat(hitboxMultiplierProfile.headshotDamageMultiplier()).isEqualTo(1.5);
-                assertThat(hitboxMultiplierProfile.bodyDamageMultiplier()).isEqualTo(1.0);
-                assertThat(hitboxMultiplierProfile.legsDamageMultiplier()).isEqualTo(0.5);
+            assertThat(properties.hitboxDamageProfile()).satisfies(hitboxDamageProfile -> {
+                assertThat(hitboxDamageProfile.headDamageModifier()).isEqualTo(1.5);
+                assertThat(hitboxDamageProfile.torsoDamageModifier()).isEqualTo(1.0);
+                assertThat(hitboxDamageProfile.limbsDamageMultiplier()).isEqualTo(0.5);
             });
         });
 
@@ -310,11 +310,11 @@ class ItemEffectFactoryTest {
                 .hasMessage("Cannot create EXPLOSION because of invalid spec: Required 'rangeProfile' value is missing");
     }
 
-    private HitboxMultiplierSpec createHitboxMultiplierSpec() {
-        HitboxMultiplierSpec spec = new HitboxMultiplierSpec();
+    private HitboxDamageProfileSpec createHitboxDamageProfileSpec() {
+        HitboxDamageProfileSpec spec = new HitboxDamageProfileSpec();
         spec.head = 1.5;
-        spec.body = 1.0;
-        spec.legs = 0.5;
+        spec.torso = 1.0;
+        spec.limbs = 0.5;
         return spec;
     }
 

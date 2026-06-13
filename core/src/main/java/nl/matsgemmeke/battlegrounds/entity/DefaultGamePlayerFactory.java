@@ -5,5 +5,5 @@ import org.bukkit.entity.Player;
 
 public interface DefaultGamePlayerFactory {
 
-    GamePlayer create(Player player, HitboxProvider<Player> hitboxProvider);
+    GamePlayer create(Player player, EntityKey entityKey, HitboxProvider<Player> hitboxProvider);
 }

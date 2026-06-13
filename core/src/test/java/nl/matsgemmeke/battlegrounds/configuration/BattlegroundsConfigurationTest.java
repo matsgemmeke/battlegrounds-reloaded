@@ -1,83 +1,80 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
 
-public class BattlegroundsConfigurationTest {
+@ExtendWith(MockitoExtension.class)
+class BattlegroundsConfigurationTest {
 
+    @Mock
     private File configFile;
+    @Mock
     private InputStream resource;
 
+    private BattlegroundsConfiguration configuration;
+
     @BeforeEach
-    public void setUp(@TempDir File tempDir) throws IOException {
+    void setUp(@TempDir File tempDir) throws IOException {
         File resourceFile = new File("src/main/resources/config.yml");
 
         this.configFile = new File(tempDir, "config.yml");
         this.resource = new FileInputStream(resourceFile);
 
         configFile.delete();
+
+        configuration = new BattlegroundsConfiguration(configFile, resource);
+        configuration.load();
     }
 
     @Test
-    public void shouldCreateNewFileWithResourceContentsUponFirstLoad() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
+    @DisplayName("isReadOnly always returns true")
+    void isReadOnly() {
+        boolean readOnly = configuration.isReadOnly();
 
-        assertNotNull(config.getString("version"));
+        assertThat(readOnly).isTrue();
     }
 
     @Test
-    public void shouldAlwaysBeReadOnly() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
+    @DisplayName("getLanguage returns value from configuration")
+    void getLanguage() {
+        String language = configuration.getLanguage();
 
-        assertTrue(config.isReadOnly());
+        assertThat(language).isEqualTo("en");
     }
 
     @Test
-    public void shouldBeAbleToGetLanguage() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
+    @DisplayName("getCameraMovementRecoilDurationInMilliseconds returns value from configuration")
+    void getCameraMovementRecoilDurationInMilliseconds() {
+        long cameraMovementRecoilDurationMillis = configuration.getCameraMovementRecoilDurationMillis();
 
-        assertEquals("en", config.getLanguage());
+        assertThat(cameraMovementRecoilDurationMillis).isEqualTo(20L);
     }
 
     @Test
-    public void canReadCameraMovementRecoilDurationInMillis() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
+    @DisplayName("getSaveDamageEventsJobPeriodMillis returns value from configuration")
+    void getSaveDamageEventsJobPeriodMillis() {
+        long saveDamageEventJobPeriodMillis = configuration.getSaveDamageEventsJobPeriodMillis();
 
-        assertEquals(20, config.getCameraMovementRecoilDurationInMilliseconds());
+        assertThat(saveDamageEventJobPeriodMillis).isEqualTo(60000L);
     }
 
     @Test
-    public void canReadGunDamageAmplifier() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
+    @DisplayName("isEnabledRegisterPlayersAsPassive returns value from configuration")
+    void isEnabledRegisterPlayersAsPassive() {
+        boolean enabledRegisterPlayersAsPassive = configuration.isEnabledRegisterPlayersAsPassive();
 
-        assertEquals(1.0, config.getGunDamageAmplifier(), 0.0);
-    }
-
-    @Test
-    public void canReadGunTriggerSound() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
-
-        assertEquals("UI_BUTTON_CLICK-0.5-2-0", config.getGunTriggerSound());
-    }
-
-    @Test
-    public void canReadRegisterPlayersAsPassive() {
-        BattlegroundsConfiguration config = new BattlegroundsConfiguration(configFile, resource);
-        config.load();
-
-        assertFalse(config.isEnabledRegisterPlayersAsPassive());
+        assertThat(enabledRegisterPlayersAsPassive).isFalse();
     }
 }

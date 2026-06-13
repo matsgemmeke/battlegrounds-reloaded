@@ -1,14 +1,14 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.actor.ProjectileActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -20,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
-import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
@@ -51,6 +50,7 @@ class ArrowLauncherTest {
     private static final double VELOCITY = 3.0;
     private static final long GAME_SOUND_DELAY = 5L;
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID ARROW_UNIQUE_ID = UUID.randomUUID();
 
     @Mock
@@ -83,7 +83,7 @@ class ArrowLauncherTest {
         when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
 
         ArrowProperties properties = new ArrowProperties(List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
@@ -122,7 +122,7 @@ class ArrowLauncherTest {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
         ArrowProperties properties = new ArrowProperties(List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(triggerResult)).thenReturn(collisionResult);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
@@ -175,7 +175,7 @@ class ArrowLauncherTest {
         when(projectileLaunchSource.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
 
         ArrowProperties properties = new ArrowProperties(List.of(gameSound), VELOCITY);
-        LaunchContext launchContext = new LaunchContext(damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
+        LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(projectileHitResult, arrow)).thenReturn(collisionResult);
         when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);

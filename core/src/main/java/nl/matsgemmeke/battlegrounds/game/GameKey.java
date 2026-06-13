@@ -16,6 +16,24 @@ public class GameKey {
         return new GameKey("SESSION-" + id);
     }
 
+    public static GameKey parse(String value) {
+        if (value.equals("OPEN-MODE")) {
+            return ofOpenMode();
+        }
+
+        if (value.startsWith("SESSION-")) {
+            String id = value.substring("SESSION-".length());
+
+            try {
+                return ofSession(Integer.parseInt(id));
+            } catch (NumberFormatException e) {
+                throw new IllegalArgumentException("Invalid SESSION id: " + id);
+            }
+        }
+
+        throw new IllegalArgumentException("Unknown GameKey format: " + value);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {

@@ -1,14 +1,14 @@
-package nl.matsgemmeke.battlegrounds.game.damage;
+package nl.matsgemmeke.battlegrounds.entity.damage;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import org.bukkit.Location;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public interface DamageTarget {
 
-    double damage(Damage damage);
+    EntityKey getEntityKey();
 
     double getHealth();
 
@@ -16,9 +16,9 @@ public interface DamageTarget {
 
     Hitbox getHitbox();
 
-    Optional<Damage> getLastDamage();
-
     Location getLocation();
 
     UUID getUniqueId();
+
+    double damage(Damage damage);
 }

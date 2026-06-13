@@ -3,6 +3,9 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
@@ -45,10 +48,12 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
             return new EventDamageResult(damageAmount);
         }
 
+        String itemName = meleeWeapon.getName();
         double meleeDamageAmount = meleeWeapon.getAttackDamage() * damagerGamePlayer.getAttackStrength();
+        Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE, HitboxComponentType.TORSO);
+        double distance = damagerGamePlayer.getLocation().distance(victimGameEntity.getLocation());
 
-        Damage damage = new Damage(meleeDamageAmount, DamageType.MELEE_DAMAGE);
-        DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, damage);
+        DamageContext damageContext = new DamageContext(damagerGamePlayer, victimGameEntity, itemName, damage, distance);
 
         damageProcessor.processDamage(damageContext);
 

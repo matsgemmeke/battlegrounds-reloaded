@@ -77,16 +77,19 @@ public class EquipmentFactory {
     }
 
     private Equipment createInstance(EquipmentSpec spec) {
+        String name = spec.name;
+        String description = spec.description;
+
         DefaultEquipment equipment = new DefaultEquipment();
-        equipment.setName(spec.name);
-        equipment.setDescription(spec.description);
+        equipment.setName(name);
+        equipment.setDescription(description);
 
         ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.items.displayItem);
 
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.update();
 
-        Deployment deployment = this.createDeployment(spec.deploy, spec.effect);
+        Deployment deployment = this.createDeployment(spec.deploy, spec.effect, name);
         equipment.setDeployment(deployment);
 
         ItemSpec activatorItemSpec = spec.items.activatorItem;
@@ -105,7 +108,7 @@ public class EquipmentFactory {
         return equipment;
     }
 
-    private Deployment createDeployment(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec) {
+    private Deployment createDeployment(DeploymentSpec deploymentSpec, ItemEffectSpec effectSpec, String itemName) {
         boolean activateEffectOnDestruction = deploymentSpec.onDestruction.activateEffect;
         boolean removeDeploymentOnDestruction = deploymentSpec.onDestruction.removeDeployment;
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
@@ -130,7 +133,7 @@ public class EquipmentFactory {
         DeploymentState state = new IdleState();
         ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 
-        Deployment deployment = deploymentFactory.create(properties, state, itemEffect);
+        Deployment deployment = deploymentFactory.create(itemName, properties, state, itemEffect);
 
         for (TriggerSpec triggerSpec : deploymentSpec.triggers.values()) {
             TriggerExecutor triggerExecutor = triggerExecutorFactory.create(triggerSpec);

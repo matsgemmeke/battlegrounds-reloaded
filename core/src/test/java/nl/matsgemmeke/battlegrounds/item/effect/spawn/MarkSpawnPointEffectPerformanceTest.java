@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -23,6 +23,7 @@ class MarkSpawnPointEffectPerformanceTest {
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
     private static final Location STARTING_LOCATION = new Location(null, 1, 1, 1, 1.0f, 1.0f);
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
@@ -78,6 +79,6 @@ class MarkSpawnPointEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

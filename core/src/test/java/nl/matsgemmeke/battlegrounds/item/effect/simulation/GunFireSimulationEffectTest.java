@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -33,6 +33,8 @@ class GunFireSimulationEffectTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
     private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(null, 10L, 200L, 100L, 20L, 10L, 2000L, 1000L);
+
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
@@ -98,6 +100,6 @@ class GunFireSimulationEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(ITEM_NAME, collisionResult, damageSource, startingLocation, actor);
     }
 }

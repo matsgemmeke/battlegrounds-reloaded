@@ -2,14 +2,14 @@ package nl.matsgemmeke.battlegrounds.configuration.item;
 
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
-public class HitboxMultiplierSpec {
+public class HitboxDamageProfileSpec {
 
     @Required
     public Double head;
 
     @Required
-    public Double body;
+    public Double torso;
 
     @Required
-    public Double legs;
+    public Double limbs;
 }

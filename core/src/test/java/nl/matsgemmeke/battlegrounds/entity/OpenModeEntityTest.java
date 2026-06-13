@@ -1,14 +1,14 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
-import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,28 +36,6 @@ class OpenModeEntityTest {
     private LivingEntity entity;
     @InjectMocks
     private OpenModeEntity openModeEntity;
-
-    @Test
-    @DisplayName("getLastDamage returns null when entity has not taken damage")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to entity")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
-
-        when(entity.getHealth()).thenReturn(20.0);
-        when(entity.isDead()).thenReturn(false);
-
-        openModeEntity.damage(damage);
-        Optional<Damage> lastDamageOptional = openModeEntity.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
 
     @Test
     @DisplayName("getVelocity returns entity's velocity")
@@ -118,7 +96,6 @@ class OpenModeEntityTest {
         verify(entity).removePotionEffect(PotionEffectType.SPEED);
     }
 
-    @NotNull
     static Stream<Arguments> damageScenarios() {
         return Stream.of(
                 arguments(50.0, 50.0, 20.0, 10.0),
@@ -131,7 +108,7 @@ class OpenModeEntityTest {
     void damageReturnsDealtDamageAndLowersHealth(double damageAmount, double expectedDamageDealt, double health, double expectedHealth) {
         when(entity.getHealth()).thenReturn(health);
 
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = openModeEntity.damage(damage);
 
@@ -144,9 +121,8 @@ class OpenModeEntityTest {
     void damageDoesNotApplyDamageIfEntityIsDead() {
         when(entity.isDead()).thenReturn(true);
 
-        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
         assertThat(damageDealt).isZero();
@@ -158,9 +134,8 @@ class OpenModeEntityTest {
     void damageDoesNotApplyDamageIfHealthIsBelowZero() {
         when(entity.getHealth()).thenReturn(0.0);
 
-        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, hitboxProvider);
         double damageDealt = openModeEntity.damage(damage);
 
         assertThat(damageDealt).isZero();

@@ -36,7 +36,7 @@ public class RecoilFactory {
                 long kickbackDuration = Optional.ofNullable(spec.kickbackDuration).orElse(0L);
                 float recoveryRate = Optional.ofNullable(spec.recoveryRate).orElse(0.0f);
                 long recoveryDuration = Optional.ofNullable(spec.recoveryDuration).orElse(0L);
-                long rotationDuration = config.getCameraMovementRecoilDurationInMilliseconds();
+                long rotationDuration = config.getCameraMovementRecoilDurationMillis();
 
                 Timer timer = new Timer();
 

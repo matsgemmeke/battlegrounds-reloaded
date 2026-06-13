@@ -29,7 +29,7 @@ public class ShootHandlerFactory {
         this.spreadPatternFactory = spreadPatternFactory;
     }
 
-    public ShootHandler create(ShootingSpec spec, ResourceContainer resourceContainer, ItemRepresentation itemRepresentation) {
+    public ShootHandler create(ShootingSpec spec, ResourceContainer resourceContainer, ItemRepresentation itemRepresentation, String itemName) {
         FireMode fireMode = fireModeFactory.create(spec.fireMode);
         ProjectileLauncher projectileLauncher = projectileLauncherFactory.create(spec.projectile);
         SpreadPattern spreadPattern = spreadPatternFactory.create(spec.spreadPattern);
@@ -41,7 +41,7 @@ public class ShootHandlerFactory {
             recoil = recoilFactory.create(recoilSpec);
         }
 
-        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, resourceContainer, itemRepresentation, recoil);
+        ShootHandler shootHandler = new ShootHandler(fireMode, projectileLauncher, spreadPattern, resourceContainer, itemRepresentation, itemName, recoil);
         shootHandler.registerObservers();
         return shootHandler;
     }

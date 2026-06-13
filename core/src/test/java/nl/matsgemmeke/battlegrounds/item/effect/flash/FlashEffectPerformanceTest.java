@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
@@ -49,6 +49,7 @@ class FlashEffectPerformanceTest {
     private static final PotionEffectProperties POTION_EFFECT_PROPERTIES = new PotionEffectProperties(POTION_EFFECT_DURATION, POTION_EFFECT_AMPLIFIER, POTION_EFFECT_AMBIENT, POTION_EFFECT_PARTICLES, POTION_EFFECT_ICON);
     private static final FlashProperties FLASH_PROPERTIES = new FlashProperties(POTION_EFFECT_PROPERTIES, RANGE, EXPLOSION_POWER, EXPLOSION_BREAK_BLOCKS, EXPLOSION_SET_FIRE);
 
+    private static final String ITEM_NAME = "Test Item";
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
 
@@ -163,6 +164,6 @@ class FlashEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

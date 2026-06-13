@@ -22,7 +22,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -88,11 +87,9 @@ class OpenModeStatePersistenceHandlerTest {
         ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
         ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
         ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
-        PlayerInventory inventory = mock(PlayerInventory.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
-        when(gamePlayer.getEntity().getInventory()).thenReturn(inventory);
 
         Gun gun = mock(Gun.class);
         when(gun.getResourceContainer()).thenReturn(gunResourceContainer);
@@ -120,12 +117,12 @@ class OpenModeStatePersistenceHandlerTest {
         assertThat(meleeWeaponResourceContainer.getLoadedAmount()).isEqualTo(MELEE_WEAPON_LOADED_AMOUNT);
         assertThat(meleeWeaponResourceContainer.getReserveAmount()).isEqualTo(MELEE_WEAPON_RESERVE_AMOUNT);
 
-        verify(inventory).setItem(GUN_ITEM_SLOT, gunItemStack);
-        verify(inventory).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
-        verify(inventory).setItem(MELEE_WEAPON_ITEM_SLOT, meleeWeaponItemStack);
         verify(itemCreator).createGun(GUN_NAME, gamePlayer);
         verify(itemCreator).createEquipment(EQUIPMENT_NAME, gamePlayer);
         verify(itemCreator).createMeleeWeapon(MELEE_WEAPON_NAME, gamePlayer);
+        verify(gamePlayer).setItem(GUN_ITEM_SLOT, gunItemStack);
+        verify(gamePlayer).setItem(EQUIPMENT_ITEM_SLOT, equipmentItemStack);
+        verify(gamePlayer).setItem(MELEE_WEAPON_ITEM_SLOT, meleeWeaponItemStack);
     }
 
     @Test
@@ -240,8 +237,7 @@ class OpenModeStatePersistenceHandlerTest {
     @Test
     @DisplayName("saveState logs error message when failing to save any player state")
     void saveState_error() {
-        GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
-        when(gamePlayer.getEntity().getUniqueId()).thenReturn(PLAYER_UUID);
+        GamePlayer gamePlayer = mock(GamePlayer.class);
 
         when(gunRegistry.getAssignedGuns(gamePlayer)).thenReturn(List.of());
         when(playerRegistry.getAll()).thenReturn(List.of(gamePlayer));

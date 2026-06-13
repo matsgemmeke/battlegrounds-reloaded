@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

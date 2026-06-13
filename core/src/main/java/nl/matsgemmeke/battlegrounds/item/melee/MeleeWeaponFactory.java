@@ -46,10 +46,14 @@ public class MeleeWeaponFactory {
     }
 
     private MeleeWeapon createInstance(MeleeWeaponSpec spec) {
+        String name = spec.name;
+        String description = spec.description;
+        double attackDamage = spec.damage.meleeDamage;
+
         DefaultMeleeWeapon meleeWeapon = new DefaultMeleeWeapon();
-        meleeWeapon.setName(spec.name);
-        meleeWeapon.setDescription(spec.description);
-        meleeWeapon.setAttackDamage(spec.damage.meleeDamage);
+        meleeWeapon.setName(name);
+        meleeWeapon.setDescription(description);
+        meleeWeapon.setAttackDamage(attackDamage);
 
         ItemTemplate displayItemTemplate = itemTemplateFactory.create(spec.item);
         meleeWeapon.setDisplayItemTemplate(displayItemTemplate);
@@ -71,7 +75,7 @@ public class MeleeWeaponFactory {
         }
 
         if (spec.throwing != null) {
-            ThrowHandler throwHandler = throwHandlerFactory.create(spec.throwing, itemRepresentation, resourceContainer);
+            ThrowHandler throwHandler = throwHandlerFactory.create(spec.throwing, itemRepresentation, resourceContainer, name);
             meleeWeapon.configureThrowHandler(throwHandler);
         }
 

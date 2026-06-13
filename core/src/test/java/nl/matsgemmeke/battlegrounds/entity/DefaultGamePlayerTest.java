@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
 import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -53,28 +54,6 @@ class DefaultGamePlayerTest {
     private Player player;
     @InjectMocks
     private DefaultGamePlayer gamePlayer;
-
-    @Test
-    @DisplayName("getLastDamage returns empty optional when player has not taken damage yet")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to player")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
-
-        when(player.getHealth()).thenReturn(20.0);
-        when(player.isDead()).thenReturn(false);
-
-        gamePlayer.damage(damage);
-        Optional<Damage> lastDamageOptional = gamePlayer.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
 
     @Test
     void getUniqueIdReturnsPlayerUUID() {
@@ -178,7 +157,7 @@ class DefaultGamePlayerTest {
     void damageAppliesNoDamageWhenPlayerIsDead() {
         when(player.isDead()).thenReturn(true);
 
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 
@@ -192,7 +171,7 @@ class DefaultGamePlayerTest {
         when(player.getHealth()).thenReturn(0.0);
         when(player.isDead()).thenReturn(false);
 
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 
@@ -215,7 +194,7 @@ class DefaultGamePlayerTest {
         when(player.getHealth()).thenReturn(health);
         when(player.isDead()).thenReturn(false);
 
-        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE);
+        Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         double damageDealt = gamePlayer.damage(damage);
 
@@ -453,17 +432,6 @@ class DefaultGamePlayerTest {
         gamePlayer.removeItem(itemStack);
 
         verify(inventory).removeItem(itemStack);
-    }
-
-    @Test
-    void getAudioPlayLocationReturnsPlayersLocation() {
-        Location location = new Location(null, 1.0, 1.0, 1.0);
-
-        when(player.getLocation()).thenReturn(location);
-
-        Location result = gamePlayer.getAudioPlayLocation();
-
-        assertThat(result).isEqualTo(location);
     }
 
     @Test

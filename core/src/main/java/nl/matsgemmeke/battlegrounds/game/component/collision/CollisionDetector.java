@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.collision;
 
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * A façade interface whose responsibility is to detect possible collision in a game context.
@@ -15,7 +14,7 @@ public interface CollisionDetector {
      * @param to the second location
      * @return whether the two given locations have a line of sight of each other
      */
-    boolean hasLineOfSight(@NotNull Location from, @NotNull Location to);
+    boolean hasLineOfSight(Location from, Location to);
 
     /**
      * Verifies if the given location produces a collision with a block.
@@ -23,5 +22,5 @@ public interface CollisionDetector {
      * @param location the location
      * @return whether a block collision is produced
      */
-    boolean producesBlockCollisionAt(@NotNull Location location);
+    boolean producesBlockCollisionAt(Location location);
 }

@@ -20,6 +20,7 @@ import static org.mockito.Mockito.when;
 class ThrowHandlerFactoryTest {
 
     private static final ResourceContainer RESOURCE_CONTAINER = new ResourceContainer(1, 1, 2, 2);
+    private static final String ITEM_NAME = "Test Item";
 
     @Mock
     private ItemRepresentation itemRepresentation;
@@ -35,7 +36,7 @@ class ThrowHandlerFactoryTest {
 
         when(projectileLauncherFactory.create(spec.projectile)).thenReturn(projectileLauncher);
 
-        ThrowHandler throwHandler = throwHandlerFactory.create(spec, itemRepresentation, RESOURCE_CONTAINER);
+        ThrowHandler throwHandler = throwHandlerFactory.create(spec, itemRepresentation, RESOURCE_CONTAINER, ITEM_NAME);
 
         assertThat(throwHandler).isNotNull();
     }

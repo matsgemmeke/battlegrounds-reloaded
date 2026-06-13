@@ -31,6 +31,7 @@ import static org.mockito.Mockito.*;
 class ShootHandlerFactoryTest {
 
     private static final ResourceContainer RESOURCE_CONTAINER = new ResourceContainer(30, 30, 90, 300);
+    private static final String ITEM_NAME = "Test Item";
 
     @Mock
     private FireModeFactory fireModeFactory;
@@ -56,7 +57,7 @@ class ShootHandlerFactoryTest {
         when(projectileLauncherFactory.create(shootingSpec.projectile)).thenReturn(projectileLauncher);
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
-        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation, ITEM_NAME);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }
@@ -84,7 +85,7 @@ class ShootHandlerFactoryTest {
         when(spreadPatternFactory.create(shootingSpec.spreadPattern)).thenReturn(spreadPattern);
 
         ShootHandlerFactory shootHandlerFactory = new ShootHandlerFactory(fireModeFactory, projectileLauncherFactory, recoilFactory, spreadPatternFactory);
-        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation);
+        shootHandlerFactory.create(shootingSpec, RESOURCE_CONTAINER, itemRepresentation, ITEM_NAME);
 
         verify(fireMode).addShotObserver(any(ShotObserver.class));
     }

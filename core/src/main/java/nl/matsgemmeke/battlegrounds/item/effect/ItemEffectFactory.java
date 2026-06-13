@@ -5,9 +5,9 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -15,7 +15,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageProperties;
-import nl.matsgemmeke.battlegrounds.item.effect.damage.HitboxMultiplierProfile;
+import nl.matsgemmeke.battlegrounds.item.effect.damage.HitboxDamageProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.explosion.ExplosionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.flash.FlashEffect;
@@ -27,17 +27,16 @@ import nl.matsgemmeke.battlegrounds.item.effect.smoke.SmokeScreenProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.sound.SoundNotificationProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
-import nl.matsgemmeke.battlegrounds.item.mapper.HitboxMultiplierProfileMapper;
+import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 public class ItemEffectFactory {
 
-    private final HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper;
+    private final HitboxDamageProfileMapper hitboxDamageProfileMapper;
     private final ParticleEffectMapper particleEffectMapper;
     private final Provider<CombustionEffect> combustionEffectProvider;
     private final Provider<DamageEffect> damageEffectProvider;
@@ -51,7 +50,7 @@ public class ItemEffectFactory {
 
     @Inject
     public ItemEffectFactory(
-            HitboxMultiplierProfileMapper hitboxMultiplierProfileMapper,
+            HitboxDamageProfileMapper hitboxDamageProfileMapper,
             ParticleEffectMapper particleEffectMapper,
             Provider<CombustionEffect> combustionEffectProvider,
             Provider<DamageEffect> damageEffectProvider,
@@ -63,7 +62,7 @@ public class ItemEffectFactory {
             Provider<SoundNotificationEffect> soundNotificationEffectProvider,
             RangeProfileMapper rangeProfileMapper
     ) {
-        this.hitboxMultiplierProfileMapper = hitboxMultiplierProfileMapper;
+        this.hitboxDamageProfileMapper = hitboxDamageProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
         this.combustionEffectProvider = combustionEffectProvider;
         this.damageEffectProvider = damageEffectProvider;
@@ -107,9 +106,9 @@ public class ItemEffectFactory {
 
                 DamageType damageType = DamageType.valueOf(spec.damageType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(spec.range);
-                HitboxMultiplierProfile hitboxMultiplierProfile = hitboxMultiplierProfileMapper.map(spec.hitboxMultipliers);
+                HitboxDamageProfile hitboxDamageProfile = hitboxDamageProfileMapper.map(spec.hitboxDamageProfile);
 
-                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxMultiplierProfile);
+                DamageProperties properties = new DamageProperties(damageType, rangeProfile, hitboxDamageProfile);
 
                 DamageEffect damageEffect = damageEffectProvider.get();
                 damageEffect.setProperties(properties);
@@ -211,7 +210,7 @@ public class ItemEffectFactory {
      * @throws ItemEffectCreationException if the value is null
      * @param <T> the value type
      */
-    private <T> T validateSpecVar(@Nullable T value, @NotNull String valueName, @NotNull Object effectType) {
+    private <T> T validateSpecVar(@Nullable T value, String valueName, Object effectType) {
         if (value == null) {
             throw new ItemEffectCreationException("Cannot create %s because of invalid spec: Required '%s' value is missing".formatted(effectType, valueName));
         }

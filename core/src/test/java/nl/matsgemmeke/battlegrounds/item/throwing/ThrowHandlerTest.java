@@ -25,6 +25,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ThrowHandlerTest {
 
+    private static final String ITEM_NAME = "Test Item";
+
     @Mock
     private ItemRepresentation itemRepresentation;
     @Mock
@@ -38,7 +40,7 @@ class ThrowHandlerTest {
     @BeforeEach
     void setUp() {
         resourceContainer = new ResourceContainer(0, 0, 0, 0);
-        throwHandler = new ThrowHandler(itemRepresentation, projectileLauncher, resourceContainer);
+        throwHandler = new ThrowHandler(itemRepresentation, projectileLauncher, resourceContainer, ITEM_NAME);
     }
 
     @Test
@@ -72,6 +74,7 @@ class ThrowHandlerTest {
         verify(projectileLauncher).launch(launchContextCaptor.capture());
 
         assertThat(launchContextCaptor.getValue()).satisfies(launchContext -> {
+            assertThat(launchContext.itemName()).isEqualTo(ITEM_NAME);
             assertThat(launchContext.damageSource()).isEqualTo(performer);
             assertThat(launchContext.projectileSource()).isEqualTo(performer);
             assertThat(launchContext.direction()).isEqualTo(throwDirection);

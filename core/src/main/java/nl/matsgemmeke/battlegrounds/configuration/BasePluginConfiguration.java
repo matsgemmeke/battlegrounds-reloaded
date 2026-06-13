@@ -75,6 +75,14 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
         return Optional.ofNullable(yamlConfiguration.getObject(route, Double.class));
     }
 
+    public Optional<Long> getOptionalLong(String route) {
+        if (!yamlConfiguration.contains(route)) {
+            return Optional.empty();
+        }
+
+        return Optional.of(yamlConfiguration.getLong(route));
+    }
+
     public Optional<ConfigurationSection> getOptionalSection(String route) {
         return Optional.ofNullable(yamlConfiguration.getConfigurationSection(route));
     }

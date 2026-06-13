@@ -25,6 +25,7 @@ public class ShootHandler {
     private final Recoil recoil;
     private final ResourceContainer resourceContainer;
     private final SpreadPattern spreadPattern;
+    private final String itemName;
     private ShotPerformer performer;
 
     public ShootHandler(
@@ -33,14 +34,16 @@ public class ShootHandler {
             SpreadPattern spreadPattern,
             ResourceContainer resourceContainer,
             ItemRepresentation itemRepresentation,
+            String itemName,
             @Nullable Recoil recoil
     ) {
         this.fireMode = fireMode;
         this.projectileLauncher = projectileLauncher;
-        this.recoil = recoil;
         this.spreadPattern = spreadPattern;
         this.resourceContainer = resourceContainer;
         this.itemRepresentation = itemRepresentation;
+        this.itemName = itemName;
+        this.recoil = recoil;
     }
 
     public void registerObservers() {
@@ -65,7 +68,7 @@ public class ShootHandler {
         List<Location> shotDirections = spreadPattern.getShotDirections(shootingDirection);
 
         for (Location shotDirection : shotDirections) {
-            LaunchContext context = new LaunchContext(performer, performer, shotDirection, soundLocationSupplier, world);
+            LaunchContext context = new LaunchContext(itemName, performer, performer, shotDirection, soundLocationSupplier, world);
 
             projectileLauncher.launch(context);
         }

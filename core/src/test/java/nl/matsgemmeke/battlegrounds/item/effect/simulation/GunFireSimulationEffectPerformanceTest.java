@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
@@ -70,7 +70,7 @@ class GunFireSimulationEffectPerformanceTest {
     void changeActorCreatesNewContextInstanceWithGivenActor() {
         Schedule schedule = mock(Schedule.class);
         Actor oldActor = mock(Actor.class);
-        ItemEffectContext context = new ItemEffectContext(COLLISION_RESULT, damageSource, oldActor, STARTING_LOCATION);
+        ItemEffectContext context = new ItemEffectContext(null, COLLISION_RESULT, damageSource, STARTING_LOCATION, oldActor);
         Location newActorLocation = new Location(null, 1, 1, 1);
 
         when(actor.exists()).thenReturn(true);
@@ -183,6 +183,6 @@ class GunFireSimulationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(null, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

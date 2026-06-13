@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 
 import java.util.Map;

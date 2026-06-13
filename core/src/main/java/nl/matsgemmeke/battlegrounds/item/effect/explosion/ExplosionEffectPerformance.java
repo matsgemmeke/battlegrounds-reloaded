@@ -2,6 +2,11 @@ package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributor;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
@@ -47,7 +52,7 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         DamageSource damageSource = currentContext.getDamageSource();
         Actor actor = currentContext.getActor();
         Location actorLocation = actor.getLocation();
-        World world = actor.getWorld();
+        World actorWorld = actor.getWorld();
 
         double maxDistance = properties.rangeProfile().longRangeDistance();
 
@@ -58,9 +63,13 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
 
         for (DamageTarget damageTarget : targetFinder.findTargets(query)) {
             Location damageTargetLocation = damageTarget.getLocation();
-            Damage damage = this.getDamageForTargetLocation(actorLocation, damageTargetLocation);
+            double distance = actorLocation.distance(damageTargetLocation);
 
-            DamageContext damageContext = new DamageContext(damageSource, damageTarget, damage);
+            String itemName = currentContext.getItemName();
+            double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
+            Damage damage = new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE, HitboxComponentType.TORSO);
+
+            DamageContext damageContext = new DamageContext(damageSource, damageTarget, itemName, damage, distance);
             damageProcessor.processDamage(damageContext);
         }
 
@@ -69,7 +78,7 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
             removableActor.remove();
         }
 
-        ArmorStand armorStand = world.spawn(actorLocation, ArmorStand.class);
+        ArmorStand armorStand = actorWorld.spawn(actorLocation, ArmorStand.class);
         armorStand.setInvisible(true);
         armorStand.setInvulnerable(true);
         armorStand.setMarker(true);
@@ -77,16 +86,9 @@ public class ExplosionEffectPerformance extends BaseItemEffectPerformance {
         ExplosionAttributor attributor = new ExplosionAttributor(armorStand.getUniqueId());
         explosionAttributorRegistry.addAttributor(attributor);
 
-        world.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks(), armorStand);
+        actorWorld.createExplosion(actorLocation, properties.power(), properties.setFire(), properties.breakBlocks(), armorStand);
 
         explosionAttributorRegistry.removeAttributor(attributor);
         armorStand.remove();
-    }
-
-    private Damage getDamageForTargetLocation(Location sourceLocation, Location targetLocation) {
-        double distance = sourceLocation.distance(targetLocation);
-        double damageAmount = properties.rangeProfile().getDamageByDistance(distance);
-
-        return new Damage(damageAmount, DamageType.EXPLOSIVE_DAMAGE);
     }
 }

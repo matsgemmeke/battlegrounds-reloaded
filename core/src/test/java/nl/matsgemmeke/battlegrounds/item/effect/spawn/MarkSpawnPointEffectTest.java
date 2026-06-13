@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.spawn;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -87,6 +87,6 @@ class MarkSpawnPointEffectTest {
         DamageSource damageSource = mock(DamageSource.class);
         when(damageSource.getUniqueId()).thenReturn(DAMAGE_SOURCE_ID);
 
-        return new ItemEffectContext(collisionResult, damageSource, actor, startingLocation);
+        return new ItemEffectContext(null, collisionResult, damageSource, startingLocation, actor);
     }
 }

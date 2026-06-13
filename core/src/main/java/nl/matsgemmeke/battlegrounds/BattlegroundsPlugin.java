@@ -8,11 +8,14 @@ import nl.matsgemmeke.battlegrounds.command.*;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
+import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
+import nl.matsgemmeke.battlegrounds.job.JobService;
+import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -21,6 +24,7 @@ import org.bukkit.event.entity.ProjectileHitEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
 import java.util.logging.Logger;
@@ -58,8 +62,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         this.setUpInternalsProvider();
         this.setUpLogging();
 
+        BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
-        BattlegroundsModule module = new BattlegroundsModule(dataFolder, internals, logger, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, this, pluginManager);
 
         injector = Guice.createInjector(module);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
@@ -69,6 +74,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         this.setUpEventHandlers();
         this.setUpCommands();
+        this.setUpJobs();
     }
 
     private void setUpCommands() {
@@ -124,6 +130,16 @@ public class BattlegroundsPlugin extends JavaPlugin {
         } catch (Exception e) {
             throw new StartupFailedException("Failed to find a valid implementation for this server version");
         }
+    }
+
+    private void setUpJobs() {
+        BattlegroundsConfiguration configuration = injector.getInstance(BattlegroundsConfiguration.class);
+
+        SaveDamageEventsJob saveDamageEventsJob = injector.getInstance(SaveDamageEventsJob.class);
+        long saveDamageEventsJobPeriodMillis = configuration.getSaveDamageEventsJobPeriodMillis();
+
+        JobService jobService = injector.getInstance(JobService.class);
+        jobService.schedule(saveDamageEventsJob, saveDamageEventsJobPeriodMillis);
     }
 
     private void setUpLogging() {

@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.item.equipment;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployment;
-import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentAction;
+import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
-import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
+import nl.matsgemmeke.battlegrounds.item.deploy.action.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -13,6 +13,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
 
 import java.util.Optional;
 
@@ -21,6 +22,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class DefaultEquipmentTest {
+
+    private static final String NAME = "Test Equipment";
 
     private DefaultEquipment equipment;
 
@@ -158,7 +161,7 @@ class DefaultEquipmentTest {
         EquipmentUser user = mock(EquipmentUser.class);
 
         DeploymentAction deploymentAction = mock(DeploymentAction.class);
-        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.empty());
+        when(deploymentAction.perform(any(DeploymentContext.class))).thenReturn(Optional.empty());
 
         equipment.setDeployment(deployment);
         equipment.performDeploymentAction(deploymentAction, user);
@@ -174,10 +177,19 @@ class DefaultEquipmentTest {
         EquipmentUser user = mock(EquipmentUser.class);
 
         DeploymentAction deploymentAction = mock(DeploymentAction.class);
-        when(deploymentAction.perform(eq(user), any(DestructionListener.class))).thenReturn(Optional.of(deploymentResult));
+        when(deploymentAction.perform(any(DeploymentContext.class))).thenReturn(Optional.of(deploymentResult));
 
         equipment.setDeployment(deployment);
+        equipment.setName(NAME);
         equipment.performDeploymentAction(deploymentAction, user);
+
+        ArgumentCaptor<DeploymentContext> deploymentContextCaptor = ArgumentCaptor.forClass(DeploymentContext.class);
+        verify(deploymentAction).perform(deploymentContextCaptor.capture());
+
+        assertThat(deploymentContextCaptor.getValue()).satisfies(context -> {
+            assertThat(context.itemName()).isEqualTo(NAME);
+            assertThat(context.deployer()).isEqualTo(user);
+        });
 
         verify(deployment).processDeploymentResult(deploymentResult);
     }

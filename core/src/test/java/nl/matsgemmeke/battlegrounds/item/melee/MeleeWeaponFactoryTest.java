@@ -101,7 +101,7 @@ class MeleeWeaponFactoryTest {
         ThrowHandler throwHandler = mock(ThrowHandler.class);
 
         when(reloadSystemFactory.create(eq(spec.reloading), any(ResourceContainer.class))).thenReturn(reloadSystem);
-        when(throwHandlerFactory.create(eq(spec.throwing), any(ItemRepresentation.class), any(ResourceContainer.class))).thenReturn(throwHandler);
+        when(throwHandlerFactory.create(eq(spec.throwing), any(ItemRepresentation.class), any(ResourceContainer.class), eq("Ballistic Knife"))).thenReturn(throwHandler);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 
@@ -122,7 +122,7 @@ class MeleeWeaponFactoryTest {
         MeleeWeaponSpec spec = this.createMeleeWeaponSpec("tomahawk");
         ThrowHandler throwHandler = mock(ThrowHandler.class);
 
-        when(throwHandlerFactory.create(eq(spec.throwing), any(ItemRepresentation.class), any(ResourceContainer.class))).thenReturn(throwHandler);
+        when(throwHandlerFactory.create(eq(spec.throwing), any(ItemRepresentation.class), any(ResourceContainer.class), eq("Tomahawk"))).thenReturn(throwHandler);
 
         MeleeWeapon result = meleeWeaponFactory.create(spec);
 

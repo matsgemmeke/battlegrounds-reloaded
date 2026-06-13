@@ -72,7 +72,7 @@ class GunFactoryTest {
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(itemTemplateFactory.create(spec.item)).thenReturn(itemTemplate);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
 
         Gun gun = gunFactory.create(spec);
 
@@ -113,7 +113,7 @@ class GunFactoryTest {
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
-        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
 
         Gun gun = gunFactory.create(spec);
 
@@ -136,7 +136,7 @@ class GunFactoryTest {
         ShootHandler shootHandler = mock(ShootHandler.class);
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
-        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class))).thenReturn(shootHandler);
+        when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
 
         Gun gun = gunFactory.create(spec, gamePlayer);
 

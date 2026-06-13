@@ -1,22 +1,21 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -29,21 +28,24 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
 
     private final Block block;
     private final DestructionListener destructionListener;
+    private final EntityKey entityKey;
     private final HitboxProvider<StaticBoundingBox> hitboxProvider;
     private final Map<DamageType, Double> resistances;
-    private final Material material;
     private final UUID uniqueId;
-    @Nullable
-    private Damage lastDamage;
     private double health;
 
-    public BlockDeploymentObject(Block block, Material material, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
+    public BlockDeploymentObject(Block block, EntityKey entityKey, HitboxProvider<StaticBoundingBox> hitboxProvider, DestructionListener destructionListener) {
         this.block = block;
-        this.material = material;
+        this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
         this.destructionListener = destructionListener;
         this.resistances = new HashMap<>();
         this.uniqueId = UUID.randomUUID();
+    }
+
+    @Override
+    public EntityKey getEntityKey() {
+        return entityKey;
     }
 
     @Override
@@ -54,11 +56,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
     @Override
     public void setHealth(double health) {
         this.health = health;
-    }
-
-    @Override
-    public Optional<Damage> getLastDamage() {
-        return Optional.ofNullable(lastDamage);
     }
 
     @Override
@@ -77,8 +74,6 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
 
     @Override
     public double damage(Damage damage) {
-        lastDamage = damage;
-
         double damageAmount = damage.amount();
 
         if (resistances != null && resistances.containsKey(damage.type())) {
@@ -113,6 +108,7 @@ public class BlockDeploymentObject implements DeploymentObject, DamageTarget {
         return false;
     }
 
+    @Override
     public void remove() {
         block.setType(Material.AIR);
     }

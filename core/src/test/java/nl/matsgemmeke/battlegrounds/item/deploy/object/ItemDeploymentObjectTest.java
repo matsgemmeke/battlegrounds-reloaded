@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.object;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import org.assertj.core.data.Offset;
 import org.bukkit.Location;
@@ -26,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Stream;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +47,8 @@ class ItemDeploymentObjectTest {
 
     @ParameterizedTest
     @CsvSource({ "false,true", "true,false" })
-    void existsReturnsWhetherItemExists(boolean dead, boolean expectedExists) {
+    @DisplayName("exists returns whether item exists")
+    void exists(boolean dead, boolean expectedExists) {
         when(item.isDead()).thenReturn(dead);
 
         boolean exists = deploymentObject.exists();
@@ -56,30 +57,8 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    @DisplayName("getLastDamage returns empty optional when item has not taken damage")
-    void getLastDamage_noDamageYet() {
-        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
-
-        assertThat(lastDamageOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getLastDamage returns optional with last damage dealt to item")
-    void getLastDamage_returnsLastDamage() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
-
-        when(item.isDead()).thenReturn(false);
-        when(item.isValid()).thenReturn(true);
-
-        deploymentObject.setHealth(20.0);
-        deploymentObject.damage(damage);
-        Optional<Damage> lastDamageOptional = deploymentObject.getLastDamage();
-
-        assertThat(lastDamageOptional).hasValue(damage);
-    }
-
-    @Test
-    void getLocationReturnsSameLocationAsItem() {
+    @DisplayName("getLocation returns item location")
+    void getLocation() {
         Location itemLocation = new Location(null, 1, 1, 1);
         when(item.getLocation()).thenReturn(itemLocation);
 
@@ -89,7 +68,8 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void getVelocityReturnsItemVelocity() {
+    @DisplayName("getVelocity returns item velocity")
+    void getVelocity() {
         Vector velocity = new Vector(1, 1, 1);
         when(item.getVelocity()).thenReturn(velocity);
 
@@ -99,6 +79,7 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
+    @DisplayName("setVelocity sets item velocity")
     void setVelocitySetsItemVelocity() {
         Vector velocity = new Vector(1, 1, 1);
 
@@ -108,7 +89,8 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void getWorldReturnItemWorld() {
+    @DisplayName("getWorld returns item world")
+    void getWorld() {
         World itemWorld = mock(World.class);
         when(item.getWorld()).thenReturn(itemWorld);
 
@@ -117,25 +99,29 @@ class ItemDeploymentObjectTest {
         assertThat(deploymentObjectWorld).isEqualTo(itemWorld);
     }
 
-    @Test
-    void hasGravityReturnsTrueWhenItemHasGravity() {
-        when(item.hasGravity()).thenReturn(true);
+    @ParameterizedTest
+    @CsvSource({ "true,true", "false,false" })
+    @DisplayName("hasGravity returns whether item has gravity")
+    void hasGravity(boolean gravity, boolean expected) {
+        when(item.hasGravity()).thenReturn(gravity);
 
-        boolean gravity = deploymentObject.hasGravity();
+        boolean result = deploymentObject.hasGravity();
 
-        assertThat(gravity).isTrue();
+        assertThat(result).isEqualTo(expected);
     }
 
     @Test
-    void setGravitySetsItemGravity() {
+    @DisplayName("setGravity sets item gravity")
+    void setGravity() {
         deploymentObject.setGravity(true);
 
         verify(item).setGravity(true);
     }
 
     @Test
-    void damageReturnsZeroWhenItemDoesNotExist() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+    @DisplayName("damage returns zero when item does not exists")
+    void damage_itemNotExists() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(true);
 
@@ -145,8 +131,9 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void damageReturnsZeroWhenItemIsNotValid() {
-        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE);
+    @DisplayName("damage returns zero when item is not valid")
+    void damage_itemNotValid() {
+        Damage damage = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(false);
@@ -167,7 +154,8 @@ class ItemDeploymentObjectTest {
 
     @ParameterizedTest
     @MethodSource("nonLethalDamageScenarios")
-    void damageReturnsDealtDamageAndLowersHealth(
+    @DisplayName("damage returns dealt damage and lowers health")
+    void damage_normalDamage(
             double damageAmount,
             double expectedDamageDealt,
             double health,
@@ -175,7 +163,7 @@ class ItemDeploymentObjectTest {
             DamageType damageType,
             Map<DamageType, Double> resistances
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
@@ -197,14 +185,15 @@ class ItemDeploymentObjectTest {
 
     @ParameterizedTest
     @MethodSource("lethalDamageScenarios")
-    void damageReturnsDealtDamageAndDestructsWhenHealthIsBelowZero(
+    @DisplayName("damage returns dealt damage and calls destruction listener when health is zero or less")
+    void damage_destroyed(
             double damageAmount,
             double expectedDamageDealt,
             double health,
             double expectedHealth,
             DamageType damageType
     ) {
-        Damage damage = new Damage(damageAmount, damageType);
+        Damage damage = new Damage(damageAmount, damageType, HitboxComponentType.TORSO);
 
         when(item.isDead()).thenReturn(false);
         when(item.isValid()).thenReturn(true);
@@ -219,7 +208,8 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void getHitboxReturnsHitboxFromCurrentBoundingBox() {
+    @DisplayName("getHitbox returns hitbox from current bounding box")
+    void getHitbox() {
         Location itemLocation = new Location(null, 1, 2, 3);
         BoundingBox boundingBox = BoundingBox.of(itemLocation, 0.1, 0.1, 0.1);
         Hitbox hitbox = new Hitbox(null, null);
@@ -244,14 +234,16 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void matchesEntityReturnsTrueWhenGivenEntityEqualsItem() {
+    @DisplayName("matchesEntity returns true when given entity equals item")
+    void matchesEntity_sameEntity() {
         boolean matches = deploymentObject.matchesEntity(item);
 
         assertThat(matches).isTrue();
     }
 
     @Test
-    void matchesEntityReturnsFalseWhenGivenEntityDoesNotEqualItem() {
+    @DisplayName("matchesEntity returns false when given entity does not equal item")
+    void matchesEntity_differentEntity() {
         Entity entity = mock(Entity.class);
 
         boolean matches = deploymentObject.matchesEntity(entity);
@@ -260,7 +252,8 @@ class ItemDeploymentObjectTest {
     }
 
     @Test
-    void removeRemovesItem() {
+    @DisplayName("remove removes item")
+    void remove() {
         deploymentObject.remove();
 
         verify(item).remove();

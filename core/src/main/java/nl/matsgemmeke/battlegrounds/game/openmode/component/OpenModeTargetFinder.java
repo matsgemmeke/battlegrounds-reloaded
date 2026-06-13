@@ -1,10 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
-import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.entity.*;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
@@ -13,13 +11,11 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -40,8 +36,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         this.playerRegistry = playerRegistry;
     }
 
-    @NotNull
-    public List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+    public List<GameEntity> findEnemyTargets(UUID entityId, Location location, double range) {
         Collection<Entity> entities = this.findTargetEntities(location, range);
         List<GameEntity> targets = new ArrayList<>();
 
@@ -58,8 +53,9 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
                 HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
-                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
+                GameEntity target = new OpenModeEntity(livingEntity, entityKey, hitboxProvider);
 
                 targets.add(target);
             }
@@ -119,8 +115,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    @NotNull
-    public List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range) {
+    public List<GameEntity> findTargets(UUID entityId, Location location, double range) {
         Collection<Entity> entities = this.findTargetEntities(location, range);
         List<GameEntity> targets = new ArrayList<>();
 
@@ -133,8 +128,9 @@ public class OpenModeTargetFinder implements TargetFinder {
             }
 
             if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
                 HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
-                GameEntity target = new OpenModeEntity(livingEntity, hitboxProvider);
+                GameEntity target = new OpenModeEntity(livingEntity, entityKey, hitboxProvider);
 
                 targets.add(target);
             }
@@ -143,8 +139,7 @@ public class OpenModeTargetFinder implements TargetFinder {
         return targets;
     }
 
-    @NotNull
-    private Collection<Entity> findTargetEntities(@NotNull Location location, double range) {
+    private Collection<Entity> findTargetEntities(Location location, double range) {
         World world = location.getWorld();
 
         if (world == null) {

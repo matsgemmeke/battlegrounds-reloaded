@@ -8,5 +8,6 @@ import java.util.List;
 
 public record HitscanProperties(
         List<GameSound> launchSounds,
-        @Nullable ParticleEffect trajectoryParticleEffect
+        @Nullable
+        ParticleEffect trajectoryParticleEffect
 ) { }

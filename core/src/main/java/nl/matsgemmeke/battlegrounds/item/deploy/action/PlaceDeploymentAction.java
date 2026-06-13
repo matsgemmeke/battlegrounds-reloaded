@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
@@ -39,11 +40,12 @@ public class PlaceDeploymentAction implements DeploymentAction {
     }
 
     @Override
-    public Optional<DeploymentResult> perform(Deployer deployer, DestructionListener destructionListener) {
+    public Optional<DeploymentResult> perform(DeploymentContext context) {
         if (properties == null) {
             throw new IllegalStateException("Cannot perform deployment without properties configured");
         }
 
+        Deployer deployer = context.deployer();
         List<Block> targetBlocks = deployer.getLastTwoTargetBlocks(TARGET_BLOCK_SCAN_DISTANCE);
 
         if (targetBlocks.size() != 2 || !targetBlocks.get(1).getType().isOccluding()) {
@@ -60,9 +62,11 @@ public class PlaceDeploymentAction implements DeploymentAction {
 
         this.placeBlock(adjacentBlock, targetBlockFace, properties.material());
 
+        EntityKey entityKey = EntityKey.custom(context.itemName());
         HitboxProvider<StaticBoundingBox> hitboxProvider = hitboxResolver.resolveDeploymentObjectHitboxProvider();
+        DestructionListener destructionListener = context.destructionListener();
 
-        BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, properties.material(), hitboxProvider, destructionListener);
+        BlockDeploymentObject deploymentObject = new BlockDeploymentObject(adjacentBlock, entityKey, hitboxProvider, destructionListener);
         deploymentObject.setHealth(properties.health());
 
         properties.resistances().forEach(deploymentObject::addResistance);

@@ -58,10 +58,10 @@ shooting:
         long-range:
           damage: 22.0
           distance: 50.0
-      hitbox-multipliers:
+      hitbox-damage-profile:
         head: 1.4
-        body: 1
-        legs: 0.5
+        torso: 1
+        limbs: 0.5
     trajectory-particle-effect:
       particle: REDSTONE
       count: 1

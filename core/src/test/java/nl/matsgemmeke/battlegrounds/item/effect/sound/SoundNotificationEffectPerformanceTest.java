@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
@@ -27,6 +27,7 @@ class SoundNotificationEffectPerformanceTest {
 
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
+    private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
     @Mock
@@ -89,6 +90,6 @@ class SoundNotificationEffectPerformanceTest {
     }
 
     private ItemEffectContext createItemEffectContext() {
-        return new ItemEffectContext(COLLISION_RESULT, damageSource, actor, STARTING_LOCATION);
+        return new ItemEffectContext(ITEM_NAME, COLLISION_RESULT, damageSource, STARTING_LOCATION, actor);
     }
 }

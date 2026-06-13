@@ -19,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -81,8 +80,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         gun.getResourceContainer().setReserveAmount(gunState.reserveAmmo());
         gun.update();
 
-        Player player = gamePlayer.getEntity();
-        player.getInventory().setItem(gunState.itemSlot(), gun.getItemStack());
+        gamePlayer.setItem(gunState.itemSlot(), gun.getItemStack());
     }
 
     private void loadEquipmentState(GamePlayer gamePlayer, EquipmentState equipmentState) {
@@ -96,8 +94,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         Equipment equipment = itemCreator.createEquipment(equipmentName, gamePlayer);
         equipment.update();
 
-        Player player = gamePlayer.getEntity();
-        player.getInventory().setItem(equipmentState.itemSlot(), equipment.getItemStack());
+        gamePlayer.setItem(equipmentState.itemSlot(), equipment.getItemStack());
     }
 
     private void loadMeleeWeaponState(GamePlayer gamePlayer, MeleeWeaponState meleeWeaponState) {
@@ -113,8 +110,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
         meleeWeapon.getResourceContainer().setReserveAmount(meleeWeaponState.reserveAmount());
         meleeWeapon.update();
 
-        Player player = gamePlayer.getEntity();
-        player.getInventory().setItem(meleeWeaponState.itemSlot(), meleeWeapon.getItemStack());
+        gamePlayer.setItem(meleeWeaponState.itemSlot(), meleeWeapon.getItemStack());
     }
 
 

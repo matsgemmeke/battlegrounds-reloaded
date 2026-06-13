@@ -2,9 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.component.targeting;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.UUID;
@@ -22,8 +21,8 @@ public interface TargetFinder {
      * @param range the range
      * @return a list of game entities that are considered enemy targets within the specified range
      */
-    @NotNull
-    List<GameEntity> findEnemyTargets(@NotNull UUID entityId, @NotNull Location location, double range);
+    @Deprecated
+    List<GameEntity> findEnemyTargets(UUID entityId, Location location, double range);
 
     /**
      * Finds targets that can receive potion effects within a specified range around a location.
@@ -42,8 +41,8 @@ public interface TargetFinder {
      * @param range the range
      * @return all targets inside the range
      */
-    @NotNull
-    List<GameEntity> findTargets(@NotNull UUID entityId, @NotNull Location location, double range);
+    @Deprecated
+    List<GameEntity> findTargets(UUID entityId, Location location, double range);
 
     List<DamageTarget> findTargets(TargetQuery query);
 }
