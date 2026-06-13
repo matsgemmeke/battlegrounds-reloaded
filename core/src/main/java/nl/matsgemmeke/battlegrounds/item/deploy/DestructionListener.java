@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 
 public interface DestructionListener {
 

@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.fixture;
 
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEvent;
 import org.bukkit.entity.EntityType;
 

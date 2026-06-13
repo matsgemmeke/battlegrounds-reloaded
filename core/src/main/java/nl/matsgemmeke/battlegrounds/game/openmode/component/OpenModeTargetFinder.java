@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.*;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
@@ -10,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;

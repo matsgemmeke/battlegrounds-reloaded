@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.storage.stats.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 
 import java.time.Instant;
 import java.util.UUID;

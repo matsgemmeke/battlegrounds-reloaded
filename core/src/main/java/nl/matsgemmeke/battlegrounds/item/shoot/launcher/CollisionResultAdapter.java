@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.BlockTriggerResultAdapter;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.adapter.DamageTargetTriggerResultAdapter;

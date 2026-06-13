@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.game.event;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageType;
 import org.bukkit.event.entity.EntityDamageEvent;
 
 public class EntityDamageEventHandler implements EventHandler<EntityDamageEvent> {

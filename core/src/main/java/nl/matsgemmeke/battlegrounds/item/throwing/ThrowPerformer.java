@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.throwing;
 
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.ItemReceiver;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import org.bukkit.Location;

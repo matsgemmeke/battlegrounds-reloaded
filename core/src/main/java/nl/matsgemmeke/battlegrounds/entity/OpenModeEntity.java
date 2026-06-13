@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.damage.Damage;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;

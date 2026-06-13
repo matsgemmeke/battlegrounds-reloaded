@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;

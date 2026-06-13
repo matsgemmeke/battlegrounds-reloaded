@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.component.targeting;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
 import org.bukkit.Location;
 
 import java.util.List;

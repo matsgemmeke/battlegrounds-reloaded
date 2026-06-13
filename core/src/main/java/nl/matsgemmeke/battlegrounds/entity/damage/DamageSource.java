@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.damage;
+package nl.matsgemmeke.battlegrounds.entity.damage;
 
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 

@@ -1,6 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.effect.explosion;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;

@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.effect.flash;
 
 import nl.matsgemmeke.battlegrounds.entity.PotionEffectReceiver;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
-import nl.matsgemmeke.battlegrounds.game.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
