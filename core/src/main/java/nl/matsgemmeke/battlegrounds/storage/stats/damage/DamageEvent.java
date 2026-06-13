@@ -10,10 +10,10 @@ import java.util.UUID;
 
 public record DamageEvent(
         GameKey gameKey,
-        UUID damagerId,
-        EntityKey damagerEntityKey,
-        UUID victimId,
-        EntityKey victimEntityType,
+        UUID sourceId,
+        EntityKey sourceEntityKey,
+        UUID targetId,
+        EntityKey targetEntityType,
         String item,
         double damageAmount,
         DamageType damageType,

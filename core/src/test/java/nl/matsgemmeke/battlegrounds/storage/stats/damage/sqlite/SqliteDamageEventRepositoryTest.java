@@ -45,10 +45,10 @@ class SqliteDamageEventRepositoryTest {
 
         assertThat(damageEventEntities).satisfiesExactly(damageEventEntity -> {
             assertThat(damageEventEntity.getGameKey()).isEqualTo("OPEN-MODE");
-            assertThat(damageEventEntity.getDamagerId()).hasToString("2c11afe2-48f0-4399-9a04-195bb8ac640e");
-            assertThat(damageEventEntity.getDamagerEntityKey()).isEqualTo("minecraft:player");
-            assertThat(damageEventEntity.getVictimId()).hasToString("606c4672-cf52-4913-85e5-984225ceaed1");
-            assertThat(damageEventEntity.getVictimEntityKey()).isEqualTo("minecraft:zombie");
+            assertThat(damageEventEntity.getSourceId()).hasToString("2c11afe2-48f0-4399-9a04-195bb8ac640e");
+            assertThat(damageEventEntity.getSourceEntityKey()).isEqualTo("minecraft:player");
+            assertThat(damageEventEntity.getTargetId()).hasToString("606c4672-cf52-4913-85e5-984225ceaed1");
+            assertThat(damageEventEntity.getTargetEntityKey()).isEqualTo("minecraft:zombie");
             assertThat(damageEventEntity.getItem()).isEqualTo("MP5");
             assertThat(damageEventEntity.getDamageAmount()).isEqualTo(20.0);
             assertThat(damageEventEntity.getDamageType()).isEqualTo("BULLET_DAMAGE");

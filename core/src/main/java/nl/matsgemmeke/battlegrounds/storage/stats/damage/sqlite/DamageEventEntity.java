@@ -12,14 +12,14 @@ public class DamageEventEntity {
     private int id;
     @DatabaseField(columnName = "game_key", canBeNull = false)
     private String gameKey;
-    @DatabaseField(columnName = "damager_id", canBeNull = false)
-    private UUID damagerId;
-    @DatabaseField(columnName = "damager_entity_key", canBeNull = false)
-    private String damagerEntityKey;
-    @DatabaseField(columnName = "victim_id", canBeNull = false)
-    private UUID victimId;
-    @DatabaseField(columnName = "victim_entity_key", canBeNull = false)
-    private String victimEntityKey;
+    @DatabaseField(columnName = "source_id", canBeNull = false)
+    private UUID sourceId;
+    @DatabaseField(columnName = "source_entity_key", canBeNull = false)
+    private String sourceEntityKey;
+    @DatabaseField(columnName = "target_id", canBeNull = false)
+    private UUID targetId;
+    @DatabaseField(columnName = "target_entity_key", canBeNull = false)
+    private String targetEntityKey;
     @DatabaseField(columnName = "item", canBeNull = false)
     private String item;
     @DatabaseField(columnName = "damage_amount", canBeNull = false)
@@ -56,36 +56,36 @@ public class DamageEventEntity {
         this.gameKey = gameKey;
     }
 
-    public UUID getDamagerId() {
-        return damagerId;
+    public UUID getSourceId() {
+        return sourceId;
     }
 
-    public void setDamagerId(UUID damagerId) {
-        this.damagerId = damagerId;
+    public void setSourceId(UUID sourceId) {
+        this.sourceId = sourceId;
     }
 
-    public String getDamagerEntityKey() {
-        return damagerEntityKey;
+    public String getSourceEntityKey() {
+        return sourceEntityKey;
     }
 
-    public void setDamagerEntityKey(String damagerEntityKey) {
-        this.damagerEntityKey = damagerEntityKey;
+    public void setSourceEntityKey(String sourceEntityKey) {
+        this.sourceEntityKey = sourceEntityKey;
     }
 
-    public UUID getVictimId() {
-        return victimId;
+    public UUID getTargetId() {
+        return targetId;
     }
 
-    public void setVictimId(UUID victimId) {
-        this.victimId = victimId;
+    public void setTargetId(UUID targetId) {
+        this.targetId = targetId;
     }
 
-    public String getVictimEntityKey() {
-        return victimEntityKey;
+    public String getTargetEntityKey() {
+        return targetEntityKey;
     }
 
-    public void setVictimEntityKey(String victimEntityKey) {
-        this.victimEntityKey = victimEntityKey;
+    public void setTargetEntityKey(String targetEntityKey) {
+        this.targetEntityKey = targetEntityKey;
     }
 
     public String getItem() {

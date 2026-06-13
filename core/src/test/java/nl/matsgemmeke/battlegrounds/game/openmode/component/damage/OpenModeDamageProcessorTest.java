@@ -33,8 +33,8 @@ import static org.mockito.Mockito.*;
 class OpenModeDamageProcessorTest {
 
     private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final UUID DAMAGER_ID = UUID.randomUUID();
-    private static final UUID VICTIM_ID = UUID.randomUUID();
+    private static final UUID SOURCE_ID = UUID.randomUUID();
+    private static final UUID TARGET_ID = UUID.randomUUID();
     private static final String ITEM_NAME = "Test Item";
     private static final double NORMAL_DAMAGE_AMOUNT = 10.0;
     private static final Damage NORMAL_DAMAGE = new Damage(NORMAL_DAMAGE_AMOUNT, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
@@ -78,18 +78,18 @@ class OpenModeDamageProcessorTest {
     @Test
     @DisplayName("processDamage performs the damage pipeline")
     void processDamage_successful() {
-        EntityKey damagerEntityKey = EntityKey.fromEntityType(EntityType.PLAYER);
-        EntityKey victimEntityKey = EntityKey.fromEntityType(EntityType.ZOMBIE);
+        EntityKey sourceEntityKey = EntityKey.fromEntityType(EntityType.PLAYER);
+        EntityKey targetEntityKey = EntityKey.fromEntityType(EntityType.ZOMBIE);
 
         DamageSource source = mock(DamageSource.class);
-        when(source.getUniqueId()).thenReturn(DAMAGER_ID);
-        when(source.getEntityKey()).thenReturn(damagerEntityKey);
+        when(source.getUniqueId()).thenReturn(SOURCE_ID);
+        when(source.getEntityKey()).thenReturn(sourceEntityKey);
 
         DamageTarget target = mock(DamageTarget.class);
-        when(target.getUniqueId()).thenReturn(VICTIM_ID);
+        when(target.getUniqueId()).thenReturn(TARGET_ID);
         when(target.getHealth()).thenReturn(0.0);
         when(target.damage(HIGH_DAMAGE)).thenReturn(30.0);
-        when(target.getEntityKey()).thenReturn(victimEntityKey);
+        when(target.getEntityKey()).thenReturn(targetEntityKey);
 
         DamageContext originalDamageContext = new DamageContext(source, target, ITEM_NAME, NORMAL_DAMAGE, DISTANCE);
         DamageContext modifiedDamageContext = new DamageContext(source, target, ITEM_NAME, HIGH_DAMAGE, DISTANCE);
@@ -105,10 +105,10 @@ class OpenModeDamageProcessorTest {
 
         assertThat(damageEventCaptor.getValue()).satisfies(damageEvent -> {
             assertThat(damageEvent.gameKey()).isEqualTo(gameKey);
-            assertThat(damageEvent.damagerId()).isEqualTo(DAMAGER_ID);
-            assertThat(damageEvent.damagerEntityKey()).isEqualTo(damagerEntityKey);
-            assertThat(damageEvent.victimId()).isEqualTo(VICTIM_ID);
-            assertThat(damageEvent.victimEntityType()).isEqualTo(victimEntityKey);
+            assertThat(damageEvent.sourceId()).isEqualTo(SOURCE_ID);
+            assertThat(damageEvent.sourceEntityKey()).isEqualTo(sourceEntityKey);
+            assertThat(damageEvent.targetId()).isEqualTo(TARGET_ID);
+            assertThat(damageEvent.targetEntityType()).isEqualTo(targetEntityKey);
             assertThat(damageEvent.item()).isEqualTo(ITEM_NAME);
             assertThat(damageEvent.damageAmount()).isEqualTo(30.0);
             assertThat(damageEvent.damageType()).isEqualTo(DamageType.BULLET_DAMAGE);

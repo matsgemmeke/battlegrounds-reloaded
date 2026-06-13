@@ -32,10 +32,10 @@ public class SqliteDamageEventRepository implements DamageEventRepository {
     private DamageEventEntity convertDamageEventToDamageEventEntity(DamageEvent damageEvent) {
         DamageEventEntity damageEventEntity = new DamageEventEntity();
         damageEventEntity.setGameKey(damageEvent.gameKey().toString());
-        damageEventEntity.setDamagerId(damageEvent.damagerId());
-        damageEventEntity.setDamagerEntityKey(damageEvent.damagerEntityKey().getValue());
-        damageEventEntity.setVictimId(damageEvent.victimId());
-        damageEventEntity.setVictimEntityKey(damageEvent.victimEntityType().getValue());
+        damageEventEntity.setSourceId(damageEvent.sourceId());
+        damageEventEntity.setSourceEntityKey(damageEvent.sourceEntityKey().getValue());
+        damageEventEntity.setTargetId(damageEvent.targetId());
+        damageEventEntity.setTargetEntityKey(damageEvent.targetEntityType().getValue());
         damageEventEntity.setItem(damageEvent.item());
         damageEventEntity.setDamageAmount(damageEvent.damageAmount());
         damageEventEntity.setDamageType(damageEvent.damageType().name());
