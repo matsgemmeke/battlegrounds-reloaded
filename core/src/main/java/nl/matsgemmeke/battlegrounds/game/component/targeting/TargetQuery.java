@@ -22,11 +22,6 @@ public class TargetQuery {
         return this;
     }
 
-    public TargetQuery conditions(Collection<TargetCondition> conditions) {
-        this.conditions = conditions;
-        return this;
-    }
-
     public TargetQuery enemiesOnly(boolean enemiesOnly) {
         this.enemiesOnly = enemiesOnly;
         return this;

@@ -46,14 +46,17 @@ public class OpenModeDamageProcessor implements DamageProcessor {
 
     @Override
     public void processDamage(DamageContext damageContext) {
+        DamageTarget target = damageContext.target();
+
+        if (target.getHealth() <= 0) {
+            return;
+        }
+
         for (DamageModifier damageModifier : damageModifiers) {
             damageContext = damageModifier.apply(damageContext);
         }
 
-        DamageTarget target = damageContext.target();
-        Damage damage = damageContext.damage();
-
-        double finalDamageAmount = target.damage(damage);
+        double finalDamageAmount = target.damage(damageContext.damage());
 
         UUID damagerId = damageContext.source().getUniqueId();
         EntityKey damagerEntityKey = damageContext.source().getEntityKey();

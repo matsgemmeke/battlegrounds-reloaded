@@ -76,6 +76,25 @@ class OpenModeDamageProcessorTest {
     }
 
     @Test
+    @DisplayName("processDamage does not perform damage pipeline when target has no health")
+    void processDamage_targetWithoutHealth() {
+        DamageModifier damageModifier = mock(DamageModifier.class);
+        DamageSource source = mock(DamageSource.class);
+
+        DamageTarget target = mock(DamageTarget.class);
+        when(target.getHealth()).thenReturn(0.0);
+
+        DamageContext damageContext = new DamageContext(source, target, ITEM_NAME, NORMAL_DAMAGE, DISTANCE);
+
+        damageProcessor.addDamageModifier(damageModifier);
+        damageProcessor.processDamage(damageContext);
+
+        verify(target, never()).damage(any(Damage.class));
+        verifyNoInteractions(damageModifier);
+        verifyNoInteractions(damageEventTracker);
+    }
+
+    @Test
     @DisplayName("processDamage performs the damage pipeline")
     void processDamage_successful() {
         EntityKey sourceEntityKey = EntityKey.fromEntityType(EntityType.PLAYER);
@@ -87,7 +106,7 @@ class OpenModeDamageProcessorTest {
 
         DamageTarget target = mock(DamageTarget.class);
         when(target.getUniqueId()).thenReturn(TARGET_ID);
-        when(target.getHealth()).thenReturn(0.0);
+        when(target.getHealth()).thenReturn(10.0, 0.0);
         when(target.damage(HIGH_DAMAGE)).thenReturn(30.0);
         when(target.getEntityKey()).thenReturn(targetEntityKey);
 
