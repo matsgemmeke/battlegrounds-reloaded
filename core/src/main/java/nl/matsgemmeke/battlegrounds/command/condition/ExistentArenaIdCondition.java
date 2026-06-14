@@ -22,7 +22,7 @@ public class ExistentArenaIdCondition implements ParameterCondition<Integer, Buk
 
     @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (gameContextProvider.sessionExists(value)) {
+        if (gameContextProvider.arenaExists(value)) {
             return;
         }
 

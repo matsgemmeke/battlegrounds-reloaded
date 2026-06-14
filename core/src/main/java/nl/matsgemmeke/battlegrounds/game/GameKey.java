@@ -8,12 +8,12 @@ public class GameKey {
         this.value = value;
     }
 
-    public static GameKey ofOpenMode() {
-        return new GameKey("OPEN-MODE");
+    public static GameKey ofArena(int id) {
+        return new GameKey("ARENA-" + id);
     }
 
-    public static GameKey ofSession(int id) {
-        return new GameKey("SESSION-" + id);
+    public static GameKey ofOpenMode() {
+        return new GameKey("OPEN-MODE");
     }
 
     public static GameKey parse(String value) {
@@ -25,7 +25,7 @@ public class GameKey {
             String id = value.substring("SESSION-".length());
 
             try {
-                return ofSession(Integer.parseInt(id));
+                return ofArena(Integer.parseInt(id));
             } catch (NumberFormatException e) {
                 throw new IllegalArgumentException("Invalid SESSION id: " + id);
             }

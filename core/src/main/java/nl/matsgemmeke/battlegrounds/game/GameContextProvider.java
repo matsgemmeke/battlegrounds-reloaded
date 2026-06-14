@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
 import nl.matsgemmeke.battlegrounds.game.session.Session;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -32,13 +31,13 @@ public class GameContextProvider {
     }
 
     /**
-     * Adds a session instance to the provider.
+     * Adds an arena instance to the provider.
      *
-     * @param gameKey the session game key
-     * @param session the session to be added
-     * @return whether the session was added
+     * @param gameKey the arena game key
+     * @param session the arena to be added
+     * @return        whether the arena was added
      */
-    public boolean addSession(@NotNull GameKey gameKey, @NotNull Session session) {
+    public boolean addArena(GameKey gameKey, Session session) {
         games.put(gameKey, session);
         return true;
     }
@@ -51,7 +50,7 @@ public class GameContextProvider {
      * @param openMode the open mode instance
      * @return whether the instance was assigned
      */
-    public boolean assignOpenMode(@NotNull OpenMode openMode) {
+    public boolean assignOpenMode(OpenMode openMode) {
         GameKey gameKey = GameKey.ofOpenMode();
         boolean containsOpenMode = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
 
@@ -102,29 +101,23 @@ public class GameContextProvider {
      * @param id the id of the session to remove
      * @return whether the session was removed
      */
-    public boolean removeSession(int id) {
-        GameKey gameKey = GameKey.ofSession(id);
+    public boolean removeArena(int id) {
+        GameKey gameKey = GameKey.ofArena(id);
         Optional<GameKey> sessionGameKey = games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
 
         return sessionGameKey.filter(key -> games.remove(key) != null).isPresent();
     }
 
     /**
-     * Gets whether a session instance exists by matching an id. Returns {@code true} if a session by the given id
-     * exists, and {@code false} if not.
+     * Gets whether an arena instance exists by matching an id. Returns {@code true} if an arena by the given id exists,
+     * and {@code false} if not.
      *
-     * @param id the session id
-     * @return whether a session with the given id exists
+     * @param id the arena id
+     * @return   whether an arena by the given id exists
      */
-    public boolean sessionExists(int id) {
-        GameKey sessionGameKey = GameKey.ofSession(id);
+    public boolean arenaExists(int id) {
+        GameKey arenaGameKey = GameKey.ofArena(id);
 
-        for (GameKey gameKey : games.keySet()) {
-            if (gameKey.equals(sessionGameKey)) {
-                return true;
-            }
-        }
-
-        return false;
+        return games.keySet().stream().anyMatch(gameKey -> gameKey.equals(arenaGameKey));
     }
 }

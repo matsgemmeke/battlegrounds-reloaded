@@ -32,12 +32,12 @@ class GameKeyTest {
     }
 
     @Test
-    @DisplayName("toString returns value for session keys")
-    void toString_session() {
-        GameKey gameKey = GameKey.ofSession(1);
+    @DisplayName("toString returns value for arena keys")
+    void toString_arena() {
+        GameKey gameKey = GameKey.ofArena(1);
         String value = gameKey.toString();
 
-        assertThat(value).isEqualTo("SESSION-1");
+        assertThat(value).isEqualTo("ARENA-1");
     }
 
     @Test

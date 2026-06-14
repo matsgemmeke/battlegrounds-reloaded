@@ -47,7 +47,7 @@ public class RemoveArenaCommand extends CommandSource {
 
         String message;
 
-        if (!gameContextProvider.removeSession(id)) {
+        if (!gameContextProvider.removeArena(id)) {
             message = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);

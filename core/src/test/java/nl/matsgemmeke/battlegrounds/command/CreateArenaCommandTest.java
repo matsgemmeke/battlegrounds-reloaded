@@ -46,12 +46,12 @@ class CreateArenaCommandTest {
     @Test
     @DisplayName("execute creates arena and sends success message")
     void execute_successful() {
-        GameKey gameKey = GameKey.ofSession(ARENA_ID);
+        GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
         Session session = mock(Session.class);
         when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(gameContextProvider.addSession(gameKey, session)).thenReturn(true);
+        when(gameContextProvider.addArena(gameKey, session)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
 
         command.execute(sender, ARENA_ID);
@@ -62,12 +62,12 @@ class CreateArenaCommandTest {
     @Test
     @DisplayName("execute does not add arena and sends failed message")
     void execute_failed() {
-        GameKey gameKey = GameKey.ofSession(ARENA_ID);
+        GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
         Session session = mock(Session.class);
         when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(gameContextProvider.addSession(gameKey, session)).thenReturn(false);
+        when(gameContextProvider.addArena(gameKey, session)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
         command.execute(sender, ARENA_ID);

@@ -29,12 +29,12 @@ public class CreateArenaCommand extends CommandSource {
     public void execute(CommandSender sender, int id) {
         SessionConfiguration configuration = SessionConfiguration.getNewConfiguration();
         Session session = sessionFactory.create(id, configuration);
-        GameKey gameKey = GameKey.ofSession(id);
+        GameKey gameKey = GameKey.ofArena(id);
 
         Map<String, Object> values = Map.of("bg_arena", id);
         String message;
 
-        if (!gameContextProvider.addSession(gameKey, session)) {
+        if (!gameContextProvider.addArena(gameKey, session)) {
             message = translator.translate(TranslationKey.ARENA_CREATION_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);

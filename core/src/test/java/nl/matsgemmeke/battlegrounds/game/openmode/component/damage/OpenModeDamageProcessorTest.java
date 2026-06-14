@@ -57,7 +57,7 @@ class OpenModeDamageProcessorTest {
 
     static List<Arguments> isDamageAllowedArguments() {
         return List.of(
-                arguments(GameKey.ofSession(1), false),
+                arguments(GameKey.ofArena(1), false),
                 arguments(GAME_KEY, true)
         );
     }

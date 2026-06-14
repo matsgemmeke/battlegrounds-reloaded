@@ -57,7 +57,7 @@ class RemoveArenaCommandTest {
     @Test
     @DisplayName("execute notifies command sender when failing to remove arena")
     void execute_arenaRemovalFailed() {
-        when(gameContextProvider.removeSession(ARENA_ID)).thenReturn(false);
+        when(gameContextProvider.removeArena(ARENA_ID)).thenReturn(false);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
@@ -70,7 +70,7 @@ class RemoveArenaCommandTest {
     @Test
     @DisplayName("execute removes arena and notifies command sender")
     void execute_successfulArenaRemoval() {
-        when(gameContextProvider.removeSession(ARENA_ID)).thenReturn(true);
+        when(gameContextProvider.removeArena(ARENA_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 

@@ -41,7 +41,7 @@ public class RespawnHandlerProviderTest {
 
     @Test
     public void getReturnsNullWhenCurrentGameContextIsOfTypeArenaMode() {
-        GameContext gameContext = new GameContext(GameKey.ofSession(1), GameContextType.ARENA_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofArena(1), GameContextType.ARENA_MODE);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

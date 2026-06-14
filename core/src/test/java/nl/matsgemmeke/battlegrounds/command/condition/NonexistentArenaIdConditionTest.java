@@ -39,7 +39,7 @@ class NonexistentArenaIdConditionTest {
     @Test
     @DisplayName("validateCondition passes when arena does not exist")
     void validateCondition_arenaNotExists() {
-        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(false);
+        when(gameContextProvider.arenaExists(ARENA_ID)).thenReturn(false);
 
         assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
@@ -47,7 +47,7 @@ class NonexistentArenaIdConditionTest {
     @Test
     @DisplayName("validateCondition throws ConditionFailedException when arena exists")
     void validateCondition_arenaExists() {
-        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(true);
+        when(gameContextProvider.arenaExists(ARENA_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath())).thenReturn(new TextTemplate(ARENA_EXISTS_MESSAGE));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
