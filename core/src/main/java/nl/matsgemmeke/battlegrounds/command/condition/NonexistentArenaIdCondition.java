@@ -9,25 +9,25 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 
 import java.util.Map;
 
-public class ExistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public class NonexistentArenaIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
     private final GameContextProvider gameContextProvider;
     private final Translator translator;
 
     @Inject
-    public ExistentSessionIdCondition(GameContextProvider gameContextProvider, Translator translator) {
+    public NonexistentArenaIdCondition(GameContextProvider gameContextProvider, Translator translator) {
         this.gameContextProvider = gameContextProvider;
         this.translator = translator;
     }
 
     @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (gameContextProvider.sessionExists(value)) {
+        if (!gameContextProvider.sessionExists(value)) {
             return;
         }
 
         Map<String, Object> values = Map.of("bg_arena", value);
-        String message = translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath()).replace(values);
+        String message = translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath()).replace(values);
 
         throw new ConditionFailedException(message);
     }

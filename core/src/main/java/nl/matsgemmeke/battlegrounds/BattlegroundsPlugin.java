@@ -5,8 +5,8 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
 import nl.matsgemmeke.battlegrounds.command.*;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
@@ -96,8 +96,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
-        commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentSessionIdCondition.class));
-        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentSessionIdCondition.class));
+        commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentArenaIdCondition.class));
+        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentArenaIdCondition.class));
     }
 
     private void setUpEventHandlers() {

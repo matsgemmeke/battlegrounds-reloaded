@@ -20,10 +20,10 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class ExistentSessionIdConditionTest {
+class NonexistentArenaIdConditionTest {
 
     private static final int ARENA_ID = 1;
-    private static final String FAILED_MESSAGE = "fail";
+    private static final String ARENA_EXISTS_MESSAGE = "arena exists";
 
     @Mock
     private BukkitCommandExecutionContext execContext;
@@ -34,24 +34,24 @@ class ExistentSessionIdConditionTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private ExistentSessionIdCondition condition;
+    private NonexistentArenaIdCondition condition;
 
     @Test
-    @DisplayName("validationCondition passes when arena exists")
-    void validateCondition_arenaExists() {
-        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(true);
+    @DisplayName("validateCondition passes when arena does not exist")
+    void validateCondition_arenaNotExists() {
+        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(false);
 
         assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
 
     @Test
-    @DisplayName("validationCondition throws ConditionFailedException when arena does not exist")
-    void validateCondition_arenaNotExists() {
-        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(false);
-        when(translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(FAILED_MESSAGE));
+    @DisplayName("validateCondition throws ConditionFailedException when arena exists")
+    void validateCondition_arenaExists() {
+        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(true);
+        when(translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath())).thenReturn(new TextTemplate(ARENA_EXISTS_MESSAGE));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(FAILED_MESSAGE);
+                .hasMessage(ARENA_EXISTS_MESSAGE);
     }
 }
