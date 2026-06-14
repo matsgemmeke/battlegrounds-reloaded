@@ -8,47 +8,50 @@ import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.mock;
+import static org.assertj.core.api.Assertions.assertThatCode;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.when;
 
-public class ExistentSessionIdConditionTest {
+@ExtendWith(MockitoExtension.class)
+class ExistentSessionIdConditionTest {
 
+    private static final int ARENA_ID = 1;
+    private static final String FAILED_MESSAGE = "fail";
+
+    @Mock
     private BukkitCommandExecutionContext execContext;
+    @Mock
     private ConditionContext<BukkitCommandIssuer> conditionContext;
-    private GameContextProvider contextProvider;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
     private Translator translator;
+    @InjectMocks
+    private ExistentSessionIdCondition condition;
 
-    @BeforeEach
-    public void setUp() {
-        execContext = mock(BukkitCommandExecutionContext.class);
-        conditionContext = mock();
-        contextProvider = mock(GameContextProvider.class);
-        translator = mock(Translator.class);
+    @Test
+    @DisplayName("validationCondition passes when arena exists")
+    void validateCondition_arenaExists() {
+        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(true);
+
+        assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
 
     @Test
-    public void conditionShouldPassWhenSessionExists() {
-        int sessionId = 1;
+    @DisplayName("validationCondition throws ConditionFailedException when arena does not exist")
+    void validateCondition_arenaNotExists() {
+        when(gameContextProvider.sessionExists(ARENA_ID)).thenReturn(false);
+        when(translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
-        when(contextProvider.sessionExists(sessionId)).thenReturn(true);
-
-        ExistentSessionIdCondition condition = new ExistentSessionIdCondition(contextProvider, translator);
-        condition.validateCondition(conditionContext, execContext, sessionId);
-    }
-
-    @Test
-    public void conditionShouldNotPassWhenSessionDoesNotExist() {
-        int sessionId = 1;
-
-        when(contextProvider.sessionExists(sessionId)).thenReturn(false);
-        when(translator.translate(TranslationKey.SESSION_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("message"));
-
-        ExistentSessionIdCondition condition = new ExistentSessionIdCondition(contextProvider, translator);
-
-        assertThrows(ConditionFailedException.class, () -> condition.validateCondition(conditionContext, execContext, sessionId));
+        assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
+                .isInstanceOf(ConditionFailedException.class)
+                .hasMessage(FAILED_MESSAGE);
     }
 }

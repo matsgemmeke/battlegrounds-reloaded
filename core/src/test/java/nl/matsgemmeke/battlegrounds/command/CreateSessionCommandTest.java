@@ -10,60 +10,68 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-public class CreateSessionCommandTest {
+@ExtendWith(MockitoExtension.class)
+class CreateSessionCommandTest {
 
+    private static final int ARENA_ID = 1;
+    private static final String SUCCESS_MESSAGE = "success";
+    private static final String FAILED_MESSAGE = "fail";
+
+    @Mock
     private CommandSender sender;
-    private GameContextProvider contextProvider;
+    @Mock
+    private GameContextProvider gameContextProvider;
+    @Mock
     private SessionFactory sessionFactory;
+    @Mock
     private Translator translator;
 
+    private CreateSessionCommand command;
+
     @BeforeEach
-    public void setUp() {
-        this.sender = mock(CommandSender.class);
-        this.contextProvider = mock(GameContextProvider.class);
-        this.sessionFactory = mock(SessionFactory.class);
-        this.translator = mock(Translator.class);
+    void setUp() {
+        when(translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
-        when(translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath())).thenReturn(new TextTemplate("description"));
+        command = new CreateSessionCommand(gameContextProvider, sessionFactory, translator);
     }
 
     @Test
-    public void executeCreatesSessionAndSendsSuccessMessage() {
-        int sessionId = 1;
-        GameKey gameKey = GameKey.ofSession(sessionId);
-        String message = "test";
+    @DisplayName("execute creates arena and sends success message")
+    void execute_successful() {
+        GameKey gameKey = GameKey.ofSession(ARENA_ID);
 
         Session session = mock(Session.class);
-        when(sessionFactory.create(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
+        when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(contextProvider.addSession(gameKey, session)).thenReturn(true);
-        when(translator.translate(eq(TranslationKey.SESSION_CREATED.getPath()))).thenReturn(new TextTemplate(message));
+        when(gameContextProvider.addSession(gameKey, session)).thenReturn(true);
+        when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
-        command.execute(sender, sessionId);
+        command.execute(sender, ARENA_ID);
 
-        verify(sender).sendMessage(message);
+        verify(sender).sendMessage(SUCCESS_MESSAGE);
     }
 
     @Test
-    public void executeDoesNotAddSessionAndSendsFailedMessage() {
-        int sessionId = 1;
-        GameKey gameKey = GameKey.ofSession(sessionId);
-        String message = "test";
+    @DisplayName("execute does not add arena and sends failed message")
+    void execute_failed() {
+        GameKey gameKey = GameKey.ofSession(ARENA_ID);
 
         Session session = mock(Session.class);
-        when(sessionFactory.create(eq(sessionId), any(SessionConfiguration.class))).thenReturn(session);
+        when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
 
-        when(contextProvider.addSession(gameKey, session)).thenReturn(false);
-        when(translator.translate(eq(TranslationKey.SESSION_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(message));
+        when(gameContextProvider.addSession(gameKey, session)).thenReturn(false);
+        when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
-        CreateSessionCommand command = new CreateSessionCommand(contextProvider, sessionFactory, translator);
-        command.execute(sender, sessionId);
+        command.execute(sender, ARENA_ID);
 
-        verify(sender).sendMessage(message);
+        verify(sender).sendMessage(FAILED_MESSAGE);
     }
 }

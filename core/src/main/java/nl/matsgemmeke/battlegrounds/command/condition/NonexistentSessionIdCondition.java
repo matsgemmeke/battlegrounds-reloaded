@@ -6,30 +6,28 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public class NonexistentSessionIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
 
-    @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
+    private final GameContextProvider gameContextProvider;
     private final Translator translator;
 
     @Inject
-    public NonexistentSessionIdCondition(@NotNull GameContextProvider contextProvider, @NotNull Translator translator) {
-        this.contextProvider = contextProvider;
+    public NonexistentSessionIdCondition(GameContextProvider gameContextProvider, Translator translator) {
+        this.gameContextProvider = gameContextProvider;
         this.translator = translator;
     }
 
+    @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (!contextProvider.sessionExists(value)) {
+        if (!gameContextProvider.sessionExists(value)) {
             return;
         }
 
-        Map<String, Object> values = Map.of("bg_session", value);
-        String message = translator.translate(TranslationKey.SESSION_ALREADY_EXISTS.getPath()).replace(values);
+        Map<String, Object> values = Map.of("bg_arena", value);
+        String message = translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath()).replace(values);
 
         throw new ConditionFailedException(message);
     }

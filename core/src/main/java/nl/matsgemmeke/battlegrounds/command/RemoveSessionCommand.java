@@ -23,20 +23,19 @@ public class RemoveSessionCommand extends CommandSource {
 
     @Inject
     public RemoveSessionCommand(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
-        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath()).getText(), "bg removesession <id>");
+        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText(), "bg removesession <id>");
         this.gameContextProvider = gameContextProvider;
         this.scheduler = scheduler;
         this.translator = translator;
         this.confirmList = new ArrayList<>();
     }
-
     public void execute(CommandSender sender, int id) {
-        Map<String, Object> values = Map.of("bg_session", id);
+        Map<String, Object> values = Map.of("bg_arena", id);
 
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            String confirmMessage = translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath()).replace(values);
+            String confirmMessage = translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()).replace(values);
             sender.sendMessage(confirmMessage);
 
             Schedule schedule = scheduler.createSingleRunSchedule(CONFIRM_LIST_COOLDOWN);
@@ -48,9 +47,9 @@ public class RemoveSessionCommand extends CommandSource {
         String message;
 
         if (!gameContextProvider.removeSession(id)) {
-            message = translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath()).replace(values);
+            message = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
         } else {
-            message = translator.translate(TranslationKey.SESSION_REMOVED.getPath()).replace(values);
+            message = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
         }
 
         confirmList.remove(sender);

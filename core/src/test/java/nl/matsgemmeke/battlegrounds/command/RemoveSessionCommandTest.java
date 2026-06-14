@@ -38,7 +38,7 @@ class RemoveSessionCommandTest {
     @BeforeEach
     void setUp() {
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.DESCRIPTION_REMOVESESSION.getPath())).thenReturn(new TextTemplate("description"));
+        when(translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
         command = new RemoveSessionCommand(gameContextProvider, scheduler, translator);
     }
@@ -46,7 +46,7 @@ class RemoveSessionCommandTest {
     @Test
     @DisplayName("execute adds command sender to confirm list upon first executing the command")
     void execute_firstExecution() {
-        when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
         command.execute(sender, SESSION_ID);
 
@@ -58,8 +58,8 @@ class RemoveSessionCommandTest {
     @DisplayName("execute notifies command sender when failing to remove session")
     void execute_sessionRemovalFailed() {
         when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(false);
-        when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.SESSION_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
+        when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
         command.execute(sender, SESSION_ID);
         command.execute(sender, SESSION_ID);
@@ -71,8 +71,8 @@ class RemoveSessionCommandTest {
     @DisplayName("execute removes session and notifies command sender")
     void execute_successfulSessionRemoval() {
         when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(true);
-        when(translator.translate(TranslationKey.SESSION_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.SESSION_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
+        when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
         command.execute(sender, SESSION_ID);
         command.execute(sender, SESSION_ID);

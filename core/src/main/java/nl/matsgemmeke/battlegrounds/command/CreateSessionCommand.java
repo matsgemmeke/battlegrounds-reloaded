@@ -9,43 +9,35 @@ import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Map;
 
 public class CreateSessionCommand extends CommandSource {
 
-    @NotNull
-    private final GameContextProvider contextProvider;
-    @NotNull
+    private final GameContextProvider gameContextProvider;
     private final SessionFactory sessionFactory;
-    @NotNull
     private final Translator translator;
 
     @Inject
-    public CreateSessionCommand(
-            @NotNull GameContextProvider contextProvider,
-            @NotNull SessionFactory sessionFactory,
-            @NotNull Translator translator
-    ) {
-        super("createsession", translator.translate(TranslationKey.DESCRIPTION_CREATESESSION.getPath()).getText(), "bg createsession <id>");
-        this.contextProvider = contextProvider;
+    public CreateSessionCommand(GameContextProvider gameContextProvider, SessionFactory sessionFactory, Translator translator) {
+        super("createsession", translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText(), "bg createsession <id>");
+        this.gameContextProvider = gameContextProvider;
         this.sessionFactory = sessionFactory;
         this.translator = translator;
     }
 
-    public void execute(@NotNull CommandSender sender, int id) {
+    public void execute(CommandSender sender, int id) {
         SessionConfiguration configuration = SessionConfiguration.getNewConfiguration();
         Session session = sessionFactory.create(id, configuration);
         GameKey gameKey = GameKey.ofSession(id);
 
-        Map<String, Object> values = Map.of("bg_session", id);
+        Map<String, Object> values = Map.of("bg_arena", id);
         String message;
 
-        if (!contextProvider.addSession(gameKey, session)) {
-            message = translator.translate(TranslationKey.SESSION_CREATION_FAILED.getPath()).replace(values);
+        if (!gameContextProvider.addSession(gameKey, session)) {
+            message = translator.translate(TranslationKey.ARENA_CREATION_FAILED.getPath()).replace(values);
         } else {
-            message = translator.translate(TranslationKey.SESSION_CREATED.getPath()).replace(values);
+            message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
         }
 
         sender.sendMessage(message);
