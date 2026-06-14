@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,32 +20,17 @@ public class BattlegroundsCommand extends BaseCommand {
 
     private static final String EMPTY_MESSAGE = " ";
 
-    @NotNull
     private final List<CommandSource> subcommands;
-    @NotNull
     private final Translator translator;
 
     @Inject
-    public BattlegroundsCommand(@NotNull Translator translator) {
+    public BattlegroundsCommand(Translator translator) {
         this.translator = translator;
         this.subcommands = new ArrayList<>();
     }
 
-    public boolean addSubcommand(@NotNull CommandSource subcommand) {
+    public boolean addSubcommand(CommandSource subcommand) {
         return subcommands.add(subcommand);
-    }
-
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.createsession")
-    @Subcommand("createsession|cs")
-    public void onCreateSession(@NotNull CommandSender sender, @Conditions("nonexistent-session-id") Integer id) {
-        CreateSessionCommand command = this.getSubcommand("createsession");
-        command.execute(sender, id);
-    }
-
-    @CatchUnknown
-    public void onCatchUnknown(CommandSender sender) {
-        sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
     }
 
     @Default
@@ -70,6 +54,19 @@ public class BattlegroundsCommand extends BaseCommand {
         }
     }
 
+    @CatchUnknown
+    public void onCatchUnknown(CommandSender sender) {
+        sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+    }
+
+    @CommandCompletion("<id>")
+    @CommandPermission("battlegrounds.createarena")
+    @Subcommand("createarena|ca")
+    public void onCreateArena(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
+        CreateArenaCommand command = this.getSubcommand("createarena");
+        command.execute(sender, id);
+    }
+
     @CommandCompletion("<weapon>")
     @CommandPermission("battlegrounds.giveweapon")
     @Conditions("open-mode-presence")
@@ -81,7 +78,7 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @CommandPermission("battlegrounds.reload")
     @Subcommand("reload")
-    public void onReload(@NotNull CommandSender sender) {
+    public void onReload(CommandSender sender) {
         ReloadCommand command = this.getSubcommand("reload");
         command.execute(sender);
     }
@@ -89,25 +86,25 @@ public class BattlegroundsCommand extends BaseCommand {
     @CommandCompletion("<id>")
     @CommandPermission("battlegrounds.removesession")
     @Subcommand("removesession")
-    public void onRemoveSession(@NotNull CommandSender sender, @Conditions("existent-session-id") Integer id) {
+    public void onRemoveSession(CommandSender sender, @Conditions("existent-session-id") Integer id) {
         RemoveSessionCommand command = this.getSubcommand("removesession");
         command.execute(sender, id);
     }
 
     @CommandPermission("battlegrounds.setmainlobby")
     @Subcommand("setmainlobby")
-    public void onSetMainLobby(@NotNull Player player) {
+    public void onSetMainLobby(Player player) {
         SetMainLobbyCommand command = this.getSubcommand("setmainlobby");
         command.execute(player);
     }
 
-    @NotNull
-    private <T extends CommandSource> T getSubcommand(@NotNull String name) {
+    private <T extends CommandSource> T getSubcommand(String name) {
         for (CommandSource subcommand : subcommands) {
             if (subcommand.getName().equalsIgnoreCase(name)) {
                 return (T) subcommand;
             }
         }
+
         throw new IllegalArgumentException("Unable to find a subcommand by the name " + name);
     }
 }

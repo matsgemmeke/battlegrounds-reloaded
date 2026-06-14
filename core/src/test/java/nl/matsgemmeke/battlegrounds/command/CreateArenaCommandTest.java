@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateSessionCommandTest {
+class CreateArenaCommandTest {
 
     private static final int ARENA_ID = 1;
     private static final String SUCCESS_MESSAGE = "success";
@@ -34,13 +34,13 @@ class CreateSessionCommandTest {
     @Mock
     private Translator translator;
 
-    private CreateSessionCommand command;
+    private CreateArenaCommand command;
 
     @BeforeEach
     void setUp() {
         when(translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
-        command = new CreateSessionCommand(gameContextProvider, sessionFactory, translator);
+        command = new CreateArenaCommand(gameContextProvider, sessionFactory, translator);
     }
 
     @Test

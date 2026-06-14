@@ -82,7 +82,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ToolsCommand toolsCommand = injector.getInstance(ToolsCommand.class);
 
         // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(injector.getInstance(CreateSessionCommand.class));
+        bgCommand.addSubcommand(injector.getInstance(CreateArenaCommand.class));
         bgCommand.addSubcommand(injector.getInstance(GiveWeaponCommand.class));
         bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
         bgCommand.addSubcommand(injector.getInstance(RemoveSessionCommand.class));

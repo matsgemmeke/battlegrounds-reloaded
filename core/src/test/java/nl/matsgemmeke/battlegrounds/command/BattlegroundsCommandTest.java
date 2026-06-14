@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -17,6 +18,8 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class BattlegroundsCommandTest {
+
+    private static final int ARENA_ID = 1;
 
     @Mock
     private Player player;
@@ -86,16 +89,15 @@ class BattlegroundsCommandTest {
     }
 
     @Test
-    void onCreateSessionExecutesCreateSessionCommand() {
-        int gameId = 1;
-
-        CreateSessionCommand command = mock(CreateSessionCommand.class);
-        when(command.getName()).thenReturn("createsession");
+    @DisplayName("onCreateArena executes create arena command")
+    void onCreateArena() {
+        CreateArenaCommand command = mock(CreateArenaCommand.class);
+        when(command.getName()).thenReturn("createarena");
 
         bgCommand.addSubcommand(command);
-        bgCommand.onCreateSession(player, gameId);
+        bgCommand.onCreateArena(player, ARENA_ID);
 
-        verify(command).execute(player, gameId);
+        verify(command).execute(player, ARENA_ID);
     }
 
     @Test

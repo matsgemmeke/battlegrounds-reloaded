@@ -12,15 +12,15 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
-public class CreateSessionCommand extends CommandSource {
+public class CreateArenaCommand extends CommandSource {
 
     private final GameContextProvider gameContextProvider;
     private final SessionFactory sessionFactory;
     private final Translator translator;
 
     @Inject
-    public CreateSessionCommand(GameContextProvider gameContextProvider, SessionFactory sessionFactory, Translator translator) {
-        super("createsession", translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText(), "bg createsession <id>");
+    public CreateArenaCommand(GameContextProvider gameContextProvider, SessionFactory sessionFactory, Translator translator) {
+        super("createarena", translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText(), "bg createarena <id>");
         this.gameContextProvider = gameContextProvider;
         this.sessionFactory = sessionFactory;
         this.translator = translator;
