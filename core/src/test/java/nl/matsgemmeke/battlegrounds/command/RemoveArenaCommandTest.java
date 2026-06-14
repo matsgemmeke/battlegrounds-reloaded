@@ -17,9 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RemoveSessionCommandTest {
+class RemoveArenaCommandTest {
 
-    private static final int SESSION_ID = 1;
+    private static final int ARENA_ID = 1;
     private static final String MESSAGE = "hello";
 
     @Mock
@@ -33,14 +33,14 @@ class RemoveSessionCommandTest {
     @Mock
     private Translator translator;
 
-    private RemoveSessionCommand command;
+    private RemoveArenaCommand command;
 
     @BeforeEach
     void setUp() {
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
         when(translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
-        command = new RemoveSessionCommand(gameContextProvider, scheduler, translator);
+        command = new RemoveArenaCommand(gameContextProvider, scheduler, translator);
     }
 
     @Test
@@ -48,34 +48,34 @@ class RemoveSessionCommandTest {
     void execute_firstExecution() {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, SESSION_ID);
+        command.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
         verify(scheduler).createSingleRunSchedule(200L);
     }
 
     @Test
-    @DisplayName("execute notifies command sender when failing to remove session")
-    void execute_sessionRemovalFailed() {
-        when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(false);
+    @DisplayName("execute notifies command sender when failing to remove arena")
+    void execute_arenaRemovalFailed() {
+        when(gameContextProvider.removeSession(ARENA_ID)).thenReturn(false);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, SESSION_ID);
-        command.execute(sender, SESSION_ID);
+        command.execute(sender, ARENA_ID);
+        command.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
     }
 
     @Test
-    @DisplayName("execute removes session and notifies command sender")
-    void execute_successfulSessionRemoval() {
-        when(gameContextProvider.removeSession(SESSION_ID)).thenReturn(true);
+    @DisplayName("execute removes arena and notifies command sender")
+    void execute_successfulArenaRemoval() {
+        when(gameContextProvider.removeSession(ARENA_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, SESSION_ID);
-        command.execute(sender, SESSION_ID);
+        command.execute(sender, ARENA_ID);
+        command.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
     }

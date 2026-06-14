@@ -84,10 +84,10 @@ public class BattlegroundsCommand extends BaseCommand {
     }
 
     @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.removesession")
-    @Subcommand("removesession")
-    public void onRemoveSession(CommandSender sender, @Conditions("existent-session-id") Integer id) {
-        RemoveSessionCommand command = this.getSubcommand("removesession");
+    @CommandPermission("battlegrounds.removearena")
+    @Subcommand("removearena")
+    public void onRemoveArena(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
+        RemoveArenaCommand command = this.getSubcommand("removearena");
         command.execute(sender, id);
     }
 

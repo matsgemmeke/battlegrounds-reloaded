@@ -125,16 +125,15 @@ class BattlegroundsCommandTest {
     }
 
     @Test
-    void onRemoveSessionExecutesRemoveSessionCommand() {
-        int gameId = 1;
-
-        RemoveSessionCommand command = mock(RemoveSessionCommand.class);
-        when(command.getName()).thenReturn("removesession");
+    @DisplayName("onRemoveArena executes remove arena command")
+    void onRemoveArena() {
+        RemoveArenaCommand command = mock(RemoveArenaCommand.class);
+        when(command.getName()).thenReturn("removearena");
 
         bgCommand.addSubcommand(command);
-        bgCommand.onRemoveSession(player, gameId);
+        bgCommand.onRemoveArena(player, ARENA_ID);
 
-        verify(command).execute(player, gameId);
+        verify(command).execute(player, ARENA_ID);
     }
 
     @Test

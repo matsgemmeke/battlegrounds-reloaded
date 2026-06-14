@@ -85,7 +85,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         bgCommand.addSubcommand(injector.getInstance(CreateArenaCommand.class));
         bgCommand.addSubcommand(injector.getInstance(GiveWeaponCommand.class));
         bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(RemoveSessionCommand.class));
+        bgCommand.addSubcommand(injector.getInstance(RemoveArenaCommand.class));
         bgCommand.addSubcommand(injector.getInstance(SetMainLobbyCommand.class));
 
         // Register the command to ACF
@@ -96,8 +96,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
-        commandConditions.addCondition(Integer.class, "existent-session-id", injector.getInstance(ExistentSessionIdCondition.class));
-        commandConditions.addCondition(Integer.class, "nonexistent-session-id", injector.getInstance(NonexistentSessionIdCondition.class));
+        commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentSessionIdCondition.class));
+        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentSessionIdCondition.class));
     }
 
     private void setUpEventHandlers() {

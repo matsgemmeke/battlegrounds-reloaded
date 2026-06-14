@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RemoveSessionCommand extends CommandSource {
+public class RemoveArenaCommand extends CommandSource {
 
     private static final long CONFIRM_LIST_COOLDOWN = 200L;
 
@@ -22,13 +22,14 @@ public class RemoveSessionCommand extends CommandSource {
     private final Translator translator;
 
     @Inject
-    public RemoveSessionCommand(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
-        super("removesession", translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText(), "bg removesession <id>");
+    public RemoveArenaCommand(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
+        super("removearena", translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText(), "bg removearena <id>");
         this.gameContextProvider = gameContextProvider;
         this.scheduler = scheduler;
         this.translator = translator;
         this.confirmList = new ArrayList<>();
     }
+
     public void execute(CommandSender sender, int id) {
         Map<String, Object> values = Map.of("bg_arena", id);
 
