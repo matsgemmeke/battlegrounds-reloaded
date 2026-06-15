@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
+import nl.matsgemmeke.battlegrounds.game.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
-import nl.matsgemmeke.battlegrounds.game.session.Arena;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

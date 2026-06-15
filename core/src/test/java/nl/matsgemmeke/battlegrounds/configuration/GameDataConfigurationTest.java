@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;

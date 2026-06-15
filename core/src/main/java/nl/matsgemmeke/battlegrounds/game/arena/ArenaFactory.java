@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.session;
+package nl.matsgemmeke.battlegrounds.game.arena;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;

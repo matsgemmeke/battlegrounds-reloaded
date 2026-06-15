@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
 
 import java.io.File;
 import java.io.InputStream;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.session;
+package nl.matsgemmeke.battlegrounds.game.arena;
 
 /**
  * Holds configurable variables for an {@link Arena} instance.

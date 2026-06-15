@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.session;
+package nl.matsgemmeke.battlegrounds.game.arena;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

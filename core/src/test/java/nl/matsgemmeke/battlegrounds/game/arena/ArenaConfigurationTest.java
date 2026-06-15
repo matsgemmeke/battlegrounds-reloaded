@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.session;
+package nl.matsgemmeke.battlegrounds.game.arena;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

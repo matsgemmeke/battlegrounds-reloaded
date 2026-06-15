@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.session.Arena;
-import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
-import nl.matsgemmeke.battlegrounds.game.session.ArenaFactory;
+import nl.matsgemmeke.battlegrounds.game.arena.Arena;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
