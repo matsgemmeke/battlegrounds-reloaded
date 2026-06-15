@@ -21,13 +21,13 @@ public class GameKey {
             return ofOpenMode();
         }
 
-        if (value.startsWith("SESSION-")) {
-            String id = value.substring("SESSION-".length());
+        if (value.startsWith("ARENA-")) {
+            String id = value.substring("ARENA-".length());
 
             try {
                 return ofArena(Integer.parseInt(id));
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid SESSION id: " + id);
+                throw new IllegalArgumentException("Invalid ARENA id: " + id);
             }
         }
 

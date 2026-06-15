@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
+import nl.matsgemmeke.battlegrounds.game.session.Arena;
 
 import java.util.*;
 
@@ -33,12 +33,12 @@ public class GameContextProvider {
     /**
      * Adds an arena instance to the provider.
      *
-     * @param gameKey the arena game key
-     * @param session the arena to be added
+     * @param gameKey the game key
+     * @param arena   the arena
      * @return        whether the arena was added
      */
-    public boolean addArena(GameKey gameKey, Session session) {
-        games.put(gameKey, session);
+    public boolean addArena(GameKey gameKey, Arena arena) {
+        games.put(gameKey, arena);
         return true;
     }
 

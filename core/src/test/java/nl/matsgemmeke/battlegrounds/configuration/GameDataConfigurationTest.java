@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
+import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
@@ -8,7 +8,7 @@ import org.junit.jupiter.api.io.TempDir;
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class GameDataConfigurationTest {
 
@@ -21,27 +21,27 @@ public class GameDataConfigurationTest {
 
     @Test
     public void shouldBeAbleToLoadSessionConfiguration() {
-        SessionConfiguration sessionConfiguration = SessionConfiguration.getNewConfiguration();
+        ArenaConfiguration arenaConfiguration = ArenaConfiguration.getNewConfiguration();
 
         SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();
-        dataConfiguration.saveConfiguration(sessionConfiguration);
+        dataConfiguration.saveConfiguration(arenaConfiguration);
 
-        SessionConfiguration result = dataConfiguration.loadConfiguration();
+        ArenaConfiguration result = dataConfiguration.loadConfiguration();
 
-        assertEquals(result.getMaxPlayers(), sessionConfiguration.getMaxPlayers());
-        assertEquals(result.getMinPlayers(), sessionConfiguration.getMinPlayers());
+        assertThat(result.getMaxPlayers()).isEqualTo(arenaConfiguration.getMaxPlayers());
+        assertThat(result.getMinPlayers()).isEqualTo(arenaConfiguration.getMinPlayers());
     }
 
     @Test
     public void shouldBeAbleToSaveSessionConfiguration() {
-        SessionConfiguration sessionConfiguration = SessionConfiguration.getNewConfiguration();
+        ArenaConfiguration arenaConfiguration = ArenaConfiguration.getNewConfiguration();
 
         SessionDataConfiguration dataConfiguration = new SessionDataConfiguration(dataFile);
         dataConfiguration.load();
-        dataConfiguration.saveConfiguration(sessionConfiguration);
+        dataConfiguration.saveConfiguration(arenaConfiguration);
 
-        assertEquals(sessionConfiguration.getMaxPlayers(), dataConfiguration.getInteger("config.max-players"));
-        assertEquals(sessionConfiguration.getMinPlayers(), dataConfiguration.getInteger("config.min-players"));
+        assertThat(dataConfiguration.getInteger("config.max-players")).isEqualTo(arenaConfiguration.getMaxPlayers());
+        assertThat(dataConfiguration.getInteger("config.min-players")).isEqualTo(arenaConfiguration.getMinPlayers());
     }
 }

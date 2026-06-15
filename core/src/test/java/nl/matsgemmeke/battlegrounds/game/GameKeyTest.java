@@ -12,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class GameKeyTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "OPEN-MODE", "SESSION-1" })
+    @ValueSource(strings = { "OPEN-MODE", "ARENA-1" })
     @DisplayName("parse returns game key of open mode when given value equals OPEN-MODE")
     void parse_successful(String value) {
         GameKey gameKey = GameKey.parse(value);
@@ -23,7 +23,7 @@ class GameKeyTest {
     @ParameterizedTest
     @CsvSource({
             "invalid,Unknown GameKey format: invalid",
-            "SESSION-invalid,Invalid SESSION id: invalid"
+            "ARENA-invalid,Invalid ARENA id: invalid"
     })
     void parse_invalidValue(String value, String expectedExceptionMessage) {
         assertThatThrownBy(() -> GameKey.parse(value))

@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.game.session;
 
 /**
- * Holds configurable variables for a {@link Session} instance.
+ * Holds configurable variables for an {@link Arena} instance.
  */
-public class SessionConfiguration {
+public class ArenaConfiguration {
 
     private static final int DEFAULT_LOBBY_COUNTDOWN_DURATION = 60;
     private static final int DEFAULT_MIN_PLAYERS = 2;
@@ -13,10 +13,10 @@ public class SessionConfiguration {
     private int maxPlayers;
     private int minPlayers;
 
-    public SessionConfiguration(int lobbyCountdownDuration, int minPlayers, int maxPlayers) {
+    public ArenaConfiguration(int lobbyCountdownDuration, int maxPlayers, int minPlayers) {
         this.lobbyCountdownDuration = lobbyCountdownDuration;
-        this.minPlayers = minPlayers;
         this.maxPlayers = maxPlayers;
+        this.minPlayers = minPlayers;
     }
 
     /**
@@ -24,8 +24,8 @@ public class SessionConfiguration {
      *
      * @return a new default configuration
      */
-    public static SessionConfiguration getNewConfiguration() {
-        return new SessionConfiguration(DEFAULT_LOBBY_COUNTDOWN_DURATION, DEFAULT_MAX_PLAYERS, DEFAULT_MIN_PLAYERS);
+    public static ArenaConfiguration getNewConfiguration() {
+        return new ArenaConfiguration(DEFAULT_LOBBY_COUNTDOWN_DURATION, DEFAULT_MAX_PLAYERS, DEFAULT_MIN_PLAYERS);
     }
 
     public int getLobbyCountdownDuration() {

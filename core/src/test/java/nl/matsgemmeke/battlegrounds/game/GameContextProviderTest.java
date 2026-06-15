@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
+import nl.matsgemmeke.battlegrounds.game.session.Arena;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,9 +28,9 @@ class GameContextProviderTest {
     @DisplayName("addArena adds arena and returns true")
     void addArena() {
         GameKey gameKey = GameKey.ofArena(1);
-        Session session = mock(Session.class);
+        Arena arena = mock(Arena.class);
 
-        boolean added = gameContextProvider.addArena(gameKey, session);
+        boolean added = gameContextProvider.addArena(gameKey, arena);
 
         assertThat(added).isTrue();
     }
@@ -105,9 +105,9 @@ class GameContextProviderTest {
     @DisplayName("removeArena returns true when removing a registered arena")
     void removeArena_registeredArena() {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
-        Session session = mock(Session.class);
+        Arena arena = mock(Arena.class);
 
-        gameContextProvider.addArena(gameKey, session);
+        gameContextProvider.addArena(gameKey, arena);
         boolean removed = gameContextProvider.removeArena(ARENA_ID);
 
         assertThat(removed).isTrue();
@@ -123,11 +123,11 @@ class GameContextProviderTest {
 
     @Test
     @DisplayName("arenaExists returns true when an arena by the given id is registered")
-    void sessionExists_registered() {
+    void arenaExists_registered() {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
-        Session session = mock(Session.class);
+        Arena arena = mock(Arena.class);
 
-        gameContextProvider.addArena(gameKey, session);
+        gameContextProvider.addArena(gameKey, arena);
         boolean arenaExists = gameContextProvider.arenaExists(ARENA_ID);
 
         assertThat(arenaExists).isTrue();
@@ -135,7 +135,7 @@ class GameContextProviderTest {
 
     @Test
     @DisplayName("arenaExists returns false when no arenas by the given id is registered")
-    void sessionExists_unregistered() {
+    void arenaExists_unregistered() {
         boolean arenaExists = gameContextProvider.arenaExists(ARENA_ID);
 
         assertThat(arenaExists).isFalse();

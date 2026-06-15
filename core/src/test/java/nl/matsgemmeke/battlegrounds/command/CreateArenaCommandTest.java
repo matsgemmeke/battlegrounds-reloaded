@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
-import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
-import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
+import nl.matsgemmeke.battlegrounds.game.session.Arena;
+import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.session.ArenaFactory;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -26,11 +26,11 @@ class CreateArenaCommandTest {
     private static final String FAILED_MESSAGE = "fail";
 
     @Mock
+    private ArenaFactory arenaFactory;
+    @Mock
     private CommandSender sender;
     @Mock
     private GameContextProvider gameContextProvider;
-    @Mock
-    private SessionFactory sessionFactory;
     @Mock
     private Translator translator;
 
@@ -40,7 +40,7 @@ class CreateArenaCommandTest {
     void setUp() {
         when(translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
-        command = new CreateArenaCommand(gameContextProvider, sessionFactory, translator);
+        command = new CreateArenaCommand(arenaFactory, gameContextProvider, translator);
     }
 
     @Test
@@ -48,10 +48,10 @@ class CreateArenaCommandTest {
     void execute_successful() {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
-        Session session = mock(Session.class);
-        when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
+        Arena arena = mock(Arena.class);
+        when(arenaFactory.create(eq(ARENA_ID), any(ArenaConfiguration.class))).thenReturn(arena);
 
-        when(gameContextProvider.addArena(gameKey, session)).thenReturn(true);
+        when(gameContextProvider.addArena(gameKey, arena)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
 
         command.execute(sender, ARENA_ID);
@@ -64,10 +64,10 @@ class CreateArenaCommandTest {
     void execute_failed() {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
-        Session session = mock(Session.class);
-        when(sessionFactory.create(eq(ARENA_ID), any(SessionConfiguration.class))).thenReturn(session);
+        Arena arena = mock(Arena.class);
+        when(arenaFactory.create(eq(ARENA_ID), any(ArenaConfiguration.class))).thenReturn(arena);
 
-        when(gameContextProvider.addArena(gameKey, session)).thenReturn(false);
+        when(gameContextProvider.addArena(gameKey, arena)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
         command.execute(sender, ARENA_ID);

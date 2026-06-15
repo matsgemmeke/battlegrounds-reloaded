@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.command;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.session.Session;
-import nl.matsgemmeke.battlegrounds.game.session.SessionConfiguration;
-import nl.matsgemmeke.battlegrounds.game.session.SessionFactory;
+import nl.matsgemmeke.battlegrounds.game.session.Arena;
+import nl.matsgemmeke.battlegrounds.game.session.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.session.ArenaFactory;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -14,27 +14,27 @@ import java.util.Map;
 
 public class CreateArenaCommand extends CommandSource {
 
+    private final ArenaFactory arenaFactory;
     private final GameContextProvider gameContextProvider;
-    private final SessionFactory sessionFactory;
     private final Translator translator;
 
     @Inject
-    public CreateArenaCommand(GameContextProvider gameContextProvider, SessionFactory sessionFactory, Translator translator) {
+    public CreateArenaCommand(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
         super("createarena", translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText(), "bg createarena <id>");
+        this.arenaFactory = arenaFactory;
         this.gameContextProvider = gameContextProvider;
-        this.sessionFactory = sessionFactory;
         this.translator = translator;
     }
 
     public void execute(CommandSender sender, int id) {
-        SessionConfiguration configuration = SessionConfiguration.getNewConfiguration();
-        Session session = sessionFactory.create(id, configuration);
+        ArenaConfiguration configuration = ArenaConfiguration.getNewConfiguration();
+        Arena arena = arenaFactory.create(id, configuration);
         GameKey gameKey = GameKey.ofArena(id);
 
         Map<String, Object> values = Map.of("bg_arena", id);
         String message;
 
-        if (!gameContextProvider.addArena(gameKey, session)) {
+        if (!gameContextProvider.addArena(gameKey, arena)) {
             message = translator.translate(TranslationKey.ARENA_CREATION_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
