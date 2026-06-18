@@ -51,6 +51,7 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
@@ -233,6 +234,9 @@ public class BattlegroundsModule implements Module {
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
+                .build(ArenaSettingsConfigurationFactory.class));
+
+        binder.install(new FactoryModuleBuilder()
                 .build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()
@@ -292,10 +296,10 @@ public class BattlegroundsModule implements Module {
                 .build(ManualInsertionReloadSystemFactory.class));
 
         // File bindings
+        binder.bind(File.class).annotatedWith(Names.named("ArenasFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "arenas"));
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
-        binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
     }
 
     @Provides

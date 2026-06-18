@@ -24,7 +24,7 @@ class ArenaConfigurationTest {
     void getNewConfiguration() {
         ArenaConfiguration configuration = ArenaConfiguration.getNewConfiguration();
 
-        assertThat(configuration.getLobbyCountdownDuration()).isEqualTo(60);
+        assertThat(configuration.getLobbyCountdownLength()).isEqualTo(60);
         assertThat(configuration.getMaxPlayers()).isEqualTo(12);
         assertThat(configuration.getMinPlayers()).isEqualTo(2);
     }
@@ -33,7 +33,7 @@ class ArenaConfigurationTest {
     void getLobbyCountdownDuration() {
         ArenaConfiguration configuration = new ArenaConfiguration(lobbyCountdownDuration, maxPlayers, minPlayers);
 
-        assertThat(configuration.getLobbyCountdownDuration()).isEqualTo(lobbyCountdownDuration);
+        assertThat(configuration.getLobbyCountdownLength()).isEqualTo(lobbyCountdownDuration);
     }
 
     @Test

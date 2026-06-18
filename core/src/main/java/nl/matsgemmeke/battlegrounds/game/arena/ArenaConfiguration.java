@@ -9,12 +9,12 @@ public class ArenaConfiguration {
     private static final int DEFAULT_MIN_PLAYERS = 2;
     private static final int DEFAULT_MAX_PLAYERS = 12;
 
-    private int lobbyCountdownDuration;
+    private int lobbyCountdownLength;
     private int maxPlayers;
     private int minPlayers;
 
-    public ArenaConfiguration(int lobbyCountdownDuration, int maxPlayers, int minPlayers) {
-        this.lobbyCountdownDuration = lobbyCountdownDuration;
+    public ArenaConfiguration(int lobbyCountdownLength, int maxPlayers, int minPlayers) {
+        this.lobbyCountdownLength = lobbyCountdownLength;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
     }
@@ -28,8 +28,8 @@ public class ArenaConfiguration {
         return new ArenaConfiguration(DEFAULT_LOBBY_COUNTDOWN_DURATION, DEFAULT_MAX_PLAYERS, DEFAULT_MIN_PLAYERS);
     }
 
-    public int getLobbyCountdownDuration() {
-        return lobbyCountdownDuration;
+    public int getLobbyCountdownLength() {
+        return lobbyCountdownLength;
     }
 
     public int getMaxPlayers() {

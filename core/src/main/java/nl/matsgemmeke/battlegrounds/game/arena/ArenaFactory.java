@@ -2,20 +2,34 @@ package nl.matsgemmeke.battlegrounds.game.arena;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.configuration.SessionDataConfiguration;
+import nl.matsgemmeke.battlegrounds.game.configuration.*;
+import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
+import org.bukkit.plugin.Plugin;
 
 import java.io.File;
+import java.io.InputStream;
 
 /**
  * Factory class for creating {@link Arena} instances.
  */
 public class ArenaFactory {
 
-    private final File setupFolder;
+    private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
+    private final ArenaSettingsMapper arenaSettingsMapper;
+    private final File arenasFolder;
+    private final Plugin plugin;
 
     @Inject
-    public ArenaFactory(@Named("SetupFolder") File setupFolder) {
-        this.setupFolder = setupFolder;
+    public ArenaFactory(
+            ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
+            ArenaSettingsMapper arenaSettingsMapper,
+            @Named("ArenasFolder") File arenasFolder,
+            Plugin plugin
+    ) {
+        this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
+        this.arenaSettingsMapper = arenaSettingsMapper;
+        this.arenasFolder = arenasFolder;
+        this.plugin = plugin;
     }
 
     /**
@@ -26,11 +40,13 @@ public class ArenaFactory {
      * @return a new session instance
      */
     public Arena create(int id, ArenaConfiguration configuration) {
-        File arenaConfigFile = new File(setupFolder.getPath() + "/arenas-" + id + "/config.yml");
+        File settingsFile = new File(arenasFolder.getPath() + "/arena-" + id + "/settings.yml");
+        InputStream resource = plugin.getResource("arenas/settings.yml");
+        ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(configuration);
 
-        SessionDataConfiguration dataConfig = new SessionDataConfiguration(arenaConfigFile);
-        dataConfig.load();
-        dataConfig.saveConfiguration(configuration);
+        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, resource);
+        settingsConfiguration.load();
+        settingsConfiguration.saveArenaSettings(spec);
 
         return new Arena(configuration);
     }
