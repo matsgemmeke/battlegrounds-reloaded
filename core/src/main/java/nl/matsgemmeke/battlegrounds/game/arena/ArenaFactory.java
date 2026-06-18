@@ -35,9 +35,9 @@ public class ArenaFactory {
     /**
      * Creates a new {@link Arena} instance.
      *
-     * @param id the session id
-     * @param configuration the session configuration
-     * @return a new session instance
+     * @param id            the arena id
+     * @param configuration the arena configuration
+     * @return              a new arena instance
      */
     public Arena create(int id, ArenaConfiguration configuration) {
         File settingsFile = new File(arenasFolder.getPath() + "/arena-" + id + "/settings.yml");

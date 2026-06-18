@@ -96,16 +96,16 @@ public class GameContextProvider {
     }
 
     /**
-     * Removes a session instance from the provider.
+     * Removes an arena instance from the provider.
      *
-     * @param id the id of the session to remove
-     * @return whether the session was removed
+     * @param id the arena id
+     * @return   whether the arena was removed
      */
     public boolean removeArena(int id) {
         GameKey gameKey = GameKey.ofArena(id);
-        Optional<GameKey> sessionGameKey = games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
+        Optional<GameKey> arenaGameKey = games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
 
-        return sessionGameKey.filter(key -> games.remove(key) != null).isPresent();
+        return arenaGameKey.filter(key -> games.remove(key) != null).isPresent();
     }
 
     /**
