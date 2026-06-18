@@ -12,12 +12,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ArenaTest {
 
     @Mock
-    private ArenaConfiguration configuration;
+    private ArenaSettings settings;
     @InjectMocks
     private Arena arena;
 
     @Test
     void getConfiguration() {
-        assertThat(arena.getConfiguration()).isEqualTo(configuration);
+        assertThat(arena.getSettings()).isEqualTo(settings);
     }
 }

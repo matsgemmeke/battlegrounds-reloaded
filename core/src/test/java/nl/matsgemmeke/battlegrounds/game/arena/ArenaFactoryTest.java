@@ -42,14 +42,14 @@ class ArenaFactoryTest {
     @Test
     @DisplayName("create returns new arena instance and creates a settings file")
     void create() {
-        ArenaConfiguration configuration = ArenaConfiguration.getNewConfiguration();
+        ArenaSettings settings = ArenaSettings.getDefaultSettings();
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         InputStream resource = InputStream.nullInputStream();
 
         when(arenaSettingsConfigurationFactory.create(any(File.class), eq(resource))).thenReturn(settingsConfiguration);
         when(plugin.getResource("arenas/settings.yml")).thenReturn(resource);
 
-        Arena arena = arenaFactory.create(ARENA_ID, configuration);
+        Arena arena = arenaFactory.create(ARENA_ID, settings);
 
         assertThat(arena).isNotNull();
 
@@ -62,9 +62,9 @@ class ArenaFactoryTest {
         assertThat(settingsFileCaptor.getValue().getPath()).endsWith("arena-1" + File.separator + "settings.yml");
 
         assertThat(settingsSpecCaptor.getValue()).satisfies(spec -> {
-            assertThat(spec.lobbyCountdownLength()).isEqualTo(configuration.getLobbyCountdownLength());
-            assertThat(spec.maxPlayers()).isEqualTo(configuration.getMaxPlayers());
-            assertThat(spec.minPlayers()).isEqualTo(configuration.getMinPlayers());
+            assertThat(spec.lobbyCountdownLength()).isEqualTo(settings.getLobbyCountdownLength());
+            assertThat(spec.maxPlayers()).isEqualTo(settings.getMaxPlayers());
+            assertThat(spec.minPlayers()).isEqualTo(settings.getMinPlayers());
         });
 
         verify(settingsConfiguration).load();

@@ -7,13 +7,13 @@ import nl.matsgemmeke.battlegrounds.game.BaseGame;
  */
 public class Arena extends BaseGame {
 
-    private final ArenaConfiguration configuration;
+    private final ArenaSettings settings;
 
-    public Arena(ArenaConfiguration configuration) {
-        this.configuration = configuration;
+    public Arena(ArenaSettings settings) {
+        this.settings = settings;
     }
 
-    public ArenaConfiguration getConfiguration() {
-        return configuration;
+    public ArenaSettings getSettings() {
+        return settings;
     }
 }

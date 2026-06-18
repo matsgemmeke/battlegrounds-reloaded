@@ -35,19 +35,19 @@ public class ArenaFactory {
     /**
      * Creates a new {@link Arena} instance.
      *
-     * @param id            the arena id
-     * @param configuration the arena configuration
-     * @return              a new arena instance
+     * @param id       the arena id
+     * @param settings the arena settings
+     * @return         a new arena instance
      */
-    public Arena create(int id, ArenaConfiguration configuration) {
+    public Arena create(int id, ArenaSettings settings) {
         File settingsFile = new File(arenasFolder.getPath() + "/arena-" + id + "/settings.yml");
         InputStream resource = plugin.getResource("arenas/settings.yml");
-        ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(configuration);
+        ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(settings);
 
         ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, resource);
         settingsConfiguration.load();
         settingsConfiguration.saveArenaSettings(spec);
 
-        return new Arena(configuration);
+        return new Arena(settings);
     }
 }

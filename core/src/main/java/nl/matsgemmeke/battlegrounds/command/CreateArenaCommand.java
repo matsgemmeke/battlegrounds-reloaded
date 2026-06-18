@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
 import nl.matsgemmeke.battlegrounds.game.arena.ArenaFactory;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -27,8 +27,8 @@ public class CreateArenaCommand extends CommandSource {
     }
 
     public void execute(CommandSender sender, int id) {
-        ArenaConfiguration configuration = ArenaConfiguration.getNewConfiguration();
-        Arena arena = arenaFactory.create(id, configuration);
+        ArenaSettings settings = ArenaSettings.getDefaultSettings();
+        Arena arena = arenaFactory.create(id, settings);
         GameKey gameKey = GameKey.ofArena(id);
 
         Map<String, Object> values = Map.of("bg_arena", id);

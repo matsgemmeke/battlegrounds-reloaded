@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.command;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
 import nl.matsgemmeke.battlegrounds.game.arena.ArenaFactory;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -49,7 +49,7 @@ class CreateArenaCommandTest {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
         Arena arena = mock(Arena.class);
-        when(arenaFactory.create(eq(ARENA_ID), any(ArenaConfiguration.class))).thenReturn(arena);
+        when(arenaFactory.create(eq(ARENA_ID), any(ArenaSettings.class))).thenReturn(arena);
 
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
@@ -65,7 +65,7 @@ class CreateArenaCommandTest {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
 
         Arena arena = mock(Arena.class);
-        when(arenaFactory.create(eq(ARENA_ID), any(ArenaConfiguration.class))).thenReturn(arena);
+        when(arenaFactory.create(eq(ARENA_ID), any(ArenaSettings.class))).thenReturn(arena);
 
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));

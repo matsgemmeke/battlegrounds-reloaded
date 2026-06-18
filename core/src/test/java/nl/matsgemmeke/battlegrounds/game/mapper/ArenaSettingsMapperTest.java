@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.mapper;
 
-import nl.matsgemmeke.battlegrounds.game.arena.ArenaConfiguration;
+import nl.matsgemmeke.battlegrounds.game.arena.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,11 +16,11 @@ class ArenaSettingsMapperTest {
     private final ArenaSettingsMapper mapper = new ArenaSettingsMapper();
 
     @Test
-    @DisplayName("toSpec returns ArenaSettingsSpec with values from given ArenaConfiguration")
+    @DisplayName("toSpec returns ArenaSettingsSpec with values from given ArenaSettings")
     void toSpec() {
-        ArenaConfiguration configuration = new ArenaConfiguration(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
+        ArenaSettings settings = new ArenaSettings(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
 
-        ArenaSettingsSpec spec = mapper.toSpec(configuration);
+        ArenaSettingsSpec spec = mapper.toSpec(settings);
 
         assertThat(spec.lobbyCountdownLength()).isEqualTo(LOBBY_COUNTDOWN_LENGTH);
         assertThat(spec.maxPlayers()).isEqualTo(MAX_PLAYERS);
