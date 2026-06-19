@@ -1,26 +1,23 @@
 package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.GameScoped;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@GameScoped
-public class OpenModeRespawnHandler implements RespawnHandler {
+public class FreeplayRespawnHandler implements RespawnHandler {
 
-    @NotNull
     private final SpawnPointRegistry spawnPointRegistry;
 
     @Inject
-    public OpenModeRespawnHandler(@NotNull SpawnPointRegistry spawnPointRegistry) {
+    public FreeplayRespawnHandler(SpawnPointRegistry spawnPointRegistry) {
         this.spawnPointRegistry = spawnPointRegistry;
     }
 
+    @Override
     public Optional<Location> consumeRespawnLocation(UUID entityId) {
         return spawnPointRegistry.getCustomSpawnPoint(entityId).map(spawnPoint -> {
             spawnPoint.onSpawn();

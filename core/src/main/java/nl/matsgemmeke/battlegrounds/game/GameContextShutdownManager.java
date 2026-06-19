@@ -20,13 +20,13 @@ public class GameContextShutdownManager {
     }
 
     public void shutdown() {
-        GameContext openModeGameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElse(null);
+        GameContext freeplayGameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElse(null);
 
-        if (openModeGameContext == null) {
+        if (freeplayGameContext == null) {
             return;
         }
 
-        gameScope.runInScope(openModeGameContext, () -> {
+        gameScope.runInScope(freeplayGameContext, () -> {
             StatePersistenceHandler statePersistenceHandler = statePersistenceHandlerProvider.get();
             statePersistenceHandler.saveState();
         });

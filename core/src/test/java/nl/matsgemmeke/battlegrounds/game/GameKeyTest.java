@@ -42,7 +42,7 @@ class GameKeyTest {
 
     @Test
     @DisplayName("toString returns value for freeplay key")
-    void toString_openMode() {
+    void toString_freeplay() {
         GameKey gameKey = GameKey.ofFreeplay();
         String value = gameKey.toString();
 

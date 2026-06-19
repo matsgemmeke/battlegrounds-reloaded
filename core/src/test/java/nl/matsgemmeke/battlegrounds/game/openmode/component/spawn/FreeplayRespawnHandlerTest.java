@@ -3,8 +3,12 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.spawn.SpawnPoint;
 import org.bukkit.Location;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -12,29 +16,29 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class OpenModeRespawnHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class FreeplayRespawnHandlerTest {
 
     private static final UUID ENTITY_ID = UUID.randomUUID();
 
+    @Mock
     private SpawnPointRegistry spawnPointRegistry;
-
-    @BeforeEach
-    public void setUp() {
-        spawnPointRegistry = mock(SpawnPointRegistry.class);
-    }
+    @InjectMocks
+    private FreeplayRespawnHandler respawnHandler;
 
     @Test
-    public void consumeRespawnLocationReturnsEmptyOptionalWhenGivenEntityIdHasNoCustomSpawnPoint() {
+    @DisplayName("consumeRespawnLocation returns empty optional when given entity id has no custom spawn point")
+    void consumeRespawnLocation_noCustomSpawnPointFound() {
         when(spawnPointRegistry.getCustomSpawnPoint(ENTITY_ID)).thenReturn(Optional.empty());
 
-        OpenModeRespawnHandler respawnHandler = new OpenModeRespawnHandler(spawnPointRegistry);
         Optional<Location> locationOptional = respawnHandler.consumeRespawnLocation(ENTITY_ID);
 
         assertThat(locationOptional).isEmpty();
     }
 
     @Test
-    public void consumeRespawnLocationResetsCustomSpawnPointAndReturnsOptionalWithLocation() {
+    @DisplayName("consumeRespawnLocation resets custom spawn point and returns with its location")
+    void consumeRespawnLocation_successful() {
         Location location = new Location(null, 1, 1, 1);
 
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
@@ -42,7 +46,6 @@ public class OpenModeRespawnHandlerTest {
 
         when(spawnPointRegistry.getCustomSpawnPoint(ENTITY_ID)).thenReturn(Optional.of(spawnPoint));
 
-        OpenModeRespawnHandler respawnHandler = new OpenModeRespawnHandler(spawnPointRegistry);
         Optional<Location> locationOptional = respawnHandler.consumeRespawnLocation(ENTITY_ID);
 
         assertThat(locationOptional).hasValue(location);
