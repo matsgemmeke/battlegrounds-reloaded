@@ -36,7 +36,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OpenModeDamageProcessorTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final UUID TARGET_ID = UUID.randomUUID();
     private static final String ITEM_NAME = "Test Item";

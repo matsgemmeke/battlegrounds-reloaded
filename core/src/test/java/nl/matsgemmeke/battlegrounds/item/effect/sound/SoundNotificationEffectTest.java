@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SoundNotificationEffectTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
     private static final SoundNotificationProperties PROPERTIES = new SoundNotificationProperties(null);
@@ -66,7 +66,7 @@ class SoundNotificationEffectTest {
 
         assertThatThrownBy(() -> soundNotificationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform sound notification effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform sound notification effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

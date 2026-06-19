@@ -17,7 +17,7 @@ import java.util.UUID;
 
 public class OpenModeInitializer {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
 
     private final BattlegroundsConfiguration configuration;
     private final EventDispatcher eventDispatcher;

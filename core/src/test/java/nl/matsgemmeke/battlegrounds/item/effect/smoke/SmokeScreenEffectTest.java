@@ -31,7 +31,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class SmokeScreenEffectTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(null, null, 100L, 200L, 2.0, 1.0, 5.0, 0.1, 5L);
 
     private static final String ITEM_NAME = "Test Item";
@@ -69,7 +69,7 @@ class SmokeScreenEffectTest {
 
         assertThatThrownBy(() -> smokeScreenEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform smoke screen effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform smoke screen effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

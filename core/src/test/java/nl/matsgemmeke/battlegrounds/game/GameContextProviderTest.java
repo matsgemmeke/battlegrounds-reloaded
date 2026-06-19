@@ -60,7 +60,7 @@ class GameContextProviderTest {
     @Test
     @DisplayName("getGameContext returns optional with game context corresponding to given game key")
     void getGameContext_matchingGameKey() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
         GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
@@ -72,7 +72,7 @@ class GameContextProviderTest {
     @Test
     @DisplayName("getGameContext returns empty optional when no matching game contexts were found")
     void getGameContext_noMatches() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
         GameKey otherKey = GameKey.ofArena(1);
         GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
 
@@ -93,7 +93,7 @@ class GameContextProviderTest {
     @Test
     @DisplayName("getGameKeyByEntityId returns optional with game key linked to given entity id")
     void getGameKeyByEntityId_success() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
 
         gameContextProvider.registerEntity(ENTITY_ID, gameKey);
         Optional<GameKey> gameKeyOptional = gameContextProvider.getGameKeyByEntityId(ENTITY_ID);

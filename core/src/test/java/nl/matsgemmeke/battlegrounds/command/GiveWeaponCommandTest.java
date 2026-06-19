@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GiveWeaponCommandTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final String[] ARGS = { "test", "weapon" };
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
@@ -66,7 +66,7 @@ class GiveWeaponCommandTest {
 
         assertThatThrownBy(() -> command.execute(player, ARGS))
                 .isInstanceOf(UnknownGameKeyException.class)
-                .hasMessage("No game context found game key OPEN-MODE");
+                .hasMessage("No game context found game key FREEPLAY");
     }
 
     @Test

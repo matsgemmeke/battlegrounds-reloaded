@@ -53,7 +53,7 @@ public class SpawnPointRegistryProviderTest {
 
     @Test
     public void getReturnsOpenModeSpawnPointRegistryWhenCurrentGameContextIsOfTypeOpenMode() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
         OpenModeSpawnPointRegistry spawnPointRegistry = mock(OpenModeSpawnPointRegistry.class);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));

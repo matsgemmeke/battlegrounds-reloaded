@@ -12,8 +12,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 class GameKeyTest {
 
     @ParameterizedTest
-    @ValueSource(strings = { "OPEN-MODE", "ARENA-1" })
-    @DisplayName("parse returns game key of open mode when given value equals OPEN-MODE")
+    @ValueSource(strings = { "FREEPLAY", "ARENA-1" })
+    @DisplayName("parse returns game key instances when value equals either FREEPLAY or ARENA-[id]")
     void parse_successful(String value) {
         GameKey gameKey = GameKey.parse(value);
 
@@ -41,11 +41,11 @@ class GameKeyTest {
     }
 
     @Test
-    @DisplayName("toString returns value for open mode key")
+    @DisplayName("toString returns value for freeplay key")
     void toString_openMode() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
         String value = gameKey.toString();
 
-        assertThat(value).isEqualTo("OPEN-MODE");
+        assertThat(value).isEqualTo("FREEPLAY");
     }
 }

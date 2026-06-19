@@ -12,7 +12,7 @@ import static org.mockito.Mockito.*;
 
 public class GameContextShutdownManagerTest {
 
-    private static final GameKey OPEN_MODE_GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
     private GameContextProvider gameContextProvider;
     private GameScope gameScope;
@@ -27,7 +27,7 @@ public class GameContextShutdownManagerTest {
 
     @Test
     public void shutdownDoesNothingWhenAnOpenModeGameContextDoesNotExists() {
-        when(gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.empty());
 
         GameContextShutdownManager gameContextShutdownManager = new GameContextShutdownManager(gameContextProvider, gameScope, statePersistenceHandlerProvider);
         gameContextShutdownManager.shutdown();
@@ -37,10 +37,10 @@ public class GameContextShutdownManagerTest {
 
     @Test
     public void shutdownSavesOpenModeState() {
-        GameContext gameContext = new GameContext(OPEN_MODE_GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(FREEPLAY_GAME_KEY, GameContextType.OPEN_MODE);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
 
-        when(gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(statePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
         GameContextShutdownManager gameContextShutdownManager = new GameContextShutdownManager(gameContextProvider, gameScope, statePersistenceHandlerProvider);

@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PlayerItemHeldEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
     private static final int PREVIOUS_SLOT = 0;
     private static final int CURRENT_SLOT = 1;
@@ -88,7 +88,7 @@ class PlayerItemHeldEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerItemHeldEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerItemHeldEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test

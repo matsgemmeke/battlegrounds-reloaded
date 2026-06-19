@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class MarkSpawnPointEffectTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
@@ -57,7 +57,7 @@ class MarkSpawnPointEffectTest {
 
         assertThatThrownBy(() -> markSpawnPointEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform mark spawn point effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform mark spawn point effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

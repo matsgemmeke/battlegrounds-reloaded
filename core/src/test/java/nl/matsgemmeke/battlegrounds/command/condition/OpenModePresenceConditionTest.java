@@ -28,7 +28,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class OpenModePresenceConditionTest {
 
-    private static final GameKey OPEN_MODE_GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -66,7 +66,7 @@ class OpenModePresenceConditionTest {
         Player player = mock(Player.class);
 
         when(issuer.getPlayer()).thenReturn(player);
-        when(gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
         when(translator.translate(TranslationKey.OPEN_MODE_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("error"));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
@@ -76,7 +76,7 @@ class OpenModePresenceConditionTest {
 
     @Test
     void validateConditionDoesNothingWhenPlayerIsRegisteredInOpenMode() {
-        GameContext gameContext = new GameContext(OPEN_MODE_GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -85,7 +85,7 @@ class OpenModePresenceConditionTest {
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(true);
 
         when(issuer.getPlayer()).thenReturn(player);
-        when(gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
         condition.validateCondition(conditionContext);
@@ -98,7 +98,7 @@ class OpenModePresenceConditionTest {
 
     @Test
     void validateConditionThrowsConditionFailedExceptionWhenPlayerIsNotInOpenMode() {
-        GameContext gameContext = new GameContext(OPEN_MODE_GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -107,7 +107,7 @@ class OpenModePresenceConditionTest {
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(false);
 
         when(issuer.getPlayer()).thenReturn(player);
-        when(gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath())).thenReturn(new TextTemplate("error"));
 

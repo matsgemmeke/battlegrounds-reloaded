@@ -87,11 +87,11 @@ class OpenModeInitializerTest {
 
         openModeInitializer.initialize();
 
-        assertThat(gameContextProvider.getGameContext(GameKey.ofOpenMode())).hasValueSatisfying(gameContext ->
+        assertThat(gameContextProvider.getGameContext(GameKey.ofFreeplay())).hasValueSatisfying(gameContext ->
                 assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)
         );
         assertThat(gameContextProvider.getGameKeyByEntityId(playerId)).hasValueSatisfying(gameKey ->
-                assertThat(gameKey).isEqualTo(GameKey.ofOpenMode())
+                assertThat(gameKey).isEqualTo(GameKey.ofFreeplay())
         );
 
         verify(eventDispatcher).registerEventHandler(EntityDamageEvent.class, entityDamageEventHandler);

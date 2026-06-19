@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 class CombustionEffectTest {
 
     private static final CombustionProperties PROPERTIES = new CombustionProperties(null, null, 1, 2, 0.1, 5L, 10, 20, false, false);
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
 
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
@@ -69,7 +69,7 @@ class CombustionEffectTest {
 
         assertThatThrownBy(() -> combustionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform combustion effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform combustion effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

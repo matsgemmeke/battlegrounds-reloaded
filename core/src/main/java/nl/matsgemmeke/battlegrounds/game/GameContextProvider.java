@@ -51,7 +51,7 @@ public class GameContextProvider {
      * @return whether the instance was assigned
      */
     public boolean assignOpenMode(OpenMode openMode) {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
         boolean containsOpenMode = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
 
         if (containsOpenMode) {

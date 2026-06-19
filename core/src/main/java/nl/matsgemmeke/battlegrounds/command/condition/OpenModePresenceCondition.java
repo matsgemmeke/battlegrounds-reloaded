@@ -20,7 +20,7 @@ import java.util.UUID;
 
 public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
-    private static final GameKey OPEN_MODE_GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
@@ -44,7 +44,7 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
 
         UUID playerId = conditionContext.getIssuer().getPlayer().getUniqueId();
 
-        GameContext gameContext = gameContextProvider.getGameContext(OPEN_MODE_GAME_KEY).orElseThrow(() -> {
+        GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElseThrow(() -> {
             String message = translator.translate(TranslationKey.OPEN_MODE_NOT_EXISTS.getPath()).getText();
             return new ConditionFailedException(message);
         });

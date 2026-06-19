@@ -45,7 +45,7 @@ public class TargetFinderProviderTest {
 
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
         Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
@@ -59,7 +59,7 @@ public class TargetFinderProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
         OpenModeTargetFinder targetFinder = mock(OpenModeTargetFinder.class);
 
         Provider<TargetFinder> openModeTargetFinderProvider = mock();

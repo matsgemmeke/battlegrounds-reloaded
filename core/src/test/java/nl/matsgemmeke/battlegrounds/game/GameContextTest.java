@@ -11,7 +11,7 @@ import static org.mockito.Mockito.when;
 
 public class GameContextTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final GameContextType TYPE = GameContextType.OPEN_MODE;
 
     @Test

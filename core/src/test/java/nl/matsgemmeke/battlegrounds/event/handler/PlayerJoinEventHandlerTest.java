@@ -36,13 +36,13 @@ public class PlayerJoinEventHandlerTest {
         Player player = mock(Player.class);
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
 
-        when(gameContextProvider.getGameContext(GameKey.ofOpenMode())).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(GameKey.ofFreeplay())).thenReturn(Optional.empty());
 
         PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerJoinEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerJoinEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test
@@ -52,7 +52,7 @@ public class PlayerJoinEventHandlerTest {
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
         PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
 
-        when(gameContextProvider.getGameContext(GameKey.ofOpenMode())).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(GameKey.ofFreeplay())).thenReturn(Optional.of(gameContext));
         when(playerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
         PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);

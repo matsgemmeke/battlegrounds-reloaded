@@ -30,7 +30,7 @@ class EventDamageAdapterProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
         OpenModeEventDamageAdapter eventDamageAdapter = mock(OpenModeEventDamageAdapter.class);
 
         Provider<EventDamageAdapter> openModeEventDamageAdapterProvider = mock();

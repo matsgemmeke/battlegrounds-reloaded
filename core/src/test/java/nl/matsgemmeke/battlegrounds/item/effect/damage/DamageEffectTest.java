@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class DamageEffectTest {
 
     private static final DamageProperties PROPERTIES = new DamageProperties(null, null, null);
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
@@ -96,7 +96,7 @@ class DamageEffectTest {
 
         assertThatThrownBy(() -> damageEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform damage effect: No game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform damage effect: No game context for game key FREEPLAY can be found");
     }
 
     @Test

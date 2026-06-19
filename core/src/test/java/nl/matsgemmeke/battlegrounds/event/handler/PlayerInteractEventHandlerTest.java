@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PlayerInteractEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
@@ -110,7 +110,7 @@ class PlayerInteractEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerInteractEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerInteractEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test

@@ -33,7 +33,7 @@ public class GameKeyProviderTest {
 
     @Test
     public void getReturnsGameKeyOfEnteredGameContext() {
-        GameKey gameKey = GameKey.ofOpenMode();
+        GameKey gameKey = GameKey.ofFreeplay();
         GameContext gameContext = new GameContext(gameKey, GameContextType.OPEN_MODE);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));

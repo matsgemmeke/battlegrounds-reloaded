@@ -12,13 +12,13 @@ public class GameKey {
         return new GameKey("ARENA-" + id);
     }
 
-    public static GameKey ofOpenMode() {
-        return new GameKey("OPEN-MODE");
+    public static GameKey ofFreeplay() {
+        return new GameKey("FREEPLAY");
     }
 
     public static GameKey parse(String value) {
-        if (value.equals("OPEN-MODE")) {
-            return ofOpenMode();
+        if (value.equals("FREEPLAY")) {
+            return ofFreeplay();
         }
 
         if (value.startsWith("ARENA-")) {

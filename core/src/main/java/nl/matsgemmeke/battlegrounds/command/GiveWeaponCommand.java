@@ -19,7 +19,7 @@ import java.util.Map;
 
 public class GiveWeaponCommand extends CommandSource {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
@@ -47,8 +47,8 @@ public class GiveWeaponCommand extends CommandSource {
     }
 
     public void execute(Player player, String[] args) {
-        GameContext gameContext = gameContextProvider.getGameContext(GAME_KEY)
-                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(GAME_KEY)));
+        GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)
+                .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(FREEPLAY_GAME_KEY)));
 
         String weaponName = String.join(" ", args);
 

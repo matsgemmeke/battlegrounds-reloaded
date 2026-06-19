@@ -44,7 +44,7 @@ class SqliteDamageEventRepositoryTest {
         List<DamageEventEntity> damageEventEntities = damageEventDao.queryForAll();
 
         assertThat(damageEventEntities).satisfiesExactly(damageEventEntity -> {
-            assertThat(damageEventEntity.getGameKey()).isEqualTo("OPEN-MODE");
+            assertThat(damageEventEntity.getGameKey()).isEqualTo("FREEPLAY");
             assertThat(damageEventEntity.getSourceId()).hasToString("2c11afe2-48f0-4399-9a04-195bb8ac640e");
             assertThat(damageEventEntity.getSourceEntityKey()).isEqualTo("minecraft:player");
             assertThat(damageEventEntity.getTargetId()).hasToString("606c4672-cf52-4913-85e5-984225ceaed1");

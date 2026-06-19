@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 public class PlayerQuitEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     private GameContextProvider gameContextProvider;
@@ -65,7 +65,7 @@ public class PlayerQuitEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerQuitEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerQuitEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test
