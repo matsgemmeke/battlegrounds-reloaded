@@ -15,7 +15,7 @@ admin:
 
 commands:
   description-createarena: "Creates a new arena by the given id"
-  description-giveweapon: "Gives a weapon for open mode"
+  description-giveweapon: "Gives a weapon for freeplay mode"
   description-reload: "Reloads all configuration files"
   description-removearena: "Removes an arena and all of its content"
   description-setmainlobby: "Sets the main lobby location"
@@ -29,6 +29,6 @@ commands:
 
 errors:
   command-sender-must-be-player: "&cMust be a player to use this command."
-  not-in-open-mode: "&cUnable to perform action; you are not in open mode."
-  open-mode-not-exists: "&cUnable to perform action; open mode is not enabled."
+  not-in-freeplay-mode: "&cUnable to perform action; you are not in freeplay mode."
+  freeplay-mode-not-exists: "&cUnable to perform action; freeplay mode is not enabled."
   unknown-command: "&cUnknown command, please type /bg help"

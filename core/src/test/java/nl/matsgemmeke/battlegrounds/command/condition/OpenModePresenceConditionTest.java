@@ -54,7 +54,7 @@ class OpenModePresenceConditionTest {
     @Test
     void validateConditionThrowsConditionFailedExceptionWhenContextHasNoPlayer() {
         when(issuer.getPlayer()).thenReturn(null);
-        when(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
@@ -67,7 +67,7 @@ class OpenModePresenceConditionTest {
 
         when(issuer.getPlayer()).thenReturn(player);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.OPEN_MODE_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translate(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("error"));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
@@ -109,7 +109,7 @@ class OpenModePresenceConditionTest {
         when(issuer.getPlayer()).thenReturn(player);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
-        when(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
 
         condition.validateCondition(conditionContext);
 

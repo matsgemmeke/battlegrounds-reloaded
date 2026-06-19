@@ -39,13 +39,13 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
         Player player = conditionContext.getIssuer().getPlayer();
 
         if (player == null) {
-            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
+            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath()).getText());
         }
 
         UUID playerId = conditionContext.getIssuer().getPlayer().getUniqueId();
 
         GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElseThrow(() -> {
-            String message = translator.translate(TranslationKey.OPEN_MODE_NOT_EXISTS.getPath()).getText();
+            String message = translator.translate(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath()).getText();
             return new ConditionFailedException(message);
         });
 
@@ -56,7 +56,7 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
                 return;
             }
 
-            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_OPEN_MODE.getPath()).getText());
+            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath()).getText());
         });
     }
 }
