@@ -6,8 +6,8 @@ import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
 import nl.matsgemmeke.battlegrounds.command.*;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
@@ -95,7 +95,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();
-        commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
+        commandConditions.addCondition("freeplay-mode-presence", injector.getInstance(FreeplayModePresenceCondition.class));
         commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentArenaIdCondition.class));
         commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentArenaIdCondition.class));
     }

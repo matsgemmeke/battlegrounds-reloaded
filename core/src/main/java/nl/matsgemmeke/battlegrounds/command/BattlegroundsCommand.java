@@ -69,7 +69,7 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @CommandCompletion("<weapon>")
     @CommandPermission("battlegrounds.giveweapon")
-    @Conditions("open-mode-presence")
+    @Conditions("freeplay-mode-presence")
     @Subcommand("giveweapon")
     public void onGiveWeapon(Player player, String[] args) {
         GiveWeaponCommand command = this.getSubcommand("giveweapon");

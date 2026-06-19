@@ -18,7 +18,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer> {
+public class FreeplayModePresenceCondition implements Condition<BukkitCommandIssuer> {
 
     private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
@@ -28,13 +28,14 @@ public class OpenModePresenceCondition implements Condition<BukkitCommandIssuer>
     private final Translator translator;
 
     @Inject
-    public OpenModePresenceCondition(GameContextProvider gameContextProvider, GameScope gameScope, Provider<PlayerRegistry> playerRegistryProvider, Translator translator) {
+    public FreeplayModePresenceCondition(GameContextProvider gameContextProvider, GameScope gameScope, Provider<PlayerRegistry> playerRegistryProvider, Translator translator) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.playerRegistryProvider = playerRegistryProvider;
         this.translator = translator;
     }
 
+    @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> conditionContext) throws InvalidCommandArgument {
         Player player = conditionContext.getIssuer().getPlayer();
 

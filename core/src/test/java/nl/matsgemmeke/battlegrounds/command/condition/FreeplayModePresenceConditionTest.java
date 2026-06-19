@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModePresenceConditionTest {
+class FreeplayModePresenceConditionTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID PLAYER_ID = UUID.randomUUID();
@@ -44,7 +45,7 @@ class OpenModePresenceConditionTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private OpenModePresenceCondition condition;
+    private FreeplayModePresenceCondition condition;
 
     @BeforeEach
     void setUp() {
@@ -52,7 +53,8 @@ class OpenModePresenceConditionTest {
     }
 
     @Test
-    void validateConditionThrowsConditionFailedExceptionWhenContextHasNoPlayer() {
+    @DisplayName("validateCondition throws ConditionFailedException when the condition context has no player")
+    void validateCondition_conditionContextWithoutPlayer() {
         when(issuer.getPlayer()).thenReturn(null);
         when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
 
@@ -62,7 +64,8 @@ class OpenModePresenceConditionTest {
     }
 
     @Test
-    void validateConditionThrowsConditionFailedExceptionWhenOpenModeContextDoesNotExist() {
+    @DisplayName("validateCondition throws ConditionFailedException when freeplay mode context does not exists")
+    void validateCondition_freeplayModeNotExists() {
         Player player = mock(Player.class);
 
         when(issuer.getPlayer()).thenReturn(player);
@@ -75,7 +78,8 @@ class OpenModePresenceConditionTest {
     }
 
     @Test
-    void validateConditionDoesNothingWhenPlayerIsRegisteredInOpenMode() {
+    @DisplayName("validateCondition does nothing when player is registered in freeplay mode")
+    void validateCondition_passes() {
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
         Player player = mock(Player.class);
@@ -97,7 +101,8 @@ class OpenModePresenceConditionTest {
     }
 
     @Test
-    void validateConditionThrowsConditionFailedExceptionWhenPlayerIsNotInOpenMode() {
+    @DisplayName("validateCondition throws ConditionFailedException when player is not in freeplay mode")
+    void validationCondition_playerNotInFreeplayMode() {
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
 
         Player player = mock(Player.class);
