@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
-import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -33,7 +32,7 @@ import static org.mockito.Mockito.*;
 class ProjectileHitEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock

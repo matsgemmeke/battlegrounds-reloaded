@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 class PlayerItemHeldEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
     private static final int PREVIOUS_SLOT = 0;
     private static final int CURRENT_SLOT = 1;
     private static final UUID PLAYER_ID = UUID.randomUUID();

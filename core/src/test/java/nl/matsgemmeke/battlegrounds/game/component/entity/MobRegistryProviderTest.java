@@ -45,7 +45,7 @@ class MobRegistryProviderTest {
     @Test
     void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -58,13 +58,13 @@ class MobRegistryProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         OpenModeMobRegistry mobRegistry = mock(OpenModeMobRegistry.class);
 
         Provider<MobRegistry> mobRegistryProvider = mock();
         when(mobRegistryProvider.get()).thenReturn(mobRegistry);
 
-        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mobRegistryProvider);
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mobRegistryProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

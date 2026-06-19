@@ -37,7 +37,7 @@ public class GameContextShutdownManagerTest {
 
     @Test
     public void shutdownSavesOpenModeState() {
-        GameContext gameContext = new GameContext(FREEPLAY_GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(FREEPLAY_GAME_KEY, GameContextType.FREEPLAY_MODE);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
 
         when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.of(gameContext));

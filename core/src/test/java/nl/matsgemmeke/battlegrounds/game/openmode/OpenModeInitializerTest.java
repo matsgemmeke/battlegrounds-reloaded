@@ -88,7 +88,7 @@ class OpenModeInitializerTest {
         openModeInitializer.initialize();
 
         assertThat(gameContextProvider.getGameContext(GameKey.ofFreeplay())).hasValueSatisfying(gameContext ->
-                assertThat(gameContext.getType()).isEqualTo(GameContextType.OPEN_MODE)
+                assertThat(gameContext.getType()).isEqualTo(GameContextType.FREEPLAY_MODE)
         );
         assertThat(gameContextProvider.getGameKeyByEntityId(playerId)).hasValueSatisfying(gameKey ->
                 assertThat(gameKey).isEqualTo(GameKey.ofFreeplay())

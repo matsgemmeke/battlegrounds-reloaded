@@ -30,13 +30,13 @@ class EventDamageAdapterProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         OpenModeEventDamageAdapter eventDamageAdapter = mock(OpenModeEventDamageAdapter.class);
 
         Provider<EventDamageAdapter> openModeEventDamageAdapterProvider = mock();
         when(openModeEventDamageAdapterProvider.get()).thenReturn(eventDamageAdapter);
 
-        Map<GameContextType, Provider<EventDamageAdapter>> implementations = Map.of(GameContextType.OPEN_MODE, openModeEventDamageAdapterProvider);
+        Map<GameContextType, Provider<EventDamageAdapter>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeEventDamageAdapterProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

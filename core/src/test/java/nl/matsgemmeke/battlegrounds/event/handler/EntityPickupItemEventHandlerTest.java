@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
 class EntityPickupItemEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 

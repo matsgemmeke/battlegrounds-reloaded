@@ -46,7 +46,7 @@ public class StatePersistenceHandlerProviderTest {
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -59,13 +59,13 @@ public class StatePersistenceHandlerProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         OpenModeStatePersistenceHandler statePersistenceHandler = mock(OpenModeStatePersistenceHandler.class);
 
         Provider<StatePersistenceHandler> openModeStatePersistenceHandlerProvider = mock();
         when(openModeStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.OPEN_MODE, openModeStatePersistenceHandlerProvider);
+        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeStatePersistenceHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

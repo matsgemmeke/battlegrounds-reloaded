@@ -46,7 +46,7 @@ public class DamageProcessorProviderTest {
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -59,13 +59,13 @@ public class DamageProcessorProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         FreeplayDamageProcessor damageProcessor = mock(FreeplayDamageProcessor.class);
 
         Provider<DamageProcessor> openModeDamageProcessorProvider = mock();
         when(openModeDamageProcessorProvider.get()).thenReturn(damageProcessor);
 
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.OPEN_MODE, openModeDamageProcessorProvider);
+        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeDamageProcessorProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

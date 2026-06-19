@@ -36,7 +36,7 @@ class GameKeyProviderTest {
     @DisplayName("get returns GameKey of entered game context")
     void get_successful() {
         GameKey gameKey = GameKey.ofFreeplay();
-        GameContext gameContext = new GameContext(gameKey, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(gameKey, GameContextType.FREEPLAY_MODE);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

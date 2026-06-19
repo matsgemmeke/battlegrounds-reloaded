@@ -32,7 +32,7 @@ import static org.mockito.Mockito.*;
 class PlayerSwapHandItemsEventHandlerTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
     private static final ItemStack MAIN_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final ItemStack OFF_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();

@@ -45,7 +45,7 @@ class GameEntityFinderProviderTest {
     @Test
     void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -58,13 +58,13 @@ class GameEntityFinderProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         OpenModeGameEntityFinder gameEntityFinder = mock(OpenModeGameEntityFinder.class);
 
         Provider<GameEntityFinder> gameEntityFinderProvider = mock();
         when(gameEntityFinderProvider.get()).thenReturn(gameEntityFinder);
 
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.OPEN_MODE, gameEntityFinderProvider);
+        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, gameEntityFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

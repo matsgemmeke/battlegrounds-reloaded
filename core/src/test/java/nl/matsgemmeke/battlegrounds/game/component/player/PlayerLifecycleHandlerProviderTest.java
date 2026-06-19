@@ -53,7 +53,7 @@ public class PlayerLifecycleHandlerProviderTest {
 
     @Test
     public void getReturnsOpenModePlayerLifecycleHandlerWhenCurrentGameContextIsOfTypeOpenMode() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         OpenModePlayerLifecycleHandler playerLifecycleHandler = mock(OpenModePlayerLifecycleHandler.class);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));

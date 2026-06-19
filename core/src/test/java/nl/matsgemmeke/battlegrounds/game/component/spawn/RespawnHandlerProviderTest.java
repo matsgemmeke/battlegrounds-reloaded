@@ -49,7 +49,7 @@ class RespawnHandlerProviderTest {
     @DisplayName("get throws ComponentProvisionException when provider contains no implementation type for game context type")
     void get_noImplementationTypesFound() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -63,13 +63,13 @@ class RespawnHandlerProviderTest {
     @Test
     @DisplayName("get returns instance bound to type of active game context")
     void get_successful() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         FreeplayRespawnHandler respawnHandler = mock(FreeplayRespawnHandler.class);
 
         Provider<RespawnHandler> freeplayRespawnHandlerProvider = mock();
         when(freeplayRespawnHandlerProvider.get()).thenReturn(respawnHandler);
 
-        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.OPEN_MODE, freeplayRespawnHandlerProvider);
+        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayRespawnHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

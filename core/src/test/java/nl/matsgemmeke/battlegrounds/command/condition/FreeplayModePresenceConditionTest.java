@@ -80,7 +80,7 @@ class FreeplayModePresenceConditionTest {
     @Test
     @DisplayName("validateCondition does nothing when player is registered in freeplay mode")
     void validateCondition_passes() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -103,7 +103,7 @@ class FreeplayModePresenceConditionTest {
     @Test
     @DisplayName("validateCondition throws ConditionFailedException when player is not in freeplay mode")
     void validationCondition_playerNotInFreeplayMode() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
 
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);

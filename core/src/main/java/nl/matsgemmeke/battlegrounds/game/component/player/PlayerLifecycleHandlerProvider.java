@@ -30,7 +30,7 @@ public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleH
 
         return switch (gameContext.getType()) {
             case ARENA_MODE -> null;
-            case OPEN_MODE -> openModePlayerLifecycleHandlerProvider.get();
+            case FREEPLAY_MODE -> openModePlayerLifecycleHandlerProvider.get();
         };
     }
 }

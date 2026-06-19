@@ -189,22 +189,22 @@ public class BattlegroundsModule implements Module {
         binder.bindScope(GameScoped.class, gameScope);
 
         MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
-        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(FreeplayDamageProcessor.class);
+        damageProcessorMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayDamageProcessor.class);
 
         MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
-        eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);
+        eventDamageAdapterMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeEventDamageAdapter.class);
 
         MapBinder<GameContextType, GameEntityFinder> gameEntityFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, GameEntityFinder.class);
-        gameEntityFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeGameEntityFinder.class);
+        gameEntityFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeGameEntityFinder.class);
 
         MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
-        mobRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeMobRegistry.class);
+        mobRegistryMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeMobRegistry.class);
 
         MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
-        statePersistenceHandlerMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeStatePersistenceHandler.class);
+        statePersistenceHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeStatePersistenceHandler.class);
 
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
-        targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
+        targetFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeTargetFinder.class);
 
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);

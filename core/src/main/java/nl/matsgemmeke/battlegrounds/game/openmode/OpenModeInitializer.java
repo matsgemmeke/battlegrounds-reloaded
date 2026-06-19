@@ -48,7 +48,7 @@ public class OpenModeInitializer {
 
     public void initialize() {
         OpenMode openMode = new OpenMode();
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
 
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
         gameContextProvider.assignOpenMode(openMode);
