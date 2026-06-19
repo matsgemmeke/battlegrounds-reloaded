@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.FreeplayDamageProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +60,7 @@ public class DamageProcessorProviderTest {
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.OPEN_MODE);
-        OpenModeDamageProcessor damageProcessor = mock(OpenModeDamageProcessor.class);
+        FreeplayDamageProcessor damageProcessor = mock(FreeplayDamageProcessor.class);
 
         Provider<DamageProcessor> openModeDamageProcessorProvider = mock();
         when(openModeDamageProcessorProvider.get()).thenReturn(damageProcessor);

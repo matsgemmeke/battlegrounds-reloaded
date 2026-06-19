@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class OpenModeDamageProcessor implements DamageProcessor {
+public class FreeplayDamageProcessor implements DamageProcessor {
 
     private final Clock clock;
     private final DamageEventTracker damageEventTracker;
@@ -25,22 +25,25 @@ public class OpenModeDamageProcessor implements DamageProcessor {
     private final List<DamageModifier> damageModifiers;
 
     @Inject
-    public OpenModeDamageProcessor(GameKey gameKey, Clock clock, DamageEventTracker damageEventTracker) {
+    public FreeplayDamageProcessor(GameKey gameKey, Clock clock, DamageEventTracker damageEventTracker) {
         this.gameKey = gameKey;
         this.clock = clock;
         this.damageEventTracker = damageEventTracker;
         this.damageModifiers = new ArrayList<>();
     }
 
+    @Override
     public void addDamageModifier(DamageModifier damageModifier) {
         damageModifiers.add(damageModifier);
     }
 
+    @Override
     public boolean isDamageAllowed(GameKey gameKey) {
         // Damage in open mode is allowed if both entities are in open mode
         return gameKey.equals(this.gameKey);
     }
 
+    @Override
     public boolean isDamageAllowedWithoutContext() {
         // Entities in open mode are always allowed to damage entities outside game contexts
         return true;

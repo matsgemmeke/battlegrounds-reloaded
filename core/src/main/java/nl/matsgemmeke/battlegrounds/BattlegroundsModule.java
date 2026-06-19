@@ -54,7 +54,7 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvide
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.FreeplayDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
 import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
@@ -189,7 +189,7 @@ public class BattlegroundsModule implements Module {
         binder.bindScope(GameScoped.class, gameScope);
 
         MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
-        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
+        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(FreeplayDamageProcessor.class);
 
         MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
         eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);

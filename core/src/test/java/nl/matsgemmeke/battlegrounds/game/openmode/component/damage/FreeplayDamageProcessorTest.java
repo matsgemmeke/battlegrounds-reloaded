@@ -34,7 +34,7 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeDamageProcessorTest {
+class FreeplayDamageProcessorTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID SOURCE_ID = UUID.randomUUID();
@@ -53,7 +53,7 @@ class OpenModeDamageProcessorTest {
     @Spy
     private GameKey gameKey = GAME_KEY;
     @InjectMocks
-    private OpenModeDamageProcessor damageProcessor;
+    private FreeplayDamageProcessor damageProcessor;
 
     static List<Arguments> isDamageAllowedArguments() {
         return List.of(

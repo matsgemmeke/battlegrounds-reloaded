@@ -24,6 +24,7 @@ public class GameScope implements Scope {
         currentGameContext.remove();
     }
 
+    @Override
     public <T> Provider<T> scope(Key<T> key, Provider<T> unscoped) {
         return () -> {
             GameContext context = currentGameContext.get();

@@ -1,30 +1,31 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import com.google.inject.OutOfScopeException;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class GameKeyProviderTest {
+@ExtendWith(MockitoExtension.class)
+class GameKeyProviderTest {
 
+    @Mock
     private GameScope gameScope;
-
-    @BeforeEach
-    public void setUp() {
-        gameScope = mock(GameScope.class);
-    }
+    @InjectMocks
+    private GameKeyProvider provider;
 
     @Test
-    public void getThrowsOutOfScopeExceptionWhenGameScopeHasNoEnteredGameContext() {
+    @DisplayName("get throws OutOfScopeException when scope has not entered any game context")
+    void get_withoutEnteredGameContext() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
-
-        GameKeyProvider provider = new GameKeyProvider(gameScope);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(OutOfScopeException.class)
@@ -32,13 +33,13 @@ public class GameKeyProviderTest {
     }
 
     @Test
-    public void getReturnsGameKeyOfEnteredGameContext() {
+    @DisplayName("get returns GameKey of entered game context")
+    void get_successful() {
         GameKey gameKey = GameKey.ofFreeplay();
         GameContext gameContext = new GameContext(gameKey, GameContextType.OPEN_MODE);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        GameKeyProvider provider = new GameKeyProvider(gameScope);
         GameKey result = provider.get();
 
         assertThat(result).isEqualTo(gameKey);
