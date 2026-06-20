@@ -144,9 +144,9 @@ class FreeplayStatePersistenceHandlerTest {
 
         statePersistenceHandler.loadPlayerState(gamePlayer);
 
-        verify(logger).severe("Attempted to load gun 'Test Gun' from the open mode of player TestPlayer, but it does not exist anymore");
-        verify(logger).severe("Attempted to load equipment 'Test Equipment' from the open mode of player TestPlayer, but it does not exist anymore");
-        verify(logger).severe("Attempted to load melee weapon 'Test Melee Weapon' from the open mode of player TestPlayer, but it does not exist anymore");
+        verify(logger).severe("Attempted to load gun 'Test Gun' of player TestPlayer, but it does not exist anymore");
+        verify(logger).severe("Attempted to load equipment 'Test Equipment' of player TestPlayer, but it does not exist anymore");
+        verify(logger).severe("Attempted to load melee weapon 'Test Melee Weapon' of player TestPlayer, but it does not exist anymore");
     }
 
     @Test

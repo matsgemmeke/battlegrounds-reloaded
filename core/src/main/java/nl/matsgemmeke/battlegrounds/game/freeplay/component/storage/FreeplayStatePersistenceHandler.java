@@ -71,7 +71,7 @@ public class FreeplayStatePersistenceHandler implements StatePersistenceHandler 
         String gunName = gunState.gunName();
 
         if (itemSpecRegistry.getGunSpec(gunName).isEmpty()) {
-            logger.severe("Attempted to load gun '%s' from the open mode of player %s, but it does not exist anymore".formatted(gunName, gamePlayer.getName()));
+            logger.severe("Attempted to load gun '%s' of player %s, but it does not exist anymore".formatted(gunName, gamePlayer.getName()));
             return;
         }
 
@@ -87,7 +87,7 @@ public class FreeplayStatePersistenceHandler implements StatePersistenceHandler 
         String equipmentName = equipmentState.equipmentName();
 
         if (itemSpecRegistry.getEquipmentSpec(equipmentName).isEmpty()) {
-            logger.severe("Attempted to load equipment '%s' from the open mode of player %s, but it does not exist anymore".formatted(equipmentName, gamePlayer.getName()));
+            logger.severe("Attempted to load equipment '%s' of player %s, but it does not exist anymore".formatted(equipmentName, gamePlayer.getName()));
             return;
         }
 
@@ -101,7 +101,7 @@ public class FreeplayStatePersistenceHandler implements StatePersistenceHandler 
         String meleeWeaponName = meleeWeaponState.meleeWeaponName();
 
         if (itemSpecRegistry.getMeleeWeaponSpec(meleeWeaponName).isEmpty()) {
-            logger.severe("Attempted to load melee weapon '%s' from the open mode of player %s, but it does not exist anymore".formatted(meleeWeaponName, gamePlayer.getName()));
+            logger.severe("Attempted to load melee weapon '%s' of player %s, but it does not exist anymore".formatted(meleeWeaponName, gamePlayer.getName()));
             return;
         }
 
@@ -136,7 +136,7 @@ public class FreeplayStatePersistenceHandler implements StatePersistenceHandler 
     }
 
     public void saveState() {
-        logger.info("Saving current state of open mode");
+        logger.info("Saving current freeplay mode state");
 
         int failedSaves = 0;
         String errorMessage = null;

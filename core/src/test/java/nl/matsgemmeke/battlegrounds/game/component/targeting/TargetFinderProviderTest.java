@@ -62,10 +62,10 @@ public class TargetFinderProviderTest {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         FreeplayTargetFinder targetFinder = mock(FreeplayTargetFinder.class);
 
-        Provider<TargetFinder> openModeTargetFinderProvider = mock();
-        when(openModeTargetFinderProvider.get()).thenReturn(targetFinder);
+        Provider<TargetFinder> freeplayTargetFinderProvider = mock();
+        when(freeplayTargetFinderProvider.get()).thenReturn(targetFinder);
 
-        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeTargetFinderProvider);
+        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayTargetFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
