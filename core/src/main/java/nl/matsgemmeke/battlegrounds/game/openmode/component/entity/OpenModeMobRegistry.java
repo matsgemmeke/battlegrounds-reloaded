@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.FreeplayMob;
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
-import nl.matsgemmeke.battlegrounds.entity.OpenModeEntity;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
@@ -41,10 +41,10 @@ public class OpenModeMobRegistry implements MobRegistry {
 
         EntityKey entityKey = EntityKey.fromEntityType(entity.getType());
         HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
-        OpenModeEntity openModeEntity = new OpenModeEntity(entity, entityKey, hitboxProvider);
+        FreeplayMob mob = new FreeplayMob(entity, entityKey, hitboxProvider);
 
-        mobs.put(uniqueId, openModeEntity);
+        mobs.put(uniqueId, mob);
 
-        return openModeEntity;
+        return mob;
     }
 }

@@ -28,14 +28,14 @@ import static org.junit.jupiter.params.provider.Arguments.arguments;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeEntityTest {
+class FreeplayMobTest {
 
     @Mock
     private HitboxProvider<LivingEntity> hitboxProvider;
     @Mock
     private LivingEntity entity;
     @InjectMocks
-    private OpenModeEntity openModeEntity;
+    private FreeplayMob freeplayMob;
 
     @Test
     @DisplayName("getVelocity returns entity's velocity")
@@ -44,9 +44,9 @@ class OpenModeEntityTest {
 
         when(entity.getVelocity()).thenReturn(entityVelocity);
 
-        Vector openModeEntityVelocity = openModeEntity.getVelocity();
+        Vector freeplayMobVelocity = freeplayMob.getVelocity();
 
-        assertThat(openModeEntityVelocity).isEqualTo(entityVelocity);
+        assertThat(freeplayMobVelocity).isEqualTo(entityVelocity);
     }
 
     @ParameterizedTest
@@ -55,7 +55,7 @@ class OpenModeEntityTest {
     void isValid_returnsEntityValid(boolean entityValid, boolean expected) {
         when(entity.isValid()).thenReturn(entityValid);
 
-        boolean valid = openModeEntity.isValid();
+        boolean valid = freeplayMob.isValid();
 
         assertThat(valid).isEqualTo(expected);
     }
@@ -64,7 +64,7 @@ class OpenModeEntityTest {
     void addPotionEffectAddsPotionEffectToEntity() {
         PotionEffect potionEffect = mock(PotionEffect.class);
 
-        openModeEntity.addPotionEffect(potionEffect);
+        freeplayMob.addPotionEffect(potionEffect);
 
         verify(entity).addPotionEffect(potionEffect);
     }
@@ -73,7 +73,7 @@ class OpenModeEntityTest {
     void getPotionEffectReturnsEmptyOptionalWhenEntityDoesNotHaveGivenPotionEffectType() {
         when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(null);
 
-        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+        Optional<PotionEffect> potionEffectOptional = freeplayMob.getPotionEffect(PotionEffectType.SPEED);
 
         assertThat(potionEffectOptional).isEmpty();
     }
@@ -84,14 +84,14 @@ class OpenModeEntityTest {
 
         when(entity.getPotionEffect(PotionEffectType.SPEED)).thenReturn(potionEffect);
 
-        Optional<PotionEffect> potionEffectOptional = openModeEntity.getPotionEffect(PotionEffectType.SPEED);
+        Optional<PotionEffect> potionEffectOptional = freeplayMob.getPotionEffect(PotionEffectType.SPEED);
 
         assertThat(potionEffectOptional).hasValue(potionEffect);
     }
 
     @Test
     void removePotionEffectRemovesPotionEffectFromEntity() {
-        openModeEntity.removePotionEffect(PotionEffectType.SPEED);
+        freeplayMob.removePotionEffect(PotionEffectType.SPEED);
 
         verify(entity).removePotionEffect(PotionEffectType.SPEED);
     }
@@ -110,7 +110,7 @@ class OpenModeEntityTest {
 
         Damage damage = new Damage(damageAmount, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        double damageDealt = openModeEntity.damage(damage);
+        double damageDealt = freeplayMob.damage(damage);
 
         assertThat(damageDealt).isEqualTo(expectedDamageDealt);
 
@@ -123,7 +123,7 @@ class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        double damageDealt = openModeEntity.damage(damage);
+        double damageDealt = freeplayMob.damage(damage);
 
         assertThat(damageDealt).isZero();
 
@@ -136,7 +136,7 @@ class OpenModeEntityTest {
 
         Damage damage = new Damage(50.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
 
-        double damageDealt = openModeEntity.damage(damage);
+        double damageDealt = freeplayMob.damage(damage);
 
         assertThat(damageDealt).isZero();
 
@@ -149,7 +149,7 @@ class OpenModeEntityTest {
 
         when(hitboxProvider.provideHitbox(entity)).thenReturn(hitbox);
 
-        Hitbox result = openModeEntity.getHitbox();
+        Hitbox result = freeplayMob.getHitbox();
 
         assertThat(result).isEqualTo(hitbox);
     }

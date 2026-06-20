@@ -30,7 +30,7 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
     }
 
     public boolean isEnabledRegisterPlayersAsPassive() {
-        return this.checkConfigurationValue("open-mode-register-players-as-passive", false);
+        return this.checkConfigurationValue("freeplay-mode-register-players-as-passive", false);
     }
 
     private <T> T checkConfigurationValue(String route, @Nullable T def) {

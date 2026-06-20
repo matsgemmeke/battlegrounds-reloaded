@@ -13,13 +13,13 @@ import org.bukkit.util.Vector;
 import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeEntity implements GameMob {
+public class FreeplayMob implements GameMob {
 
     private final EntityKey entityKey;
     private final HitboxProvider<LivingEntity> hitboxProvider;
     private final LivingEntity entity;
 
-    public OpenModeEntity(LivingEntity entity, EntityKey entityKey, HitboxProvider<LivingEntity> hitboxProvider) {
+    public FreeplayMob(LivingEntity entity, EntityKey entityKey, HitboxProvider<LivingEntity> hitboxProvider) {
         this.entity = entity;
         this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
