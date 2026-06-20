@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode.component.damage;
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.damage;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;

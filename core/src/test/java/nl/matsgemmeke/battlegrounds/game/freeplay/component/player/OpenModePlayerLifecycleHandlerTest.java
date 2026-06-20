@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode.component.player;
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.player;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;

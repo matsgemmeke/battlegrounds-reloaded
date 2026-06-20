@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.entity;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.EntityKey;

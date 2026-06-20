@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode.component.spawn;
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;

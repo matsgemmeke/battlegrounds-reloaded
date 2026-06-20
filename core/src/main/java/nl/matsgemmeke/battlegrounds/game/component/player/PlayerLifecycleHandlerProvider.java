@@ -5,7 +5,7 @@ import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.player.OpenModePlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.OpenModePlayerLifecycleHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleHandler> {

@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.OpenModeStatePersistenceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode.component.entity;
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.entity;
 
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;

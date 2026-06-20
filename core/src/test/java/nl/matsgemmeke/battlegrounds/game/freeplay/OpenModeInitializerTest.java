@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.openmode;
+package nl.matsgemmeke.battlegrounds.game.freeplay;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;

@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.OpenModeMobRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;

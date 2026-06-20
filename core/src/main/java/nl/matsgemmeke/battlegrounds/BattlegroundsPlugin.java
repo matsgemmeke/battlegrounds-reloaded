@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
-import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
+import nl.matsgemmeke.battlegrounds.game.freeplay.OpenModeInitializer;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import org.bukkit.event.block.BlockBurnEvent;
