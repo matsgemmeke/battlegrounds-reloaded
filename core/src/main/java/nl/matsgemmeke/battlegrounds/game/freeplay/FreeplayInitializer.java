@@ -15,7 +15,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 
 import java.util.UUID;
 
-public class OpenModeInitializer {
+public class FreeplayInitializer {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
 
@@ -28,7 +28,7 @@ public class OpenModeInitializer {
     private final Provider<EntityDamageEventHandler> entityDamageEventHandlerProvider;
 
     @Inject
-    public OpenModeInitializer(
+    public FreeplayInitializer(
             BattlegroundsConfiguration configuration,
             EventDispatcher eventDispatcher,
             GameContextProvider gameContextProvider,

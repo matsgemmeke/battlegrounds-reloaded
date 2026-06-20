@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.OpenModeEventDamageAdapter;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayEventDamageAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ class EventDamageAdapterProviderTest {
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
-        OpenModeEventDamageAdapter eventDamageAdapter = mock(OpenModeEventDamageAdapter.class);
+        FreeplayEventDamageAdapter eventDamageAdapter = mock(FreeplayEventDamageAdapter.class);
 
         Provider<EventDamageAdapter> openModeEventDamageAdapterProvider = mock();
         when(openModeEventDamageAdapterProvider.get()).thenReturn(eventDamageAdapter);

@@ -48,13 +48,13 @@ class OpenModeInitializerTest {
 
     private MockedStatic<Bukkit> bukkit;
 
-    private OpenModeInitializer openModeInitializer;
+    private FreeplayInitializer freeplayInitializer;
 
     @BeforeEach
     void setUp() {
         bukkit = mockStatic(Bukkit.class);
 
-        openModeInitializer = new OpenModeInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
+        freeplayInitializer = new FreeplayInitializer(configuration, eventDispatcher, gameContextProvider, gameScope, playerRegistryProvider, statePersistenceHandlerProvider, entityDamageEventHandlerProvider);
     }
 
     @AfterEach
@@ -85,7 +85,7 @@ class OpenModeInitializerTest {
 
         bukkit.when(Bukkit::getOnlinePlayers).thenReturn(List.of(player));
 
-        openModeInitializer.initialize();
+        freeplayInitializer.initialize();
 
         assertThat(gameContextProvider.getGameContext(GameKey.ofFreeplay())).hasValueSatisfying(gameContext ->
                 assertThat(gameContext.getType()).isEqualTo(GameContextType.FREEPLAY_MODE)

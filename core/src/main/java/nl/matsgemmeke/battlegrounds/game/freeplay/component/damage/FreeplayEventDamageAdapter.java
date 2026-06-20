@@ -18,7 +18,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 
-public class OpenModeEventDamageAdapter implements EventDamageAdapter {
+public class FreeplayEventDamageAdapter implements EventDamageAdapter {
 
     private final DamageProcessor damageProcessor;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
@@ -26,7 +26,7 @@ public class OpenModeEventDamageAdapter implements EventDamageAdapter {
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeEventDamageAdapter(DamageProcessor damageProcessor, MeleeWeaponRegistry meleeWeaponRegistry, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
+    public FreeplayEventDamageAdapter(DamageProcessor damageProcessor, MeleeWeaponRegistry meleeWeaponRegistry, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
         this.damageProcessor = damageProcessor;
         this.mobRegistry = mobRegistry;
         this.meleeWeaponRegistry = meleeWeaponRegistry;

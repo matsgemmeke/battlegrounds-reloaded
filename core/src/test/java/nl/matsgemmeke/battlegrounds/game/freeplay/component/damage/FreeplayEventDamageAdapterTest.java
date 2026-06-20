@@ -31,7 +31,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeEventDamageAdapterTest {
+class FreeplayEventDamageAdapterTest {
 
     private static final UUID DAMAGER_UNIQUE_ID = UUID.randomUUID();
     private static final UUID VICTIM_UNIQUE_ID = UUID.randomUUID();
@@ -49,7 +49,7 @@ class OpenModeEventDamageAdapterTest {
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
-    private OpenModeEventDamageAdapter eventDamageAdapter;
+    private FreeplayEventDamageAdapter eventDamageAdapter;
 
     @Test
     @DisplayName("processMeleeDamage returns original damage when given damager not a registered player")
