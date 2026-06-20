@@ -47,11 +47,11 @@ public class OpenModeInitializer {
     }
 
     public void initialize() {
-        OpenMode openMode = new OpenMode();
+        Freeplay freeplay = new Freeplay();
         GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
 
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
-        gameContextProvider.assignOpenMode(openMode);
+        gameContextProvider.assignFreeplay(freeplay);
 
         gameScope.runInScope(gameContext, this::registerComponents);
     }

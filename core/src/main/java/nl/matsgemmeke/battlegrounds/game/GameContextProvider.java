@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
+import nl.matsgemmeke.battlegrounds.game.openmode.Freeplay;
 
 import java.util.*;
 
@@ -43,22 +43,22 @@ public class GameContextProvider {
     }
 
     /**
-     * Assigns the open mode instance to the provider. This will only assign the open mode once, as there should only
-     * be one instance. Returns {@code true} if the instance was assigned, and {@code false} if there already is an
-     * assigned instance.
+     * Assigns the freeplay mode instance to the provider. This will only assign the freeplay mode once, as there
+     * should only be one instance. Returns {@code true} if the instance was assigned, and {@code false} if there
+     * already is an assigned instance.
      *
-     * @param openMode the open mode instance
-     * @return whether the instance was assigned
+     * @param freeplay the freeplay mode instance
+     * @return         whether the instance was assigned
      */
-    public boolean assignOpenMode(OpenMode openMode) {
+    public boolean assignFreeplay(Freeplay freeplay) {
         GameKey gameKey = GameKey.ofFreeplay();
-        boolean containsOpenMode = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
+        boolean containsFreeplay = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
 
-        if (containsOpenMode) {
+        if (containsFreeplay) {
             return false;
         }
 
-        games.put(gameKey, openMode);
+        games.put(gameKey, freeplay);
         return true;
     }
 

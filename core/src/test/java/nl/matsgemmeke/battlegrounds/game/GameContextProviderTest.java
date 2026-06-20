@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.openmode.OpenMode;
+import nl.matsgemmeke.battlegrounds.game.openmode.Freeplay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,23 +36,23 @@ class GameContextProviderTest {
     }
 
     @Test
-    @DisplayName("assignOpenMode adds open mode and returns true")
-    void assignOpenMode_success() {
-        OpenMode openMode = mock(OpenMode.class);
+    @DisplayName("assignFreeplay adds freeplay mode and returns true")
+    void assignFreeplay_success() {
+        Freeplay freeplay = mock(Freeplay.class);
 
-        boolean assigned = gameContextProvider.assignOpenMode(openMode);
+        boolean assigned = gameContextProvider.assignFreeplay(freeplay);
 
         assertThat(assigned).isTrue();
     }
 
     @Test
-    @DisplayName("assignOpenMode does not add open mode and returns false when already assigned")
-    void assignOpenMode_alreadyAssigned() {
-        OpenMode openMode = mock(OpenMode.class);
-        OpenMode otherOpenMode = mock(OpenMode.class);
+    @DisplayName("assignFreeplay does not add freeplay mode and returns false when already assigned")
+    void assignFreeplay_alreadyAssigned() {
+        Freeplay freeplay = mock(Freeplay.class);
+        Freeplay otherFreeplay = mock(Freeplay.class);
 
-        gameContextProvider.assignOpenMode(openMode);
-        boolean assigned = gameContextProvider.assignOpenMode(otherOpenMode);
+        gameContextProvider.assignFreeplay(freeplay);
+        boolean assigned = gameContextProvider.assignFreeplay(otherFreeplay);
 
         assertThat(assigned).isFalse();
     }
