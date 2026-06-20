@@ -63,7 +63,7 @@ class FreeplayInitializerTest {
     }
 
     @Test
-    @DisplayName("get creates new OpenMode instance and assigns it to the game context provider")
+    @DisplayName("get creates new freeplay instance and assigns it to the game context provider")
     void get_successful() {
         UUID playerId = UUID.randomUUID();
         GamePlayer gamePlayer = mock(GamePlayer.class);

@@ -62,10 +62,10 @@ public class DamageProcessorProviderTest {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         FreeplayDamageProcessor damageProcessor = mock(FreeplayDamageProcessor.class);
 
-        Provider<DamageProcessor> openModeDamageProcessorProvider = mock();
-        when(openModeDamageProcessorProvider.get()).thenReturn(damageProcessor);
+        Provider<DamageProcessor> freeplayDamageProcessorProvider = mock();
+        when(freeplayDamageProcessorProvider.get()).thenReturn(damageProcessor);
 
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeDamageProcessorProvider);
+        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

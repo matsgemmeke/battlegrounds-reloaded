@@ -62,10 +62,10 @@ public class StatePersistenceHandlerProviderTest {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         FreeplayStatePersistenceHandler statePersistenceHandler = mock(FreeplayStatePersistenceHandler.class);
 
-        Provider<StatePersistenceHandler> openModeStatePersistenceHandlerProvider = mock();
-        when(openModeStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
+        Provider<StatePersistenceHandler> freeplayStatePersistenceHandlerProvider = mock();
+        when(freeplayStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, openModeStatePersistenceHandlerProvider);
+        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

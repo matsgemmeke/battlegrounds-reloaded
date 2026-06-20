@@ -9,36 +9,38 @@ import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class PlayerJoinEventHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerJoinEventHandlerTest {
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
     private GameScope gameScope;
+    @Mock
     private Provider<PlayerLifecycleHandler> playerLifecycleHandlerProvider;
-
-    @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        playerLifecycleHandlerProvider = mock();
-    }
+    @InjectMocks
+    private PlayerJoinEventHandler eventHandler;
 
     @Test
-    public void handleThrowsEventHandlingExceptionWhenNoGameContextExistsForOpenMode() {
+    @DisplayName("handle throws EventHandlingException when no game context exists for freeplay")
+    void handle_withoutFreeplayGameContext() {
         Player player = mock(Player.class);
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
 
         when(gameContextProvider.getGameContext(GameKey.ofFreeplay())).thenReturn(Optional.empty());
-
-        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
@@ -46,7 +48,8 @@ public class PlayerJoinEventHandlerTest {
     }
 
     @Test
-    public void handleCallsPlayerLifeCycleHandlerToHandlePlayerJoin() {
+    @DisplayName("handle calls PlayerLifecycleHandler to handle player join")
+    void handle_successful() {
         GameContext gameContext = mock(GameContext.class);
         Player player = mock(Player.class);
         PlayerJoinEvent event = new PlayerJoinEvent(player, "test");
@@ -55,7 +58,6 @@ public class PlayerJoinEventHandlerTest {
         when(gameContextProvider.getGameContext(GameKey.ofFreeplay())).thenReturn(Optional.of(gameContext));
         when(playerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
-        PlayerJoinEventHandler eventHandler = new PlayerJoinEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
         eventHandler.handle(event);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);

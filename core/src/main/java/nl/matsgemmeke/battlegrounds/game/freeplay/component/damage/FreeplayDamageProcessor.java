@@ -39,13 +39,13 @@ public class FreeplayDamageProcessor implements DamageProcessor {
 
     @Override
     public boolean isDamageAllowed(GameKey gameKey) {
-        // Damage in open mode is allowed if both entities are in open mode
+        // Damage in freeplay is allowed if both entities are in freeplay
         return gameKey.equals(this.gameKey);
     }
 
     @Override
     public boolean isDamageAllowedWithoutContext() {
-        // Entities in open mode are always allowed to damage entities outside game contexts
+        // Entities in freeplay are always allowed to damage entities outside game contexts
         return true;
     }
 

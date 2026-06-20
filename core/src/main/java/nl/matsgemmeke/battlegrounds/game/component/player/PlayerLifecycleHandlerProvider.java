@@ -1,36 +1,18 @@
 package nl.matsgemmeke.battlegrounds.game.component.player;
 
 import com.google.inject.Inject;
-import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import com.google.inject.TypeLiteral;
+import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.game.component.ComponentRouterProvider;
 
-public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleHandler> {
+import java.util.Map;
 
-    @NotNull
-    private final GameScope gameScope;
-    @NotNull
-    private final Provider<FreeplayPlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider;
+public class PlayerLifecycleHandlerProvider extends ComponentRouterProvider<PlayerLifecycleHandler> {
 
     @Inject
-    public PlayerLifecycleHandlerProvider(
-            @NotNull GameScope gameScope,
-            @NotNull Provider<FreeplayPlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider
-    ) {
-        this.gameScope = gameScope;
-        this.freeplayPlayerLifecycleHandlerProvider = freeplayPlayerLifecycleHandlerProvider;
-    }
-
-    public PlayerLifecycleHandler get() {
-        GameContext gameContext = gameScope.getCurrentGameContext()
-                .orElseThrow(() -> new OutOfScopeException("Cannot provide instance of PlayerLifecycleHandler when the game scope is empty"));
-
-        return switch (gameContext.getType()) {
-            case ARENA_MODE -> null;
-            case FREEPLAY_MODE -> freeplayPlayerLifecycleHandlerProvider.get();
-        };
+    public PlayerLifecycleHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations, TypeLiteral<PlayerLifecycleHandler> typeLiteral) {
+        super(gameScope, implementations, typeLiteral);
     }
 }

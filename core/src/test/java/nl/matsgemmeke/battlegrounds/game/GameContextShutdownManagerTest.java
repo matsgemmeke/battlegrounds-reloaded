@@ -2,31 +2,35 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
-public class GameContextShutdownManagerTest {
+@ExtendWith(MockitoExtension.class)
+class GameContextShutdownManagerTest {
 
     private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
     private GameScope gameScope;
+    @Mock
     private Provider<StatePersistenceHandler> statePersistenceHandlerProvider;
-
-    @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        statePersistenceHandlerProvider = mock();
-    }
+    @InjectMocks
+    private GameContextShutdownManager gameContextShutdownManager;
 
     @Test
-    public void shutdownDoesNothingWhenAnOpenModeGameContextDoesNotExists() {
+    @DisplayName("shutdown does nothing when the freeplay game context does not exist")
+    void shutdown_withoutFreeplay() {
         when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.empty());
 
         GameContextShutdownManager gameContextShutdownManager = new GameContextShutdownManager(gameContextProvider, gameScope, statePersistenceHandlerProvider);
@@ -36,7 +40,8 @@ public class GameContextShutdownManagerTest {
     }
 
     @Test
-    public void shutdownSavesOpenModeState() {
+    @DisplayName("shutdown saves freeplay mode state")
+    void shutdown_savesFreeplay() {
         GameContext gameContext = new GameContext(FREEPLAY_GAME_KEY, GameContextType.FREEPLAY_MODE);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
 

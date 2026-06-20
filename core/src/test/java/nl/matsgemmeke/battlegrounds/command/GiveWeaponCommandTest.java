@@ -61,7 +61,7 @@ class GiveWeaponCommandTest {
 
     @Test
     @DisplayName("execute throws UnknownGameKeyException when open mode game key is not registered")
-    void execute_openModeGameKeyNotRegistered() {
+    void execute_freeplayGameKeyNotRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> command.execute(player, ARGS))
