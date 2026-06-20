@@ -19,7 +19,7 @@ import org.bukkit.entity.LivingEntity;
 
 import java.util.*;
 
-public class OpenModeTargetFinder implements TargetFinder {
+public class FreeplayTargetFinder implements TargetFinder {
 
     private static final double ENTITY_FINDING_RANGE = 10.0;
 
@@ -29,7 +29,7 @@ public class OpenModeTargetFinder implements TargetFinder {
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeTargetFinder(DeploymentObjectRegistry deploymentObjectRegistry, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
+    public FreeplayTargetFinder(DeploymentObjectRegistry deploymentObjectRegistry, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
         this.deploymentObjectRegistry = deploymentObjectRegistry;
         this.hitboxResolver = hitboxResolver;
         this.mobRegistry = mobRegistry;

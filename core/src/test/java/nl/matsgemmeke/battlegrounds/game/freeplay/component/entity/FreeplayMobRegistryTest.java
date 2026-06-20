@@ -19,14 +19,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeMobRegistryTest {
+class FreeplayMobRegistryTest {
 
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
     @Mock
     private HitboxResolver hitboxResolver;
     @InjectMocks
-    private OpenModeMobRegistry mobRegistry;
+    private FreeplayMobRegistry mobRegistry;
 
     @Test
     @DisplayName("findByUniqueId returns empty optional when given unique id is not registered")

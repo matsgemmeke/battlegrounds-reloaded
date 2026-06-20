@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.entity.openmode;
+package nl.matsgemmeke.battlegrounds.game.component.entity.freeplay;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
@@ -14,14 +14,14 @@ import org.bukkit.entity.Mob;
 import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeGameEntityFinder implements GameEntityFinder {
+public class FreeplayGameEntityFinder implements GameEntityFinder {
 
     private final BukkitEntityFinder bukkitEntityFinder;
     private final MobRegistry mobRegistry;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public OpenModeGameEntityFinder(MobRegistry mobRegistry, PlayerRegistry playerRegistry, BukkitEntityFinder bukkitEntityFinder) {
+    public FreeplayGameEntityFinder(MobRegistry mobRegistry, PlayerRegistry playerRegistry, BukkitEntityFinder bukkitEntityFinder) {
         this.mobRegistry = mobRegistry;
         this.playerRegistry = playerRegistry;
         this.bukkitEntityFinder = bukkitEntityFinder;

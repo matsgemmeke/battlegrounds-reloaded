@@ -18,7 +18,7 @@ import java.util.UUID;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModePlayerLifecycleHandlerTest {
+class FreeplayPlayerLifecycleHandlerTest {
 
     private static final UUID PLAYER_UNIQUE_ID = UUID.randomUUID();
 
@@ -31,7 +31,7 @@ class OpenModePlayerLifecycleHandlerTest {
     @Mock
     private StatePersistenceHandler statePersistenceHandler;
     @InjectMocks
-    private OpenModePlayerLifecycleHandler playerLifecycleHandler;
+    private FreeplayPlayerLifecycleHandler playerLifecycleHandler;
 
     @Test
     void handlePlayerJoinDoesNotRegisterPlayerWhenAlreadyRegistered() {

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.entity.openmode;
+package nl.matsgemmeke.battlegrounds.game.component.entity.freeplay;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.GameMob;
@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeGameEntityFinderTest {
+class FreeplayGameEntityFinderTest {
 
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
@@ -32,7 +32,7 @@ class OpenModeGameEntityFinderTest {
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
-    private OpenModeGameEntityFinder gameEntityFinder;
+    private FreeplayGameEntityFinder gameEntityFinder;
 
     @Test
     void findGameEntityByUniqueIdReturnsOptionalWithGamePlayerWhenPlayerRegistryContainsGivenUniqueId() {

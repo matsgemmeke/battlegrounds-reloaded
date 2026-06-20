@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.OpenModeMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -59,7 +59,7 @@ class MobRegistryProviderTest {
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
-        OpenModeMobRegistry mobRegistry = mock(OpenModeMobRegistry.class);
+        FreeplayMobRegistry mobRegistry = mock(FreeplayMobRegistry.class);
 
         Provider<MobRegistry> mobRegistryProvider = mock();
         when(mobRegistryProvider.get()).thenReturn(mobRegistry);

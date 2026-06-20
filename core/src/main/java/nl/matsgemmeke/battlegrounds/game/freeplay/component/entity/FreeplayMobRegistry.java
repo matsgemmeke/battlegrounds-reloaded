@@ -14,13 +14,13 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-public class OpenModeMobRegistry implements MobRegistry {
+public class FreeplayMobRegistry implements MobRegistry {
 
     private final HitboxResolver hitboxResolver;
     private final Map<UUID, GameMob> mobs;
 
     @Inject
-    public OpenModeMobRegistry(HitboxResolver hitboxResolver) {
+    public FreeplayMobRegistry(HitboxResolver hitboxResolver) {
         this.hitboxResolver = hitboxResolver;
         this.mobs = new HashMap<>();
     }

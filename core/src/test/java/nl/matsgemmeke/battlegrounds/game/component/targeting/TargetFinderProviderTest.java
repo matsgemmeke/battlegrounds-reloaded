@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -60,7 +60,7 @@ public class TargetFinderProviderTest {
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
-        OpenModeTargetFinder targetFinder = mock(OpenModeTargetFinder.class);
+        FreeplayTargetFinder targetFinder = mock(FreeplayTargetFinder.class);
 
         Provider<TargetFinder> openModeTargetFinderProvider = mock();
         when(openModeTargetFinderProvider.get()).thenReturn(targetFinder);

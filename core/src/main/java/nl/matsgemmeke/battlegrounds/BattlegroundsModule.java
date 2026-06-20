@@ -35,7 +35,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProv
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
-import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
+import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
@@ -53,11 +53,11 @@ import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayEventDamageAdapter;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.OpenModeMobRegistry;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.OpenModeStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -195,16 +195,16 @@ public class BattlegroundsModule implements Module {
         eventDamageAdapterMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayEventDamageAdapter.class);
 
         MapBinder<GameContextType, GameEntityFinder> gameEntityFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, GameEntityFinder.class);
-        gameEntityFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeGameEntityFinder.class);
+        gameEntityFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayGameEntityFinder.class);
 
         MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
-        mobRegistryMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeMobRegistry.class);
+        mobRegistryMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayMobRegistry.class);
 
         MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
-        statePersistenceHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeStatePersistenceHandler.class);
+        statePersistenceHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayStatePersistenceHandler.class);
 
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
-        targetFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(OpenModeTargetFinder.class);
+        targetFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayTargetFinder.class);
 
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);

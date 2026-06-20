@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeInitializerTest {
+class FreeplayInitializerTest {
 
     @Mock
     private BattlegroundsConfiguration configuration;

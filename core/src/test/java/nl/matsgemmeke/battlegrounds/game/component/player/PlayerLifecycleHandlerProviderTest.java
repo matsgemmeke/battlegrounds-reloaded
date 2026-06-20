@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.OpenModePlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,19 +20,19 @@ import static org.mockito.Mockito.when;
 public class PlayerLifecycleHandlerProviderTest {
 
     private GameScope gameScope;
-    private Provider<OpenModePlayerLifecycleHandler> openModePlayerLifecycleHandlerProvider;
+    private Provider<FreeplayPlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider;
 
     @BeforeEach
     public void setUp() {
         gameScope = mock(GameScope.class);
-        openModePlayerLifecycleHandlerProvider = mock();
+        freeplayPlayerLifecycleHandlerProvider = mock();
     }
 
     @Test
     public void getThrowsOutOfScopeExceptionWhenGameScopeHasNoCurrentGameContext() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, openModePlayerLifecycleHandlerProvider);
+        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, freeplayPlayerLifecycleHandlerProvider);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(OutOfScopeException.class)
@@ -45,7 +45,7 @@ public class PlayerLifecycleHandlerProviderTest {
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, openModePlayerLifecycleHandlerProvider);
+        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, freeplayPlayerLifecycleHandlerProvider);
         PlayerLifecycleHandler result = provider.get();
 
         assertThat(result).isNull();
@@ -54,12 +54,12 @@ public class PlayerLifecycleHandlerProviderTest {
     @Test
     public void getReturnsOpenModePlayerLifecycleHandlerWhenCurrentGameContextIsOfTypeOpenMode() {
         GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
-        OpenModePlayerLifecycleHandler playerLifecycleHandler = mock(OpenModePlayerLifecycleHandler.class);
+        FreeplayPlayerLifecycleHandler playerLifecycleHandler = mock(FreeplayPlayerLifecycleHandler.class);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
-        when(openModePlayerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
+        when(freeplayPlayerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, openModePlayerLifecycleHandlerProvider);
+        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, freeplayPlayerLifecycleHandlerProvider);
         PlayerLifecycleHandler result = provider.get();
 
         assertThat(result).isEqualTo(playerLifecycleHandler);

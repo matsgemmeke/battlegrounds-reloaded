@@ -29,7 +29,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeTargetFinderTest {
+class FreeplayTargetFinderTest {
 
     private static final double RANGE = 0.1;
     private static final UUID ENTITY_UNIQUE_ID = UUID.randomUUID();
@@ -43,7 +43,7 @@ class OpenModeTargetFinderTest {
     @Mock
     private PlayerRegistry playerRegistry;
     @InjectMocks
-    private OpenModeTargetFinder targetFinder;
+    private FreeplayTargetFinder targetFinder;
 
     @Test
     void findEnemyTargetsReturnsEmptyListWhenGivenLocationWorldIsNull() {

@@ -39,7 +39,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OpenModeStatePersistenceHandlerTest {
+class FreeplayStatePersistenceHandlerTest {
 
     private static final UUID PLAYER_UUID = UUID.randomUUID();
 
@@ -73,7 +73,7 @@ class OpenModeStatePersistenceHandlerTest {
     @Mock
     private PlayerStateStorage playerStateStorage;
     @InjectMocks
-    private OpenModeStatePersistenceHandler statePersistenceHandler;
+    private FreeplayStatePersistenceHandler statePersistenceHandler;
 
     @Test
     @DisplayName("loadPlayerState assigns items to GamePlayer based on saved state")

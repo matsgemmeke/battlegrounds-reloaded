@@ -5,7 +5,7 @@ import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.OpenModePlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
 import org.jetbrains.annotations.NotNull;
 
 public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleHandler> {
@@ -13,15 +13,15 @@ public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleH
     @NotNull
     private final GameScope gameScope;
     @NotNull
-    private final Provider<OpenModePlayerLifecycleHandler> openModePlayerLifecycleHandlerProvider;
+    private final Provider<FreeplayPlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider;
 
     @Inject
     public PlayerLifecycleHandlerProvider(
             @NotNull GameScope gameScope,
-            @NotNull Provider<OpenModePlayerLifecycleHandler> openModePlayerLifecycleHandlerProvider
+            @NotNull Provider<FreeplayPlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider
     ) {
         this.gameScope = gameScope;
-        this.openModePlayerLifecycleHandlerProvider = openModePlayerLifecycleHandlerProvider;
+        this.freeplayPlayerLifecycleHandlerProvider = freeplayPlayerLifecycleHandlerProvider;
     }
 
     public PlayerLifecycleHandler get() {
@@ -30,7 +30,7 @@ public class PlayerLifecycleHandlerProvider implements Provider<PlayerLifecycleH
 
         return switch (gameContext.getType()) {
             case ARENA_MODE -> null;
-            case FREEPLAY_MODE -> openModePlayerLifecycleHandlerProvider.get();
+            case FREEPLAY_MODE -> freeplayPlayerLifecycleHandlerProvider.get();
         };
     }
 }

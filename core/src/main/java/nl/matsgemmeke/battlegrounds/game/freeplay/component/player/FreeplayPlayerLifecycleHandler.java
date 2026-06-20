@@ -11,7 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.util.UUID;
 
-public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
+public class FreeplayPlayerLifecycleHandler implements PlayerLifecycleHandler {
 
     private final BattlegroundsConfiguration configuration;
     private final ItemLifecycleHandler itemLifecycleHandler;
@@ -19,7 +19,7 @@ public class OpenModePlayerLifecycleHandler implements PlayerLifecycleHandler {
     private final StatePersistenceHandler statePersistenceHandler;
 
     @Inject
-    public OpenModePlayerLifecycleHandler(
+    public FreeplayPlayerLifecycleHandler(
             BattlegroundsConfiguration configuration,
             ItemLifecycleHandler itemLifecycleHandler,
             PlayerRegistry playerRegistry,

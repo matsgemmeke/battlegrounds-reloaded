@@ -26,7 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-public class OpenModeStatePersistenceHandler implements StatePersistenceHandler {
+public class FreeplayStatePersistenceHandler implements StatePersistenceHandler {
 
     private final EquipmentRegistry equipmentRegistry;
     private final GunRegistry gunRegistry;
@@ -38,7 +38,7 @@ public class OpenModeStatePersistenceHandler implements StatePersistenceHandler 
     private final PlayerStateStorage playerStateStorage;
 
     @Inject
-    public OpenModeStatePersistenceHandler(
+    public FreeplayStatePersistenceHandler(
             EquipmentRegistry equipmentRegistry,
             GunRegistry gunRegistry,
             ItemCreator itemCreator,
