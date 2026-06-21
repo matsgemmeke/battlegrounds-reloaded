@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.configuration;
 
+import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
@@ -16,6 +17,7 @@ public class ArenaSettingsConfiguration extends BasePluginConfiguration {
 
     private final ObjectValidator objectValidator;
 
+    @Inject
     public ArenaSettingsConfiguration(ObjectValidator objectValidator, @Assisted File file, @Assisted InputStream resource) {
         super(file, resource, false);
         this.objectValidator = objectValidator;

@@ -21,7 +21,7 @@ commands:
   description-setmainlobby: "Sets the main lobby location"
   description-tools: "Provides miscellaneous tools for operating the plugin"
   description-tools-hitbox: "Shows hitboxes of nearby entities"
-  help-menu-command: " ● %bg__usage%"
+  help-menu-command: " ● %bg_usage%"
   help-menu-title: "&6&l Battlegrounds Help Menu"
   tools-menu-command: " ● /bg tools hitbox <seconds> <range>"
   tools-menu-title: "&6&l List of tools"

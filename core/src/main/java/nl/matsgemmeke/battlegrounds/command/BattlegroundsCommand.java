@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
 public class BattlegroundsCommand extends BaseCommand {
@@ -36,22 +37,39 @@ public class BattlegroundsCommand extends BaseCommand {
     @Default
     @HelpCommand
     public void onDefault(CommandSender sender) {
+        sender.sendMessage(EMPTY_MESSAGE);
         sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
         sender.sendMessage(EMPTY_MESSAGE);
 
         if (sender instanceof Player player) {
             for (CommandSource subcommand : subcommands) {
-                TextComponent message = new TextComponent(subcommand.getUsage());
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, subcommand.getUsage()));
+                String subcommandText = this.getSubcommandText(subcommand);
+
+                TextComponent message = new TextComponent(subcommandText);
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + subcommand.getUsage()));
                 message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(subcommand.getDescription())));
 
                 player.spigot().sendMessage(message);
             }
         } else {
             for (CommandSource subcommand : subcommands) {
-                sender.sendMessage(subcommand.getUsage());
+                String subcommandText = this.getSubcommandText(subcommand);
+
+                sender.sendMessage(subcommandText);
             }
         }
+
+        sender.sendMessage(EMPTY_MESSAGE);
+    }
+
+    private String getSubcommandText(CommandSource subcommand) {
+        Map<String, Object> values = Map.of(
+                "bg_name", subcommand.getName(),
+                "bg_description", subcommand.getDescription(),
+                "bg_usage", subcommand.getUsage()
+        );
+
+        return translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath()).replace(values);
     }
 
     @CatchUnknown

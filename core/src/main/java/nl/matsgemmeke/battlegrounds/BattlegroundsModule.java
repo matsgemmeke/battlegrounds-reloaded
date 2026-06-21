@@ -57,6 +57,8 @@ import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayEventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
@@ -199,6 +201,12 @@ public class BattlegroundsModule implements Module {
 
         MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
         mobRegistryMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayMobRegistry.class);
+
+        MapBinder<GameContextType, PlayerLifecycleHandler> playerLifecycleHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, PlayerLifecycleHandler.class);
+        playerLifecycleHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayPlayerLifecycleHandler.class);
+
+        MapBinder<GameContextType, RespawnHandler> respawnHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, RespawnHandler.class);
+        respawnHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayRespawnHandler.class);
 
         MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
         statePersistenceHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayStatePersistenceHandler.class);

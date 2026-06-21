@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.component.spawn;
 
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
@@ -10,6 +11,7 @@ import java.util.Map;
 
 public class RespawnHandlerProvider extends ComponentRouterProvider<RespawnHandler> {
 
+    @Inject
     public RespawnHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<RespawnHandler>> implementations, TypeLiteral<RespawnHandler> typeLiteral) {
         super(gameScope, implementations, typeLiteral);
     }
