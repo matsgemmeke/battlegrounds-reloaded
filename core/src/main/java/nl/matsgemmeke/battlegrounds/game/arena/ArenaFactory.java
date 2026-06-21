@@ -40,7 +40,8 @@ public class ArenaFactory {
      * @return         a new arena instance
      */
     public Arena create(int id, ArenaSettings settings) {
-        File settingsFile = new File(arenasFolder.getPath() + "/arena-" + id + "/settings.yml");
+        File settingsDirectory = new File(arenasFolder, "arena-" + id);
+        File settingsFile = new File(settingsDirectory, "settings.yml");
         InputStream resource = plugin.getResource("arenas/settings.yml");
         ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(settings);
 

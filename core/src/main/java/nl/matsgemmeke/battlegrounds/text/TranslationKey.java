@@ -17,7 +17,7 @@ public enum TranslationKey {
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
     DESCRIPTION_TOOLS("commands.description-tools"),
     DESCRIPTION_TOOLS_HITBOX("commands.description-tools-hitbox"),
-    FREEPLAY_MODE_NOT_EXISTS("errors.freeplay-mode.not-exists"),
+    FREEPLAY_MODE_NOT_EXISTS("errors.freeplay-mode-not-exists"),
     HELP_MENU_COMMAND("commands.help-menu-command"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
