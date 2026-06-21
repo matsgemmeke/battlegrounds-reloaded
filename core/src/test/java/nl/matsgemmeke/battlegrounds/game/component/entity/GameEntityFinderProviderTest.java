@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
+import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameEntityFinder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -44,8 +44,8 @@ class GameEntityFinderProviderTest {
 
     @Test
     void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -58,13 +58,13 @@ class GameEntityFinderProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeGameEntityFinder gameEntityFinder = mock(OpenModeGameEntityFinder.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayGameEntityFinder gameEntityFinder = mock(FreeplayGameEntityFinder.class);
 
         Provider<GameEntityFinder> gameEntityFinderProvider = mock();
         when(gameEntityFinderProvider.get()).thenReturn(gameEntityFinder);
 
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.OPEN_MODE, gameEntityFinderProvider);
+        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, gameEntityFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRegistry;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -44,8 +44,8 @@ class MobRegistryProviderTest {
 
     @Test
     void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -58,13 +58,13 @@ class MobRegistryProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeMobRegistry mobRegistry = mock(OpenModeMobRegistry.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayMobRegistry mobRegistry = mock(FreeplayMobRegistry.class);
 
         Provider<MobRegistry> mobRegistryProvider = mock();
         when(mobRegistryProvider.get()).thenReturn(mobRegistry);
 
-        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.OPEN_MODE, mobRegistryProvider);
+        Map<GameContextType, Provider<MobRegistry>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mobRegistryProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

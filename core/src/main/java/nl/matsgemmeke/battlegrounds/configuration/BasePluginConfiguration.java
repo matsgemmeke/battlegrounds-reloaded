@@ -17,17 +17,16 @@ import java.util.Optional;
 public abstract class BasePluginConfiguration implements PluginConfiguration {
 
     private final boolean readOnly;
-    @NotNull
     private final File file;
     @Nullable
     private final InputStream resource;
     private YamlConfiguration yamlConfiguration;
 
-    public BasePluginConfiguration(@NotNull File file, @Nullable InputStream resource) {
-        this(file, resource, false);
+    public BasePluginConfiguration(File file) {
+        this(file, null, false);
     }
 
-    public BasePluginConfiguration(@NotNull File file, @Nullable InputStream resource, boolean readOnly) {
+    public BasePluginConfiguration(File file, @Nullable InputStream resource, boolean readOnly) {
         this.file = file;
         this.resource = resource;
         this.readOnly = readOnly;
@@ -143,6 +142,15 @@ public abstract class BasePluginConfiguration implements PluginConfiguration {
         }
     }
 
+    public void set(String path, Object value) {
+        if (readOnly) {
+            throw new UnsupportedOperationException("Configuration file is read-only");
+        }
+
+        yamlConfiguration.set(path, value);
+    }
+
+    @Deprecated
     public void setValue(@NotNull String path, @NotNull Object value) {
         if (readOnly) {
             throw new UnsupportedOperationException("Configuration file is read-only");

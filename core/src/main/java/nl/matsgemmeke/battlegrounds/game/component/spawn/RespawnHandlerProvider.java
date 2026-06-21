@@ -1,36 +1,18 @@
 package nl.matsgemmeke.battlegrounds.game.component.spawn;
 
 import com.google.inject.Inject;
-import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import com.google.inject.TypeLiteral;
+import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeRespawnHandler;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.game.component.ComponentRouterProvider;
 
-public class RespawnHandlerProvider implements Provider<RespawnHandler> {
+import java.util.Map;
 
-    @NotNull
-    private final GameScope gameScope;
-    @NotNull
-    private final Provider<OpenModeRespawnHandler> openModeRespawnHandlerProvider;
+public class RespawnHandlerProvider extends ComponentRouterProvider<RespawnHandler> {
 
     @Inject
-    public RespawnHandlerProvider(
-            @NotNull GameScope gameScope,
-            @NotNull Provider<OpenModeRespawnHandler> openModeRespawnHandlerProvider
-    ) {
-        this.gameScope = gameScope;
-        this.openModeRespawnHandlerProvider = openModeRespawnHandlerProvider;
-    }
-
-    public RespawnHandler get() {
-        GameContext gameContext = gameScope.getCurrentGameContext()
-                .orElseThrow(() -> new OutOfScopeException("Cannot provide instance of RespawnHandler when the game scope is empty"));
-
-        return switch (gameContext.getType()) {
-            case ARENA_MODE -> null;
-            case OPEN_MODE -> openModeRespawnHandlerProvider.get();
-        };
+    public RespawnHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<RespawnHandler>> implementations, TypeLiteral<RespawnHandler> typeLiteral) {
+        super(gameScope, implementations, typeLiteral);
     }
 }

@@ -1,31 +1,29 @@
 package nl.matsgemmeke.battlegrounds.text;
 
-import org.jetbrains.annotations.NotNull;
-
 public enum TranslationKey {
 
+    ARENA_ALREADY_EXISTS("admin.arena-already-exists"),
+    ARENA_CONFIRM_REMOVAL("admin.arena-confirm-removal"),
+    ARENA_CREATED("admin.arena-created"),
+    ARENA_CREATION_FAILED("admin.arena-creation-failed"),
+    ARENA_NOT_EXISTS("admin.arena-not-exists"),
+    ARENA_REMOVAL_FAILED("admin.arena-removal-failed"),
+    ARENA_REMOVED("admin.arena-removed"),
     COMMAND_SENDER_MUST_BE_PLAYER("errors.command-sender-must-be-player"),
-    DESCRIPTION_CREATESESSION("commands.description-createsession"),
+    DESCRIPTION_CREATEARENA("commands.description-createarena"),
     DESCRIPTION_GIVEWEAPON("commands.description-giveweapon"),
     DESCRIPTION_RELOAD("commands.description-reload"),
-    DESCRIPTION_REMOVESESSION("commands.description-removesession"),
+    DESCRIPTION_REMOVEARENA("commands.description-removearena"),
     DESCRIPTION_SETMAINLOBBY("commands.description-setmainlobby"),
     DESCRIPTION_TOOLS("commands.description-tools"),
     DESCRIPTION_TOOLS_HITBOX("commands.description-tools-hitbox"),
+    FREEPLAY_MODE_NOT_EXISTS("errors.freeplay-mode-not-exists"),
     HELP_MENU_COMMAND("commands.help-menu-command"),
     HELP_MENU_TITLE("commands.help-menu-title"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
-    NOT_IN_OPEN_MODE("errors.not-in-open-mode"),
-    OPEN_MODE_NOT_EXISTS("errors.open-mode.not-exists"),
+    NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
-    SESSION_ALREADY_EXISTS("admin.session-already-exists"),
-    SESSION_CONFIRM_REMOVAL("admin.session-confirm-removal"),
-    SESSION_CREATED("admin.session-created"),
-    SESSION_CREATION_FAILED("admin.session-creation-failed"),
-    SESSION_NOT_EXISTS("admin.session-not-exists"),
-    SESSION_REMOVAL_FAILED("admin.session-removal-failed"),
-    SESSION_REMOVED("admin.session-removed"),
     TOOL_HITBOX_SUCCESS("admin.tool-hitbox-success"),
     TOOL_NOT_EXISTS("admin.tool-not-exists"),
     TOOLS_MENU_COMMAND("commands.tools-menu-command"),
@@ -34,14 +32,12 @@ public enum TranslationKey {
     WEAPON_GIVEN("commands.weapon-given"),
     WEAPON_NOT_EXISTS("admin.weapon-not-exists");
 
-    @NotNull
-    private String path;
+    private final String path;
 
-    TranslationKey(@NotNull String path) {
+    TranslationKey(String path) {
         this.path = path;
     }
 
-    @NotNull
     public String getPath() {
         return path;
     }

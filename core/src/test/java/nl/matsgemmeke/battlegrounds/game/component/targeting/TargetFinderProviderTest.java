@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,8 +45,8 @@ public class TargetFinderProviderTest {
 
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -59,13 +59,13 @@ public class TargetFinderProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeTargetFinder targetFinder = mock(OpenModeTargetFinder.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayTargetFinder targetFinder = mock(FreeplayTargetFinder.class);
 
-        Provider<TargetFinder> openModeTargetFinderProvider = mock();
-        when(openModeTargetFinderProvider.get()).thenReturn(targetFinder);
+        Provider<TargetFinder> freeplayTargetFinderProvider = mock();
+        when(freeplayTargetFinderProvider.get()).thenReturn(targetFinder);
 
-        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.OPEN_MODE, openModeTargetFinderProvider);
+        Map<GameContextType, Provider<TargetFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayTargetFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

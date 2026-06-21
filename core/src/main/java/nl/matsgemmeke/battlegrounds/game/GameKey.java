@@ -8,26 +8,26 @@ public class GameKey {
         this.value = value;
     }
 
-    public static GameKey ofOpenMode() {
-        return new GameKey("OPEN-MODE");
+    public static GameKey ofArena(int id) {
+        return new GameKey("ARENA-" + id);
     }
 
-    public static GameKey ofSession(int id) {
-        return new GameKey("SESSION-" + id);
+    public static GameKey ofFreeplay() {
+        return new GameKey("FREEPLAY");
     }
 
     public static GameKey parse(String value) {
-        if (value.equals("OPEN-MODE")) {
-            return ofOpenMode();
+        if (value.equals("FREEPLAY")) {
+            return ofFreeplay();
         }
 
-        if (value.startsWith("SESSION-")) {
-            String id = value.substring("SESSION-".length());
+        if (value.startsWith("ARENA-")) {
+            String id = value.substring("ARENA-".length());
 
             try {
-                return ofSession(Integer.parseInt(id));
+                return ofArena(Integer.parseInt(id));
             } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid SESSION id: " + id);
+                throw new IllegalArgumentException("Invalid ARENA id: " + id);
             }
         }
 

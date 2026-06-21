@@ -33,7 +33,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EntityDamageByEntityEventHandlerTest {
 
-    private static final GameKey DAMAGER_GAME_KEY = GameKey.ofSession(1);
+    private static final GameKey DAMAGER_GAME_KEY = GameKey.ofArena(1);
     private static final double EVENT_DAMAGE = 10.0;
     private static final double ADAPTER_DAMAGE = 50.0;
     private static final UUID DAMAGER_UNIQUE_ID = UUID.randomUUID();
@@ -88,7 +88,7 @@ class EntityDamageByEntityEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process EntityDamageByEntityEvent for game key SESSION-1, no corresponding game context was found");
+                .hasMessage("Unable to process EntityDamageByEntityEvent for game key ARENA-1, no corresponding game context was found");
 
         verifyNoInteractions(gameScope);
     }

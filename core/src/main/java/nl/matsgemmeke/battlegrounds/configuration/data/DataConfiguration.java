@@ -10,8 +10,8 @@ import java.io.File;
 
 public class DataConfiguration extends BasePluginConfiguration {
 
-    public DataConfiguration(@NotNull File file) {
-        super(file, null);
+    public DataConfiguration(File file) {
+        super(file);
     }
 
     @Nullable

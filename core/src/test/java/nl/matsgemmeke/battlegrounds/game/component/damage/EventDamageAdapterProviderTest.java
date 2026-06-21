@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayEventDamageAdapter;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,13 +30,13 @@ class EventDamageAdapterProviderTest {
 
     @Test
     void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeEventDamageAdapter eventDamageAdapter = mock(OpenModeEventDamageAdapter.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayEventDamageAdapter eventDamageAdapter = mock(FreeplayEventDamageAdapter.class);
 
-        Provider<EventDamageAdapter> openModeEventDamageAdapterProvider = mock();
-        when(openModeEventDamageAdapterProvider.get()).thenReturn(eventDamageAdapter);
+        Provider<EventDamageAdapter> freeplayEventDamageAdapterProvider = mock();
+        when(freeplayEventDamageAdapterProvider.get()).thenReturn(eventDamageAdapter);
 
-        Map<GameContextType, Provider<EventDamageAdapter>> implementations = Map.of(GameContextType.OPEN_MODE, openModeEventDamageAdapterProvider);
+        Map<GameContextType, Provider<EventDamageAdapter>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayEventDamageAdapterProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

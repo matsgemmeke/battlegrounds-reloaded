@@ -31,7 +31,7 @@ import static org.mockito.Mockito.mock;
 @ExtendWith(MockitoExtension.class)
 class GunFireSimulationEffectTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(null, 10L, 200L, 100L, 20L, 10L, 2000L, 1000L);
 
     private static final String ITEM_NAME = "Test Item";
@@ -69,7 +69,7 @@ class GunFireSimulationEffectTest {
 
         assertThatThrownBy(() -> gunFireSimulationEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform gun fire simulation effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform gun fire simulation effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

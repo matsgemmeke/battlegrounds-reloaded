@@ -32,7 +32,7 @@ import static org.mockito.Mockito.verify;
 class ExplosionEffectTest {
 
     private static final ExplosionProperties PROPERTIES = new ExplosionProperties(null, 2.0f, false, false);
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID SOURCE_ID = UUID.randomUUID();
     private static final ItemEffectContext CONTEXT = createContext();
 
@@ -70,7 +70,7 @@ class ExplosionEffectTest {
 
         assertThatThrownBy(() -> explosionEffect.startPerformance(CONTEXT))
                 .isInstanceOf(ItemEffectPerformanceException.class)
-                .hasMessage("Unable to perform explosion effect: no game context for game key OPEN-MODE can be found");
+                .hasMessage("Unable to perform explosion effect: no game context for game key FREEPLAY can be found");
     }
 
     @Test

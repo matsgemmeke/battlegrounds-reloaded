@@ -1,17 +1,12 @@
 package nl.matsgemmeke.battlegrounds.command;
 
-import org.jetbrains.annotations.NotNull;
-
 public abstract class CommandSource {
 
-    @NotNull
     private final String description;
-    @NotNull
     private final String name;
-    @NotNull
     private final String usage;
 
-    public CommandSource(@NotNull String name, @NotNull String description, @NotNull String usage) {
+    public CommandSource(String name, String description, String usage) {
         this.name = name;
         this.description = description;
         this.usage = usage;
@@ -22,7 +17,6 @@ public abstract class CommandSource {
      *
      * @return the command description
      */
-    @NotNull
     public String getDescription() {
         return description;
     }
@@ -32,7 +26,6 @@ public abstract class CommandSource {
      *
      * @return the command name
      */
-    @NotNull
     public String getName() {
         return name;
     }
@@ -42,7 +35,6 @@ public abstract class CommandSource {
      *
      * @return the command name
      */
-    @NotNull
     public String getUsage() {
         return usage;
     }

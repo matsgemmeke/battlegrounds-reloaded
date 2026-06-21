@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,8 +45,8 @@ public class DamageProcessorProviderTest {
 
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -59,13 +59,13 @@ public class DamageProcessorProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeDamageProcessor damageProcessor = mock(OpenModeDamageProcessor.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayDamageProcessor damageProcessor = mock(FreeplayDamageProcessor.class);
 
-        Provider<DamageProcessor> openModeDamageProcessorProvider = mock();
-        when(openModeDamageProcessorProvider.get()).thenReturn(damageProcessor);
+        Provider<DamageProcessor> freeplayDamageProcessorProvider = mock();
+        when(freeplayDamageProcessorProvider.get()).thenReturn(damageProcessor);
 
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.OPEN_MODE, openModeDamageProcessorProvider);
+        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

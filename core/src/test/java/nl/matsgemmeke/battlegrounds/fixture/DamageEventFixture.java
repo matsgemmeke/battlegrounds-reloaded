@@ -12,7 +12,7 @@ import java.util.UUID;
 
 public final class DamageEventFixture {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID DAMAGER_ID = UUID.fromString("2c11afe2-48f0-4399-9a04-195bb8ac640e");
     private static final EntityKey DAMAGER_ENTITY_KEY = EntityKey.fromEntityType(EntityType.PLAYER);
     private static final UUID VICTIM_ID = UUID.fromString("606c4672-cf52-4913-85e5-984225ceaed1");

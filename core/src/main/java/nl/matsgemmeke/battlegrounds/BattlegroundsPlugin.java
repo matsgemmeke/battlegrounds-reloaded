@@ -5,15 +5,15 @@ import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
 import nl.matsgemmeke.battlegrounds.command.*;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentSessionIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentSessionIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.OpenModePresenceCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
+import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
-import nl.matsgemmeke.battlegrounds.game.openmode.OpenModeInitializer;
+import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -69,8 +69,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         injector = Guice.createInjector(module);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
-        OpenModeInitializer openModeInitializer = injector.getInstance(OpenModeInitializer.class);
-        openModeInitializer.initialize();
+        FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
+        freeplayInitializer.initialize();
 
         this.setUpEventHandlers();
         this.setUpCommands();
@@ -82,10 +82,10 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ToolsCommand toolsCommand = injector.getInstance(ToolsCommand.class);
 
         // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(injector.getInstance(CreateSessionCommand.class));
+        bgCommand.addSubcommand(injector.getInstance(CreateArenaCommand.class));
         bgCommand.addSubcommand(injector.getInstance(GiveWeaponCommand.class));
         bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(RemoveSessionCommand.class));
+        bgCommand.addSubcommand(injector.getInstance(RemoveArenaCommand.class));
         bgCommand.addSubcommand(injector.getInstance(SetMainLobbyCommand.class));
 
         // Register the command to ACF
@@ -95,9 +95,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         // Register custom conditions to ACF
         var commandConditions = commandManager.getCommandConditions();
-        commandConditions.addCondition("open-mode-presence", injector.getInstance(OpenModePresenceCondition.class));
-        commandConditions.addCondition(Integer.class, "existent-session-id", injector.getInstance(ExistentSessionIdCondition.class));
-        commandConditions.addCondition(Integer.class, "nonexistent-session-id", injector.getInstance(NonexistentSessionIdCondition.class));
+        commandConditions.addCondition("freeplay-mode-presence", injector.getInstance(FreeplayModePresenceCondition.class));
+        commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentArenaIdCondition.class));
+        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentArenaIdCondition.class));
     }
 
     private void setUpEventHandlers() {

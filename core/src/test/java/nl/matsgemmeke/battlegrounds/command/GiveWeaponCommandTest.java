@@ -31,7 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class GiveWeaponCommandTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final String[] ARGS = { "test", "weapon" };
     private static final UUID UNIQUE_ID = UUID.randomUUID();
 
@@ -60,13 +60,13 @@ class GiveWeaponCommandTest {
     }
 
     @Test
-    @DisplayName("execute throws UnknownGameKeyException when open mode game key is not registered")
-    void execute_openModeGameKeyNotRegistered() {
+    @DisplayName("execute throws UnknownGameKeyException when freeplay game key is not registered")
+    void execute_freeplayGameKeyNotRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> command.execute(player, ARGS))
                 .isInstanceOf(UnknownGameKeyException.class)
-                .hasMessage("No game context found game key OPEN-MODE");
+                .hasMessage("No game context found game key FREEPLAY");
     }
 
     @Test

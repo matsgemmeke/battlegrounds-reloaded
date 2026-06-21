@@ -35,7 +35,7 @@ import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapterProv
 import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.effect.ExplosionAttributorRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.entity.*;
-import nl.matsgemmeke.battlegrounds.game.component.entity.openmode.OpenModeGameEntityFinder;
+import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameEntityFinder;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
@@ -43,20 +43,23 @@ import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.spawn.DefaultSpawnPointRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.RespawnHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistry;
-import nl.matsgemmeke.battlegrounds.game.component.spawn.SpawnPointRegistryProvider;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
+import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.OpenModeTargetFinder;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeDamageProcessor;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.damage.OpenModeEventDamageAdapter;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.entity.OpenModeMobRegistry;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayEventDamageAdapter;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRegistry;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -188,22 +191,28 @@ public class BattlegroundsModule implements Module {
         binder.bindScope(GameScoped.class, gameScope);
 
         MapBinder<GameContextType, DamageProcessor> damageProcessorMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, DamageProcessor.class);
-        damageProcessorMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeDamageProcessor.class);
+        damageProcessorMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayDamageProcessor.class);
 
         MapBinder<GameContextType, EventDamageAdapter> eventDamageAdapterMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, EventDamageAdapter.class);
-        eventDamageAdapterMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeEventDamageAdapter.class);
+        eventDamageAdapterMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayEventDamageAdapter.class);
 
         MapBinder<GameContextType, GameEntityFinder> gameEntityFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, GameEntityFinder.class);
-        gameEntityFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeGameEntityFinder.class);
+        gameEntityFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayGameEntityFinder.class);
 
         MapBinder<GameContextType, MobRegistry> mobRegistryMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, MobRegistry.class);
-        mobRegistryMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeMobRegistry.class);
+        mobRegistryMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayMobRegistry.class);
+
+        MapBinder<GameContextType, PlayerLifecycleHandler> playerLifecycleHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, PlayerLifecycleHandler.class);
+        playerLifecycleHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayPlayerLifecycleHandler.class);
+
+        MapBinder<GameContextType, RespawnHandler> respawnHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, RespawnHandler.class);
+        respawnHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayRespawnHandler.class);
 
         MapBinder<GameContextType, StatePersistenceHandler> statePersistenceHandlerMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, StatePersistenceHandler.class);
-        statePersistenceHandlerMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeStatePersistenceHandler.class);
+        statePersistenceHandlerMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayStatePersistenceHandler.class);
 
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
-        targetFinderMapBinder.addBinding(GameContextType.OPEN_MODE).to(OpenModeTargetFinder.class);
+        targetFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayTargetFinder.class);
 
         binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
         binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
@@ -227,11 +236,14 @@ public class BattlegroundsModule implements Module {
         binder.bind(ProjectileHitActionRegistry.class).in(GameScoped.class);
         binder.bind(ProjectileRegistry.class).in(GameScoped.class);
         binder.bind(RespawnHandler.class).toProvider(RespawnHandlerProvider.class).in(GameScoped.class);
-        binder.bind(SpawnPointRegistry.class).toProvider(SpawnPointRegistryProvider.class).in(GameScoped.class);
+        binder.bind(SpawnPointRegistry.class).to(DefaultSpawnPointRegistry.class).in(GameScoped.class);
         binder.bind(StatePersistenceHandler.class).toProvider(StatePersistenceHandlerProvider.class).in(GameScoped.class);
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
 
         // Factory bindings
+        binder.install(new FactoryModuleBuilder()
+                .build(ArenaSettingsConfigurationFactory.class));
+
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentFactory.class));
 
@@ -292,10 +304,10 @@ public class BattlegroundsModule implements Module {
                 .build(ManualInsertionReloadSystemFactory.class));
 
         // File bindings
+        binder.bind(File.class).annotatedWith(Names.named("ArenasFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "arenas"));
         binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
-        binder.bind(File.class).annotatedWith(Names.named("SetupFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "setup"));
     }
 
     @Provides

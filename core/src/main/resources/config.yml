@@ -4,6 +4,10 @@ version: 3.0.0
 # The language of the plugin messages.
 language: en
 
+# Whether players start off as passive when they join freeplay mode. Passive players cannot take damage from other
+# players using the plugin's custom items. However, they can still damage one another through normal attacks.
+freeplay-mode-register-players-as-passive: false
+
 # The interval in milliseconds which the camera movement recoil uses the space out rotations for a smooth effect.
 # Change this value to a lower number for a smoother effect. However, this also increases the amount of traffic flow.
 item-camera-movement-recoil-duration-millis: 20
@@ -14,7 +18,3 @@ item-gun-damage-amplifier: 1.0
 
 # How often the save damage events job runs, in milliseconds (e.g. 60000 = 1 minute).
 job-save-damage-events-period-millis: 60000
-
-# Whether players start off as passive when they join open mode. Passive players cannot take damage from other players
-# using the plugin's custom items. However, they can still damage one another through normal attacks.
-open-mode-register-players-as-passive: false

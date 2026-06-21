@@ -31,8 +31,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PlayerSwapHandItemsEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofOpenMode();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.OPEN_MODE);
+    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
+    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
     private static final ItemStack MAIN_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final ItemStack OFF_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
@@ -87,7 +87,7 @@ class PlayerSwapHandItemsEventHandlerTest {
 
         assertThatThrownBy(() -> eventHandler.handle(event))
                 .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerSwapHandItemsEvent for game key OPEN-MODE, no corresponding game context was found");
+                .hasMessage("Unable to process PlayerSwapHandItemsEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test

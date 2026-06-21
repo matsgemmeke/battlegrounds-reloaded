@@ -1,0 +1,8 @@
+# The length of the lobby countdown in seconds.
+lobby-countdown-length: 60
+
+# The maximum amount of players allowed to join the arena.
+max-players: 12
+
+# The minimum amount of players required to start the arena.
+min-players: 2

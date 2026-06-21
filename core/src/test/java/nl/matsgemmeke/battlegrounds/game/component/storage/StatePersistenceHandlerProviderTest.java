@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.storage.OpenModeStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -45,8 +45,8 @@ public class StatePersistenceHandlerProviderTest {
 
     @Test
     public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.OPEN_MODE, mock());
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
@@ -59,13 +59,13 @@ public class StatePersistenceHandlerProviderTest {
 
     @Test
     public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeStatePersistenceHandler statePersistenceHandler = mock(OpenModeStatePersistenceHandler.class);
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayStatePersistenceHandler statePersistenceHandler = mock(FreeplayStatePersistenceHandler.class);
 
-        Provider<StatePersistenceHandler> openModeStatePersistenceHandlerProvider = mock();
-        when(openModeStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
+        Provider<StatePersistenceHandler> freeplayStatePersistenceHandlerProvider = mock();
+        when(freeplayStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.OPEN_MODE, openModeStatePersistenceHandlerProvider);
+        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 

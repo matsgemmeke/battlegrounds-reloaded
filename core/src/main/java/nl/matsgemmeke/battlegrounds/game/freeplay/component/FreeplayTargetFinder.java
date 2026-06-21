@@ -1,0 +1,151 @@
+package nl.matsgemmeke.battlegrounds.game.freeplay.component;
+
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.*;
+import nl.matsgemmeke.battlegrounds.entity.damage.DamageTarget;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.game.component.deploy.DeploymentObjectRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetQuery;
+import nl.matsgemmeke.battlegrounds.game.component.targeting.condition.TargetCondition;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+
+import java.util.*;
+
+public class FreeplayTargetFinder implements TargetFinder {
+
+    private static final double ENTITY_FINDING_RANGE = 10.0;
+
+    private final DeploymentObjectRegistry deploymentObjectRegistry;
+    private final HitboxResolver hitboxResolver;
+    private final MobRegistry mobRegistry;
+    private final PlayerRegistry playerRegistry;
+
+    @Inject
+    public FreeplayTargetFinder(DeploymentObjectRegistry deploymentObjectRegistry, HitboxResolver hitboxResolver, MobRegistry mobRegistry, PlayerRegistry playerRegistry) {
+        this.deploymentObjectRegistry = deploymentObjectRegistry;
+        this.hitboxResolver = hitboxResolver;
+        this.mobRegistry = mobRegistry;
+        this.playerRegistry = playerRegistry;
+    }
+
+    public List<GameEntity> findEnemyTargets(UUID entityId, Location location, double range) {
+        Collection<Entity> entities = this.findTargetEntities(location, range);
+        List<GameEntity> targets = new ArrayList<>();
+
+        for (Entity entity : entities) {
+            GamePlayer gamePlayer = playerRegistry.findByUniqueId(entity.getUniqueId()).orElse(null);
+
+            if (gamePlayer != null && gamePlayer.getUniqueId().equals(entityId)) {
+                continue;
+            }
+
+            if (gamePlayer != null && !gamePlayer.isPassive()) {
+                targets.add(gamePlayer);
+                continue;
+            }
+
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
+                HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
+                GameEntity target = new FreeplayMob(livingEntity, entityKey, hitboxProvider);
+
+                targets.add(target);
+            }
+        }
+
+        return targets;
+    }
+
+    @Override
+    public List<PotionEffectReceiver> findPotionEffectReceivers(Location location, double range) {
+        double rangeSquared = range * range;
+
+        List<PotionEffectReceiver> targets = new ArrayList<>();
+        World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
+
+        playerRegistry.getAll().stream()
+                .filter(gamePlayer -> gamePlayer.getLocation().distanceSquared(location) <= rangeSquared)
+                .forEach(targets::add);
+
+        world.getNearbyEntities(location, range, range, range).stream()
+                .filter(entity -> entity.getType() != EntityType.PLAYER)
+                .filter(LivingEntity.class::isInstance)
+                .map(entity -> mobRegistry.register((LivingEntity) entity))
+                .filter(gameMob -> gameMob.getLocation().distanceSquared(location) <= rangeSquared)
+                .forEach(targets::add);
+
+        return targets;
+    }
+
+    @Override
+    public List<DamageTarget> findTargets(TargetQuery query) {
+        List<DamageTarget> targets = new ArrayList<>();
+        Location location = query.getLocation().orElseThrow(() -> new IllegalArgumentException("No location provided"));
+        World world = Optional.ofNullable(location.getWorld()).orElseThrow(() -> new IllegalArgumentException("Provided location has no world"));
+
+        Optional<UUID> uniqueId = query.getUniqueId();
+        Collection<TargetCondition> conditions = query.getConditions();
+        boolean enemiesOnly = query.isEnemiesOnly();
+
+        playerRegistry.getAll().stream()
+                .filter(gamePlayer -> !enemiesOnly || uniqueId.map(id -> !id.equals(gamePlayer.getUniqueId())).orElse(true))
+                .filter(gamePlayer -> conditions.stream().allMatch(condition -> condition.test(gamePlayer, location)))
+                .forEach(targets::add);
+
+        world.getNearbyEntities(location, ENTITY_FINDING_RANGE, ENTITY_FINDING_RANGE, ENTITY_FINDING_RANGE).stream()
+                .filter(entity -> entity.getType() != EntityType.PLAYER)
+                .filter(LivingEntity.class::isInstance)
+                .map(entity -> mobRegistry.register((LivingEntity) entity))
+                .filter(gameMob -> conditions.stream().allMatch(condition -> condition.test(gameMob, location)))
+                .forEach(targets::add);
+
+        deploymentObjectRegistry.getDamageableDeploymentObjects().stream()
+                .filter(deploymentObject -> !enemiesOnly || uniqueId.map(id -> !id.equals(deploymentObject.getUniqueId())).orElse(true))
+                .filter(deploymentObject -> conditions.stream().allMatch(condition -> condition.test(deploymentObject, location)))
+                .forEach(targets::add);
+
+        return targets;
+    }
+
+    public List<GameEntity> findTargets(UUID entityId, Location location, double range) {
+        Collection<Entity> entities = this.findTargetEntities(location, range);
+        List<GameEntity> targets = new ArrayList<>();
+
+        for (Entity entity : entities) {
+            GamePlayer gamePlayer = playerRegistry.findByUniqueId(entity.getUniqueId()).orElse(null);
+
+            if (gamePlayer != null && !gamePlayer.isPassive()) {
+                targets.add(gamePlayer);
+                continue;
+            }
+
+            if (entity.getType() != EntityType.PLAYER && entity instanceof LivingEntity livingEntity) {
+                EntityKey entityKey = EntityKey.fromEntityType(livingEntity.getType());
+                HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(livingEntity);
+                GameEntity target = new FreeplayMob(livingEntity, entityKey, hitboxProvider);
+
+                targets.add(target);
+            }
+        }
+
+        return targets;
+    }
+
+    private Collection<Entity> findTargetEntities(Location location, double range) {
+        World world = location.getWorld();
+
+        if (world == null) {
+            return Collections.emptyList();
+        }
+
+        return world.getNearbyEntities(location, range, range, range);
+    }
+}

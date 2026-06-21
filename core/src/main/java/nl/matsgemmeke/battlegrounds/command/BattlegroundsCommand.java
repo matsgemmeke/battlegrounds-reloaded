@@ -11,37 +11,65 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
 public class BattlegroundsCommand extends BaseCommand {
 
     private static final String EMPTY_MESSAGE = " ";
 
-    @NotNull
     private final List<CommandSource> subcommands;
-    @NotNull
     private final Translator translator;
 
     @Inject
-    public BattlegroundsCommand(@NotNull Translator translator) {
+    public BattlegroundsCommand(Translator translator) {
         this.translator = translator;
         this.subcommands = new ArrayList<>();
     }
 
-    public boolean addSubcommand(@NotNull CommandSource subcommand) {
+    public boolean addSubcommand(CommandSource subcommand) {
         return subcommands.add(subcommand);
     }
 
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.createsession")
-    @Subcommand("createsession|cs")
-    public void onCreateSession(@NotNull CommandSender sender, @Conditions("nonexistent-session-id") Integer id) {
-        CreateSessionCommand command = this.getSubcommand("createsession");
-        command.execute(sender, id);
+    @Default
+    @HelpCommand
+    public void onDefault(CommandSender sender) {
+        sender.sendMessage(EMPTY_MESSAGE);
+        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
+        sender.sendMessage(EMPTY_MESSAGE);
+
+        if (sender instanceof Player player) {
+            for (CommandSource subcommand : subcommands) {
+                String subcommandText = this.getSubcommandText(subcommand);
+
+                TextComponent message = new TextComponent(subcommandText);
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + subcommand.getUsage()));
+                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(subcommand.getDescription())));
+
+                player.spigot().sendMessage(message);
+            }
+        } else {
+            for (CommandSource subcommand : subcommands) {
+                String subcommandText = this.getSubcommandText(subcommand);
+
+                sender.sendMessage(subcommandText);
+            }
+        }
+
+        sender.sendMessage(EMPTY_MESSAGE);
+    }
+
+    private String getSubcommandText(CommandSource subcommand) {
+        Map<String, Object> values = Map.of(
+                "bg_name", subcommand.getName(),
+                "bg_description", subcommand.getDescription(),
+                "bg_usage", subcommand.getUsage()
+        );
+
+        return translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath()).replace(values);
     }
 
     @CatchUnknown
@@ -49,30 +77,17 @@ public class BattlegroundsCommand extends BaseCommand {
         sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
     }
 
-    @Default
-    @HelpCommand
-    public void onDefault(CommandSender sender) {
-        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
-        sender.sendMessage(EMPTY_MESSAGE);
-
-        if (sender instanceof Player player) {
-            for (CommandSource subcommand : subcommands) {
-                TextComponent message = new TextComponent(subcommand.getUsage());
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, subcommand.getUsage()));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(subcommand.getDescription())));
-
-                player.spigot().sendMessage(message);
-            }
-        } else {
-            for (CommandSource subcommand : subcommands) {
-                sender.sendMessage(subcommand.getUsage());
-            }
-        }
+    @CommandCompletion("<id>")
+    @CommandPermission("battlegrounds.createarena")
+    @Subcommand("createarena|ca")
+    public void onCreateArena(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
+        CreateArenaCommand command = this.getSubcommand("createarena");
+        command.execute(sender, id);
     }
 
     @CommandCompletion("<weapon>")
     @CommandPermission("battlegrounds.giveweapon")
-    @Conditions("open-mode-presence")
+    @Conditions("freeplay-mode-presence")
     @Subcommand("giveweapon")
     public void onGiveWeapon(Player player, String[] args) {
         GiveWeaponCommand command = this.getSubcommand("giveweapon");
@@ -81,33 +96,33 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @CommandPermission("battlegrounds.reload")
     @Subcommand("reload")
-    public void onReload(@NotNull CommandSender sender) {
+    public void onReload(CommandSender sender) {
         ReloadCommand command = this.getSubcommand("reload");
         command.execute(sender);
     }
 
     @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.removesession")
-    @Subcommand("removesession")
-    public void onRemoveSession(@NotNull CommandSender sender, @Conditions("existent-session-id") Integer id) {
-        RemoveSessionCommand command = this.getSubcommand("removesession");
+    @CommandPermission("battlegrounds.removearena")
+    @Subcommand("removearena")
+    public void onRemoveArena(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
+        RemoveArenaCommand command = this.getSubcommand("removearena");
         command.execute(sender, id);
     }
 
     @CommandPermission("battlegrounds.setmainlobby")
     @Subcommand("setmainlobby")
-    public void onSetMainLobby(@NotNull Player player) {
+    public void onSetMainLobby(Player player) {
         SetMainLobbyCommand command = this.getSubcommand("setmainlobby");
         command.execute(player);
     }
 
-    @NotNull
-    private <T extends CommandSource> T getSubcommand(@NotNull String name) {
+    private <T extends CommandSource> T getSubcommand(String name) {
         for (CommandSource subcommand : subcommands) {
             if (subcommand.getName().equalsIgnoreCase(name)) {
                 return (T) subcommand;
             }
         }
+
         throw new IllegalArgumentException("Unable to find a subcommand by the name " + name);
     }
 }

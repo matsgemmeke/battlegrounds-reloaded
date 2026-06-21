@@ -1,0 +1,50 @@
+package nl.matsgemmeke.battlegrounds.game.freeplay.component.entity;
+
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.entity.EntityKey;
+import nl.matsgemmeke.battlegrounds.entity.FreeplayMob;
+import nl.matsgemmeke.battlegrounds.entity.GameMob;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
+import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.game.component.entity.MobRegistry;
+import org.bukkit.entity.LivingEntity;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+public class FreeplayMobRegistry implements MobRegistry {
+
+    private final HitboxResolver hitboxResolver;
+    private final Map<UUID, GameMob> mobs;
+
+    @Inject
+    public FreeplayMobRegistry(HitboxResolver hitboxResolver) {
+        this.hitboxResolver = hitboxResolver;
+        this.mobs = new HashMap<>();
+    }
+
+    @Override
+    public Optional<GameMob> findByUniqueId(UUID uniqueId) {
+        return Optional.ofNullable(mobs.get(uniqueId));
+    }
+
+    @Override
+    public GameMob register(LivingEntity entity) {
+        UUID uniqueId = entity.getUniqueId();
+        GameMob existingMob = mobs.get(uniqueId);
+
+        if (existingMob != null) {
+            return existingMob;
+        }
+
+        EntityKey entityKey = EntityKey.fromEntityType(entity.getType());
+        HitboxProvider<LivingEntity> hitboxProvider = hitboxResolver.resolveHitboxProvider(entity);
+        FreeplayMob mob = new FreeplayMob(entity, entityKey, hitboxProvider);
+
+        mobs.put(uniqueId, mob);
+
+        return mob;
+    }
+}

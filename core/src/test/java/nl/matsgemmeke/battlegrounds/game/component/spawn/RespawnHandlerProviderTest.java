@@ -1,15 +1,18 @@
 package nl.matsgemmeke.battlegrounds.game.component.spawn;
 
-import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
+import com.google.inject.TypeLiteral;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.openmode.component.spawn.OpenModeRespawnHandler;
+import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
+import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,49 +20,60 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class RespawnHandlerProviderTest {
+class RespawnHandlerProviderTest {
 
     private GameScope gameScope;
-    private Provider<OpenModeRespawnHandler> openModeRespawnHandlerProvider;
+    private TypeLiteral<RespawnHandler> typeLiteral;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         gameScope = mock(GameScope.class);
-        openModeRespawnHandlerProvider = mock();
+        typeLiteral = TypeLiteral.get(RespawnHandler.class);
     }
 
     @Test
-    public void getThrowsOutOfScopeExceptionWhenGameScopeHasNoCurrentGameContext() {
+    @DisplayName("get throws ComponentProvisionException when game scope has not entered any game context")
+    void get_withoutEnteredGameContext() {
+        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of();
+
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, implementations, typeLiteral);
 
         assertThatThrownBy(provider::get)
-                .isInstanceOf(OutOfScopeException.class)
-                .hasMessage("Cannot provide instance of RespawnHandler when the game scope is empty");
+                .isInstanceOf(ComponentProvisionException.class)
+                .hasMessage("Cannot provide instance of RespawnHandler: the game scope is empty");
     }
 
     @Test
-    public void getReturnsNullWhenCurrentGameContextIsOfTypeArenaMode() {
-        GameContext gameContext = new GameContext(GameKey.ofSession(1), GameContextType.ARENA_MODE);
+    @DisplayName("get throws ComponentProvisionException when provider contains no implementation type for game context type")
+    void get_noImplementationTypesFound() {
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
+        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
 
-        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
-        RespawnHandler result = provider.get();
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, implementations, typeLiteral);
 
-        assertThat(result).isNull();
+        assertThatThrownBy(provider::get)
+                .isInstanceOf(ComponentProvisionException.class)
+                .hasMessage("Cannot provide instance of RespawnHandler: no implementation bound for ARENA_MODE");
     }
 
     @Test
-    public void getReturnsOpenModeSpawnPointRegistryWhenCurrentGameContextIsOfTypeOpenMode() {
-        GameContext gameContext = new GameContext(GameKey.ofOpenMode(), GameContextType.OPEN_MODE);
-        OpenModeRespawnHandler respawnHandler = mock(OpenModeRespawnHandler.class);
+    @DisplayName("get returns instance bound to type of active game context")
+    void get_successful() {
+        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        FreeplayRespawnHandler respawnHandler = mock(FreeplayRespawnHandler.class);
+
+        Provider<RespawnHandler> freeplayRespawnHandlerProvider = mock();
+        when(freeplayRespawnHandlerProvider.get()).thenReturn(respawnHandler);
+
+        Map<GameContextType, Provider<RespawnHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayRespawnHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
-        when(openModeRespawnHandlerProvider.get()).thenReturn(respawnHandler);
 
-        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, openModeRespawnHandlerProvider);
+        RespawnHandlerProvider provider = new RespawnHandlerProvider(gameScope, implementations, typeLiteral);
         RespawnHandler result = provider.get();
 
         assertThat(result).isEqualTo(respawnHandler);
