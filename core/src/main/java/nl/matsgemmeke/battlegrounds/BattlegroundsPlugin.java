@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds;
 
+import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
@@ -60,7 +61,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, this, pluginManager);
+        PaperCommandManager commandManager = new PaperCommandManager(this);
+
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
 
         injector = Guice.createInjector(module);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);

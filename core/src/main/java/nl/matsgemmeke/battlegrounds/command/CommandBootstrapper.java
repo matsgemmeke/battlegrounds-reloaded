@@ -7,11 +7,10 @@ import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondit
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.bukkit.plugin.Plugin;
 
 public class CommandBootstrapper {
 
-    private final Plugin plugin;
+    private final PaperCommandManager commandManager;
     private final Translator translator;
 
     private final BattlegroundsCommand bgCommand;
@@ -29,7 +28,7 @@ public class CommandBootstrapper {
 
     @Inject
     public CommandBootstrapper(
-            Plugin plugin,
+            PaperCommandManager commandManager,
             Translator translator,
             BattlegroundsCommand bgCommand,
             CreateArenaCommand createArenaCommand,
@@ -42,7 +41,7 @@ public class CommandBootstrapper {
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
             FreeplayModePresenceCondition freeplayModePresenceCondition
     ) {
-        this.plugin = plugin;
+        this.commandManager = commandManager;
         this.translator = translator;
         this.bgCommand = bgCommand;
         this.createArenaCommand = createArenaCommand;
@@ -57,8 +56,6 @@ public class CommandBootstrapper {
     }
 
     public void initialize() {
-        PaperCommandManager commandManager = new PaperCommandManager(plugin);
-
         this.registerCommands(commandManager);
         this.registerConditions(commandManager);
     }
