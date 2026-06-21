@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
-public class CreateArenaCommand extends CommandSource {
+public class CreateArenaCommand {
 
     public static final String NAME = "createarena";
     public static final String USAGE = "/bg createarena <id>";
@@ -25,7 +25,6 @@ public class CreateArenaCommand extends CommandSource {
 
     @Inject
     public CreateArenaCommand(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
-        super("createarena", translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText(), "bg createarena <id>");
         this.arenaFactory = arenaFactory;
         this.gameContextProvider = gameContextProvider;
         this.translator = translator;

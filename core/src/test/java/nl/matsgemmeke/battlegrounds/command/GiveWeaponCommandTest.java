@@ -54,8 +54,6 @@ class GiveWeaponCommandTest {
 
     @BeforeEach
     void setUp() {
-        when(translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath())).thenReturn(new TextTemplate("test"));
-
         command = new GiveWeaponCommand(gameContextProvider, gameScope, itemSpecRegistry, translator, itemCreatorProvider, playerRegistryProvider);
     }
 

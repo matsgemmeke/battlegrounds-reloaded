@@ -9,10 +9,10 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -33,15 +33,8 @@ class CreateArenaCommandTest {
     private GameContextProvider gameContextProvider;
     @Mock
     private Translator translator;
-
+    @InjectMocks
     private CreateArenaCommand command;
-
-    @BeforeEach
-    void setUp() {
-        when(translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath())).thenReturn(new TextTemplate("description"));
-
-        command = new CreateArenaCommand(arenaFactory, gameContextProvider, translator);
-    }
 
     @Test
     @DisplayName("execute creates arena and sends success message")

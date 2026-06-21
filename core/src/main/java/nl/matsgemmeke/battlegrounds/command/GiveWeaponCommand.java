@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class GiveWeaponCommand extends CommandSource {
+public class GiveWeaponCommand {
 
     public static final String NAME = "giveweapon";
     public static final String USAGE = "/bg giveweapon <weapon>";
@@ -41,7 +41,6 @@ public class GiveWeaponCommand extends CommandSource {
             Provider<ItemCreator> itemCreatorProvider,
             Provider<PlayerRegistry> playerRegistryProvider
     ) {
-        super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.itemSpecRegistry = itemSpecRegistry;

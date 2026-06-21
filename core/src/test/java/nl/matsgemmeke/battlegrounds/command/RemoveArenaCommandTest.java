@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -32,15 +33,12 @@ class RemoveArenaCommandTest {
     private Scheduler scheduler;
     @Mock
     private Translator translator;
-
+    @InjectMocks
     private RemoveArenaCommand command;
 
     @BeforeEach
     void setUp() {
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath())).thenReturn(new TextTemplate("description"));
-
-        command = new RemoveArenaCommand(gameContextProvider, scheduler, translator);
     }
 
     @Test

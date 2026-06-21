@@ -5,10 +5,10 @@ import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -25,15 +25,8 @@ class ReloadCommandTest {
     private CommandSender sender;
     @Mock
     private Translator translator;
-
+    @InjectMocks
     private ReloadCommand reloadCommand;
-
-    @BeforeEach
-    public void setUp() {
-        when(translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath())).thenReturn(new TextTemplate("description"));
-
-        reloadCommand = new ReloadCommand(config, translator);
-    }
 
     @Test
     @DisplayName("execute reloads config and sends confirmation message")

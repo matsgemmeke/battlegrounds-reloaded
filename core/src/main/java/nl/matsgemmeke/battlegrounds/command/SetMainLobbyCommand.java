@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class SetMainLobbyCommand extends CommandSource {
+public class SetMainLobbyCommand {
 
     public static final String NAME = "setmainlobby";
     public static final String USAGE = "/bg setmainlobby";
@@ -19,7 +19,6 @@ public class SetMainLobbyCommand extends CommandSource {
 
     @Inject
     public SetMainLobbyCommand(DataConfiguration dataConfiguration, Translator translator) {
-        super("setmainlobby", translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText(), "bg setmainlobby");
         this.dataConfiguration = dataConfiguration;
         this.translator = translator;
     }
