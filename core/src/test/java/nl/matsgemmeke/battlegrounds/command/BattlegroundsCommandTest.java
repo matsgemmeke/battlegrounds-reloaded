@@ -33,7 +33,8 @@ class BattlegroundsCommandTest {
 
     private static final String SUBCOMMAND_NAME = "test";
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
-    private static final String SUBCOMMAND_USAGE = "bg test <nr>";
+    private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
+    private static final String SUBCOMMAND_SUGGESTION = "/bg test";
 
     @Mock
     private Player player;
@@ -45,11 +46,11 @@ class BattlegroundsCommandTest {
     private ArgumentCaptor<Map<String, Object>> valuesCaptor;
 
     @Test
-    void onReloadThrowsIllegalArgumentExceptionWhenSubcommandDoesNotExist() {
-        CommandSource subcommand = mock(CommandSource.class);
-        when(subcommand.getName()).thenReturn("not the reload command");
+    @DisplayName("onReload throws IllegalArgumentException when the subcommand does not exist")
+    void onReload_subcommandNotFound() {
+        CommandInfo commandInfo = new CommandInfo("test", null, null, null, null);
 
-        bgCommand.addSubcommand(subcommand);
+        bgCommand.addSubcommand(commandInfo, "test");
 
         assertThatThrownBy(() -> bgCommand.onReload(player))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -57,7 +58,8 @@ class BattlegroundsCommandTest {
     }
 
     @Test
-    void onCatchUnknownSendsErrorMessageToCommandSender() {
+    @DisplayName("onCatchUnknown sends error message to command sender")
+    void onCatchUnknown() {
         when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate("test"));
 
         bgCommand.onCatchUnknown(player);
@@ -68,10 +70,8 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
     void onDefault_playerSender() {
-        ReloadCommand command = mock(ReloadCommand.class);
-        when(command.getName()).thenReturn(SUBCOMMAND_NAME);
-        when(command.getDescription()).thenReturn(SUBCOMMAND_DESCRIPTION);
-        when(command.getUsage()).thenReturn(SUBCOMMAND_USAGE);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        ReloadCommand reloadCommand = mock(ReloadCommand.class);
 
         Player player = mock(Player.class);
         Player.Spigot spigot = mock(Player.Spigot.class);
@@ -83,7 +83,7 @@ class BattlegroundsCommandTest {
         when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(HELP_MENU_TITLE));
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, reloadCommand);
         bgCommand.onDefault(player);
 
         ArgumentCaptor<TextComponent> textComponentCaptor = ArgumentCaptor.forClass(TextComponent.class);
@@ -92,7 +92,7 @@ class BattlegroundsCommandTest {
         TextComponent textComponent = textComponentCaptor.getValue();
         assertThat(textComponent.getClickEvent()).satisfies(clickEvent -> {
             assertThat(clickEvent.getAction()).isEqualTo(ClickEvent.Action.SUGGEST_COMMAND);
-            assertThat(clickEvent.getValue()).isEqualTo("/bg test <nr>");
+            assertThat(clickEvent.getValue()).isEqualTo(SUBCOMMAND_SUGGESTION);
         });
         assertThat(textComponent.getHoverEvent()).satisfies(hoverEvent -> {
             assertThat(hoverEvent.getAction()).isEqualTo(HoverEvent.Action.SHOW_TEXT);
@@ -108,19 +108,16 @@ class BattlegroundsCommandTest {
     @DisplayName("onDefault shows help menu to sender as normal messages")
     void onDefault_consoleSender() {
         CommandSender sender = mock(CommandSender.class);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        ReloadCommand reloadCommand = mock(ReloadCommand.class);
 
         TextTemplate helpMenuCommandTextTemplate = mock(TextTemplate.class);
         when(helpMenuCommandTextTemplate.replace(anyMap())).thenReturn(" - /bg test <nr>");
 
-        ReloadCommand command = mock(ReloadCommand.class);
-        when(command.getName()).thenReturn(SUBCOMMAND_NAME);
-        when(command.getDescription()).thenReturn(SUBCOMMAND_DESCRIPTION);
-        when(command.getUsage()).thenReturn(SUBCOMMAND_USAGE);
-
         when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(HELP_MENU_TITLE));
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, reloadCommand);
         bgCommand.onDefault(sender);
 
         verify(helpMenuCommandTextTemplate).replace(valuesCaptor.capture());
@@ -138,34 +135,35 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onCreateArena executes create arena command")
     void onCreateArena() {
+        CommandInfo commandInfo = new CommandInfo("createarena", null, null, null, null);
         CreateArenaCommand command = mock(CreateArenaCommand.class);
-        when(command.getName()).thenReturn("createarena");
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, command);
         bgCommand.onCreateArena(player, ARENA_ID);
 
         verify(command).execute(player, ARENA_ID);
     }
 
     @Test
-    void onGiveWeaponExecutesGiveWeaponCommand() {
+    @DisplayName("onGivenWeapon executes give weapon command")
+    void onGiveWeapon() {
         String[] args = { "test", "weapon" };
-
+        CommandInfo commandInfo = new CommandInfo("giveweapon", null, null, null, null);
         GiveWeaponCommand command = mock(GiveWeaponCommand.class);
-        when(command.getName()).thenReturn("giveweapon");
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, command);
         bgCommand.onGiveWeapon(player, args);
 
         verify(command).execute(player, args);
     }
 
     @Test
-    void onReloadExecutesReloadCommand() {
+    @DisplayName("onReload executes reload command")
+    void onReload() {
+        CommandInfo commandInfo = new CommandInfo("reload", null, null, null, null);
         ReloadCommand command = mock(ReloadCommand.class);
-        when(command.getName()).thenReturn("reload");
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, command);
         bgCommand.onReload(player);
 
         verify(command).execute(player);
@@ -174,21 +172,22 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onRemoveArena executes remove arena command")
     void onRemoveArena() {
+        CommandInfo commandInfo = new CommandInfo("removearena", null, null, null, null);
         RemoveArenaCommand command = mock(RemoveArenaCommand.class);
-        when(command.getName()).thenReturn("removearena");
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, command);
         bgCommand.onRemoveArena(player, ARENA_ID);
 
         verify(command).execute(player, ARENA_ID);
     }
 
     @Test
-    void onSetMainLobbyExecutesSetMainLobbyCommand() {
+    @DisplayName("onSetMainLobby executes set main lobby command")
+    void onSetMainLobby() {
+        CommandInfo commandInfo = new CommandInfo("setmainlobby", null, null, null, null);
         SetMainLobbyCommand command = mock(SetMainLobbyCommand.class);
-        when(command.getName()).thenReturn("setmainlobby");
 
-        bgCommand.addSubcommand(command);
+        bgCommand.addSubcommand(commandInfo, command);
         bgCommand.onSetMainLobby(player);
 
         verify(command).execute(player);

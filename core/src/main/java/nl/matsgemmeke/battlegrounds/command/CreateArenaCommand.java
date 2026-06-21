@@ -14,6 +14,11 @@ import java.util.Map;
 
 public class CreateArenaCommand extends CommandSource {
 
+    public static final String NAME = "createarena";
+    public static final String USAGE = "/bg createarena <id>";
+    public static final String SUGGESTION = "/bg createarena ";
+    public static final String[] PERMISSIONS = new String[] { "battlegrounds.createarena" };
+
     private final ArenaFactory arenaFactory;
     private final GameContextProvider gameContextProvider;
     private final Translator translator;

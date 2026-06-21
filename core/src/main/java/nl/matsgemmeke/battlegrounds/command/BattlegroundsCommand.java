@@ -12,8 +12,7 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
@@ -21,17 +20,17 @@ public class BattlegroundsCommand extends BaseCommand {
 
     private static final String EMPTY_MESSAGE = " ";
 
-    private final List<CommandSource> subcommands;
+    private final Map<CommandInfo, Object> subcommands;
     private final Translator translator;
 
     @Inject
     public BattlegroundsCommand(Translator translator) {
         this.translator = translator;
-        this.subcommands = new ArrayList<>();
+        this.subcommands = new LinkedHashMap<>();
     }
 
-    public boolean addSubcommand(CommandSource subcommand) {
-        return subcommands.add(subcommand);
+    public void addSubcommand(CommandInfo commandInfo, Object subcommand) {
+        subcommands.put(commandInfo, subcommand);
     }
 
     @Default
@@ -42,18 +41,18 @@ public class BattlegroundsCommand extends BaseCommand {
         sender.sendMessage(EMPTY_MESSAGE);
 
         if (sender instanceof Player player) {
-            for (CommandSource subcommand : subcommands) {
-                String subcommandText = this.getSubcommandText(subcommand);
+            for (CommandInfo commandInfo : subcommands.keySet()) {
+                String subcommandText = this.getCommandInfoText(commandInfo);
 
                 TextComponent message = new TextComponent(subcommandText);
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + subcommand.getUsage()));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(subcommand.getDescription())));
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandInfo.suggestion()));
+                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(commandInfo.description())));
 
                 player.spigot().sendMessage(message);
             }
         } else {
-            for (CommandSource subcommand : subcommands) {
-                String subcommandText = this.getSubcommandText(subcommand);
+            for (CommandInfo commandInfo : subcommands.keySet()) {
+                String subcommandText = this.getCommandInfoText(commandInfo);
 
                 sender.sendMessage(subcommandText);
             }
@@ -62,11 +61,11 @@ public class BattlegroundsCommand extends BaseCommand {
         sender.sendMessage(EMPTY_MESSAGE);
     }
 
-    private String getSubcommandText(CommandSource subcommand) {
+    private String getCommandInfoText(CommandInfo commandInfo) {
         Map<String, Object> values = Map.of(
-                "bg_name", subcommand.getName(),
-                "bg_description", subcommand.getDescription(),
-                "bg_usage", subcommand.getUsage()
+                "bg_name", commandInfo.name(),
+                "bg_description", commandInfo.description(),
+                "bg_usage", commandInfo.usage()
         );
 
         return translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath()).replace(values);
@@ -116,13 +115,12 @@ public class BattlegroundsCommand extends BaseCommand {
         command.execute(player);
     }
 
-    private <T extends CommandSource> T getSubcommand(String name) {
-        for (CommandSource subcommand : subcommands) {
-            if (subcommand.getName().equalsIgnoreCase(name)) {
-                return (T) subcommand;
-            }
-        }
-
-        throw new IllegalArgumentException("Unable to find a subcommand by the name " + name);
+    @SuppressWarnings("unchecked")
+    private <T> T getSubcommand(String name) {
+        return subcommands.entrySet().stream()
+                .filter(entry -> entry.getKey().name().equalsIgnoreCase(name))
+                .map(entry -> (T) entry.getValue())
+                .findAny()
+                .orElseThrow(() -> new IllegalArgumentException("Unable to find a subcommand by the name " + name));
     }
 }

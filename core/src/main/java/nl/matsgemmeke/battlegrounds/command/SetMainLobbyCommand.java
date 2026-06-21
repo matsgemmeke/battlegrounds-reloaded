@@ -6,23 +6,25 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.NotNull;
 
 public class SetMainLobbyCommand extends CommandSource {
 
-    @NotNull
+    public static final String NAME = "setmainlobby";
+    public static final String USAGE = "/bg setmainlobby";
+    public static final String SUGGESTION = "/bg setmainlobby";
+    public static final String[] PERMISSIONS = new String[] { "battlegrounds.setmainlobby" };
+
     private final DataConfiguration dataConfiguration;
-    @NotNull
     private final Translator translator;
 
     @Inject
-    public SetMainLobbyCommand(@NotNull DataConfiguration dataConfiguration, @NotNull Translator translator) {
+    public SetMainLobbyCommand(DataConfiguration dataConfiguration, Translator translator) {
         super("setmainlobby", translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText(), "bg setmainlobby");
         this.dataConfiguration = dataConfiguration;
         this.translator = translator;
     }
 
-    public void execute(@NotNull Player player) {
+    public void execute(Player player) {
         // Get the center location of the block the player is standing on
         Location location = player.getLocation().getBlock().getLocation().add(0.5, 0, 0.5);
 
