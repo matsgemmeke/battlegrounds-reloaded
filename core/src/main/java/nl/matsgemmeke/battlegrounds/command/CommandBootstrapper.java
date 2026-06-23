@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -14,6 +15,7 @@ public class CommandBootstrapper {
     private final Translator translator;
 
     private final BattlegroundsCommand bgCommand;
+    private final ArenaCommand arenaCommand;
     private final CreateArenaCommand createArenaCommand;
     private final GiveWeaponCommand giveWeaponCommand;
     private final ReloadCommand reloadCommand;
@@ -31,6 +33,7 @@ public class CommandBootstrapper {
             PaperCommandManager commandManager,
             Translator translator,
             BattlegroundsCommand bgCommand,
+            ArenaCommand arenaCommand,
             CreateArenaCommand createArenaCommand,
             GiveWeaponCommand giveWeaponCommand,
             ReloadCommand reloadCommand,
@@ -44,6 +47,7 @@ public class CommandBootstrapper {
         this.commandManager = commandManager;
         this.translator = translator;
         this.bgCommand = bgCommand;
+        this.arenaCommand = arenaCommand;
         this.createArenaCommand = createArenaCommand;
         this.giveWeaponCommand = giveWeaponCommand;
         this.reloadCommand = reloadCommand;
@@ -73,6 +77,10 @@ public class CommandBootstrapper {
         CommandInfo removeArenaCommandInfo = new CommandInfo(RemoveArenaCommand.NAME, removeArenaCommandDescription, RemoveArenaCommand.USAGE, RemoveArenaCommand.SUGGESTION, RemoveArenaCommand.PERMISSIONS);
         CommandInfo setMainLobbyCommandInfo = new CommandInfo(SetMainLobbyCommand.NAME, setMainLobbyCommandDescription, SetMainLobbyCommand.USAGE, SetMainLobbyCommand.SUGGESTION, SetMainLobbyCommand.PERMISSIONS);
 
+        bgCommand.addCommandInfo(giveWeaponCommandInfo);
+        bgCommand.addCommandInfo(reloadCommandInfo);
+        bgCommand.addCommandInfo(setMainLobbyCommandInfo);
+
         bgCommand.addSubcommand(createArenaCommandInfo, createArenaCommand);
         bgCommand.addSubcommand(giveWeaponCommandInfo, giveWeaponCommand);
         bgCommand.addSubcommand(reloadCommandInfo, reloadCommand);
@@ -80,6 +88,7 @@ public class CommandBootstrapper {
         bgCommand.addSubcommand(setMainLobbyCommandInfo, setMainLobbyCommand);
 
         commandManager.registerCommand(bgCommand);
+        commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(toolsCommand);
     }
 

@@ -3,30 +3,34 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
 public class BattlegroundsCommand extends BaseCommand {
 
-    private static final String EMPTY_MESSAGE = " ";
-
+    private final HelpMenu helpMenu;
     private final Map<CommandInfo, Object> subcommands;
+    private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public BattlegroundsCommand(Translator translator) {
+    public BattlegroundsCommand(HelpMenu helpMenu, Translator translator) {
+        this.helpMenu = helpMenu;
         this.translator = translator;
+        this.commandInfoList = new ArrayList<>();
         this.subcommands = new LinkedHashMap<>();
+    }
+
+    public void addCommandInfo(CommandInfo commandInfo) {
+        commandInfoList.add(commandInfo);
     }
 
     public void addSubcommand(CommandInfo commandInfo, Object subcommand) {
@@ -36,52 +40,18 @@ public class BattlegroundsCommand extends BaseCommand {
     @Default
     @HelpCommand
     public void onDefault(CommandSender sender) {
-        sender.sendMessage(EMPTY_MESSAGE);
-        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
-        sender.sendMessage(EMPTY_MESSAGE);
+        String title = translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText();
 
         if (sender instanceof Player player) {
-            for (CommandInfo commandInfo : subcommands.keySet()) {
-                String subcommandText = this.getCommandInfoText(commandInfo);
-
-                TextComponent message = new TextComponent(subcommandText);
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandInfo.suggestion()));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(commandInfo.description())));
-
-                player.spigot().sendMessage(message);
-            }
+            helpMenu.sendHelpMenuAsJsonMessages(player, title, commandInfoList);
         } else {
-            for (CommandInfo commandInfo : subcommands.keySet()) {
-                String subcommandText = this.getCommandInfoText(commandInfo);
-
-                sender.sendMessage(subcommandText);
-            }
+            helpMenu.sendHelpMenuAsNormalMessages(sender, title, commandInfoList);
         }
-
-        sender.sendMessage(EMPTY_MESSAGE);
-    }
-
-    private String getCommandInfoText(CommandInfo commandInfo) {
-        Map<String, Object> values = Map.of(
-                "bg_name", commandInfo.name(),
-                "bg_description", commandInfo.description(),
-                "bg_usage", commandInfo.usage()
-        );
-
-        return translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath()).replace(values);
     }
 
     @CatchUnknown
     public void onCatchUnknown(CommandSender sender) {
         sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
-    }
-
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.createarena")
-    @Subcommand("createarena|ca")
-    public void onCreateArena(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
-        CreateArenaCommand command = this.getSubcommand("createarena");
-        command.execute(sender, id);
     }
 
     @CommandCompletion("<weapon>")
@@ -98,14 +68,6 @@ public class BattlegroundsCommand extends BaseCommand {
     public void onReload(CommandSender sender) {
         ReloadCommand command = this.getSubcommand("reload");
         command.execute(sender);
-    }
-
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.removearena")
-    @Subcommand("removearena")
-    public void onRemoveArena(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
-        RemoveArenaCommand command = this.getSubcommand("removearena");
-        command.execute(sender, id);
     }
 
     @CommandPermission("battlegrounds.setmainlobby")
