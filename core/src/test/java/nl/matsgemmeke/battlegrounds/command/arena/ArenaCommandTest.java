@@ -27,17 +27,32 @@ class ArenaCommandTest {
     private static final String SUBCOMMAND_DESCRIPTION = "just an arena command";
     private static final String SUBCOMMAND_USAGE = "/bg arena test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena test ";
+    private static final String UNKNOWN_COMMAND_MESSAGE = "unknown command";
 
     @Mock
     private CreateArenaCommandExecutor createArenaCommandExecutor;
     @Mock
     private RemoveArenaCommandExecutor removeArenaCommandExecutor;
     @Mock
+    private CommandSender sender;
+    @Mock
     private HelpMenu helpMenu;
     @Mock
     private Translator translator;
     @InjectMocks
     private ArenaCommand command;
+
+    @Test
+    @DisplayName("onDefault sends unknown command message when command has args")
+    void onDefault_withArgs() {
+        String[] args = new String[] { "test" };
+
+        when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate(UNKNOWN_COMMAND_MESSAGE));
+
+        command.onDefault(sender, args);
+
+        verify(sender).sendMessage(UNKNOWN_COMMAND_MESSAGE);
+    }
 
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
@@ -48,7 +63,7 @@ class ArenaCommandTest {
         when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
 
         command.addCommandInfo(commandInfo);
-        command.onDefault(player);
+        command.onDefault(player, null);
 
         verify(helpMenu).sendHelpMenuAsJsonMessages(player, ARENA_HELP_MENU_TITLE, List.of(commandInfo));
     }
@@ -56,13 +71,12 @@ class ArenaCommandTest {
     @Test
     @DisplayName("onDefault shows help menu to sender as normal messages")
     void onDefault_consoleSender() {
-        CommandSender sender = mock(CommandSender.class);
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
         when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
 
         command.addCommandInfo(commandInfo);
-        command.onDefault(sender);
+        command.onDefault(sender, null);
 
         verify(helpMenu).sendHelpMenuAsNormalMessages(sender, ARENA_HELP_MENU_TITLE, List.of(commandInfo));
     }
@@ -70,8 +84,6 @@ class ArenaCommandTest {
     @Test
     @DisplayName("onCreate delegates to create arena executor")
     void onCreate() {
-        CommandSender sender = mock(CommandSender.class);
-
         command.onCreate(sender, ARENA_ID);
 
         verify(createArenaCommandExecutor).execute(sender, ARENA_ID);
@@ -80,8 +92,6 @@ class ArenaCommandTest {
     @Test
     @DisplayName("onRemove delegates to create arena executor")
     void onRemove() {
-        CommandSender sender = mock(CommandSender.class);
-
         command.onRemove(sender, ARENA_ID);
 
         verify(removeArenaCommandExecutor).execute(sender, ARENA_ID);

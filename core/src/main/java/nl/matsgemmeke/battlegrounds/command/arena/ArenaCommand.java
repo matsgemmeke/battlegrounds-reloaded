@@ -42,7 +42,12 @@ public class ArenaCommand extends BaseCommand {
     }
 
     @Default
-    public void onDefault(CommandSender sender) {
+    public void onDefault(CommandSender sender, String[] args) {
+        if (args != null && args.length > 0) {
+            sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+            return;
+        }
+
         String title = translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath()).getText();
 
         if (sender instanceof Player player) {
