@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
+import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -15,8 +16,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CommandBootstrapperTest {
@@ -27,6 +27,8 @@ class CommandBootstrapperTest {
     private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
     @Mock
     private Translator translator;
+    @Mock
+    private ArenaCommand arenaCommand;
     @Mock
     private BattlegroundsCommand bgCommand;
     @Mock
@@ -61,7 +63,10 @@ class CommandBootstrapperTest {
         verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(reloadCommand));
         verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(setMainLobbyCommand));
 
+        verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
+
         verify(commandManager).registerCommand(bgCommand);
+        verify(commandManager).registerCommand(arenaCommand);
         verify(commandManager).registerCommand(toolsCommand);
 
         verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);

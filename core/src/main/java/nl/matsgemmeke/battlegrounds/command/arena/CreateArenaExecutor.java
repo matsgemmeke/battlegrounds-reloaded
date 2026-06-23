@@ -14,9 +14,8 @@ import java.util.Map;
 
 public class CreateArenaExecutor {
 
-    public static final String NAME = "createarena";
-    public static final String USAGE = "/bg createarena <id>";
-    public static final String SUGGESTION = "/bg createarena ";
+    public static final String USAGE = "/bg arena create <id>";
+    public static final String SUGGESTION = "/bg arena create ";
     public static final String[] PERMISSIONS = new String[] { "battlegrounds.createarena" };
 
     private final ArenaFactory arenaFactory;

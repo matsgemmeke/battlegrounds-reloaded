@@ -40,7 +40,7 @@ public class BattlegroundsCommand extends BaseCommand {
     @Default
     @HelpCommand
     public void onDefault(CommandSender sender) {
-        String title = translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText();
+        String title = translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_TITLE.getPath()).getText();
 
         if (sender instanceof Player player) {
             helpMenu.sendHelpMenuAsJsonMessages(player, title, commandInfoList);
@@ -79,10 +79,6 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @SuppressWarnings("unchecked")
     private <T> T getSubcommand(String name) {
-        return subcommands.entrySet().stream()
-                .filter(entry -> entry.getKey().name().equalsIgnoreCase(name))
-                .map(entry -> (T) entry.getValue())
-                .findAny()
-                .orElseThrow(() -> new IllegalArgumentException("Unable to find a subcommand by the name " + name));
+        return null;
     }
 }

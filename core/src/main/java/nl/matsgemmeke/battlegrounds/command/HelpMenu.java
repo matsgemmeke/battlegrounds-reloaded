@@ -58,7 +58,6 @@ public class HelpMenu {
 
     private String getCommandInfoText(CommandInfo commandInfo) {
         Map<String, Object> values = Map.of(
-                "bg_name", commandInfo.name(),
                 "bg_description", commandInfo.description(),
                 "bg_usage", commandInfo.usage()
         );

@@ -20,12 +20,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class BattlegroundsCommandTest {
 
-    private static final String HELP_MENU_TITLE = "help menu";
-
-    private static final String SUBCOMMAND_NAME = "test";
+    private static final String BATTLEGROUNDS_HELP_MENU_TITLE = "help menu";
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
-    private static final String SUBCOMMAND_SUGGESTION = "/bg test";
+    private static final String SUBCOMMAND_SUGGESTION = "/bg test ";
 
     @Mock
     private HelpMenu helpMenu;
@@ -39,7 +37,7 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onReload throws IllegalArgumentException when the subcommand does not exist")
     void onReload_subcommandNotFound() {
-        CommandInfo commandInfo = new CommandInfo("test", null, null, null, null);
+        CommandInfo commandInfo = new CommandInfo(null, null, null, null);
 
         bgCommand.addSubcommand(commandInfo, "test");
 
@@ -61,36 +59,36 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
     void onDefault_playerSender() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
         Player player = mock(Player.class);
 
-        when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(BATTLEGROUNDS_HELP_MENU_TITLE));
 
         bgCommand.addCommandInfo(commandInfo);
         bgCommand.onDefault(player);
 
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, HELP_MENU_TITLE, List.of(commandInfo));
+        verify(helpMenu).sendHelpMenuAsJsonMessages(player, BATTLEGROUNDS_HELP_MENU_TITLE, List.of(commandInfo));
     }
 
     @Test
     @DisplayName("onDefault shows help menu to sender as normal messages")
     void onDefault_consoleSender() {
         CommandSender sender = mock(CommandSender.class);
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
-        when(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(BATTLEGROUNDS_HELP_MENU_TITLE));
 
         bgCommand.addCommandInfo(commandInfo);
         bgCommand.onDefault(sender);
 
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, HELP_MENU_TITLE, List.of(commandInfo));
+        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, BATTLEGROUNDS_HELP_MENU_TITLE, List.of(commandInfo));
     }
 
     @Test
     @DisplayName("onGivenWeapon executes give weapon command")
     void onGiveWeapon() {
         String[] args = { "test", "weapon" };
-        CommandInfo commandInfo = new CommandInfo("giveweapon", null, null, null, null);
+        CommandInfo commandInfo = new CommandInfo(null, null, null, null);
         GiveWeaponCommand command = mock(GiveWeaponCommand.class);
 
         bgCommand.addSubcommand(commandInfo, command);
@@ -102,7 +100,7 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onReload executes reload command")
     void onReload() {
-        CommandInfo commandInfo = new CommandInfo("reload", null, null, null, null);
+        CommandInfo commandInfo = new CommandInfo(null, null, null, null);
         ReloadCommand command = mock(ReloadCommand.class);
 
         bgCommand.addSubcommand(commandInfo, command);
@@ -114,7 +112,7 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onSetMainLobby executes set main lobby command")
     void onSetMainLobby() {
-        CommandInfo commandInfo = new CommandInfo("setmainlobby", null, null, null, null);
+        CommandInfo commandInfo = new CommandInfo(null, null, null, null);
         SetMainLobbyCommand command = mock(SetMainLobbyCommand.class);
 
         bgCommand.addSubcommand(commandInfo, command);

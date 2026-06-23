@@ -14,9 +14,8 @@ import java.util.Map;
 
 public class RemoveArenaExecutor {
 
-    public static final String NAME = "removearena";
-    public static final String USAGE = "/bg removearena <id>";
-    public static final String SUGGESTION = "/bg removearena ";
+    public static final String USAGE = "/bg arena remove <id>";
+    public static final String SUGGESTION = "/bg arena remove ";
     public static final String[] PERMISSIONS = new String[] { "battlegrounds.removearena" };
     private static final long CONFIRM_LIST_COOLDOWN = 200L;
 

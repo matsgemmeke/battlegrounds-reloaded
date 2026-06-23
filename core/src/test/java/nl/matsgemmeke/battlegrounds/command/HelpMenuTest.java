@@ -31,7 +31,6 @@ import static org.mockito.Mockito.verify;
 class HelpMenuTest {
 
     private static final String HELP_MENU_TITLE = "help menu";
-    private static final String SUBCOMMAND_NAME = "test";
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg test";
@@ -47,7 +46,7 @@ class HelpMenuTest {
     @DisplayName("sendHelpMenuAsJsonMessages shows help menu to given sender as normal messages")
     void sendHelpMenuAsNormalMessages() {
         CommandSender sender = mock(CommandSender.class);
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
         TextTemplate helpMenuCommandTextTemplate = mock(TextTemplate.class);
         when(helpMenuCommandTextTemplate.replace(anyMap())).thenReturn(" - /bg test <nr>");
@@ -59,7 +58,6 @@ class HelpMenuTest {
         verify(helpMenuCommandTextTemplate).replace(valuesCaptor.capture());
 
         assertThat(valuesCaptor.getValue()).contains(
-                entry("bg_name", SUBCOMMAND_NAME),
                 entry("bg_description", SUBCOMMAND_DESCRIPTION),
                 entry("bg_usage", SUBCOMMAND_USAGE)
         );
@@ -71,7 +69,7 @@ class HelpMenuTest {
     @Test
     @DisplayName("sendHelpMenuAsJsonMessages shows help menu to given player as JSON messages")
     void sendHelpMenuAsJsonMessages() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_NAME, SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
         Player player = mock(Player.class);
         Player.Spigot spigot = mock(Player.Spigot.class);
@@ -102,7 +100,6 @@ class HelpMenuTest {
         verify(helpMenuCommandTextTemplate).replace(valuesCaptor.capture());
 
         assertThat(valuesCaptor.getValue()).contains(
-                entry("bg_name", SUBCOMMAND_NAME),
                 entry("bg_description", SUBCOMMAND_DESCRIPTION),
                 entry("bg_usage", SUBCOMMAND_USAGE)
         );

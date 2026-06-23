@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
+import nl.matsgemmeke.battlegrounds.command.arena.CreateArenaExecutor;
+import nl.matsgemmeke.battlegrounds.command.arena.RemoveArenaExecutor;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -54,20 +56,19 @@ public class CommandBootstrapper {
     }
 
     public void initialize() {
-        this.registerCommands(commandManager);
+        this.registerBattlegroundsCommand(commandManager);
+        this.registerArenaCommand(commandManager);
         this.registerConditions(commandManager);
     }
 
-    private void registerCommands(PaperCommandManager commandManager) {
-        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText();
+    private void registerBattlegroundsCommand(PaperCommandManager commandManager) {
         String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText();
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
-        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText();
         String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText();
 
-        CommandInfo giveWeaponCommandInfo = new CommandInfo(GiveWeaponCommand.NAME, giveWeaponCommandDescription, GiveWeaponCommand.USAGE, GiveWeaponCommand.SUGGESTION, GiveWeaponCommand.PERMISSIONS);
-        CommandInfo reloadCommandInfo = new CommandInfo(ReloadCommand.NAME, reloadCommandDescription, ReloadCommand.USAGE, ReloadCommand.SUGGESTION, ReloadCommand.PERMISSIONS);
-        CommandInfo setMainLobbyCommandInfo = new CommandInfo(SetMainLobbyCommand.NAME, setMainLobbyCommandDescription, SetMainLobbyCommand.USAGE, SetMainLobbyCommand.SUGGESTION, SetMainLobbyCommand.PERMISSIONS);
+        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GiveWeaponCommand.USAGE, GiveWeaponCommand.SUGGESTION, GiveWeaponCommand.PERMISSIONS);
+        CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, ReloadCommand.USAGE, ReloadCommand.SUGGESTION, ReloadCommand.PERMISSIONS);
+        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SetMainLobbyCommand.USAGE, SetMainLobbyCommand.SUGGESTION, SetMainLobbyCommand.PERMISSIONS);
 
         bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
@@ -78,8 +79,20 @@ public class CommandBootstrapper {
         bgCommand.addSubcommand(setMainLobbyCommandInfo, setMainLobbyCommand);
 
         commandManager.registerCommand(bgCommand);
-        commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(toolsCommand);
+    }
+
+    private void registerArenaCommand(PaperCommandManager commandManager) {
+        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText();
+        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText();
+
+        CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CreateArenaExecutor.USAGE, CreateArenaExecutor.SUGGESTION, CreateArenaExecutor.PERMISSIONS);
+        CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, RemoveArenaExecutor.USAGE, RemoveArenaExecutor.SUGGESTION, RemoveArenaExecutor.PERMISSIONS);
+
+        arenaCommand.addCommandInfo(createArenaCommandInfo);
+        arenaCommand.addCommandInfo(removeArenaCommandInfo);
+
+        commandManager.registerCommand(arenaCommand);
     }
 
     private void registerConditions(PaperCommandManager commandManager) {
