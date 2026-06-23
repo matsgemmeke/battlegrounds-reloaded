@@ -17,9 +17,8 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class GiveWeaponCommand {
+public class GiveWeaponCommandExecutor {
 
-    public static final String NAME = "giveweapon";
     public static final String USAGE = "/bg giveweapon <weapon>";
     public static final String SUGGESTION = "/bg giveweapon ";
     public static final String[] PERMISSIONS = new String[] { "battlegrounds.giveweapon" };
@@ -33,7 +32,7 @@ public class GiveWeaponCommand {
     private final Translator translator;
 
     @Inject
-    public GiveWeaponCommand(
+    public GiveWeaponCommandExecutor(
             GameContextProvider gameContextProvider,
             GameScope gameScope,
             ItemSpecRegistry itemSpecRegistry,

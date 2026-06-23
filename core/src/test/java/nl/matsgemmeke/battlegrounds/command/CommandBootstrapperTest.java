@@ -32,12 +32,6 @@ class CommandBootstrapperTest {
     @Mock
     private BattlegroundsCommand bgCommand;
     @Mock
-    private GiveWeaponCommand giveWeaponCommand;
-    @Mock
-    private ReloadCommand reloadCommand;
-    @Mock
-    private SetMainLobbyCommand setMainLobbyCommand;
-    @Mock
     private ToolsCommand toolsCommand;
     @Mock
     private FreeplayModePresenceCondition freeplayModePresenceCondition;
@@ -59,10 +53,7 @@ class CommandBootstrapperTest {
     void initialize() {
         commandBootstrapper.initialize();
 
-        verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(giveWeaponCommand));
-        verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(reloadCommand));
-        verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(setMainLobbyCommand));
-
+        verify(bgCommand, times(3)).addCommandInfo(any(CommandInfo.class));
         verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(bgCommand);

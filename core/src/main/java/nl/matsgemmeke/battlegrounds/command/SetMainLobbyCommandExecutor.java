@@ -7,9 +7,8 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-public class SetMainLobbyCommand {
+public class SetMainLobbyCommandExecutor {
 
-    public static final String NAME = "setmainlobby";
     public static final String USAGE = "/bg setmainlobby";
     public static final String SUGGESTION = "/bg setmainlobby";
     public static final String[] PERMISSIONS = new String[] { "battlegrounds.setmainlobby" };
@@ -18,7 +17,7 @@ public class SetMainLobbyCommand {
     private final Translator translator;
 
     @Inject
-    public SetMainLobbyCommand(DataConfiguration dataConfiguration, Translator translator) {
+    public SetMainLobbyCommandExecutor(DataConfiguration dataConfiguration, Translator translator) {
         this.dataConfiguration = dataConfiguration;
         this.translator = translator;
     }

@@ -15,7 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ReloadCommandTest {
+class ReloadCommandExecutorTest {
 
     private static final String MESSAGE = "test";
 
@@ -26,7 +26,7 @@ class ReloadCommandTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private ReloadCommand reloadCommand;
+    private ReloadCommandExecutor commandExecutor;
 
     @Test
     @DisplayName("execute reloads config and sends confirmation message")
@@ -34,7 +34,7 @@ class ReloadCommandTest {
         when(config.load()).thenReturn(true);
         when(translator.translate(TranslationKey.RELOAD_SUCCESS.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        reloadCommand.execute(sender);
+        commandExecutor.execute(sender);
 
         verify(sender).sendMessage(MESSAGE);
     }
@@ -45,7 +45,7 @@ class ReloadCommandTest {
         when(config.load()).thenReturn(false);
         when(translator.translate(TranslationKey.RELOAD_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        reloadCommand.execute(sender);
+        commandExecutor.execute(sender);
 
         verify(sender).sendMessage(MESSAGE);
     }

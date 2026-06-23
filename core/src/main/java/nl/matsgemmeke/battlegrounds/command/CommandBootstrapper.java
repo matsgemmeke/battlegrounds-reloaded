@@ -18,10 +18,6 @@ public class CommandBootstrapper {
 
     private final BattlegroundsCommand bgCommand;
     private final ArenaCommand arenaCommand;
-    private final GiveWeaponCommand giveWeaponCommand;
-    private final ReloadCommand reloadCommand;
-    private final SetMainLobbyCommand setMainLobbyCommand;
-
     private final ToolsCommand toolsCommand;
 
     private final ExistentArenaIdCondition existentArenaIdCondition;
@@ -34,9 +30,6 @@ public class CommandBootstrapper {
             Translator translator,
             BattlegroundsCommand bgCommand,
             ArenaCommand arenaCommand,
-            GiveWeaponCommand giveWeaponCommand,
-            ReloadCommand reloadCommand,
-            SetMainLobbyCommand setMainLobbyCommand,
             ToolsCommand toolsCommand,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
@@ -46,9 +39,6 @@ public class CommandBootstrapper {
         this.translator = translator;
         this.bgCommand = bgCommand;
         this.arenaCommand = arenaCommand;
-        this.giveWeaponCommand = giveWeaponCommand;
-        this.reloadCommand = reloadCommand;
-        this.setMainLobbyCommand = setMainLobbyCommand;
         this.toolsCommand = toolsCommand;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
@@ -66,17 +56,13 @@ public class CommandBootstrapper {
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
         String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText();
 
-        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GiveWeaponCommand.USAGE, GiveWeaponCommand.SUGGESTION, GiveWeaponCommand.PERMISSIONS);
-        CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, ReloadCommand.USAGE, ReloadCommand.SUGGESTION, ReloadCommand.PERMISSIONS);
-        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SetMainLobbyCommand.USAGE, SetMainLobbyCommand.SUGGESTION, SetMainLobbyCommand.PERMISSIONS);
+        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GiveWeaponCommandExecutor.USAGE, GiveWeaponCommandExecutor.SUGGESTION, GiveWeaponCommandExecutor.PERMISSIONS);
+        CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, ReloadCommandExecutor.USAGE, ReloadCommandExecutor.SUGGESTION, ReloadCommandExecutor.PERMISSIONS);
+        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SetMainLobbyCommandExecutor.USAGE, SetMainLobbyCommandExecutor.SUGGESTION, SetMainLobbyCommandExecutor.PERMISSIONS);
 
         bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
         bgCommand.addCommandInfo(setMainLobbyCommandInfo);
-
-        bgCommand.addSubcommand(giveWeaponCommandInfo, giveWeaponCommand);
-        bgCommand.addSubcommand(reloadCommandInfo, reloadCommand);
-        bgCommand.addSubcommand(setMainLobbyCommandInfo, setMainLobbyCommand);
 
         commandManager.registerCommand(bgCommand);
         commandManager.registerCommand(toolsCommand);

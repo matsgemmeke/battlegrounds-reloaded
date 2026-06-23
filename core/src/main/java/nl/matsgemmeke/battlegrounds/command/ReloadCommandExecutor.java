@@ -6,9 +6,8 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 
-public class ReloadCommand {
+public class ReloadCommandExecutor {
 
-    public static final String NAME = "reload";
     public static final String USAGE = "/bg reload";
     public static final String SUGGESTION = "/bg reload";
     public static final String[] PERMISSIONS = new String[] { "battlegrounds.reload" };
@@ -17,7 +16,7 @@ public class ReloadCommand {
     private final Translator translator;
 
     @Inject
-    public ReloadCommand(BattlegroundsConfiguration config, Translator translator) {
+    public ReloadCommandExecutor(BattlegroundsConfiguration config, Translator translator) {
         this.config = config;
         this.translator = translator;
     }

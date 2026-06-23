@@ -29,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class GiveWeaponCommandTest {
+class GiveWeaponCommandExecutorTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final String[] ARGS = { "test", "weapon" };
@@ -50,11 +50,11 @@ class GiveWeaponCommandTest {
     @Mock
     private Translator translator;
 
-    private GiveWeaponCommand command;
+    private GiveWeaponCommandExecutor commandExecutor;
 
     @BeforeEach
     void setUp() {
-        command = new GiveWeaponCommand(gameContextProvider, gameScope, itemSpecRegistry, translator, itemCreatorProvider, playerRegistryProvider);
+        commandExecutor = new GiveWeaponCommandExecutor(gameContextProvider, gameScope, itemSpecRegistry, translator, itemCreatorProvider, playerRegistryProvider);
     }
 
     @Test
@@ -62,7 +62,7 @@ class GiveWeaponCommandTest {
     void execute_freeplayGameKeyNotRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> command.execute(player, ARGS))
+        assertThatThrownBy(() -> commandExecutor.execute(player, ARGS))
                 .isInstanceOf(UnknownGameKeyException.class)
                 .hasMessage("No game context found game key FREEPLAY");
     }
@@ -77,7 +77,7 @@ class GiveWeaponCommandTest {
         when(itemSpecRegistry.exists("test weapon")).thenReturn(false);
         when(translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(message));
 
-        command.execute(player, ARGS);
+        commandExecutor.execute(player, ARGS);
 
         verify(player).sendMessage(message);
     }
@@ -98,7 +98,7 @@ class GiveWeaponCommandTest {
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
-        assertThatThrownBy(() -> command.execute(player, ARGS))
+        assertThatThrownBy(() -> commandExecutor.execute(player, ARGS))
                 .isInstanceOf(IllegalStateException.class)
                 .hasMessage("Unable to find GamePlayer instance for player TestPlayer despite being registered");
     }
@@ -133,7 +133,7 @@ class GiveWeaponCommandTest {
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
-        command.execute(player, ARGS);
+        commandExecutor.execute(player, ARGS);
 
         verify(inventory).addItem(itemStack);
         verify(player).sendMessage("weapon given: test");
