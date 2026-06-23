@@ -3,19 +3,17 @@ package nl.matsgemmeke.battlegrounds.command.arena;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.command.CreateArenaCommand;
-import nl.matsgemmeke.battlegrounds.command.RemoveArenaCommand;
 import org.bukkit.command.CommandSender;
 
 @CommandAlias("battlegrounds|bg|battle")
 @Subcommand("arena")
 public class ArenaCommand extends BaseCommand {
 
-    private final CreateArenaCommand createArenaExecutor;
-    private final RemoveArenaCommand removeArenaExecutor;
+    private final CreateArenaExecutor createArenaExecutor;
+    private final RemoveArenaExecutor removeArenaExecutor;
 
     @Inject
-    public ArenaCommand(CreateArenaCommand createArenaExecutor, RemoveArenaCommand removeArenaExecutor) {
+    public ArenaCommand(CreateArenaExecutor createArenaExecutor, RemoveArenaExecutor removeArenaExecutor) {
         this.createArenaExecutor = createArenaExecutor;
         this.removeArenaExecutor = removeArenaExecutor;
     }

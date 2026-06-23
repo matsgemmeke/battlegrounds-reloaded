@@ -30,13 +30,9 @@ class CommandBootstrapperTest {
     @Mock
     private BattlegroundsCommand bgCommand;
     @Mock
-    private CreateArenaCommand createArenaCommand;
-    @Mock
     private GiveWeaponCommand giveWeaponCommand;
     @Mock
     private ReloadCommand reloadCommand;
-    @Mock
-    private RemoveArenaCommand removeArenaCommand;
     @Mock
     private SetMainLobbyCommand setMainLobbyCommand;
     @Mock
@@ -61,10 +57,8 @@ class CommandBootstrapperTest {
     void initialize() {
         commandBootstrapper.initialize();
 
-        verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(createArenaCommand));
         verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(giveWeaponCommand));
         verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(reloadCommand));
-        verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(removeArenaCommand));
         verify(bgCommand).addSubcommand(any(CommandInfo.class), eq(setMainLobbyCommand));
 
         verify(commandManager).registerCommand(bgCommand);

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.command.arena;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateArenaCommandTest {
+class CreateArenaExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String SUCCESS_MESSAGE = "success";
@@ -34,7 +34,7 @@ class CreateArenaCommandTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private CreateArenaCommand command;
+    private CreateArenaExecutor executor;
 
     @Test
     @DisplayName("execute creates arena and sends success message")
@@ -47,7 +47,7 @@ class CreateArenaCommandTest {
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
 
-        command.execute(sender, ARENA_ID);
+        executor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(SUCCESS_MESSAGE);
     }
@@ -63,7 +63,7 @@ class CreateArenaCommandTest {
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
-        command.execute(sender, ARENA_ID);
+        executor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(FAILED_MESSAGE);
     }

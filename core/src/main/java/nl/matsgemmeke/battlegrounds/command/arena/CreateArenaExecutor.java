@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.command.arena;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
-public class CreateArenaCommand {
+public class CreateArenaExecutor {
 
     public static final String NAME = "createarena";
     public static final String USAGE = "/bg createarena <id>";
@@ -24,7 +24,7 @@ public class CreateArenaCommand {
     private final Translator translator;
 
     @Inject
-    public CreateArenaCommand(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
+    public CreateArenaExecutor(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
         this.arenaFactory = arenaFactory;
         this.gameContextProvider = gameContextProvider;
         this.translator = translator;

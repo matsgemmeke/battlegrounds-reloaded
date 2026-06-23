@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.command.arena;
 
-import nl.matsgemmeke.battlegrounds.command.CreateArenaCommand;
-import nl.matsgemmeke.battlegrounds.command.RemoveArenaCommand;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +17,9 @@ class ArenaCommandTest {
     private static final int ARENA_ID = 1;
 
     @Mock
-    private CreateArenaCommand createArenaExecutor;
+    private CreateArenaExecutor createArenaExecutor;
     @Mock
-    private RemoveArenaCommand removeArenaExecutor;
+    private RemoveArenaExecutor removeArenaExecutor;
     @InjectMocks
     private ArenaCommand command;
 

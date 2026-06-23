@@ -16,10 +16,8 @@ public class CommandBootstrapper {
 
     private final BattlegroundsCommand bgCommand;
     private final ArenaCommand arenaCommand;
-    private final CreateArenaCommand createArenaCommand;
     private final GiveWeaponCommand giveWeaponCommand;
     private final ReloadCommand reloadCommand;
-    private final RemoveArenaCommand removeArenaCommand;
     private final SetMainLobbyCommand setMainLobbyCommand;
 
     private final ToolsCommand toolsCommand;
@@ -34,10 +32,8 @@ public class CommandBootstrapper {
             Translator translator,
             BattlegroundsCommand bgCommand,
             ArenaCommand arenaCommand,
-            CreateArenaCommand createArenaCommand,
             GiveWeaponCommand giveWeaponCommand,
             ReloadCommand reloadCommand,
-            RemoveArenaCommand removeArenaCommand,
             SetMainLobbyCommand setMainLobbyCommand,
             ToolsCommand toolsCommand,
             ExistentArenaIdCondition existentArenaIdCondition,
@@ -48,10 +44,8 @@ public class CommandBootstrapper {
         this.translator = translator;
         this.bgCommand = bgCommand;
         this.arenaCommand = arenaCommand;
-        this.createArenaCommand = createArenaCommand;
         this.giveWeaponCommand = giveWeaponCommand;
         this.reloadCommand = reloadCommand;
-        this.removeArenaCommand = removeArenaCommand;
         this.setMainLobbyCommand = setMainLobbyCommand;
         this.toolsCommand = toolsCommand;
         this.existentArenaIdCondition = existentArenaIdCondition;
@@ -71,20 +65,16 @@ public class CommandBootstrapper {
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText();
         String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText();
 
-        CommandInfo createArenaCommandInfo = new CommandInfo(CreateArenaCommand.NAME, createArenaCommandDescription, CreateArenaCommand.USAGE, CreateArenaCommand.SUGGESTION, CreateArenaCommand.PERMISSIONS);
         CommandInfo giveWeaponCommandInfo = new CommandInfo(GiveWeaponCommand.NAME, giveWeaponCommandDescription, GiveWeaponCommand.USAGE, GiveWeaponCommand.SUGGESTION, GiveWeaponCommand.PERMISSIONS);
         CommandInfo reloadCommandInfo = new CommandInfo(ReloadCommand.NAME, reloadCommandDescription, ReloadCommand.USAGE, ReloadCommand.SUGGESTION, ReloadCommand.PERMISSIONS);
-        CommandInfo removeArenaCommandInfo = new CommandInfo(RemoveArenaCommand.NAME, removeArenaCommandDescription, RemoveArenaCommand.USAGE, RemoveArenaCommand.SUGGESTION, RemoveArenaCommand.PERMISSIONS);
         CommandInfo setMainLobbyCommandInfo = new CommandInfo(SetMainLobbyCommand.NAME, setMainLobbyCommandDescription, SetMainLobbyCommand.USAGE, SetMainLobbyCommand.SUGGESTION, SetMainLobbyCommand.PERMISSIONS);
 
         bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
         bgCommand.addCommandInfo(setMainLobbyCommandInfo);
 
-        bgCommand.addSubcommand(createArenaCommandInfo, createArenaCommand);
         bgCommand.addSubcommand(giveWeaponCommandInfo, giveWeaponCommand);
         bgCommand.addSubcommand(reloadCommandInfo, reloadCommand);
-        bgCommand.addSubcommand(removeArenaCommandInfo, removeArenaCommand);
         bgCommand.addSubcommand(setMainLobbyCommandInfo, setMainLobbyCommand);
 
         commandManager.registerCommand(bgCommand);
