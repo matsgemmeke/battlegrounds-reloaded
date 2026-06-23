@@ -29,9 +29,9 @@ class ArenaCommandTest {
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena test ";
 
     @Mock
-    private CreateArenaExecutor createArenaExecutor;
+    private CreateArenaCommandExecutor createArenaCommandExecutor;
     @Mock
-    private RemoveArenaExecutor removeArenaExecutor;
+    private RemoveArenaCommandExecutor removeArenaCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -74,7 +74,7 @@ class ArenaCommandTest {
 
         command.onCreate(sender, ARENA_ID);
 
-        verify(createArenaExecutor).execute(sender, ARENA_ID);
+        verify(createArenaCommandExecutor).execute(sender, ARENA_ID);
     }
 
     @Test
@@ -84,6 +84,6 @@ class ArenaCommandTest {
 
         command.onRemove(sender, ARENA_ID);
 
-        verify(removeArenaExecutor).execute(sender, ARENA_ID);
+        verify(removeArenaCommandExecutor).execute(sender, ARENA_ID);
     }
 }

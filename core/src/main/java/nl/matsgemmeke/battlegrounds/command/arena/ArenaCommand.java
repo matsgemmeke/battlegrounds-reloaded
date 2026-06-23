@@ -17,16 +17,21 @@ import java.util.List;
 @Subcommand("arena")
 public class ArenaCommand extends BaseCommand {
 
-    private final CreateArenaExecutor createArenaExecutor;
-    private final RemoveArenaExecutor removeArenaExecutor;
+    private final CreateArenaCommandExecutor createArenaCommandExecutor;
+    private final RemoveArenaCommandExecutor removeArenaCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public ArenaCommand(CreateArenaExecutor createArenaExecutor, RemoveArenaExecutor removeArenaExecutor, HelpMenu helpMenu, Translator translator) {
-        this.createArenaExecutor = createArenaExecutor;
-        this.removeArenaExecutor = removeArenaExecutor;
+    public ArenaCommand(
+            CreateArenaCommandExecutor createArenaCommandExecutor,
+            RemoveArenaCommandExecutor removeArenaCommandExecutor,
+            HelpMenu helpMenu,
+            Translator translator
+    ) {
+        this.createArenaCommandExecutor = createArenaCommandExecutor;
+        this.removeArenaCommandExecutor = removeArenaCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -51,13 +56,13 @@ public class ArenaCommand extends BaseCommand {
     @CommandPermission("battlegrounds.createarena")
     @Subcommand("create")
     public void onCreate(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
-        createArenaExecutor.execute(sender, id);
+        createArenaCommandExecutor.execute(sender, id);
     }
 
     @CommandCompletion("<id>")
     @CommandPermission("battlegrounds.removearena")
     @Subcommand("remove")
     public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
-        removeArenaExecutor.execute(sender, id);
+        removeArenaCommandExecutor.execute(sender, id);
     }
 }

@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RemoveArenaExecutor {
+public class RemoveArenaCommandExecutor {
 
     public static final String USAGE = "/bg arena remove <id>";
     public static final String SUGGESTION = "/bg arena remove ";
@@ -25,7 +25,7 @@ public class RemoveArenaExecutor {
     private final Translator translator;
 
     @Inject
-    public RemoveArenaExecutor(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
+    public RemoveArenaCommandExecutor(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
         this.gameContextProvider = gameContextProvider;
         this.scheduler = scheduler;
         this.translator = translator;

@@ -18,7 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RemoveArenaExecutorTest {
+class RemoveArenaCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String MESSAGE = "hello";
@@ -34,7 +34,7 @@ class RemoveArenaExecutorTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private RemoveArenaExecutor executor;
+    private RemoveArenaCommandExecutor commandExecutor;
 
     @BeforeEach
     void setUp() {
@@ -46,7 +46,7 @@ class RemoveArenaExecutorTest {
     void execute_firstExecution() {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        executor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
         verify(scheduler).createSingleRunSchedule(200L);
@@ -59,8 +59,8 @@ class RemoveArenaExecutorTest {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        executor.execute(sender, ARENA_ID);
-        executor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
     }
@@ -72,8 +72,8 @@ class RemoveArenaExecutorTest {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        executor.execute(sender, ARENA_ID);
-        executor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
     }

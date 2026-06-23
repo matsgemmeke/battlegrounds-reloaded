@@ -12,7 +12,7 @@ import org.bukkit.command.CommandSender;
 
 import java.util.Map;
 
-public class CreateArenaExecutor {
+public class CreateArenaCommandExecutor {
 
     public static final String USAGE = "/bg arena create <id>";
     public static final String SUGGESTION = "/bg arena create ";
@@ -23,7 +23,7 @@ public class CreateArenaExecutor {
     private final Translator translator;
 
     @Inject
-    public CreateArenaExecutor(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
+    public CreateArenaCommandExecutor(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
         this.arenaFactory = arenaFactory;
         this.gameContextProvider = gameContextProvider;
         this.translator = translator;

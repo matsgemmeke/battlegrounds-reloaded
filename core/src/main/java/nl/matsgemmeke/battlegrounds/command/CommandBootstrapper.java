@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
-import nl.matsgemmeke.battlegrounds.command.arena.CreateArenaExecutor;
-import nl.matsgemmeke.battlegrounds.command.arena.RemoveArenaExecutor;
+import nl.matsgemmeke.battlegrounds.command.arena.CreateArenaCommandExecutor;
+import nl.matsgemmeke.battlegrounds.command.arena.RemoveArenaCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -72,8 +72,8 @@ public class CommandBootstrapper {
         String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText();
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText();
 
-        CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CreateArenaExecutor.USAGE, CreateArenaExecutor.SUGGESTION, CreateArenaExecutor.PERMISSIONS);
-        CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, RemoveArenaExecutor.USAGE, RemoveArenaExecutor.SUGGESTION, RemoveArenaExecutor.PERMISSIONS);
+        CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CreateArenaCommandExecutor.USAGE, CreateArenaCommandExecutor.SUGGESTION, CreateArenaCommandExecutor.PERMISSIONS);
+        CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, RemoveArenaCommandExecutor.USAGE, RemoveArenaCommandExecutor.SUGGESTION, RemoveArenaCommandExecutor.PERMISSIONS);
 
         arenaCommand.addCommandInfo(createArenaCommandInfo);
         arenaCommand.addCommandInfo(removeArenaCommandInfo);

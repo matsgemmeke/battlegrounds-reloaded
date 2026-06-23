@@ -19,7 +19,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class CreateArenaExecutorTest {
+class CreateArenaCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String SUCCESS_MESSAGE = "success";
@@ -34,7 +34,7 @@ class CreateArenaExecutorTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private CreateArenaExecutor executor;
+    private CreateArenaCommandExecutor commandExecutor;
 
     @Test
     @DisplayName("execute creates arena and sends success message")
@@ -47,7 +47,7 @@ class CreateArenaExecutorTest {
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(true);
         when(translator.translate(eq(TranslationKey.ARENA_CREATED.getPath()))).thenReturn(new TextTemplate(SUCCESS_MESSAGE));
 
-        executor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(SUCCESS_MESSAGE);
     }
@@ -63,7 +63,7 @@ class CreateArenaExecutorTest {
         when(gameContextProvider.addArena(gameKey, arena)).thenReturn(false);
         when(translator.translate(eq(TranslationKey.ARENA_CREATION_FAILED.getPath()))).thenReturn(new TextTemplate(FAILED_MESSAGE));
 
-        executor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(FAILED_MESSAGE);
     }
