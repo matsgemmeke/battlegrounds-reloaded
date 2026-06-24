@@ -8,10 +8,6 @@ import org.bukkit.command.CommandSender;
 
 public class ReloadCommandExecutor {
 
-    public static final String USAGE = "/bg reload";
-    public static final String SUGGESTION = "/bg reload";
-    public static final String[] PERMISSIONS = new String[] { "battlegrounds.reload" };
-
     private final BattlegroundsConfiguration config;
     private final Translator translator;
 

@@ -19,9 +19,6 @@ import java.util.Map;
 
 public class GiveWeaponCommandExecutor {
 
-    public static final String USAGE = "/bg giveweapon <weapon>";
-    public static final String SUGGESTION = "/bg giveweapon ";
-    public static final String[] PERMISSIONS = new String[] { "battlegrounds.giveweapon" };
     private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
     private final GameContextProvider gameContextProvider;

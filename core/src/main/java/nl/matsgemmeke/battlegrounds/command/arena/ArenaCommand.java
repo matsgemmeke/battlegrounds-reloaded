@@ -15,6 +15,7 @@ import java.util.List;
 
 @CommandAlias("battlegrounds|bg|battle")
 @Subcommand("arena")
+@CommandPermission("battlegrounds.arena")
 public class ArenaCommand extends BaseCommand {
 
     private final CreateArenaCommandExecutor createArenaCommandExecutor;

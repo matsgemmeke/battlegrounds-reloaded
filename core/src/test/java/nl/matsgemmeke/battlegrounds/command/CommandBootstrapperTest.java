@@ -53,7 +53,7 @@ class CommandBootstrapperTest {
     void initialize() {
         commandBootstrapper.initialize();
 
-        verify(bgCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(bgCommand, times(4)).addCommandInfo(any(CommandInfo.class));
         verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(bgCommand);

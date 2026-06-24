@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -30,9 +31,13 @@ public class HelpMenu {
         sender.sendMessage(EMPTY_LINE);
 
         for (CommandInfo commandInfo : commandInfoList) {
-            String subcommandText = this.getCommandInfoText(commandInfo);
+            boolean permitted = Arrays.stream(commandInfo.permissions()).anyMatch(sender::hasPermission);
 
-            sender.sendMessage(subcommandText);
+            if (permitted) {
+                String subcommandText = this.getCommandInfoText(commandInfo);
+
+                sender.sendMessage(subcommandText);
+            }
         }
 
         sender.sendMessage(EMPTY_LINE);
@@ -44,13 +49,17 @@ public class HelpMenu {
         player.sendMessage(EMPTY_LINE);
 
         for (CommandInfo commandInfo : commandInfoList) {
-            String subcommandText = this.getCommandInfoText(commandInfo);
+            boolean permitted = Arrays.stream(commandInfo.permissions()).anyMatch(player::hasPermission);
 
-            TextComponent message = new TextComponent(subcommandText);
-            message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandInfo.suggestion()));
-            message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(commandInfo.description())));
+            if (permitted) {
+                String subcommandText = this.getCommandInfoText(commandInfo);
 
-            player.spigot().sendMessage(message);
+                TextComponent message = new TextComponent(subcommandText);
+                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commandInfo.suggestion()));
+                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(commandInfo.description())));
+
+                player.spigot().sendMessage(message);
+            }
         }
 
         player.sendMessage(EMPTY_LINE);

@@ -12,6 +12,7 @@ public enum TranslationKey {
     ARENA_REMOVED("admin.arena-removed"),
     BATTLEGROUNDS_HELP_MENU_TITLE("commands.battlegrounds-help-menu-title"),
     COMMAND_SENDER_MUST_BE_PLAYER("errors.command-sender-must-be-player"),
+    DESCRIPTION_ARENA("commands.description-arena"),
     DESCRIPTION_CREATEARENA("commands.description-createarena"),
     DESCRIPTION_GIVEWEAPON("commands.description-giveweapon"),
     DESCRIPTION_RELOAD("commands.description-reload"),

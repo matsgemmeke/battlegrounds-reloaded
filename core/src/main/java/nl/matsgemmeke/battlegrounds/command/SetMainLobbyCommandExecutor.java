@@ -9,10 +9,6 @@ import org.bukkit.entity.Player;
 
 public class SetMainLobbyCommandExecutor {
 
-    public static final String USAGE = "/bg setmainlobby";
-    public static final String SUGGESTION = "/bg setmainlobby";
-    public static final String[] PERMISSIONS = new String[] { "battlegrounds.setmainlobby" };
-
     private final DataConfiguration dataConfiguration;
     private final Translator translator;
 

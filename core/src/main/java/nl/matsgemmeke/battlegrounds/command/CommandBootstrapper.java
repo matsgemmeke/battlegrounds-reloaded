@@ -13,6 +13,22 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 
 public class CommandBootstrapper {
 
+    private static final String ARENA_COMMAND_USAGE = "/bg arena";
+    private static final String ARENA_COMMAND_SUGGESTION = "/bg arena";
+    private static final String[] ARENA_COMMAND_PERMISSIONS = new String[] { "bg.arena" };
+
+    private static final String GIVE_WEAPON_COMMAND_USAGE = "/bg giveweapon <weapon>";
+    private static final String GIVE_WEAPON_COMMAND_SUGGESTION = "/bg giveweapon ";
+    private static final String[] GIVE_WEAPON_COMMAND_PERMISSIONS = new String[] { "bg.giveweapon" };
+
+    private static final String RELOAD_COMMAND_USAGE = "/bg reload";
+    private static final String RELOAD_COMMAND_SUGGESTION = "/bg reload";
+    private static final String[] RELOAD_COMMAND_PERMISSIONS = new String[] { "battlegrounds.reload" };
+
+    private static final String SET_MAIN_LOBBY_COMMAND_USAGE = "/bg setmainlobby";
+    private static final String SET_MAIN_LOBBY_COMMAND_SUGGESTION = "/bg setmainlobby";
+    private static final String[] SET_MAIN_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.setmainlobby" };
+
     private final PaperCommandManager commandManager;
     private final Translator translator;
 
@@ -52,14 +68,17 @@ public class CommandBootstrapper {
     }
 
     private void registerBattlegroundsCommand(PaperCommandManager commandManager) {
+        String arenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ARENA.getPath()).getText();
         String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText();
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
         String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText();
 
-        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GiveWeaponCommandExecutor.USAGE, GiveWeaponCommandExecutor.SUGGESTION, GiveWeaponCommandExecutor.PERMISSIONS);
-        CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, ReloadCommandExecutor.USAGE, ReloadCommandExecutor.SUGGESTION, ReloadCommandExecutor.PERMISSIONS);
-        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SetMainLobbyCommandExecutor.USAGE, SetMainLobbyCommandExecutor.SUGGESTION, SetMainLobbyCommandExecutor.PERMISSIONS);
+        CommandInfo arenaCommandInfo = new CommandInfo(arenaCommandDescription, ARENA_COMMAND_USAGE, ARENA_COMMAND_SUGGESTION, ARENA_COMMAND_PERMISSIONS);
+        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GIVE_WEAPON_COMMAND_USAGE, GIVE_WEAPON_COMMAND_SUGGESTION, GIVE_WEAPON_COMMAND_PERMISSIONS);
+        CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, RELOAD_COMMAND_USAGE, RELOAD_COMMAND_SUGGESTION, RELOAD_COMMAND_PERMISSIONS);
+        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SET_MAIN_LOBBY_COMMAND_USAGE, SET_MAIN_LOBBY_COMMAND_SUGGESTION, SET_MAIN_LOBBY_COMMAND_PERMISSIONS);
 
+        bgCommand.addCommandInfo(arenaCommandInfo);
         bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
         bgCommand.addCommandInfo(setMainLobbyCommandInfo);

@@ -34,7 +34,8 @@ class HelpMenuTest {
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg test";
-    
+    private static final String[] SUBCOMMAND_PERMISSIONS = new String[] { "battlegrounds.test" };
+
     @Mock
     private Translator translator;
     @InjectMocks
@@ -43,17 +44,21 @@ class HelpMenuTest {
     private ArgumentCaptor<Map<String, Object>> valuesCaptor;
 
     @Test
-    @DisplayName("sendHelpMenuAsJsonMessages shows help menu to given sender as normal messages")
+    @DisplayName("sendHelpMenuAsJsonMessages shows help menu with permitted commands to given sender as normal messages")
     void sendHelpMenuAsNormalMessages() {
+        CommandInfo permittedCommandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        CommandInfo forbiddenCommandInfo = new CommandInfo(null, null, null, new String[] { "battlegrounds.forbidden" });
+
         CommandSender sender = mock(CommandSender.class);
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        when(sender.hasPermission("battlegrounds.test")).thenReturn(true);
+        when(sender.hasPermission("battlegrounds.forbidden")).thenReturn(false);
 
         TextTemplate helpMenuCommandTextTemplate = mock(TextTemplate.class);
         when(helpMenuCommandTextTemplate.replace(anyMap())).thenReturn(" - /bg test <nr>");
 
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        helpMenu.sendHelpMenuAsNormalMessages(sender, HELP_MENU_TITLE, List.of(commandInfo));
+        helpMenu.sendHelpMenuAsNormalMessages(sender, HELP_MENU_TITLE, List.of(permittedCommandInfo, forbiddenCommandInfo));
 
         verify(helpMenuCommandTextTemplate).replace(valuesCaptor.capture());
 
@@ -67,12 +72,15 @@ class HelpMenuTest {
     }
 
     @Test
-    @DisplayName("sendHelpMenuAsJsonMessages shows help menu to given player as JSON messages")
+    @DisplayName("sendHelpMenuAsJsonMessages shows help menu with permitted commands to given player as JSON messages")
     void sendHelpMenuAsJsonMessages() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandInfo permittedCommandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        CommandInfo forbiddenCommandInfo = new CommandInfo(null, null, null, new String[] { "battlegrounds.forbidden" });
+        Player.Spigot spigot = mock(Player.Spigot.class);
 
         Player player = mock(Player.class);
-        Player.Spigot spigot = mock(Player.Spigot.class);
+        when(player.hasPermission("battlegrounds.test")).thenReturn(true);
+        when(player.hasPermission("battlegrounds.forbidden")).thenReturn(false);
         when(player.spigot()).thenReturn(spigot);
 
         TextTemplate helpMenuCommandTextTemplate = mock(TextTemplate.class);
@@ -80,7 +88,7 @@ class HelpMenuTest {
 
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        helpMenu.sendHelpMenuAsJsonMessages(player, HELP_MENU_TITLE, List.of(commandInfo));
+        helpMenu.sendHelpMenuAsJsonMessages(player, HELP_MENU_TITLE, List.of(permittedCommandInfo, forbiddenCommandInfo));
 
         ArgumentCaptor<TextComponent> textComponentCaptor = ArgumentCaptor.forClass(TextComponent.class);
         verify(spigot).sendMessage(textComponentCaptor.capture());
