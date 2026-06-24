@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.command.arena.RemoveArenaCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.tool.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 
@@ -69,9 +70,9 @@ public class CommandBootstrapper {
 
     private void registerBattlegroundsCommand(PaperCommandManager commandManager) {
         String arenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ARENA.getPath()).getText();
-        String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText();
+        String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).getText();
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
-        String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SETMAINLOBBY.getPath()).getText();
+        String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SET_MAIN_LOBBY.getPath()).getText();
 
         CommandInfo arenaCommandInfo = new CommandInfo(arenaCommandDescription, ARENA_COMMAND_USAGE, ARENA_COMMAND_SUGGESTION, ARENA_COMMAND_PERMISSIONS);
         CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GIVE_WEAPON_COMMAND_USAGE, GIVE_WEAPON_COMMAND_SUGGESTION, GIVE_WEAPON_COMMAND_PERMISSIONS);
@@ -88,8 +89,8 @@ public class CommandBootstrapper {
     }
 
     private void registerArenaCommand(PaperCommandManager commandManager) {
-        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATEARENA.getPath()).getText();
-        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText();
+        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
+        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
 
         CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CreateArenaCommandExecutor.USAGE, CreateArenaCommandExecutor.SUGGESTION, CreateArenaCommandExecutor.PERMISSIONS);
         CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, RemoveArenaCommandExecutor.USAGE, RemoveArenaCommandExecutor.SUGGESTION, RemoveArenaCommandExecutor.PERMISSIONS);
