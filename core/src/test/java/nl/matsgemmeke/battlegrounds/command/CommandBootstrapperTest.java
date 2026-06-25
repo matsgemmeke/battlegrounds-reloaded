@@ -56,6 +56,7 @@ class CommandBootstrapperTest {
 
         verify(bgCommand, times(4)).addCommandInfo(any(CommandInfo.class));
         verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
+        verify(toolsCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(bgCommand);
         verify(commandManager).registerCommand(arenaCommand);

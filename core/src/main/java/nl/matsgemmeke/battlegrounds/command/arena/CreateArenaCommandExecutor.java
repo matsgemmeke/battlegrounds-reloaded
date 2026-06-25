@@ -14,10 +14,6 @@ import java.util.Map;
 
 public class CreateArenaCommandExecutor {
 
-    public static final String USAGE = "/bg arena create <id>";
-    public static final String SUGGESTION = "/bg arena create ";
-    public static final String[] PERMISSIONS = new String[] { "battlegrounds.createarena" };
-
     private final ArenaFactory arenaFactory;
     private final GameContextProvider gameContextProvider;
     private final Translator translator;
