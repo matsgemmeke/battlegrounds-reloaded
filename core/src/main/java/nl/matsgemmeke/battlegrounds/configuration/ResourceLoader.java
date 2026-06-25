@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.io.*;
 import java.net.URI;
 import java.nio.file.*;
@@ -10,7 +8,7 @@ import java.util.*;
 
 public class ResourceLoader {
 
-    public void copyResource(@NotNull URI source, @NotNull Path target) throws IOException {
+    public void copyResource(URI source, Path target) throws IOException {
         Path path;
 
         try {
@@ -22,7 +20,7 @@ public class ResourceLoader {
         }
     }
 
-    private void copyResourcesTo(@NotNull Path path, @NotNull Path target) throws IOException {
+    private void copyResourcesTo(Path path, Path target) throws IOException {
         Files.walkFileTree(path, new SimpleFileVisitor<>() {
             @Override
             public FileVisitResult preVisitDirectory(Path dir, BasicFileAttributes attrs) throws IOException {
@@ -39,7 +37,7 @@ public class ResourceLoader {
         });
     }
 
-    private Path createJarFilePath(@NotNull URI source) throws IOException {
+    private Path createJarFilePath(URI source) throws IOException {
         Map<String, String> env = new HashMap<>();
         FileSystem fileSystem = FileSystems.newFileSystem(source, env);
         return fileSystem.provider().getPath(source);

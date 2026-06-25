@@ -44,16 +44,15 @@ public class RemoveArenaCommandExecutor {
             return;
         }
 
-        String message;
-
         if (!gameContextProvider.removeArena(id)) {
-            message = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
-        } else {
-            message = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
+            String removalFailedMessage = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
+            sender.sendMessage(removalFailedMessage);
+            return;
         }
 
         confirmList.remove(sender);
 
-        sender.sendMessage(message);
+        String removedMessage = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
+        sender.sendMessage(removedMessage);
     }
 }
