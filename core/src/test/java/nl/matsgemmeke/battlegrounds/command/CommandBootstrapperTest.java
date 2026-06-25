@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.tool.ToolsCommand;
+import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.junit.jupiter.api.BeforeEach;

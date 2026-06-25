@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tool;
+package nl.matsgemmeke.battlegrounds.command.tools;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;

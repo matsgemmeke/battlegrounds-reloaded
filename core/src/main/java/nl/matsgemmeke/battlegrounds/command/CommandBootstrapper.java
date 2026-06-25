@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.command.arena.RemoveArenaCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.tool.ToolsCommand;
+import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 
