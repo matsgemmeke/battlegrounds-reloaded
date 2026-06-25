@@ -1,7 +1,7 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.command.tool;
 
-import nl.matsgemmeke.battlegrounds.command.tool.ShowHitboxesTool;
-import nl.matsgemmeke.battlegrounds.command.tool.ToolsCommand;
+import nl.matsgemmeke.battlegrounds.command.CommandInfo;
+import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -30,7 +30,7 @@ class ToolsCommandTest {
     @Mock
     private HelpMenu helpMenu;
     @Mock
-    private ShowHitboxesTool showHitboxesTool;
+    private ShowHitboxesCommandExecutor showHitboxesCommandExecutor;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -83,6 +83,6 @@ class ToolsCommandTest {
 
         command.onShowHitboxes(player, 10, 20.0);
 
-        verify(showHitboxesTool).execute(player, 10, 20.0);
+        verify(showHitboxesCommandExecutor).execute(player, 10, 20.0);
     }
 }

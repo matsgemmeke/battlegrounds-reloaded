@@ -21,13 +21,13 @@ public class ToolsCommand extends BaseCommand {
 
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
-    private final ShowHitboxesTool showHitboxesTool;
+    private final ShowHitboxesCommandExecutor showHitboxesCommandExecutor;
     private final Translator translator;
 
     @Inject
-    public ToolsCommand(HelpMenu helpMenu, ShowHitboxesTool showHitboxesTool, Translator translator) {
+    public ToolsCommand(HelpMenu helpMenu, ShowHitboxesCommandExecutor showHitboxesCommandExecutor, Translator translator) {
         this.helpMenu = helpMenu;
-        this.showHitboxesTool = showHitboxesTool;
+        this.showHitboxesCommandExecutor = showHitboxesCommandExecutor;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
     }
@@ -58,6 +58,6 @@ public class ToolsCommand extends BaseCommand {
     @CommandCompletion("<seconds> <range>")
     @CommandPermission("battlegrounds.tools.showhitboxes")
     public void onShowHitboxes(Player player, @Default("10") int seconds, @Default("10.0") double range) {
-        showHitboxesTool.execute(player, seconds, range);
+        showHitboxesCommandExecutor.execute(player, seconds, range);
     }
 }
