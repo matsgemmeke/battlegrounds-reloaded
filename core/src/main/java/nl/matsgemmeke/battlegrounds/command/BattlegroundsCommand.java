@@ -3,10 +3,6 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.hover.content.Text;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
@@ -14,62 +10,47 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
 public class BattlegroundsCommand extends BaseCommand {
 
-    private static final String EMPTY_MESSAGE = " ";
-
-    private final List<CommandSource> subcommands;
+    private final GiveWeaponCommandExecutor giveWeaponCommandExecutor;
+    private final ReloadCommandExecutor reloadCommandExecutor;
+    private final SetMainLobbyCommandExecutor setMainLobbyCommandExecutor;
+    private final HelpMenu helpMenu;
+    private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public BattlegroundsCommand(Translator translator) {
+    public BattlegroundsCommand(
+            GiveWeaponCommandExecutor giveWeaponCommandExecutor,
+            ReloadCommandExecutor reloadCommandExecutor,
+            SetMainLobbyCommandExecutor setMainLobbyCommandExecutor,
+            HelpMenu helpMenu,
+            Translator translator
+    ) {
+        this.giveWeaponCommandExecutor = giveWeaponCommandExecutor;
+        this.reloadCommandExecutor = reloadCommandExecutor;
+        this.setMainLobbyCommandExecutor = setMainLobbyCommandExecutor;
+        this.helpMenu = helpMenu;
         this.translator = translator;
-        this.subcommands = new ArrayList<>();
+        this.commandInfoList = new ArrayList<>();
     }
 
-    public boolean addSubcommand(CommandSource subcommand) {
-        return subcommands.add(subcommand);
+    public void addCommandInfo(CommandInfo commandInfo) {
+        commandInfoList.add(commandInfo);
     }
 
     @Default
     @HelpCommand
     public void onDefault(CommandSender sender) {
-        sender.sendMessage(EMPTY_MESSAGE);
-        sender.sendMessage(translator.translate(TranslationKey.HELP_MENU_TITLE.getPath()).getText());
-        sender.sendMessage(EMPTY_MESSAGE);
+        String title = translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_TITLE.getPath()).getText();
 
         if (sender instanceof Player player) {
-            for (CommandSource subcommand : subcommands) {
-                String subcommandText = this.getSubcommandText(subcommand);
-
-                TextComponent message = new TextComponent(subcommandText);
-                message.setClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/" + subcommand.getUsage()));
-                message.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(subcommand.getDescription())));
-
-                player.spigot().sendMessage(message);
-            }
+            helpMenu.sendHelpMenuAsJsonMessages(player, title, commandInfoList);
         } else {
-            for (CommandSource subcommand : subcommands) {
-                String subcommandText = this.getSubcommandText(subcommand);
-
-                sender.sendMessage(subcommandText);
-            }
+            helpMenu.sendHelpMenuAsNormalMessages(sender, title, commandInfoList);
         }
-
-        sender.sendMessage(EMPTY_MESSAGE);
-    }
-
-    private String getSubcommandText(CommandSource subcommand) {
-        Map<String, Object> values = Map.of(
-                "bg_name", subcommand.getName(),
-                "bg_description", subcommand.getDescription(),
-                "bg_usage", subcommand.getUsage()
-        );
-
-        return translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath()).replace(values);
     }
 
     @CatchUnknown
@@ -77,52 +58,23 @@ public class BattlegroundsCommand extends BaseCommand {
         sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
     }
 
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.createarena")
-    @Subcommand("createarena|ca")
-    public void onCreateArena(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
-        CreateArenaCommand command = this.getSubcommand("createarena");
-        command.execute(sender, id);
-    }
-
     @CommandCompletion("<weapon>")
     @CommandPermission("battlegrounds.giveweapon")
     @Conditions("freeplay-mode-presence")
     @Subcommand("giveweapon")
     public void onGiveWeapon(Player player, String[] args) {
-        GiveWeaponCommand command = this.getSubcommand("giveweapon");
-        command.execute(player, args);
+        giveWeaponCommandExecutor.execute(player, args);
     }
 
     @CommandPermission("battlegrounds.reload")
     @Subcommand("reload")
     public void onReload(CommandSender sender) {
-        ReloadCommand command = this.getSubcommand("reload");
-        command.execute(sender);
-    }
-
-    @CommandCompletion("<id>")
-    @CommandPermission("battlegrounds.removearena")
-    @Subcommand("removearena")
-    public void onRemoveArena(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
-        RemoveArenaCommand command = this.getSubcommand("removearena");
-        command.execute(sender, id);
+        reloadCommandExecutor.execute(sender);
     }
 
     @CommandPermission("battlegrounds.setmainlobby")
     @Subcommand("setmainlobby")
     public void onSetMainLobby(Player player) {
-        SetMainLobbyCommand command = this.getSubcommand("setmainlobby");
-        command.execute(player);
-    }
-
-    private <T extends CommandSource> T getSubcommand(String name) {
-        for (CommandSource subcommand : subcommands) {
-            if (subcommand.getName().equalsIgnoreCase(name)) {
-                return (T) subcommand;
-            }
-        }
-
-        throw new IllegalArgumentException("Unable to find a subcommand by the name " + name);
+        setMainLobbyCommandExecutor.execute(player);
     }
 }

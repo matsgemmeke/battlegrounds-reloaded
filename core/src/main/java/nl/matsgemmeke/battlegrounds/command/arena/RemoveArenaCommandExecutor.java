@@ -1,29 +1,33 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.command.arena;
 
 import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.util.FileUtil;
 import org.bukkit.command.CommandSender;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class RemoveArenaCommand extends CommandSource {
+public class RemoveArenaCommandExecutor {
 
     private static final long CONFIRM_LIST_COOLDOWN = 200L;
 
+    private final File arenasFolder;
     private final GameContextProvider gameContextProvider;
     private final List<CommandSender> confirmList;
     private final Scheduler scheduler;
     private final Translator translator;
 
     @Inject
-    public RemoveArenaCommand(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
-        super("removearena", translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath()).getText(), "bg removearena <id>");
+    public RemoveArenaCommandExecutor(@Named("ArenasFolder") File arenasFolder, GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
+        this.arenasFolder = arenasFolder;
         this.gameContextProvider = gameContextProvider;
         this.scheduler = scheduler;
         this.translator = translator;
@@ -45,16 +49,18 @@ public class RemoveArenaCommand extends CommandSource {
             return;
         }
 
-        String message;
-
         if (!gameContextProvider.removeArena(id)) {
-            message = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
-        } else {
-            message = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
+            String removalFailedMessage = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
+            sender.sendMessage(removalFailedMessage);
+            return;
         }
 
         confirmList.remove(sender);
 
-        sender.sendMessage(message);
+        File arenaFolder = new File(arenasFolder, "arena-" + id);
+        FileUtil.deleteFolder(arenaFolder);
+
+        String removedMessage = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
+        sender.sendMessage(removedMessage);
     }
 }

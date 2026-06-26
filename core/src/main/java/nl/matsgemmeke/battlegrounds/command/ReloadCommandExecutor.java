@@ -6,14 +6,13 @@ import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;
 
-public class ReloadCommand extends CommandSource {
+public class ReloadCommandExecutor {
 
     private final BattlegroundsConfiguration config;
     private final Translator translator;
 
     @Inject
-    public ReloadCommand(BattlegroundsConfiguration config, Translator translator) {
-        super("reload", translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText(), "bg reload");
+    public ReloadCommandExecutor(BattlegroundsConfiguration config, Translator translator) {
         this.config = config;
         this.translator = translator;
     }

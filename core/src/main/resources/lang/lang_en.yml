@@ -14,17 +14,18 @@ admin:
   weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist."
 
 commands:
-  description-createarena: "Creates a new arena by the given id"
-  description-giveweapon: "Gives a weapon for freeplay mode"
+  arena-help-menu-title: "&6&l Arena commands"
+  battlegrounds-help-menu-title: "&6&l Battlegrounds Help Menu"
+  description-arena: "Manage arenas: create, remove, and configure"
+  description-create-arena: "Creates a new arena by the given id"
+  description-give-weapon: "Gives a weapon for freeplay mode"
   description-reload: "Reloads all configuration files"
-  description-removearena: "Removes an arena and all of its content"
-  description-setmainlobby: "Sets the main lobby location"
+  description-remove-arena: "Removes an arena and all of its content"
+  description-set-main-lobby: "Sets the main lobby location"
+  description-show-hitboxes: "Shows hitboxes of nearby entities"
   description-tools: "Provides miscellaneous tools for operating the plugin"
-  description-tools-hitbox: "Shows hitboxes of nearby entities"
-  help-menu-command: " ● %bg_usage%"
-  help-menu-title: "&6&l Battlegrounds Help Menu"
-  tools-menu-command: " ● /bg tools hitbox <seconds> <range>"
-  tools-menu-title: "&6&l List of tools"
+  help-menu-command: " - %bg_usage%"
+  tools-help-menu-title: "&6&l List of tools"
   weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:

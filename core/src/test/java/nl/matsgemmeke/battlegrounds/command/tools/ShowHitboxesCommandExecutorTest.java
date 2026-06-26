@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tool;
+package nl.matsgemmeke.battlegrounds.command.tools;
 
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
@@ -18,6 +18,7 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
@@ -31,10 +32,11 @@ import java.util.Set;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ShowHitboxesToolTest {
+class ShowHitboxesCommandExecutorTest {
 
     private static final int SECONDS = 10;
     private static final double RANGE = 20.0;
+    private static final String TOOL_HITBOX_SUCCESS_MESSAGE = "Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks.";
 
     @Mock
     private HitboxResolver hitboxResolver;
@@ -43,7 +45,7 @@ class ShowHitboxesToolTest {
     @Mock
     private Translator translator;
     @InjectMocks
-    private ShowHitboxesTool showHitboxesTool;
+    private ShowHitboxesCommandExecutor commandExecutor;
 
     @ParameterizedTest
     @CsvSource({
@@ -51,10 +53,11 @@ class ShowHitboxesToolTest {
             "0.2,0.2,0.2,22.5",
             "0.2,0.2,0.2,45.0"
     })
-    void executeStartsScheduleThatShowsHitboxesOfNearbyEntitiesForGivenAmountOfSeconds(double height, double width, double depth, float yaw) {
+    @DisplayName("execute starts schedule that shows hitboxes of nearby entities for the given amount of seconds")
+    void execute(double hitboxHeight, double hitboxWidth, double hitboxDepth, float yaw) {
         Location baseLocation = new Location(null, 10.0, 10.0, 10.0, yaw, 0.0f);
         Location playerLocation = new Location(null, 0, 0, 0);
-        HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, height, width, depth, 0, 0, 0);
+        HitboxComponent component = new HitboxComponent(HitboxComponentType.TORSO, hitboxWidth, hitboxHeight, hitboxDepth, 0, 0, 0);
         RelativeHitbox relativeHitbox = new RelativeHitbox(Set.of(component));
         Hitbox hitbox = new Hitbox(baseLocation, relativeHitbox);
         Entity entity = mock(Entity.class);
@@ -72,7 +75,7 @@ class ShowHitboxesToolTest {
 
         when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate("Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks."));
+        when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate(TOOL_HITBOX_SUCCESS_MESSAGE));
 
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);
@@ -80,7 +83,7 @@ class ShowHitboxesToolTest {
             return null;
         }).when(schedule).addTask(any(ScheduleTask.class));
 
-        showHitboxesTool.execute(player, SECONDS, RANGE);
+        commandExecutor.execute(player, SECONDS, RANGE);
 
         verify(world, times(24)).spawnParticle(any(Particle.class), any(Location.class), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), any(DustOptions.class));
         verify(player).sendMessage("Displaying hitboxes for 10 seconds inside a range of 20.0 blocks.");

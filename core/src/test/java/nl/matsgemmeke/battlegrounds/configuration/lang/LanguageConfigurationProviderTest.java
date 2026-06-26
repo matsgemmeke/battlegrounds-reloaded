@@ -9,7 +9,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -37,6 +37,6 @@ public class LanguageConfigurationProviderTest {
         LanguageConfigurationProvider provider = new LanguageConfigurationProvider(configuration, langFolder, plugin);
         LanguageConfiguration configuration = provider.get();
 
-        assertEquals("&6&l Battlegrounds Help Menu", configuration.getString("commands.help-menu-title"));
+        assertThat(configuration.getString("commands.battlegrounds-help-menu-title")).isEqualTo("&6&l Battlegrounds Help Menu");
     }
 }

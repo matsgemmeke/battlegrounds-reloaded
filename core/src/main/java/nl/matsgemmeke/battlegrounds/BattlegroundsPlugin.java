@@ -4,10 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.j256.ormlite.logger.Level;
-import nl.matsgemmeke.battlegrounds.command.*;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
@@ -64,7 +61,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, this, pluginManager);
+        PaperCommandManager commandManager = new PaperCommandManager(this);
+
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
 
         injector = Guice.createInjector(module);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
@@ -73,31 +72,8 @@ public class BattlegroundsPlugin extends JavaPlugin {
         freeplayInitializer.initialize();
 
         this.setUpEventHandlers();
-        this.setUpCommands();
+        injector.getInstance(CommandBootstrapper.class).initialize();
         this.setUpJobs();
-    }
-
-    private void setUpCommands() {
-        BattlegroundsCommand bgCommand = injector.getInstance(BattlegroundsCommand.class);
-        ToolsCommand toolsCommand = injector.getInstance(ToolsCommand.class);
-
-        // Add all subcommands to the battlegrounds command
-        bgCommand.addSubcommand(injector.getInstance(CreateArenaCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(GiveWeaponCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(ReloadCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(RemoveArenaCommand.class));
-        bgCommand.addSubcommand(injector.getInstance(SetMainLobbyCommand.class));
-
-        // Register the command to ACF
-        PaperCommandManager commandManager = new PaperCommandManager(this);
-        commandManager.registerCommand(bgCommand);
-        commandManager.registerCommand(toolsCommand);
-
-        // Register custom conditions to ACF
-        var commandConditions = commandManager.getCommandConditions();
-        commandConditions.addCondition("freeplay-mode-presence", injector.getInstance(FreeplayModePresenceCondition.class));
-        commandConditions.addCondition(Integer.class, "existent-arena-id", injector.getInstance(ExistentArenaIdCondition.class));
-        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", injector.getInstance(NonexistentArenaIdCondition.class));
     }
 
     private void setUpEventHandlers() {

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds;
 
+import co.aikar.commands.PaperCommandManager;
 import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -135,14 +136,24 @@ public class BattlegroundsModule implements Module {
     private final File dataFolder;
     private final InternalsProvider internals;
     private final Logger logger;
+    private final PaperCommandManager commandManager;
     private final Plugin plugin;
     private final PluginManager pluginManager;
 
-    public BattlegroundsModule(BukkitScheduler bukkitScheduler, File dataFolder, InternalsProvider internals, Logger logger, Plugin plugin, PluginManager pluginManager) {
+    public BattlegroundsModule(
+            BukkitScheduler bukkitScheduler,
+            File dataFolder,
+            InternalsProvider internals,
+            Logger logger,
+            PaperCommandManager commandManager,
+            Plugin plugin,
+            PluginManager pluginManager
+    ) {
         this.bukkitScheduler = bukkitScheduler;
         this.dataFolder = dataFolder;
         this.internals = internals;
         this.logger = logger;
+        this.commandManager = commandManager;
         this.plugin = plugin;
         this.pluginManager = pluginManager;
     }
@@ -154,6 +165,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(Clock.class).toInstance(Clock.systemUTC());
         binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
+        binder.bind(PaperCommandManager.class).toInstance(commandManager);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
         binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);

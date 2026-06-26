@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tool;
+package nl.matsgemmeke.battlegrounds.command.tools;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
@@ -21,7 +21,7 @@ import org.bukkit.util.Vector;
 
 import java.util.Map;
 
-public class ShowHitboxesTool {
+public class ShowHitboxesCommandExecutor {
 
     private static final long SCHEDULE_DELAY = 0L;
     private static final long SCHEDULE_INTERVAL = 1L;
@@ -42,7 +42,7 @@ public class ShowHitboxesTool {
     private final Translator translator;
 
     @Inject
-    public ShowHitboxesTool(HitboxResolver hitboxResolver, Scheduler scheduler, Translator translator) {
+    public ShowHitboxesCommandExecutor(HitboxResolver hitboxResolver, Scheduler scheduler, Translator translator) {
         this.hitboxResolver = hitboxResolver;
         this.scheduler = scheduler;
         this.translator = translator;

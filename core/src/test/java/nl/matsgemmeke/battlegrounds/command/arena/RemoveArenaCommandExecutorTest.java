@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.command.arena;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -11,19 +11,29 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.io.File;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class RemoveArenaCommandTest {
+class RemoveArenaCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String MESSAGE = "hello";
 
+    @TempDir
+    private static File tempDir;
     @Mock
     private CommandSender sender;
+    @Spy
+    private File arenasFolder = new File(tempDir, "/arenas");
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
@@ -32,15 +42,14 @@ class RemoveArenaCommandTest {
     private Scheduler scheduler;
     @Mock
     private Translator translator;
-
-    private RemoveArenaCommand command;
+    @InjectMocks
+    private RemoveArenaCommandExecutor commandExecutor;
 
     @BeforeEach
     void setUp() {
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.DESCRIPTION_REMOVEARENA.getPath())).thenReturn(new TextTemplate("description"));
 
-        command = new RemoveArenaCommand(gameContextProvider, scheduler, translator);
+        arenasFolder.mkdirs();
     }
 
     @Test
@@ -48,7 +57,7 @@ class RemoveArenaCommandTest {
     void execute_firstExecution() {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
         verify(scheduler).createSingleRunSchedule(200L);
@@ -61,8 +70,8 @@ class RemoveArenaCommandTest {
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, ARENA_ID);
-        command.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
 
         verify(sender).sendMessage(MESSAGE);
     }
@@ -70,12 +79,17 @@ class RemoveArenaCommandTest {
     @Test
     @DisplayName("execute removes arena and notifies command sender")
     void execute_successfulArenaRemoval() {
+        File arenaFolder = new File(arenasFolder, "arena-" + ARENA_ID);
+        arenaFolder.mkdirs();
+
         when(gameContextProvider.removeArena(ARENA_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
-        command.execute(sender, ARENA_ID);
-        command.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
+        commandExecutor.execute(sender, ARENA_ID);
+
+        assertThat(arenaFolder).doesNotExist();
 
         verify(sender).sendMessage(MESSAGE);
     }

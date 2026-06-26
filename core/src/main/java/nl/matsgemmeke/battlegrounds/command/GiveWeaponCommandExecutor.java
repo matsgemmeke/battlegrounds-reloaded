@@ -17,7 +17,7 @@ import org.bukkit.entity.Player;
 
 import java.util.Map;
 
-public class GiveWeaponCommand extends CommandSource {
+public class GiveWeaponCommandExecutor {
 
     private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
 
@@ -29,7 +29,7 @@ public class GiveWeaponCommand extends CommandSource {
     private final Translator translator;
 
     @Inject
-    public GiveWeaponCommand(
+    public GiveWeaponCommandExecutor(
             GameContextProvider gameContextProvider,
             GameScope gameScope,
             ItemSpecRegistry itemSpecRegistry,
@@ -37,7 +37,6 @@ public class GiveWeaponCommand extends CommandSource {
             Provider<ItemCreator> itemCreatorProvider,
             Provider<PlayerRegistry> playerRegistryProvider
     ) {
-        super("giveweapon", translator.translate(TranslationKey.DESCRIPTION_GIVEWEAPON.getPath()).getText(), "bg giveweapon <weapon>");
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.itemSpecRegistry = itemSpecRegistry;
