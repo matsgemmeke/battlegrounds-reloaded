@@ -1,13 +1,16 @@
 package nl.matsgemmeke.battlegrounds.command.arena;
 
 import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.util.FileUtil;
 import org.bukkit.command.CommandSender;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -16,13 +19,15 @@ public class RemoveArenaCommandExecutor {
 
     private static final long CONFIRM_LIST_COOLDOWN = 200L;
 
+    private final File arenasFolder;
     private final GameContextProvider gameContextProvider;
     private final List<CommandSender> confirmList;
     private final Scheduler scheduler;
     private final Translator translator;
 
     @Inject
-    public RemoveArenaCommandExecutor(GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
+    public RemoveArenaCommandExecutor(@Named("ArenasFolder") File arenasFolder, GameContextProvider gameContextProvider, Scheduler scheduler, Translator translator) {
+        this.arenasFolder = arenasFolder;
         this.gameContextProvider = gameContextProvider;
         this.scheduler = scheduler;
         this.translator = translator;
@@ -51,6 +56,9 @@ public class RemoveArenaCommandExecutor {
         }
 
         confirmList.remove(sender);
+
+        File arenaFolder = new File(arenasFolder, "arena-" + id);
+        FileUtil.deleteFolder(arenaFolder);
 
         String removedMessage = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
         sender.sendMessage(removedMessage);

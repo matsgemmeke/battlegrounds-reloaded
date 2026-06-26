@@ -46,7 +46,7 @@ class CommandBootstrapperTest {
     @BeforeEach
     void setUp() {
         when(commandManager.getCommandConditions()).thenReturn(commandConditions);
-        when(translator.translate(anyString())).thenReturn(new TextTemplate("description"));
+        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
     }
 
     @Test
@@ -54,7 +54,7 @@ class CommandBootstrapperTest {
     void initialize() {
         commandBootstrapper.initialize();
 
-        verify(bgCommand, times(4)).addCommandInfo(any(CommandInfo.class));
+        verify(bgCommand, times(5)).addCommandInfo(any(CommandInfo.class));
         verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
         verify(toolsCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
