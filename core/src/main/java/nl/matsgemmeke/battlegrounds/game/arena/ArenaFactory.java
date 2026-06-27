@@ -49,6 +49,6 @@ public class ArenaFactory {
         settingsConfiguration.load();
         settingsConfiguration.saveArenaSettings(spec);
 
-        return new Arena(settings);
+        return new Arena(id, settings);
     }
 }

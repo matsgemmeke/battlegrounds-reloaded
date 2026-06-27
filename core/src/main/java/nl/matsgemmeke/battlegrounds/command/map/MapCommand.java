@@ -51,7 +51,7 @@ public class MapCommand extends BaseCommand {
         }
     }
 
-    @CommandCompletion("<id> <name>")
+    @CommandCompletion("@arena-id <name>")
     @CommandPermission("battlegrounds.map.create")
     @Subcommand("create")
     public void onCreate(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId, String mapName) {

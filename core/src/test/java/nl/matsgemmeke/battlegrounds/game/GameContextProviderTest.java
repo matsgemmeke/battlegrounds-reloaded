@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -55,6 +56,21 @@ class GameContextProviderTest {
         boolean assigned = gameContextProvider.assignFreeplay(otherFreeplay);
 
         assertThat(assigned).isFalse();
+    }
+
+    @Test
+    @DisplayName("getArenaIds returns all id's from registered arenas")
+    void getArenaIds() {
+        Freeplay freeplay = mock(Freeplay.class);
+
+        Arena arena = mock(Arena.class);
+        when(arena.getId()).thenReturn(ARENA_ID);
+
+        gameContextProvider.addArena(GameKey.ofArena(ARENA_ID), arena);
+        gameContextProvider.assignFreeplay(freeplay);
+        List<Integer> arenaIds = gameContextProvider.getArenaIds();
+
+        assertThat(arenaIds).containsExactly(ARENA_ID);
     }
 
     @Test

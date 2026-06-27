@@ -7,10 +7,16 @@ import nl.matsgemmeke.battlegrounds.game.BaseGame;
  */
 public class Arena extends BaseGame {
 
+    private final int id;
     private final ArenaSettings settings;
 
-    public Arena(ArenaSettings settings) {
+    public Arena(int id, ArenaSettings settings) {
+        this.id = id;
         this.settings = settings;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public ArenaSettings getSettings() {

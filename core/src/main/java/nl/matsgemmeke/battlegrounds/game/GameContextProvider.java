@@ -63,6 +63,19 @@ public class GameContextProvider {
     }
 
     /**
+     * Returns a list of id's of all arenas that are currently registered.
+     *
+     * @return a list of all arena id's
+     */
+    public List<Integer> getArenaIds() {
+        return games.values().stream()
+                .filter(Arena.class::isInstance)
+                .map(Arena.class::cast)
+                .map(Arena::getId)
+                .toList();
+    }
+
+    /**
      * Gets the game context by their game key. The return optional is empty when none of the registered game context
      * has the given game key.
      *

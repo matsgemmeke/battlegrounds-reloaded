@@ -51,7 +51,8 @@ class ArenaFactoryTest {
 
         Arena arena = arenaFactory.create(ARENA_ID, settings);
 
-        assertThat(arena).isNotNull();
+        assertThat(arena.getId()).isEqualTo(ARENA_ID);
+        assertThat(arena.getSettings()).isNotNull();
 
         ArgumentCaptor<File> settingsFileCaptor = ArgumentCaptor.forClass(File.class);
         verify(arenaSettingsConfigurationFactory).create(settingsFileCaptor.capture(), eq(resource));
