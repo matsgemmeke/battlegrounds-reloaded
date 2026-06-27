@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -36,6 +37,10 @@ public class CommandBootstrapper {
     private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
     private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
 
+    private static final String MAP_COMMAND_USAGE = "/bg arena map";
+    private static final String MAP_COMMAND_SUGGESTION = "/bg arena map";
+    private static final String[] MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map" };
+
     private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <id>";
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
@@ -49,6 +54,7 @@ public class CommandBootstrapper {
 
     private final BattlegroundsCommand bgCommand;
     private final ArenaCommand arenaCommand;
+    private final MapCommand mapCommand;
     private final ToolsCommand toolsCommand;
 
     private final ExistentArenaIdCondition existentArenaIdCondition;
@@ -61,6 +67,7 @@ public class CommandBootstrapper {
             Translator translator,
             BattlegroundsCommand bgCommand,
             ArenaCommand arenaCommand,
+            MapCommand mapCommand,
             ToolsCommand toolsCommand,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
@@ -70,6 +77,7 @@ public class CommandBootstrapper {
         this.translator = translator;
         this.bgCommand = bgCommand;
         this.arenaCommand = arenaCommand;
+        this.mapCommand = mapCommand;
         this.toolsCommand = toolsCommand;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
@@ -79,6 +87,7 @@ public class CommandBootstrapper {
     public void initialize() {
         this.registerBattlegroundsCommand();
         this.registerArenaCommand();
+        this.registerMapCommand();
         this.registerToolsCommand();
         this.registerConditions();
     }
@@ -107,15 +116,22 @@ public class CommandBootstrapper {
 
     private void registerArenaCommand() {
         String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
+        String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
 
         CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS);
+        CommandInfo mapCommandInfo = new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS);
         CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS);
 
         arenaCommand.addCommandInfo(createArenaCommandInfo);
+        arenaCommand.addCommandInfo(mapCommandInfo);
         arenaCommand.addCommandInfo(removeArenaCommandInfo);
 
         commandManager.registerCommand(arenaCommand);
+    }
+
+    private void registerMapCommand() {
+        commandManager.registerCommand(mapCommand);
     }
 
     private void registerToolsCommand() {
