@@ -16,6 +16,7 @@ public class ArenaFactory {
 
     private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     private final ArenaSettingsMapper arenaSettingsMapper;
+    private final ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
     private final File arenasFolder;
     private final Plugin plugin;
 
@@ -23,11 +24,13 @@ public class ArenaFactory {
     public ArenaFactory(
             ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
             ArenaSettingsMapper arenaSettingsMapper,
+            ArenaSetupConfigurationFactory arenaSetupConfigurationFactory,
             @Named("ArenasFolder") File arenasFolder,
             Plugin plugin
     ) {
         this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
         this.arenaSettingsMapper = arenaSettingsMapper;
+        this.arenaSetupConfigurationFactory = arenaSetupConfigurationFactory;
         this.arenasFolder = arenasFolder;
         this.plugin = plugin;
     }
@@ -40,14 +43,20 @@ public class ArenaFactory {
      * @return         a new arena instance
      */
     public Arena create(int id, ArenaSettings settings) {
-        File settingsDirectory = new File(arenasFolder, "arena-" + id);
-        File settingsFile = new File(settingsDirectory, "settings.yml");
-        InputStream resource = plugin.getResource("arenas/settings.yml");
+        File arenaFolder = new File(arenasFolder, "arena-" + id);
+        File settingsFile = new File(arenaFolder, "settings.yml");
+        File setupFile = new File(arenaFolder, "setup.yml");
+
+        InputStream settingsResource = plugin.getResource("arenas/settings.yml");
         ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(settings);
 
-        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, resource);
+        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, settingsResource);
         settingsConfiguration.load();
         settingsConfiguration.saveArenaSettings(spec);
+
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(setupFile);
+        setupConfiguration.load();
+        setupConfiguration.save();
 
         return new Arena(id, settings);
     }
