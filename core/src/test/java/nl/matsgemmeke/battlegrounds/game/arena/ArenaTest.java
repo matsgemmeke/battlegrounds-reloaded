@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.arena;
 
+import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

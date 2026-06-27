@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
+import nl.matsgemmeke.battlegrounds.game.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
@@ -73,6 +74,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         this.setUpEventHandlers();
         injector.getInstance(CommandBootstrapper.class).initialize();
+        injector.getInstance(ArenaSetupLoader.class).loadArenas();
         this.setUpJobs();
     }
 

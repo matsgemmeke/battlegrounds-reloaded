@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.arena;
 
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
+import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 
 /**
  * Represents an arena which groups multiple players to play various kinds of game modes.

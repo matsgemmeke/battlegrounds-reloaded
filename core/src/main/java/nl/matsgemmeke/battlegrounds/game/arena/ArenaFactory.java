@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.arena;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
+import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.*;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
 import org.bukkit.plugin.Plugin;

@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.arena;
 
+import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.*;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
 import org.bukkit.plugin.Plugin;
