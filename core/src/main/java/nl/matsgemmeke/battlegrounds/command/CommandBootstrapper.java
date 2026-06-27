@@ -45,6 +45,10 @@ public class CommandBootstrapper {
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
+    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
+    private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
+    private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
+
     private static final String SHOW_HITBOXES_COMMAND_USAGE = "/bg tools showhitboxes <seconds> <range>";
     private static final String SHOW_HITBOXES_COMMAND_SUGGESTION = "/bg tools showhitboxes ";
     private static final String[] SHOW_HITBOXES_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools.showhitboxes" };
@@ -131,6 +135,12 @@ public class CommandBootstrapper {
     }
 
     private void registerMapCommand() {
+        String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
+
+        CommandInfo createMapCommandInfo = new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS);
+
+        mapCommand.addCommandInfo(createMapCommandInfo);
+
         commandManager.registerCommand(mapCommand);
     }
 

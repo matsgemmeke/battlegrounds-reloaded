@@ -23,6 +23,9 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class MapCommandTest {
 
+    private static final int ARENA_ID = 1;
+    private static final String MAP_NAME = "The Map";
+
     private static final String MAP_HELP_MENU_TITLE = "map help menu";
     private static final String SUBCOMMAND_DESCRIPTION = "just a map command";
     private static final String SUBCOMMAND_USAGE = "/bg arena map test <nr>";
@@ -32,6 +35,8 @@ class MapCommandTest {
 
     @Mock
     private CommandSender sender;
+    @Mock
+    private CreateMapCommandExecutor createMapCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -76,5 +81,13 @@ class MapCommandTest {
         command.onDefault(sender, null);
 
         verify(helpMenu).sendHelpMenuAsNormalMessages(sender, MAP_HELP_MENU_TITLE, List.of(commandInfo));
+    }
+
+    @Test
+    @DisplayName("onCreate delegates to create map executor")
+    void onCreate() {
+        command.onCreate(sender, ARENA_ID, MAP_NAME);
+
+        verify(createMapCommandExecutor).execute(sender, ARENA_ID, MAP_NAME);
     }
 }

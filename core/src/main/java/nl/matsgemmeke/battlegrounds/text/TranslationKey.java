@@ -14,6 +14,7 @@ public enum TranslationKey {
     COMMAND_SENDER_MUST_BE_PLAYER("errors.command-sender-must-be-player"),
     DESCRIPTION_ARENA("commands.description-arena"),
     DESCRIPTION_CREATE_ARENA("commands.description-create-arena"),
+    DESCRIPTION_CREATE_MAP("commands.description-create-map"),
     DESCRIPTION_GIVE_WEAPON("commands.description-give-weapon"),
     DESCRIPTION_MAP("commands.description-map"),
     DESCRIPTION_RELOAD("commands.description-reload"),

@@ -1,10 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command.map;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
@@ -21,12 +18,14 @@ import java.util.List;
 @Subcommand("arena map")
 public class MapCommand extends BaseCommand {
 
+    private final CreateMapCommandExecutor createMapCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public MapCommand(HelpMenu helpMenu, Translator translator) {
+    public MapCommand(CreateMapCommandExecutor createMapCommandExecutor, HelpMenu helpMenu, Translator translator) {
+        this.createMapCommandExecutor = createMapCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -50,5 +49,12 @@ public class MapCommand extends BaseCommand {
         } else {
             helpMenu.sendHelpMenuAsNormalMessages(sender, title, commandInfoList);
         }
+    }
+
+    @CommandCompletion("<id> <name>")
+    @CommandPermission("battlegrounds.map.create")
+    @Subcommand("create")
+    public void onCreate(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId, String mapName) {
+        createMapCommandExecutor.execute(sender, arenaId, mapName);
     }
 }
