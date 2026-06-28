@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.game.arena.loading;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
+import nl.matsgemmeke.battlegrounds.util.TextUtil;
 
 import java.io.File;
 import java.util.Arrays;
@@ -18,7 +19,7 @@ public class ArenaSetupLoader {
     private final Logger logger;
 
     @Inject
-    public ArenaSetupLoader(ArenaLoader arenaLoader, @Named("ArenasFolder") File arenasFolder, Logger logger) {
+    public ArenaSetupLoader(ArenaLoader arenaLoader, @Named("ArenasFolder") File arenasFolder, @Named("Battlegrounds") Logger logger) {
         this.arenaLoader = arenaLoader;
         this.arenasFolder = arenasFolder;
         this.logger = logger;
@@ -36,7 +37,10 @@ public class ArenaSetupLoader {
                 .filter(file -> file.isDirectory() && file.getName().startsWith("arena-"))
                 .toList();
 
-        logger.info("Attempting to load %s saved arenas".formatted(arenaFolders.size()));
+        int arenaCount = arenaFolders.size();
+        String arenaNoun = TextUtil.pluralize(arenaCount, "arena", "arenas");
+
+        logger.info("Attempting to load %s saved %s".formatted(arenaCount, arenaNoun));
 
         for (File arenaFolder : arenaFolders) {
             try {

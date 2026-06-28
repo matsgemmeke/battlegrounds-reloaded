@@ -53,6 +53,6 @@ class SaveDamageEventsJobTest {
 
         assertThat(savedDamageEventsCaptor.getValue()).containsExactly(damageEvent);
 
-        verify(logger).info("[Battlegrounds] Saved 1 damage event to the database");
+        verify(logger).info("Saved 1 damage event to the database");
     }
 }

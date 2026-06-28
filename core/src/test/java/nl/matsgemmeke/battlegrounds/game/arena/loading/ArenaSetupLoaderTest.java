@@ -66,7 +66,7 @@ class ArenaSetupLoaderTest {
         arenaSetupLoader = new ArenaSetupLoader(arenaLoader, arenasFolder, logger);
         arenaSetupLoader.loadArenas();
 
-        verify(logger).info("Attempting to load 1 saved arenas");
+        verify(logger).info("Attempting to load 1 saved arena");
         verify(arenaLoader).loadArena(eq(1), argThat(file -> file.equals(new File("src/test/resources/arena-setups/valid/arena-1"))));
     }
 

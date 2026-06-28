@@ -53,7 +53,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSetupConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
@@ -256,8 +255,6 @@ public class BattlegroundsModule implements Module {
         // Factory bindings
         binder.install(new FactoryModuleBuilder()
                 .build(ArenaSettingsConfigurationFactory.class));
-        binder.install(new FactoryModuleBuilder()
-                .build(ArenaSetupConfigurationFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .build(DeploymentFactory.class));
