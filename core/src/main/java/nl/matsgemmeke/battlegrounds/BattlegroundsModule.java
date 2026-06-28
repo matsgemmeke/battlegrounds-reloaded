@@ -117,6 +117,7 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import nl.matsgemmeke.battlegrounds.validation.GuiceConstraintValidatorFactory;
 import org.bukkit.plugin.Plugin;
@@ -168,6 +169,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(PaperCommandManager.class).toInstance(commandManager);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
+        binder.bind(ResourceProvider.class).toInstance(plugin::getResource);
         binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);

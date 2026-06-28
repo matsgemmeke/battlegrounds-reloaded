@@ -32,7 +32,7 @@ class ArenaSettingsConfigurationTest {
     }
 
     @Test
-    @DisplayName("getArenaSettings throws InvalidArenaConfigurationSpecException when values in configuration are invalid")
+    @DisplayName("getArenaSettings throws InvalidArenaSettingsSpecException when values in configuration are invalid")
     void getArenaSettings_invalid() throws FileNotFoundException {
         File resourceFile = new File("src/test/resources/arena-settings-configuration/invalid/settings.yml");
         InputStream resource = new FileInputStream(resourceFile);
@@ -41,8 +41,8 @@ class ArenaSettingsConfigurationTest {
         configuration.load();
 
         assertThatThrownBy(configuration::getArenaSettings)
-                .isInstanceOf(InvalidArenaConfigurationSpecException.class)
-                .hasMessage("Failed to load arena configuration specification");
+                .isInstanceOf(InvalidArenaSettingsSpecException.class)
+                .hasMessage("Failed to load arena settings specification");
     }
 
     @Test
@@ -61,7 +61,7 @@ class ArenaSettingsConfigurationTest {
     }
 
     @Test
-    @DisplayName("saveArenaSettings throws InvalidArenaConfigurationSpecException when given spec is invalid")
+    @DisplayName("saveArenaSettings throws InvalidArenaSettingsSpecException when given spec is invalid")
     void saveArenaSettings_invalid() throws FileNotFoundException {
         File resourceFile = new File("src/test/resources/arena-settings-configuration/valid/settings.yml");
         InputStream resource = new FileInputStream(resourceFile);
@@ -71,7 +71,7 @@ class ArenaSettingsConfigurationTest {
         configuration.load();
 
         assertThatThrownBy(() -> configuration.saveArenaSettings(spec))
-                .isInstanceOf(InvalidArenaConfigurationSpecException.class)
+                .isInstanceOf(InvalidArenaSettingsSpecException.class)
                 .hasMessage("Cannot save invalid arena settings specification");
     }
 

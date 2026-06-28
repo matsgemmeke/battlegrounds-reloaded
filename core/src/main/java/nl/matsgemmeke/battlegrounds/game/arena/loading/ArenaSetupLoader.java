@@ -40,7 +40,7 @@ public class ArenaSetupLoader {
         int arenaCount = arenaFolders.size();
         String arenaNoun = TextUtil.pluralize(arenaCount, "arena", "arenas");
 
-        logger.info("Attempting to load %s saved %s".formatted(arenaCount, arenaNoun));
+        logger.info("Found %s saved %s".formatted(arenaCount, arenaNoun));
 
         for (File arenaFolder : arenaFolders) {
             try {

@@ -34,7 +34,7 @@ public class ArenaSettingsConfiguration extends BasePluginConfiguration {
             objectValidator.validate(spec);
             return spec;
         } catch (ValidationException ex) {
-            throw new InvalidArenaConfigurationSpecException("Failed to load arena configuration specification", ex);
+            throw new InvalidArenaSettingsSpecException("Failed to load arena settings specification", ex);
         }
     }
 
@@ -42,7 +42,7 @@ public class ArenaSettingsConfiguration extends BasePluginConfiguration {
         try {
             objectValidator.validate(spec);
         } catch (ValidationException ex) {
-            throw new InvalidArenaConfigurationSpecException("Cannot save invalid arena settings specification", ex);
+            throw new InvalidArenaSettingsSpecException("Cannot save invalid arena settings specification", ex);
         }
 
         this.set(LOBBY_COUNTDOWN_LENGTH_PATH, spec.lobbyCountdownLength());
