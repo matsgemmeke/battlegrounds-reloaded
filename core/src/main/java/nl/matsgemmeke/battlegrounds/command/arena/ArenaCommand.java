@@ -61,8 +61,8 @@ public class ArenaCommand extends BaseCommand {
     @CommandCompletion("<id>")
     @CommandPermission("battlegrounds.arena.create")
     @Subcommand("create")
-    public void onCreate(CommandSender sender, @Conditions("nonexistent-arena-id") Integer id) {
-        createArenaCommandExecutor.execute(sender, id);
+    public void onCreate(Player player, @Conditions("nonexistent-arena-id") Integer id) {
+        createArenaCommandExecutor.execute(player, id);
     }
 
     @CommandCompletion("@arena-id")

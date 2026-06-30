@@ -34,9 +34,9 @@ class ArenaCommandTest {
     @Mock
     private RemoveArenaCommandExecutor removeArenaCommandExecutor;
     @Mock
-    private CommandSender sender;
-    @Mock
     private HelpMenu helpMenu;
+    @Mock
+    private Player player;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -49,16 +49,15 @@ class ArenaCommandTest {
 
         when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate(UNKNOWN_COMMAND_MESSAGE));
 
-        command.onDefault(sender, args);
+        command.onDefault(player, args);
 
-        verify(sender).sendMessage(UNKNOWN_COMMAND_MESSAGE);
+        verify(player).sendMessage(UNKNOWN_COMMAND_MESSAGE);
     }
 
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
     void onDefault_playerSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
-        Player player = mock(Player.class);
 
         when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
 
@@ -72,6 +71,7 @@ class ArenaCommandTest {
     @DisplayName("onDefault shows help menu to sender as normal messages")
     void onDefault_consoleSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        CommandSender sender = mock(CommandSender.class);
 
         when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
 
@@ -84,16 +84,16 @@ class ArenaCommandTest {
     @Test
     @DisplayName("onCreate delegates to create arena executor")
     void onCreate() {
-        command.onCreate(sender, ARENA_ID);
+        command.onCreate(player, ARENA_ID);
 
-        verify(createArenaCommandExecutor).execute(sender, ARENA_ID);
+        verify(createArenaCommandExecutor).execute(player, ARENA_ID);
     }
 
     @Test
     @DisplayName("onRemove delegates to create arena executor")
     void onRemove() {
-        command.onRemove(sender, ARENA_ID);
+        command.onRemove(player, ARENA_ID);
 
-        verify(removeArenaCommandExecutor).execute(sender, ARENA_ID);
+        verify(removeArenaCommandExecutor).execute(player, ARENA_ID);
     }
 }

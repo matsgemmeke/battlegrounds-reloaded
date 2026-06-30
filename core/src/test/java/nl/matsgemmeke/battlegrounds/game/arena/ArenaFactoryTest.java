@@ -16,6 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.InputStream;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -24,7 +28,9 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ArenaFactoryTest {
 
+    private static final Instant INSTANT = Instant.parse("2026-01-01T12:00:00.00Z");
     private static final int ARENA_ID = 1;
+    private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
     private ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
@@ -32,6 +38,8 @@ class ArenaFactoryTest {
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
     private ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    @Spy
+    private Clock clock = Clock.fixed(INSTANT, ZoneOffset.UTC);
     @TempDir
     @Spy
     private File arenasFolder;
@@ -52,7 +60,7 @@ class ArenaFactoryTest {
         when(arenaSettingsConfigurationFactory.create(any(File.class), eq(resource))).thenReturn(settingsConfiguration);
         when(arenaSetupConfigurationFactory.create(any(File.class))).thenReturn(setupConfiguration);
 
-        Arena arena = arenaFactory.create(ARENA_ID, settings);
+        Arena arena = arenaFactory.create(ARENA_ID, settings, PLAYER_ID);
 
         assertThat(arena.getId()).isEqualTo(ARENA_ID);
         assertThat(arena.getSettings()).isNotNull();
@@ -77,5 +85,8 @@ class ArenaFactoryTest {
         assertThat(setupFileCaptor.getValue().getPath()).endsWith("arena-1" + File.separator + "setup.yml");
 
         verify(settingsConfiguration).load();
+        verify(setupConfiguration).setCreatedAt(INSTANT);
+        verify(setupConfiguration).setCreatedBy(PLAYER_ID);
+        verify(setupConfiguration).save();
     }
 }

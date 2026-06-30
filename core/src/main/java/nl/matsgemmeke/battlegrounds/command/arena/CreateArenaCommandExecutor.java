@@ -8,9 +8,10 @@ import nl.matsgemmeke.battlegrounds.game.arena.ArenaFactory;
 import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.UUID;
 
 public class CreateArenaCommandExecutor {
 
@@ -25,9 +26,11 @@ public class CreateArenaCommandExecutor {
         this.translator = translator;
     }
 
-    public void execute(CommandSender sender, int id) {
+    public void execute(Player player, int id) {
         ArenaSettings settings = ArenaSettings.getDefaultSettings();
-        Arena arena = arenaFactory.create(id, settings);
+        UUID uniqueId = player.getUniqueId();
+
+        Arena arena = arenaFactory.create(id, settings, uniqueId);
         GameKey gameKey = GameKey.ofArena(id);
 
         Map<String, Object> values = Map.of("bg_arena", id);
@@ -39,6 +42,6 @@ public class CreateArenaCommandExecutor {
             message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
         }
 
-        sender.sendMessage(message);
+        player.sendMessage(message);
     }
 }
