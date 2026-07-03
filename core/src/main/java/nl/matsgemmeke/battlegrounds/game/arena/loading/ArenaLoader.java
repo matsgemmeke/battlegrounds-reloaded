@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.arena.loading;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
@@ -46,9 +47,9 @@ public class ArenaLoader {
 
         File settingsFile = new File(arenaFolder, ARENA_SETTINGS_FILE_NAME);
         InputStream settingsResource = resourceProvider.getResource(ARENA_SETTINGS_RESOURCE);
+        YamlConfigurationFile configurationFile = new YamlConfigurationFile(settingsFile, settingsResource);
 
-        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, settingsResource);
-        settingsConfiguration.load();
+        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(configurationFile);
 
         ArenaSettingsSpec settingsSpec = this.getArenaSettingsSpec(arenaId, settingsConfiguration);
         ArenaSettings settings = arenaSettingsMapper.toDomain(settingsSpec);

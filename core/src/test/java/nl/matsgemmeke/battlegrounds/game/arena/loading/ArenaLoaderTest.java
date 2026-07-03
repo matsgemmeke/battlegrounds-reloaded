@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.arena.loading;
 
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.arena.Arena;
@@ -55,7 +56,7 @@ class ArenaLoaderTest {
         when(settingsConfiguration.getArenaSettings()).thenThrow(new InvalidArenaSettingsSpecException("error"));
 
         when(resourceProvider.getResource("arenas/settings.yml")).thenReturn(settingsResource);
-        when(arenaSettingsConfigurationFactory.create(argThat(file -> file.equals(new File("src/test/resources/arena-setups/valid/arena-1/settings.yml"))), eq(settingsResource))).thenReturn(settingsConfiguration);
+        when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
 
         assertThatThrownBy(() -> arenaLoader.loadArena(ARENA_ID, arenaFolder))
                 .isInstanceOf(InvalidArenaSetupException.class)
@@ -73,7 +74,7 @@ class ArenaLoaderTest {
         when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);
 
         when(resourceProvider.getResource("arenas/settings.yml")).thenReturn(settingsResource);
-        when(arenaSettingsConfigurationFactory.create(argThat(file -> file.equals(new File("src/test/resources/arena-setups/valid/arena-1/settings.yml"))), eq(settingsResource))).thenReturn(settingsConfiguration);
+        when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
 
         arenaLoader.loadArena(ARENA_ID, arenaFolder);
 
@@ -88,7 +89,5 @@ class ArenaLoaderTest {
                 assertThat(settings.getMinPlayers()).isEqualTo(MIN_PLAYERS);
             });
         });
-
-        verify(settingsConfiguration).load();
     }
 }

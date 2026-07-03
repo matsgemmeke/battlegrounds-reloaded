@@ -1,9 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.configuration;
 
-import java.io.File;
-import java.io.InputStream;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 
 public interface ArenaSettingsConfigurationFactory {
 
-    ArenaSettingsConfiguration create(File file, InputStream resource);
+    ArenaSettingsConfiguration create(ConfigurationFile configurationFile);
 }

@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.game.arena;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
 import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.*;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
@@ -24,6 +26,7 @@ public class ArenaFactory {
     private final Clock clock;
     private final File arenasFolder;
     private final Plugin plugin;
+    private final YamlConfigurationFileFactory yamlConfigurationFileFactory;
 
     @Inject
     public ArenaFactory(
@@ -32,7 +35,8 @@ public class ArenaFactory {
             ArenaSetupConfigurationFactory arenaSetupConfigurationFactory,
             Clock clock,
             @Named("ArenasFolder") File arenasFolder,
-            Plugin plugin
+            Plugin plugin,
+            YamlConfigurationFileFactory yamlConfigurationFileFactory
     ) {
         this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
         this.arenaSettingsMapper = arenaSettingsMapper;
@@ -40,6 +44,7 @@ public class ArenaFactory {
         this.clock = clock;
         this.arenasFolder = arenasFolder;
         this.plugin = plugin;
+        this.yamlConfigurationFileFactory = yamlConfigurationFileFactory;
     }
 
     /**
@@ -52,17 +57,22 @@ public class ArenaFactory {
      */
     public Arena create(int id, ArenaSettings settings, UUID createdBy) {
         File arenaFolder = new File(arenasFolder, "arena-" + id);
-        File settingsFile = new File(arenaFolder, "settings.yml");
-        File setupFile = new File(arenaFolder, "setup.yml");
 
+        // Create settings.yml file
+        File settingsFile = new File(arenaFolder, "settings.yml");
         InputStream settingsResource = plugin.getResource("arenas/settings.yml");
+        YamlConfigurationFile settingsConfigurationFile = yamlConfigurationFileFactory.create(settingsFile, settingsResource);
+
         ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(settings);
 
-        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsFile, settingsResource);
-        settingsConfiguration.load();
+        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsConfigurationFile);
         settingsConfiguration.saveArenaSettings(spec);
 
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(setupFile);
+        // Create setup.yml file
+        File setupFile = new File(arenaFolder, "setup.yml");
+        YamlConfigurationFile setupConfigurationFile = yamlConfigurationFileFactory.create(setupFile);
+
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(setupConfigurationFile);
         setupConfiguration.setCreatedAt(Instant.now(clock));
         setupConfiguration.setCreatedBy(createdBy);
         setupConfiguration.save();

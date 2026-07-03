@@ -44,6 +44,32 @@ class YamlConfigurationFileTest {
     }
 
     @Test
+    @DisplayName("getInt returns empty optional when given path is not an int")
+    void getInt_notAnInt() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        yamlConfigurationFile.load();
+
+        assertThat(yamlConfigurationFile.getInt("hello")).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getInt returns optional with int value from given path")
+    void getInt_successful() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        yamlConfigurationFile.load();
+
+        assertThat(yamlConfigurationFile.getInt("int")).hasValue(100);
+    }
+
+    @Test
     @DisplayName("set sets value in yaml configuration")
     void set() {
         File yamlFile = new File(tempDir, "test.yml");

@@ -1,15 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.configuration;
 
-import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 
-import java.io.File;
+public interface ArenaSetupConfigurationFactory {
 
-public class ArenaSetupConfigurationFactory {
-
-    public ArenaSetupConfiguration create(File file) {
-        YamlConfigurationFile configurationFile = new YamlConfigurationFile(file);
-        configurationFile.load();
-
-        return new ArenaSetupConfiguration(configurationFile);
-    }
+    ArenaSetupConfiguration create(ConfigurationFile configurationFile);
 }

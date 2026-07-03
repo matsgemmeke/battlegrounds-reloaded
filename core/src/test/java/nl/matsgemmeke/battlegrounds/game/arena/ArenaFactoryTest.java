@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.game.arena;
 
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
 import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.*;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
@@ -45,6 +48,8 @@ class ArenaFactoryTest {
     private File arenasFolder;
     @Mock
     private Plugin plugin;
+    @Mock
+    private YamlConfigurationFileFactory yamlConfigurationFileFactory;
     @InjectMocks
     private ArenaFactory arenaFactory;
 
@@ -55,26 +60,22 @@ class ArenaFactoryTest {
         ArenaSettings settings = ArenaSettings.getDefaultSettings();
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        YamlConfigurationFile settingsConfigurationFile = mock(YamlConfigurationFile.class);
+        YamlConfigurationFile setupConfigurationFile = mock(YamlConfigurationFile.class);
 
         when(plugin.getResource("arenas/settings.yml")).thenReturn(resource);
-        when(arenaSettingsConfigurationFactory.create(any(File.class), eq(resource))).thenReturn(settingsConfiguration);
-        when(arenaSetupConfigurationFactory.create(any(File.class))).thenReturn(setupConfiguration);
+        when(yamlConfigurationFileFactory.create(new File(arenasFolder, "arena-1" + File.separator + "settings.yml"), resource)).thenReturn(settingsConfigurationFile);
+        when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
+        when(yamlConfigurationFileFactory.create(new File(arenasFolder, "arena-1" + File.separator + "setup.yml"))).thenReturn(setupConfigurationFile);
+        when(arenaSetupConfigurationFactory.create(setupConfigurationFile)).thenReturn(setupConfiguration);
 
         Arena arena = arenaFactory.create(ARENA_ID, settings, PLAYER_ID);
 
         assertThat(arena.getId()).isEqualTo(ARENA_ID);
         assertThat(arena.getSettings()).isNotNull();
 
-        ArgumentCaptor<File> settingsFileCaptor = ArgumentCaptor.forClass(File.class);
-        verify(arenaSettingsConfigurationFactory).create(settingsFileCaptor.capture(), eq(resource));
-
         ArgumentCaptor<ArenaSettingsSpec> settingsSpecCaptor = ArgumentCaptor.forClass(ArenaSettingsSpec.class);
         verify(settingsConfiguration).saveArenaSettings(settingsSpecCaptor.capture());
-
-        ArgumentCaptor<File> setupFileCaptor = ArgumentCaptor.forClass(File.class);
-        verify(arenaSetupConfigurationFactory).create(setupFileCaptor.capture());
-
-        assertThat(settingsFileCaptor.getValue().getPath()).endsWith("arena-1" + File.separator + "settings.yml");
 
         assertThat(settingsSpecCaptor.getValue()).satisfies(spec -> {
             assertThat(spec.lobbyCountdownLength()).isEqualTo(settings.getLobbyCountdownLength());
@@ -82,9 +83,6 @@ class ArenaFactoryTest {
             assertThat(spec.minPlayers()).isEqualTo(settings.getMinPlayers());
         });
 
-        assertThat(setupFileCaptor.getValue().getPath()).endsWith("arena-1" + File.separator + "setup.yml");
-
-        verify(settingsConfiguration).load();
         verify(setupConfiguration).setCreatedAt(INSTANT);
         verify(setupConfiguration).setCreatedBy(PLAYER_ID);
         verify(setupConfiguration).save();
