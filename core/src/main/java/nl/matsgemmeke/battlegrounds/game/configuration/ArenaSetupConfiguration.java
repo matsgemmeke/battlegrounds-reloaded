@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.util.TextUtil;
 
 import java.time.Instant;
 import java.util.Optional;
@@ -10,11 +11,17 @@ public class ArenaSetupConfiguration {
 
     private static final String CREATED_AT_PATH = "created-at";
     private static final String CREATED_BY_PATH = "created-by";
+    private static final String MAPS_PATH = "maps";
+    private static final String MAP_NAME_PATH = "name";
 
     private final ConfigurationFile configurationFile;
 
     public ArenaSetupConfiguration(ConfigurationFile configurationFile) {
         this.configurationFile = configurationFile;
+    }
+
+    public void save() {
+        configurationFile.save();
     }
 
     public Optional<Instant> getCreatedAt() {
@@ -33,7 +40,9 @@ public class ArenaSetupConfiguration {
         configurationFile.set(CREATED_BY_PATH, uuid.toString());
     }
 
-    public void save() {
-        configurationFile.save();
+    public void createMap(String name) {
+        String mapPathName = TextUtil.toKebabCase(name);
+
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, name);
     }
 }

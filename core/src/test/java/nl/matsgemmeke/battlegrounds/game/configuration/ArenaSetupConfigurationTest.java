@@ -24,10 +24,20 @@ class ArenaSetupConfigurationTest {
     private static final String CREATED_BY_TEXT = "2c11afe2-48f0-4399-9a04-195bb8ac640e";
     private static final UUID CREATED_BY = UUID.fromString(CREATED_BY_TEXT);
 
+    private static final String MAP_NAME = "Level 1";
+
     @Mock
     private ConfigurationFile configurationFile;
     @InjectMocks
     private ArenaSetupConfiguration setupConfiguration;
+
+    @Test
+    @DisplayName("save saves the configuration file")
+    void save() {
+        setupConfiguration.save();
+
+        verify(configurationFile).save();
+    }
 
     @Test
     @DisplayName("getCreatedAt returns empty optional when configuration file does not have a value")
@@ -86,10 +96,10 @@ class ArenaSetupConfigurationTest {
     }
 
     @Test
-    @DisplayName("save saves the configuration file")
-    void save() {
-        setupConfiguration.save();
+    @DisplayName("createMap creates basic map info in configuration file")
+    void createMap() {
+        setupConfiguration.createMap(MAP_NAME);
 
-        verify(configurationFile).save();
+        verify(configurationFile).set("maps.level-1.name", MAP_NAME);
     }
 }
