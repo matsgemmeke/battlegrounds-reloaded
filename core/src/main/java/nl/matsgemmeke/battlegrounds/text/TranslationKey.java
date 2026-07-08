@@ -25,6 +25,7 @@ public enum TranslationKey {
     FREEPLAY_MODE_NOT_EXISTS("errors.freeplay-mode-not-exists"),
     HELP_MENU_COMMAND("commands.help-menu-command"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
+    MAP_CREATED("admin.map-created"),
     MAP_HELP_MENU_TITLE("commands.map-help-menu-title"),
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),

@@ -61,13 +61,11 @@ class ArenaFactoryTest {
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
         YamlConfigurationFile settingsConfigurationFile = mock(YamlConfigurationFile.class);
-        YamlConfigurationFile setupConfigurationFile = mock(YamlConfigurationFile.class);
 
         when(plugin.getResource("arenas/settings.yml")).thenReturn(resource);
         when(yamlConfigurationFileFactory.create(new File(arenasFolder, "arena-1" + File.separator + "settings.yml"), resource)).thenReturn(settingsConfigurationFile);
         when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
-        when(yamlConfigurationFileFactory.create(new File(arenasFolder, "arena-1" + File.separator + "setup.yml"))).thenReturn(setupConfigurationFile);
-        when(arenaSetupConfigurationFactory.create(setupConfigurationFile)).thenReturn(setupConfiguration);
+        when(arenaSetupConfigurationFactory.create(ARENA_ID)).thenReturn(setupConfiguration);
 
         Arena arena = arenaFactory.create(ARENA_ID, settings, PLAYER_ID);
 

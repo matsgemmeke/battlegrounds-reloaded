@@ -69,10 +69,7 @@ public class ArenaFactory {
         settingsConfiguration.saveArenaSettings(spec);
 
         // Create setup.yml file
-        File setupFile = new File(arenaFolder, "setup.yml");
-        YamlConfigurationFile setupConfigurationFile = yamlConfigurationFileFactory.create(setupFile);
-
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(setupConfigurationFile);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(id);
         setupConfiguration.setCreatedAt(Instant.now(clock));
         setupConfiguration.setCreatedBy(createdBy);
         setupConfiguration.save();
