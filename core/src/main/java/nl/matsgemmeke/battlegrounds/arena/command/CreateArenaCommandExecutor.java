@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.arena;
+package nl.matsgemmeke.battlegrounds.arena.command;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;

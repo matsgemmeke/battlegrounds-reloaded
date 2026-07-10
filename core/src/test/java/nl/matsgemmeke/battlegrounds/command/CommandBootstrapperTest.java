@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
-import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
+import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommand;
 import nl.matsgemmeke.battlegrounds.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
