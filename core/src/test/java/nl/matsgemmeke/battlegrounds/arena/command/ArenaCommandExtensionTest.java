@@ -1,12 +1,10 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.*;
+import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
-import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.junit.jupiter.api.BeforeEach;
@@ -15,71 +13,53 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.HashSet;
-import java.util.Set;
-
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class CommandBootstrapperTest {
+class ArenaCommandExtensionTest {
 
     @Mock
-    private PaperCommandManager commandManager;
+    private ArenaCommand arenaCommand;
     @Mock
-    private CommandExtension commandExtension;
-    @Spy
-    private Set<CommandExtension> commandExtensions = new HashSet<>();
+    private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
     private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
     @Mock
     private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
     @Mock
-    private Translator translator;
-    @Mock
-    private BattlegroundsCommand bgCommand;
-    @Mock
-    private MapCommand mapCommand;
-    @Mock
-    private ToolsCommand toolsCommand;
-    @Mock
-    private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
-    @Mock
-    private FreeplayModePresenceCondition freeplayModePresenceCondition;
-    @Mock
     private ExistentArenaIdCondition existentArenaIdCondition;
     @Mock
     private NonexistentArenaIdCondition nonexistentArenaIdCondition;
+    @Mock
+    private PaperCommandManager commandManager;
+    @Mock
+    private Translator translator;
     @InjectMocks
-    private CommandBootstrapper commandBootstrapper;
+    private ArenaCommandExtension commandExtension;
 
     @BeforeEach
     void setUp() {
-        commandExtensions.add(commandExtension);
-
         when(commandManager.getCommandCompletions()).thenReturn(commandCompletions);
         when(commandManager.getCommandConditions()).thenReturn(commandConditions);
         when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
     }
 
     @Test
-    @DisplayName("initialize registers all commands and conditions")
-    void initialize() {
-        commandBootstrapper.initialize();
+    @DisplayName("configure initializes commands, command completions and command conditions")
+    void configure() {
+        commandExtension.configure(commandManager);
 
-        verify(bgCommand, times(5)).addCommandInfo(any(CommandInfo.class));
-        verify(mapCommand, times(1)).addCommandInfo(any(CommandInfo.class));
-        verify(toolsCommand, times(1)).addCommandInfo(any(CommandInfo.class));
+        verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
 
-        verify(commandManager).registerCommand(bgCommand);
-        verify(commandManager).registerCommand(toolsCommand);
+        verify(commandManager).registerCommand(arenaCommand);
 
         verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
 
-        verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
     }

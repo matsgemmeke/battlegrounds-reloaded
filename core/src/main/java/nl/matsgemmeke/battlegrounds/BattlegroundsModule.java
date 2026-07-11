@@ -5,10 +5,13 @@ import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
+import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -184,6 +187,9 @@ public class BattlegroundsModule implements Module {
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
+
+        Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
+        commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
