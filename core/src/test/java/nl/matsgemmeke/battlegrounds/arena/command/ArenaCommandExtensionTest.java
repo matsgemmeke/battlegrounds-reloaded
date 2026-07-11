@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.*;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;

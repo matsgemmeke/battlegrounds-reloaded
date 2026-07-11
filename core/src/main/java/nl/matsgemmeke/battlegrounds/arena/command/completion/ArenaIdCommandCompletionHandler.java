@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.completion;
+package nl.matsgemmeke.battlegrounds.arena.command.completion;
 
 import co.aikar.commands.BukkitCommandCompletionContext;
 import co.aikar.commands.CommandCompletions.CommandCompletionHandler;

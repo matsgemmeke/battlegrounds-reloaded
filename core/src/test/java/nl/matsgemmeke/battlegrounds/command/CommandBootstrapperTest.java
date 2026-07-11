@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
-import nl.matsgemmeke.battlegrounds.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -34,8 +33,6 @@ class CommandBootstrapperTest {
     @Spy
     private Set<CommandExtension> commandExtensions = new HashSet<>();
     @Mock
-    private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
-    @Mock
     private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
     @Mock
     private Translator translator;
@@ -45,8 +42,6 @@ class CommandBootstrapperTest {
     private MapCommand mapCommand;
     @Mock
     private ToolsCommand toolsCommand;
-    @Mock
-    private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
     private FreeplayModePresenceCondition freeplayModePresenceCondition;
     @Mock
@@ -60,7 +55,6 @@ class CommandBootstrapperTest {
     void setUp() {
         commandExtensions.add(commandExtension);
 
-        when(commandManager.getCommandCompletions()).thenReturn(commandCompletions);
         when(commandManager.getCommandConditions()).thenReturn(commandConditions);
         when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
     }
@@ -76,8 +70,6 @@ class CommandBootstrapperTest {
 
         verify(commandManager).registerCommand(bgCommand);
         verify(commandManager).registerCommand(toolsCommand);
-
-        verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
 
         verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);

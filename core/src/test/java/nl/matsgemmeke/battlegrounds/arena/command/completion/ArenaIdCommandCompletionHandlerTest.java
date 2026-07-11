@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.completion;
+package nl.matsgemmeke.battlegrounds.arena.command.completion;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import org.junit.jupiter.api.DisplayName;

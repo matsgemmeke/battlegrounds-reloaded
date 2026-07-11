@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.command.completion.ArenaIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
@@ -51,8 +50,6 @@ public class CommandBootstrapper {
     private final MapCommand mapCommand;
     private final ToolsCommand toolsCommand;
 
-    private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
-
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
@@ -65,7 +62,6 @@ public class CommandBootstrapper {
             BattlegroundsCommand bgCommand,
             MapCommand mapCommand,
             ToolsCommand toolsCommand,
-            ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
             FreeplayModePresenceCondition freeplayModePresenceCondition
@@ -76,7 +72,6 @@ public class CommandBootstrapper {
         this.bgCommand = bgCommand;
         this.mapCommand = mapCommand;
         this.toolsCommand = toolsCommand;
-        this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
@@ -88,7 +83,6 @@ public class CommandBootstrapper {
         this.registerBattlegroundsCommand();
         this.registerMapCommand();
         this.registerToolsCommand();
-        this.registerCommandCompletions();
         this.registerConditions();
     }
 
@@ -132,11 +126,6 @@ public class CommandBootstrapper {
         toolsCommand.addCommandInfo(showHitboxesCommandInfo);
 
         commandManager.registerCommand(toolsCommand);
-    }
-
-    private void registerCommandCompletions() {
-        var commandCompletions = commandManager.getCommandCompletions();
-        commandCompletions.registerCompletion("arena-id", arenaIdCommandCompletionHandler);
     }
 
     private void registerConditions() {
