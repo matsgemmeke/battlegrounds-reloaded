@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateArenaCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveArenaCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;

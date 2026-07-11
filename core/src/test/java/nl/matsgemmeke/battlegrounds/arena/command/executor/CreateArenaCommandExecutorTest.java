@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.command;
+package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;

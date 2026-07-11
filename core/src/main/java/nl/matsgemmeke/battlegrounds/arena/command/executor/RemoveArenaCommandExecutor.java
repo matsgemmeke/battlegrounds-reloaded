@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.command;
+package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
