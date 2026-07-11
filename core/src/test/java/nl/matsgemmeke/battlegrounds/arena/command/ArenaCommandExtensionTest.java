@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentArenaIdCo
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,16 +41,13 @@ class ArenaCommandExtensionTest {
     @InjectMocks
     private ArenaCommandExtension commandExtension;
 
-    @BeforeEach
-    void setUp() {
-        when(commandManager.getCommandCompletions()).thenReturn(commandCompletions);
-        when(commandManager.getCommandConditions()).thenReturn(commandConditions);
-        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
-    }
-
     @Test
     @DisplayName("configure initializes commands, command completions and command conditions")
     void configure() {
+        when(commandManager.getCommandCompletions()).thenReturn(commandCompletions);
+        when(commandManager.getCommandConditions()).thenReturn(commandConditions);
+        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
+
         commandExtension.configure(commandManager);
 
         verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));

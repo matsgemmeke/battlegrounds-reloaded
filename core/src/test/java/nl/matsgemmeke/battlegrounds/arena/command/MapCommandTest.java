@@ -1,5 +1,6 @@
-package nl.matsgemmeke.battlegrounds.command.map;
+package nl.matsgemmeke.battlegrounds.arena.command;
 
+import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;

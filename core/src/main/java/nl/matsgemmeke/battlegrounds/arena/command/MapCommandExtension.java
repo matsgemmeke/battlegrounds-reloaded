@@ -1,0 +1,35 @@
+package nl.matsgemmeke.battlegrounds.arena.command;
+
+import co.aikar.commands.PaperCommandManager;
+import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.command.CommandExtension;
+import nl.matsgemmeke.battlegrounds.command.CommandInfo;
+import nl.matsgemmeke.battlegrounds.text.TranslationKey;
+import nl.matsgemmeke.battlegrounds.text.Translator;
+
+public class MapCommandExtension implements CommandExtension {
+
+    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
+    private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
+    private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
+
+    private final MapCommand mapCommand;
+    private final Translator translator;
+
+    @Inject
+    public MapCommandExtension(MapCommand mapCommand, Translator translator) {
+        this.mapCommand = mapCommand;
+        this.translator = translator;
+    }
+
+    @Override
+    public void configure(PaperCommandManager commandManager) {
+        String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
+
+        CommandInfo createMapCommandInfo = new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS);
+
+        mapCommand.addCommandInfo(createMapCommandInfo);
+
+        commandManager.registerCommand(mapCommand);
+    }
+}

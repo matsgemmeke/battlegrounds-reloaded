@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -37,8 +36,6 @@ class CommandBootstrapperTest {
     @Mock
     private BattlegroundsCommand bgCommand;
     @Mock
-    private MapCommand mapCommand;
-    @Mock
     private ToolsCommand toolsCommand;
     @Mock
     private FreeplayModePresenceCondition freeplayModePresenceCondition;
@@ -59,7 +56,6 @@ class CommandBootstrapperTest {
         commandBootstrapper.initialize();
 
         verify(bgCommand, times(5)).addCommandInfo(any(CommandInfo.class));
-        verify(mapCommand, times(1)).addCommandInfo(any(CommandInfo.class));
         verify(toolsCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(bgCommand);

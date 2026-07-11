@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.map;
+package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSetupConfigurationFactory;

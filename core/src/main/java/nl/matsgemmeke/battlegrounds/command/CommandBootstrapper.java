@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -32,10 +31,6 @@ public class CommandBootstrapper {
     private static final String TOOLS_COMMAND_SUGGESTION = "/bg tools";
     private static final String[] TOOLS_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools" };
 
-    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
-    private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
-    private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
-
     private static final String SHOW_HITBOXES_COMMAND_USAGE = "/bg tools showhitboxes <seconds> <range>";
     private static final String SHOW_HITBOXES_COMMAND_SUGGESTION = "/bg tools showhitboxes ";
     private static final String[] SHOW_HITBOXES_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools.showhitboxes" };
@@ -45,7 +40,6 @@ public class CommandBootstrapper {
     private final Translator translator;
 
     private final BattlegroundsCommand bgCommand;
-    private final MapCommand mapCommand;
     private final ToolsCommand toolsCommand;
 
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
@@ -56,7 +50,6 @@ public class CommandBootstrapper {
             Set<CommandExtension> commandExtensions,
             Translator translator,
             BattlegroundsCommand bgCommand,
-            MapCommand mapCommand,
             ToolsCommand toolsCommand,
             FreeplayModePresenceCondition freeplayModePresenceCondition
     ) {
@@ -64,7 +57,6 @@ public class CommandBootstrapper {
         this.commandExtensions = commandExtensions;
         this.translator = translator;
         this.bgCommand = bgCommand;
-        this.mapCommand = mapCommand;
         this.toolsCommand = toolsCommand;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
     }
@@ -73,7 +65,6 @@ public class CommandBootstrapper {
         commandExtensions.forEach(extension -> extension.configure(commandManager));
 
         this.registerBattlegroundsCommand();
-        this.registerMapCommand();
         this.registerToolsCommand();
         this.registerConditions();
     }
@@ -98,16 +89,6 @@ public class CommandBootstrapper {
         bgCommand.addCommandInfo(toolsCommandInfo);
 
         commandManager.registerCommand(bgCommand);
-    }
-
-    private void registerMapCommand() {
-        String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
-
-        CommandInfo createMapCommandInfo = new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS);
-
-        mapCommand.addCommandInfo(createMapCommandInfo);
-
-        commandManager.registerCommand(mapCommand);
     }
 
     private void registerToolsCommand() {
