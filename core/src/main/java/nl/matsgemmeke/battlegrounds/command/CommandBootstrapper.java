@@ -2,9 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
@@ -50,8 +48,6 @@ public class CommandBootstrapper {
     private final MapCommand mapCommand;
     private final ToolsCommand toolsCommand;
 
-    private final ExistentArenaIdCondition existentArenaIdCondition;
-    private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
 
     @Inject
@@ -62,8 +58,6 @@ public class CommandBootstrapper {
             BattlegroundsCommand bgCommand,
             MapCommand mapCommand,
             ToolsCommand toolsCommand,
-            ExistentArenaIdCondition existentArenaIdCondition,
-            NonexistentArenaIdCondition nonexistentArenaIdCondition,
             FreeplayModePresenceCondition freeplayModePresenceCondition
     ) {
         this.commandManager = commandManager;
@@ -72,8 +66,6 @@ public class CommandBootstrapper {
         this.bgCommand = bgCommand;
         this.mapCommand = mapCommand;
         this.toolsCommand = toolsCommand;
-        this.existentArenaIdCondition = existentArenaIdCondition;
-        this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
     }
 
@@ -131,7 +123,5 @@ public class CommandBootstrapper {
     private void registerConditions() {
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
-        commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
-        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
     }
 }

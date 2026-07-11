@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.condition;
+package nl.matsgemmeke.battlegrounds.arena.command.condition;
 
 import co.aikar.commands.*;
 import co.aikar.commands.CommandConditions.ParameterCondition;

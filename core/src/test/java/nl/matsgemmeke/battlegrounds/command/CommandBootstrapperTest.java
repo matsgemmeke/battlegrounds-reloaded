@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.map.MapCommand;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
@@ -44,10 +42,6 @@ class CommandBootstrapperTest {
     private ToolsCommand toolsCommand;
     @Mock
     private FreeplayModePresenceCondition freeplayModePresenceCondition;
-    @Mock
-    private ExistentArenaIdCondition existentArenaIdCondition;
-    @Mock
-    private NonexistentArenaIdCondition nonexistentArenaIdCondition;
     @InjectMocks
     private CommandBootstrapper commandBootstrapper;
 
@@ -72,7 +66,5 @@ class CommandBootstrapperTest {
         verify(commandManager).registerCommand(toolsCommand);
 
         verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
-        verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
-        verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
     }
 }
