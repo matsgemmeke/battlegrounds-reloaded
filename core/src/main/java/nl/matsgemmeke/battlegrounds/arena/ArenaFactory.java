@@ -1,8 +1,7 @@
-package nl.matsgemmeke.battlegrounds.game.arena;
+package nl.matsgemmeke.battlegrounds.arena;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;
-import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.configuration.*;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
