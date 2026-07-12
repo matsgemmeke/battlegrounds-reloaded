@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
@@ -14,11 +15,13 @@ public class MapCommandExtension implements CommandExtension {
     private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
 
     private final MapCommand mapCommand;
+    private final NonexistentMapNameCondition nonexistentMapNameCondition;
     private final Translator translator;
 
     @Inject
-    public MapCommandExtension(MapCommand mapCommand, Translator translator) {
+    public MapCommandExtension(MapCommand mapCommand, NonexistentMapNameCondition nonexistentMapNameCondition, Translator translator) {
         this.mapCommand = mapCommand;
+        this.nonexistentMapNameCondition = nonexistentMapNameCondition;
         this.translator = translator;
     }
 
@@ -31,5 +34,7 @@ public class MapCommandExtension implements CommandExtension {
         mapCommand.addCommandInfo(createMapCommandInfo);
 
         commandManager.registerCommand(mapCommand);
+
+        commandManager.getCommandConditions().addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
     }
 }

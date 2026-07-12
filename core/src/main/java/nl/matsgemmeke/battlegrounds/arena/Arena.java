@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -32,5 +33,9 @@ public class Arena extends BaseGame {
 
     public void addMap(ArenaMap map) {
         maps.add(map);
+    }
+
+    public Optional<ArenaMap> getMap(String name) {
+        return maps.stream().filter(map -> map.getName().equals(name)).findFirst();
     }
 }

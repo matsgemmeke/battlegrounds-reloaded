@@ -55,7 +55,7 @@ public class MapCommand extends BaseCommand {
     @CommandCompletion("@arena-id <name>")
     @CommandPermission("battlegrounds.map.create")
     @Subcommand("create")
-    public void onCreate(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId, String mapName) {
+    public void onCreate(CommandSender sender, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("nonexistent-map-name") String mapName) {
         createMapCommandExecutor.execute(sender, arenaId, mapName);
     }
 }

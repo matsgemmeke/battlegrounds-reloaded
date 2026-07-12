@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
@@ -9,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.InvalidArenaSettingsSpec
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 
@@ -24,21 +24,21 @@ public class ArenaLoader {
     private static final String ARENA_SETTINGS_FILE_NAME = "settings.yml";
     private static final String ARENA_SETTINGS_RESOURCE = "arenas/settings.yml";
 
+    private final ArenaRegistry arenaRegistry;
     private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     private final ArenaSettingsMapper arenaSettingsMapper;
-    private final GameContextProvider gameContextProvider;
     private final ResourceProvider resourceProvider;
 
     @Inject
     public ArenaLoader(
+            ArenaRegistry arenaRegistry,
             ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
             ArenaSettingsMapper arenaSettingsMapper,
-            GameContextProvider gameContextProvider,
             ResourceProvider resourceProvider
     ) {
+        this.arenaRegistry = arenaRegistry;
         this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
         this.arenaSettingsMapper = arenaSettingsMapper;
-        this.gameContextProvider = gameContextProvider;
         this.resourceProvider = resourceProvider;
     }
 
@@ -55,7 +55,7 @@ public class ArenaLoader {
         ArenaSettings settings = arenaSettingsMapper.toDomain(settingsSpec);
         Arena arena = new Arena(arenaId, settings);
 
-        gameContextProvider.addArena(gameKey, arena);
+        arenaRegistry.addArena(gameKey, arena);
     }
 
     private ArenaSettingsSpec getArenaSettingsSpec(int arenaId, ArenaSettingsConfiguration settingsConfiguration) {

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
-import co.aikar.commands.PaperCommandManager;
+import co.aikar.commands.*;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -20,7 +21,11 @@ import static org.mockito.Mockito.when;
 class MapCommandExtensionTest {
 
     @Mock
+    private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
+    @Mock
     private MapCommand mapCommand;
+    @Mock
+    private NonexistentMapNameCondition nonexistentMapNameCondition;
     @Mock
     private PaperCommandManager commandManager;
     @Mock
@@ -31,6 +36,7 @@ class MapCommandExtensionTest {
     @Test
     @DisplayName("configure initializes commands, command completions and command conditions")
     void configure() {
+        when(commandManager.getCommandConditions()).thenReturn(commandConditions);
         when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
 
         commandExtension.configure(commandManager);
@@ -38,5 +44,7 @@ class MapCommandExtensionTest {
         verify(mapCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(mapCommand);
+
+        verify(commandConditions).addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
     }
 }

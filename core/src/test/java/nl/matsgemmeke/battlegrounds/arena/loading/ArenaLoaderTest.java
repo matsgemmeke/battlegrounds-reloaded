@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.configuration.InvalidArenaSettingsSpecException;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 import org.junit.jupiter.api.DisplayName;
@@ -36,11 +36,11 @@ class ArenaLoaderTest {
     private static final int MIN_PLAYERS = 2;
 
     @Mock
+    private ArenaRegistry arenaRegistry;
+    @Mock
     private ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
-    @Mock
-    private GameContextProvider gameContextProvider;
     @Mock
     private ResourceProvider resourceProvider;
     @InjectMocks
@@ -79,7 +79,7 @@ class ArenaLoaderTest {
         arenaLoader.loadArena(ARENA_ID, arenaFolder);
 
         ArgumentCaptor<Arena> arenaCaptor = ArgumentCaptor.forClass(Arena.class);
-        verify(gameContextProvider).addArena(eq(GameKey.ofArena(ARENA_ID)), arenaCaptor.capture());
+        verify(arenaRegistry).addArena(eq(GameKey.ofArena(ARENA_ID)), arenaCaptor.capture());
 
         assertThat(arenaCaptor.getValue()).satisfies(arena -> {
             assertThat(arena.getId()).isEqualTo(ARENA_ID);
