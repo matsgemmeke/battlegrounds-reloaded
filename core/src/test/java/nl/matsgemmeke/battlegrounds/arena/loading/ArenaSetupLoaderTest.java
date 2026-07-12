@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.arena.loading;
+package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

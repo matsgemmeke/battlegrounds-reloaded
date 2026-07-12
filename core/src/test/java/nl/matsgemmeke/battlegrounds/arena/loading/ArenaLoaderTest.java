@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.arena.loading;
+package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;

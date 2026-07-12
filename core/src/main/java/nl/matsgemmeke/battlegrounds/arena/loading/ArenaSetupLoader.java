@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.arena.loading;
+package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import com.google.inject.Inject;
 import jakarta.inject.Named;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.arena.loading;
+package nl.matsgemmeke.battlegrounds.arena.loading;
 
 public class InvalidArenaSetupException extends RuntimeException {
 
