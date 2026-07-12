@@ -20,9 +20,9 @@ public class ArenaRegistry {
         this.arenas = new HashMap<>();
     }
 
-    public void addArena(GameKey gameKey, Arena arena) {
+    public boolean addArena(GameKey gameKey, Arena arena) {
         arenas.put(gameKey, arena);
-        gameContextProvider.addArena(gameKey, arena);
+        return gameContextProvider.addArena(gameKey, arena);
     }
 
     public Optional<Arena> getArena(int id) {

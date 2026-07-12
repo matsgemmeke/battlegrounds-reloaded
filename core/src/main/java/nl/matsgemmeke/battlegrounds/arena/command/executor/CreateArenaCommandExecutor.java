@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaFactory;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
@@ -16,13 +16,13 @@ import java.util.UUID;
 public class CreateArenaCommandExecutor {
 
     private final ArenaFactory arenaFactory;
-    private final GameContextProvider gameContextProvider;
+    private final ArenaRegistry arenaRegistry;
     private final Translator translator;
 
     @Inject
-    public CreateArenaCommandExecutor(ArenaFactory arenaFactory, GameContextProvider gameContextProvider, Translator translator) {
+    public CreateArenaCommandExecutor(ArenaFactory arenaFactory, ArenaRegistry arenaRegistry, Translator translator) {
         this.arenaFactory = arenaFactory;
-        this.gameContextProvider = gameContextProvider;
+        this.arenaRegistry = arenaRegistry;
         this.translator = translator;
     }
 
@@ -36,7 +36,7 @@ public class CreateArenaCommandExecutor {
         Map<String, Object> values = Map.of("bg_arena", id);
         String message;
 
-        if (!gameContextProvider.addArena(gameKey, arena)) {
+        if (!arenaRegistry.addArena(gameKey, arena)) {
             message = translator.translate(TranslationKey.ARENA_CREATION_FAILED.getPath()).replace(values);
         } else {
             message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
