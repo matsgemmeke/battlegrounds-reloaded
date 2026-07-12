@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.arena;
 
 import nl.matsgemmeke.battlegrounds.arena.configuration.*;
+import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

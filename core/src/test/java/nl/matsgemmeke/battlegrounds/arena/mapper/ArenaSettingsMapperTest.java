@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.mapper;
+package nl.matsgemmeke.battlegrounds.arena.mapper;
 
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
