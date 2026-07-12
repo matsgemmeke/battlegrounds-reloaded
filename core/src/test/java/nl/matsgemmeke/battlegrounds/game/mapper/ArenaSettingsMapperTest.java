@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.mapper;
 
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

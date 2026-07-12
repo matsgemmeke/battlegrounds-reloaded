@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfiguration;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.command.CommandSender;

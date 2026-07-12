@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfiguration;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
+import nl.matsgemmeke.battlegrounds.arena.configuration.InvalidArenaSettingsSpecException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfiguration;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsSpec;
-import nl.matsgemmeke.battlegrounds.game.configuration.InvalidArenaSettingsSpecException;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 import org.junit.jupiter.api.DisplayName;

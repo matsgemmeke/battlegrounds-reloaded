@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;

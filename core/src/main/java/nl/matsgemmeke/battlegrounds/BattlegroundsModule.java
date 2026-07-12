@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -55,7 +56,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
