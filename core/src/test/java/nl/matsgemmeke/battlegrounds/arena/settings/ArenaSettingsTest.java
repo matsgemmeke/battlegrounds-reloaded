@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.game.arena.settings;
+package nl.matsgemmeke.battlegrounds.arena.settings;
 
-import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
