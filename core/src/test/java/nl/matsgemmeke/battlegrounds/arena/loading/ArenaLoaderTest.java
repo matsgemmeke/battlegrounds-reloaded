@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.arena.loading;
 
+import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfiguration;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsSpec;

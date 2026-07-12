@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
+import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.arena.ArenaFactory;
-import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;

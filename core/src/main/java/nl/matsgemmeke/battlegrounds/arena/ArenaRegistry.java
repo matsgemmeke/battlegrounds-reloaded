@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.arena;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,9 +1,10 @@
 package nl.matsgemmeke.battlegrounds.game.arena;
 
+import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import nl.matsgemmeke.battlegrounds.game.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.configuration.*;
 import nl.matsgemmeke.battlegrounds.game.mapper.ArenaSettingsMapper;
 import org.bukkit.plugin.Plugin;

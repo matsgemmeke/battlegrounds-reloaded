@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.freeplay.Freeplay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

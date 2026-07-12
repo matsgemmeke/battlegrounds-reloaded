@@ -1,6 +1,6 @@
-package nl.matsgemmeke.battlegrounds.game.arena.settings;
+package nl.matsgemmeke.battlegrounds.arena.settings;
 
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.Arena;
 
 /**
  * Contains settings variables for an {@link Arena} instance.
