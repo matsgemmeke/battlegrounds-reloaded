@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
+import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
@@ -190,6 +191,7 @@ public class BattlegroundsModule implements Module {
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
+        commandExtensionBinder.addBinding().to(MapCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);

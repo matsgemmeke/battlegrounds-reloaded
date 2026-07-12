@@ -7,6 +7,7 @@ admin:
   arena-removal-failed: "&cFailed to remove arena %bg_arena%!"
   arena-removed: "&6You have removed arena &f%bg_arena% &6and its content."
   main-lobby-set: "&6You have set the main lobby to your current location."
+  map-already-exists: "&cArena %bg_arena% already has a map by the name of %bg_map%."
   map-created: "&6You have added a new map to arena &f%bg_arena% &6by the name of &f%bg_map%&6."
   reload-failed: "&cFailed to reload configuration files."
   reload-success: "&6Successfully reloaded all configuration files."
@@ -34,6 +35,7 @@ commands:
 
 errors:
   command-sender-must-be-player: "&cMust be a player to use this command."
+  generic-error: "&cAn unexpected error occurred while processing this command. Please try again or contact an administrator."
   not-in-freeplay-mode: "&cUnable to perform action; you are not in freeplay mode."
   freeplay-mode-not-exists: "&cUnable to perform action; freeplay mode is not enabled."
   unknown-command: "&cUnknown command, please type /bg help"
