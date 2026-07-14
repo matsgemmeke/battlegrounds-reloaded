@@ -1,19 +1,19 @@
 package nl.matsgemmeke.battlegrounds.arena.command.condition;
 
 import co.aikar.commands.*;
-import co.aikar.commands.CommandConditions.ParameterCondition;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
+import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 
 import java.util.Map;
 import java.util.logging.Logger;
 
-public class NonexistentMapNameCondition implements ParameterCondition<String, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public class NonexistentMapNameCondition implements ParameterCondition<String> {
 
     private final ArenaRegistry arenaRegistry;
     private final Logger logger;

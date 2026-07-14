@@ -1,15 +1,15 @@
 package nl.matsgemmeke.battlegrounds.arena.command.condition;
 
 import co.aikar.commands.*;
-import co.aikar.commands.CommandConditions.ParameterCondition;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 
 import java.util.Map;
 
-public class ExistentArenaIdCondition implements ParameterCondition<Integer, BukkitCommandExecutionContext, BukkitCommandIssuer> {
+public class ExistentArenaIdCondition implements ParameterCondition<Integer> {
 
     private final GameContextProvider gameContextProvider;
     private final Translator translator;
