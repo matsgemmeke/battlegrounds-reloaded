@@ -9,6 +9,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,5 +52,16 @@ class ArenaTest {
         Optional<ArenaMap> mapOptional = arena.getMap(MAP_NAME);
 
         assertThat(mapOptional).hasValue(map);
+    }
+
+    @Test
+    @DisplayName("getMapNames returns list of all map names")
+    void getMapNames() {
+        ArenaMap map = new ArenaMap(MAP_NAME);
+
+        arena.addMap(map);
+        List<String> mapNames = arena.getMapNames();
+
+        assertThat(mapNames).containsExactly(MAP_NAME);
     }
 }

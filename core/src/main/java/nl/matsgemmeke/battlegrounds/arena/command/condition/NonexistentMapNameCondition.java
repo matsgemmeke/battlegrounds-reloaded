@@ -27,7 +27,7 @@ public class NonexistentMapNameCondition implements ParameterCondition<String, B
     }
 
     @Override
-    public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, String mapName) throws InvalidCommandArgument {
+    public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, String mapName) {
         Integer arenaId = execContext.getResolvedArg("arena-id", Integer.class);
 
         if (arenaId == null) {

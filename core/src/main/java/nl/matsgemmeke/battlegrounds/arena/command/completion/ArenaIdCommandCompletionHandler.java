@@ -1,14 +1,13 @@
 package nl.matsgemmeke.battlegrounds.arena.command.completion;
 
 import co.aikar.commands.BukkitCommandCompletionContext;
-import co.aikar.commands.CommandCompletions.CommandCompletionHandler;
-import co.aikar.commands.InvalidCommandArgument;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.command.CommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 
 import java.util.Collection;
 
-public class ArenaIdCommandCompletionHandler implements CommandCompletionHandler<BukkitCommandCompletionContext> {
+public class ArenaIdCommandCompletionHandler implements CommandCompletionHandler {
 
     private final GameContextProvider gameContextProvider;
 
@@ -18,7 +17,7 @@ public class ArenaIdCommandCompletionHandler implements CommandCompletionHandler
     }
     
     @Override
-    public Collection<String> getCompletions(BukkitCommandCompletionContext context) throws InvalidCommandArgument {
+    public Collection<String> getCompletions(BukkitCommandCompletionContext context) {
         return gameContextProvider.getArenaIds().stream().map(Object::toString).toList();
     }
 }

@@ -58,4 +58,11 @@ public class MapCommand extends BaseCommand {
     public void onCreate(CommandSender sender, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("nonexistent-map-name") String mapName) {
         createMapCommandExecutor.execute(sender, arenaId, mapName);
     }
+
+    @CommandCompletion("@arena-id @map-name")
+    @CommandPermission("battlegrounds.map.remove")
+    @Subcommand("remove")
+    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId, String mapName) {
+        sender.sendMessage("hey");
+    }
 }

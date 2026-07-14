@@ -21,12 +21,12 @@ public class ExistentArenaIdCondition implements ParameterCondition<Integer, Buk
     }
 
     @Override
-    public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer value) throws InvalidCommandArgument {
-        if (gameContextProvider.arenaExists(value)) {
+    public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer arenaId) {
+        if (gameContextProvider.arenaExists(arenaId)) {
             return;
         }
 
-        Map<String, Object> values = Map.of("bg_arena", value);
+        Map<String, Object> values = Map.of("bg_arena", arenaId);
         String message = translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath()).replace(values);
 
         throw new ConditionFailedException(message);

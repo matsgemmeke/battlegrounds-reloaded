@@ -70,7 +70,7 @@ public class ArenaCommand extends BaseCommand {
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.arena.remove")
     @Subcommand("remove")
-    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer id) {
-        removeArenaCommandExecutor.execute(sender, id);
+    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId) {
+        removeArenaCommandExecutor.execute(sender, arenaId);
     }
 }
