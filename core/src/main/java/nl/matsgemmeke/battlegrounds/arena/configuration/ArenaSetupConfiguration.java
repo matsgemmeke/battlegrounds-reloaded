@@ -13,6 +13,8 @@ public class ArenaSetupConfiguration {
     private static final String CREATED_BY_PATH = "created-by";
     private static final String MAPS_PATH = "maps";
     private static final String MAP_NAME_PATH = "name";
+    private static final String MAP_CREATED_AT_PATH = "created-at";
+    private static final String MAP_CREATED_BY_PATH = "created-by";
 
     private final ConfigurationFile configurationFile;
 
@@ -40,9 +42,11 @@ public class ArenaSetupConfiguration {
         configurationFile.set(CREATED_BY_PATH, uuid.toString());
     }
 
-    public void createMap(String name) {
-        String mapPathName = TextUtil.toKebabCase(name);
+    public void createMap(MapCreationInfo mapCreationInfo) {
+        String mapPathName = TextUtil.toKebabCase(mapCreationInfo.mapName());
 
-        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, name);
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, mapCreationInfo.mapName());
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_AT_PATH, mapCreationInfo.createdAt().toString());
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
     }
 }

@@ -98,8 +98,12 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("createMap creates basic map info in configuration file")
     void createMap() {
-        setupConfiguration.createMap(MAP_NAME);
+        MapCreationInfo mapCreationInfo = new MapCreationInfo(MAP_NAME, CREATED_AT, CREATED_BY);
+
+        setupConfiguration.createMap(mapCreationInfo);
 
         verify(configurationFile).set("maps.level-1.name", MAP_NAME);
+        verify(configurationFile).set("maps.level-1.created-at", CREATED_AT_TEXT);
+        verify(configurationFile).set("maps.level-1.created-by", CREATED_BY_TEXT);
     }
 }

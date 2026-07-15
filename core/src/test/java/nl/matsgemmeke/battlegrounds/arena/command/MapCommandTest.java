@@ -35,11 +35,11 @@ class MapCommandTest {
     private static final String UNKNOWN_COMMAND_MESSAGE = "unknown command";
 
     @Mock
-    private CommandSender sender;
-    @Mock
     private CreateMapCommandExecutor createMapCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
+    @Mock
+    private Player player;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -52,16 +52,15 @@ class MapCommandTest {
 
         when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate(UNKNOWN_COMMAND_MESSAGE));
 
-        command.onDefault(sender, args);
+        command.onDefault(player, args);
 
-        verify(sender).sendMessage(UNKNOWN_COMMAND_MESSAGE);
+        verify(player).sendMessage(UNKNOWN_COMMAND_MESSAGE);
     }
 
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
     void onDefault_playerSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
-        Player player = mock(Player.class);
 
         when(translator.translate(TranslationKey.MAP_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_TITLE));
 
@@ -75,6 +74,7 @@ class MapCommandTest {
     @DisplayName("onDefault shows help menu to sender as normal messages")
     void onDefault_consoleSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        CommandSender sender = mock(CommandSender.class);
 
         when(translator.translate(TranslationKey.MAP_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_TITLE));
 
@@ -87,8 +87,8 @@ class MapCommandTest {
     @Test
     @DisplayName("onCreate delegates to create map executor")
     void onCreate() {
-        command.onCreate(sender, ARENA_ID, MAP_NAME);
+        command.onCreate(player, ARENA_ID, MAP_NAME);
 
-        verify(createMapCommandExecutor).execute(sender, ARENA_ID, MAP_NAME);
+        verify(createMapCommandExecutor).execute(player, ARENA_ID, MAP_NAME);
     }
 }

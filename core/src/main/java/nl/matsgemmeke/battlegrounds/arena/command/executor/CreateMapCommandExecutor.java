@@ -5,28 +5,34 @@ import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
-import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 
+import java.time.Clock;
+import java.time.Instant;
 import java.util.Map;
+import java.util.UUID;
 
 public class CreateMapCommandExecutor {
 
     private final ArenaRegistry arenaRegistry;
     private final ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    private final Clock clock;
     private final Translator translator;
 
     @Inject
-    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationFactory arenaSetupConfigurationFactory, Translator translator) {
+    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationFactory arenaSetupConfigurationFactory, Clock clock, Translator translator) {
         this.arenaRegistry = arenaRegistry;
         this.arenaSetupConfigurationFactory = arenaSetupConfigurationFactory;
+        this.clock = clock;
         this.translator = translator;
     }
 
-    public void execute(CommandSender sender, int arenaId, String mapName) {
+    public void execute(Player player, int arenaId, String mapName) {
         Arena arena = arenaRegistry.getArena(arenaId).orElse(null);
 
         if (arena == null) {
@@ -37,12 +43,16 @@ public class CreateMapCommandExecutor {
 
         arena.addMap(map);
 
+        Instant createdAt = Instant.now(clock);
+        UUID createdBy = player.getUniqueId();
+        MapCreationInfo mapCreationInfo = new MapCreationInfo(mapName, createdAt, createdBy);
+
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(arenaId);
-        setupConfiguration.createMap(mapName);
+        setupConfiguration.createMap(mapCreationInfo);
         setupConfiguration.save();
 
         Map<String, Object> values = Map.of("bg_arena", arenaId, "bg_map", mapName);
 
-        sender.sendMessage(translator.translate(TranslationKey.MAP_CREATED.getPath()).replace(values));
+        player.sendMessage(translator.translate(TranslationKey.MAP_CREATED.getPath()).replace(values));
     }
 }
