@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
@@ -17,6 +18,7 @@ public class MapCommandExtension implements CommandExtension {
 
     private final MapCommand mapCommand;
     private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+    private final ExistentMapNameCondition existentMapNameCondition;
     private final NonexistentMapNameCondition nonexistentMapNameCondition;
     private final Translator translator;
 
@@ -24,11 +26,13 @@ public class MapCommandExtension implements CommandExtension {
     public MapCommandExtension(
             MapCommand mapCommand,
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
+            ExistentMapNameCondition existentMapNameCondition,
             NonexistentMapNameCondition nonexistentMapNameCondition,
             Translator translator
     ) {
         this.mapCommand = mapCommand;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
+        this.existentMapNameCondition = existentMapNameCondition;
         this.nonexistentMapNameCondition = nonexistentMapNameCondition;
         this.translator = translator;
     }
@@ -44,6 +48,7 @@ public class MapCommandExtension implements CommandExtension {
         commandManager.registerCommand(mapCommand);
 
         commandManager.getCommandCompletions().registerCompletion("map-name", mapNameCommandCompletionHandler);
+        commandManager.getCommandConditions().addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandManager.getCommandConditions().addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
     }
 }

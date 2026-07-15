@@ -59,10 +59,19 @@ public class MapCommand extends BaseCommand {
         createMapCommandExecutor.execute(sender, arenaId, mapName);
     }
 
-    @CommandCompletion("@arena-id @map-name")
+    // NOTE: The trailing "@nothing" in @CommandCompletion is intentional! The param mapName is a greedy String, so at
+    // runtime ACF joins all remaining args into one value (e.g. "My Map") - execution works fine without it. But for
+    // command completions, ACF has no concept of "multi-word argument" - it just reuses the last declared completer
+    // for any extra arguments. Without "@nothing", the @map-name suggestions would keep popping up after every space,
+    // as if starting a new argument. With "@nothing" the command will not suggest map names once past arena-id + 1st
+    // word of the map.
+    //
+    // Downside: no tab-complete help for the 2nd+ word of a map name (e.g. typing "My " won't suggest anything) - but
+    // manual typing still parses correctly.
+    @CommandCompletion("@arena-id @map-name @nothing")
     @CommandPermission("battlegrounds.map.remove")
     @Subcommand("remove")
-    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId, String mapName) {
-        sender.sendMessage("hey");
+    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
+        sender.sendMessage(mapName);
     }
 }

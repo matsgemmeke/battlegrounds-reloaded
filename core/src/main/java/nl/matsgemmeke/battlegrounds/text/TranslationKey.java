@@ -28,6 +28,7 @@ public enum TranslationKey {
     MAIN_LOBBY_SET("admin.main-lobby-set"),
     MAP_ALREADY_EXISTS("admin.map-already-exists"),
     MAP_CREATED("admin.map-created"),
+    MAP_NOT_EXISTS("admin.map-not-exists"),
     MAP_HELP_MENU_TITLE("commands.map-help-menu-title"),
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),
