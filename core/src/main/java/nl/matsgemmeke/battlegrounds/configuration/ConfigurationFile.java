@@ -18,6 +18,16 @@ public interface ConfigurationFile {
     ConfigurationSection createSection(String path);
 
     /**
+     * Gets a configuration section from the configuration file. Returns an empty optional if the given path does not
+     * lead to a section.
+     *
+     * @param path the path to the configuration section
+     * @return     an optional with the configuration section of the given path or empty if the path does not lead to a
+     *             section
+     */
+    Optional<ConfigurationSection> getConfigurationSection(String path);
+
+    /**
      * Gets an integer value from the configuration file. Returns an empty optional if the given path does not lead to
      * a value.
      *

@@ -14,6 +14,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -41,6 +42,32 @@ class YamlConfigurationFileTest {
 
             assertThat(result).isEqualTo(section);
         }
+    }
+
+    @Test
+    @DisplayName("getConfigurationSection returns empty optional when given path is not a configuration section")
+    void getConfigurationSection_noSection() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        Optional<ConfigurationSection> configurationSectionOptional = yamlConfigurationFile.getConfigurationSection("hello");
+
+        assertThat(configurationSectionOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getConfigurationSection returns optional with corresponding configuration section from given path")
+    void getConfigurationSection_successful() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        Optional<ConfigurationSection> configurationSectionOptional = yamlConfigurationFile.getConfigurationSection("section");
+
+        assertThat(configurationSectionOptional).hasValueSatisfying(configurationSection -> configurationSection.get("key").equals("value"));
     }
 
     @Test

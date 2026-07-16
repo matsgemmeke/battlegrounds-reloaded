@@ -1,2 +1,4 @@
 hello: world
 int: 100
+section:
+  key: value
