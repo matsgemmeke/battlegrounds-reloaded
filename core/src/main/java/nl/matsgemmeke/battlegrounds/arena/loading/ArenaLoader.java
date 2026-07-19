@@ -3,10 +3,9 @@ package nl.matsgemmeke.battlegrounds.arena.loading;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
-import nl.matsgemmeke.battlegrounds.arena.configuration.InvalidArenaSettingsSpecException;
+import nl.matsgemmeke.battlegrounds.arena.configuration.*;
+import nl.matsgemmeke.battlegrounds.arena.configuration.map.ArenaMapData;
+import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
@@ -27,6 +26,7 @@ public class ArenaLoader {
     private final ArenaRegistry arenaRegistry;
     private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     private final ArenaSettingsMapper arenaSettingsMapper;
+    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     private final ResourceProvider resourceProvider;
 
     @Inject
@@ -34,11 +34,13 @@ public class ArenaLoader {
             ArenaRegistry arenaRegistry,
             ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
             ArenaSettingsMapper arenaSettingsMapper,
+            ArenaSetupConfigurationResolver arenaSetupConfigurationResolver,
             ResourceProvider resourceProvider
     ) {
         this.arenaRegistry = arenaRegistry;
         this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
         this.arenaSettingsMapper = arenaSettingsMapper;
+        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
         this.resourceProvider = resourceProvider;
     }
 
@@ -54,6 +56,15 @@ public class ArenaLoader {
         ArenaSettingsSpec settingsSpec = this.getArenaSettingsSpec(arenaId, settingsConfiguration);
         ArenaSettings settings = arenaSettingsMapper.toDomain(settingsSpec);
         Arena arena = new Arena(arenaId, settings);
+
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(arenaId);
+
+        for (ArenaMapData mapData : setupConfiguration.getMaps()) {
+            String name = mapData.name();
+            ArenaMap map = new ArenaMap(name);
+
+            arena.addMap(map);
+        }
 
         arenaRegistry.addArena(gameKey, arena);
     }

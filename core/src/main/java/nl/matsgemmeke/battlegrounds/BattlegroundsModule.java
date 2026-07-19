@@ -14,6 +14,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -266,7 +267,7 @@ public class BattlegroundsModule implements Module {
 
         // Factory bindings
         binder.install(new FactoryModuleBuilder().build(ArenaSettingsConfigurationFactory.class));
-        binder.install(new FactoryModuleBuilder().build(ArenaSettingsConfigurationFactory.class));
+        binder.install(new FactoryModuleBuilder().build(ArenaSetupConfigurationFactory.class));
         binder.install(new FactoryModuleBuilder().build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()

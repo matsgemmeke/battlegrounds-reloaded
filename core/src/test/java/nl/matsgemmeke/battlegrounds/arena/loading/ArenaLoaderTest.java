@@ -2,10 +2,8 @@ package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
-import nl.matsgemmeke.battlegrounds.arena.configuration.InvalidArenaSettingsSpecException;
+import nl.matsgemmeke.battlegrounds.arena.configuration.*;
+import nl.matsgemmeke.battlegrounds.arena.configuration.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -21,6 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.InputStream;
+import java.time.Instant;
+import java.util.List;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -35,12 +36,18 @@ class ArenaLoaderTest {
     private static final int MAX_PLAYERS = 12;
     private static final int MIN_PLAYERS = 2;
 
+    private static final String MAP_NAME = "Level 1";
+    private static final Instant MAP_CREATED_AT = Instant.parse("2026-01-01T12:00:00.00Z");
+    private static final UUID MAP_CREATED_BY = UUID.randomUUID();
+
     @Mock
     private ArenaRegistry arenaRegistry;
     @Mock
     private ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
+    @Mock
+    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     @Mock
     private ResourceProvider resourceProvider;
     @InjectMocks
@@ -69,12 +76,17 @@ class ArenaLoaderTest {
         File arenaFolder = new File("src/test/resources/arena-setups/valid/arena-1");
         InputStream settingsResource = InputStream.nullInputStream();
         ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
+        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY);
 
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);
 
+        ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        when(setupConfiguration.getMaps()).thenReturn(List.of(mapData));
+
         when(resourceProvider.getResource("arenas/settings.yml")).thenReturn(settingsResource);
         when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
+        when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(setupConfiguration);
 
         arenaLoader.loadArena(ARENA_ID, arenaFolder);
 
@@ -88,6 +100,7 @@ class ArenaLoaderTest {
                 assertThat(settings.getMaxPlayers()).isEqualTo(MAX_PLAYERS);
                 assertThat(settings.getMinPlayers()).isEqualTo(MIN_PLAYERS);
             });
+            assertThat(arena.getMapNames()).containsExactly(MAP_NAME);
         });
     }
 }
