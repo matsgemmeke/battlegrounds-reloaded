@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration.map;
+package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import jakarta.validation.constraints.Past;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;

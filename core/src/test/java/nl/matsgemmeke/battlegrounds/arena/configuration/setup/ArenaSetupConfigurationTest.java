@@ -1,6 +1,5 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
-import nl.matsgemmeke.battlegrounds.arena.configuration.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;

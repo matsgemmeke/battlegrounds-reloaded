@@ -1,8 +1,7 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.arena.configuration.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;

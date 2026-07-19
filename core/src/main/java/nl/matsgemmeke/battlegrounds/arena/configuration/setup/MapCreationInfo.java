@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import java.time.Instant;
 import java.util.UUID;

@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationResolver;
-import nl.matsgemmeke.battlegrounds.arena.configuration.MapCreationInfo;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.text.TextTemplate;
