@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.validation;
 import com.google.inject.Inject;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
+import nl.matsgemmeke.battlegrounds.util.TextUtil;
 
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,11 +26,12 @@ public class ObjectValidator {
             return;
         }
 
+        String violationNoun = TextUtil.pluralize(violations.size(), "violation", "violations");
         String violationsMessage = violations.stream()
                 .map(this::createViolationMessage)
                 .collect(Collectors.joining("\n - ", " - ", ""));
-        String errorMessage = "Validation failed for %s (%d constraint violations):\n%s"
-                .formatted(object.getClass().getSimpleName(), violations.size(), violationsMessage);
+        String errorMessage = "Validation failed for %s (%d constraint %s):\n%s"
+                .formatted(object.getClass().getSimpleName(), violations.size(), violationNoun, violationsMessage);
 
         throw new ValidationException(errorMessage);
     }

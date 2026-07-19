@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationResolver;
 import nl.matsgemmeke.battlegrounds.arena.configuration.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
@@ -20,14 +20,14 @@ import java.util.UUID;
 public class CreateMapCommandExecutor {
 
     private final ArenaRegistry arenaRegistry;
-    private final ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     private final Clock clock;
     private final Translator translator;
 
     @Inject
-    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationFactory arenaSetupConfigurationFactory, Clock clock, Translator translator) {
+    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationResolver arenaSetupConfigurationResolver, Clock clock, Translator translator) {
         this.arenaRegistry = arenaRegistry;
-        this.arenaSetupConfigurationFactory = arenaSetupConfigurationFactory;
+        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
         this.clock = clock;
         this.translator = translator;
     }
@@ -47,7 +47,7 @@ public class CreateMapCommandExecutor {
         UUID createdBy = player.getUniqueId();
         MapCreationInfo mapCreationInfo = new MapCreationInfo(mapName, createdAt, createdBy);
 
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(arenaId);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(arenaId);
         setupConfiguration.createMap(mapCreationInfo);
         setupConfiguration.save();
 

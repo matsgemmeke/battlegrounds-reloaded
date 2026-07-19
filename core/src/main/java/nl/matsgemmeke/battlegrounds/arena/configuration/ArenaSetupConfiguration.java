@@ -1,11 +1,18 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration;
 
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.arena.configuration.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
+import org.bukkit.configuration.ConfigurationSection;
 
 import java.time.Instant;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.logging.Logger;
 
 public class ArenaSetupConfiguration {
 
@@ -17,8 +24,13 @@ public class ArenaSetupConfiguration {
     private static final String MAP_CREATED_BY_PATH = "created-by";
 
     private final ConfigurationFile configurationFile;
+    private final Logger logger;
+    private final ObjectValidator objectValidator;
 
-    public ArenaSetupConfiguration(ConfigurationFile configurationFile) {
+    @Inject
+    public ArenaSetupConfiguration(Logger logger, ObjectValidator objectValidator, @Assisted ConfigurationFile configurationFile) {
+        this.logger = logger;
+        this.objectValidator = objectValidator;
         this.configurationFile = configurationFile;
     }
 
@@ -48,5 +60,48 @@ public class ArenaSetupConfiguration {
         configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, mapCreationInfo.mapName());
         configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_AT_PATH, mapCreationInfo.createdAt().toString());
         configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
+    }
+
+    public Collection<ArenaMapData> getMaps() {
+        ConfigurationSection mapsSection = configurationFile.getConfigurationSection(MAPS_PATH).orElse(null);
+
+        if (mapsSection == null) {
+            return Collections.emptySet();
+        }
+
+        Set<ArenaMapData> mapDataList = new HashSet<>();
+
+        for (String mapsKey : mapsSection.getKeys(false)) {
+            String name = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_NAME_PATH).orElse(null);
+            Instant createdAt = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
+            UUID createdBy = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
+
+            ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy);
+
+            try {
+                objectValidator.validate(mapData);
+                mapDataList.add(mapData);
+            } catch (ValidationException ex) {
+                logger.severe("Failed to load map %s: %s".formatted(mapsKey, ex.getMessage()));
+            }
+        }
+
+        return mapDataList;
+    }
+
+    private Instant parseInstant(String value) {
+        try {
+            return Instant.parse(value);
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
+    }
+
+    private UUID parseUUID(String value) {
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 }

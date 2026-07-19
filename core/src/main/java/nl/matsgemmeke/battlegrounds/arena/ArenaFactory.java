@@ -22,7 +22,7 @@ public class ArenaFactory {
 
     private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
     private final ArenaSettingsMapper arenaSettingsMapper;
-    private final ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     private final Clock clock;
     private final File arenasFolder;
     private final Plugin plugin;
@@ -32,7 +32,7 @@ public class ArenaFactory {
     public ArenaFactory(
             ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
             ArenaSettingsMapper arenaSettingsMapper,
-            ArenaSetupConfigurationFactory arenaSetupConfigurationFactory,
+            ArenaSetupConfigurationResolver arenaSetupConfigurationResolver,
             Clock clock,
             @Named("ArenasFolder") File arenasFolder,
             Plugin plugin,
@@ -40,7 +40,7 @@ public class ArenaFactory {
     ) {
         this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
         this.arenaSettingsMapper = arenaSettingsMapper;
-        this.arenaSetupConfigurationFactory = arenaSetupConfigurationFactory;
+        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
         this.clock = clock;
         this.arenasFolder = arenasFolder;
         this.plugin = plugin;
@@ -69,7 +69,7 @@ public class ArenaFactory {
         settingsConfiguration.saveArenaSettings(spec);
 
         // Create setup.yml file
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationFactory.create(id);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(id);
         setupConfiguration.setCreatedAt(Instant.now(clock));
         setupConfiguration.setCreatedBy(createdBy);
         setupConfiguration.save();

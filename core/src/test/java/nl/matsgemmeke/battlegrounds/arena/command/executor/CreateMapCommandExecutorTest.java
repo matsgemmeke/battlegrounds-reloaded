@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSetupConfigurationResolver;
 import nl.matsgemmeke.battlegrounds.arena.configuration.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
@@ -38,7 +38,7 @@ class CreateMapCommandExecutorTest {
     @Mock
     private ArenaRegistry arenaRegistry;
     @Mock
-    private ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     @Spy
     private Clock clock = Clock.fixed(INSTANT, ZoneOffset.UTC);
     @Mock
@@ -69,7 +69,7 @@ class CreateMapCommandExecutorTest {
 
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(arenaSetupConfigurationFactory.create(ARENA_ID)).thenReturn(arenaSetupConfiguration);
+        when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(arenaSetupConfiguration);
         when(translator.translate(TranslationKey.MAP_CREATED.getPath())).thenReturn(mapCreatedTextTemplate);
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);

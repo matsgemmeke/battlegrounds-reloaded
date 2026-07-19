@@ -40,7 +40,7 @@ class ArenaFactoryTest {
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
-    private ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
+    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     @Spy
     private Clock clock = Clock.fixed(INSTANT, ZoneOffset.UTC);
     @TempDir
@@ -65,7 +65,7 @@ class ArenaFactoryTest {
         when(plugin.getResource("arenas/settings.yml")).thenReturn(resource);
         when(yamlConfigurationFileFactory.create(new File(arenasFolder, "arena-1" + File.separator + "settings.yml"), resource)).thenReturn(settingsConfigurationFile);
         when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
-        when(arenaSetupConfigurationFactory.create(ARENA_ID)).thenReturn(setupConfiguration);
+        when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(setupConfiguration);
 
         Arena arena = arenaFactory.create(ARENA_ID, settings, PLAYER_ID);
 

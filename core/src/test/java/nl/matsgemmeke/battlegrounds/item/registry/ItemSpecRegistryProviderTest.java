@@ -132,10 +132,10 @@ class ItemSpecRegistryProviderTest {
         assertThat(registry.exists("MP5")).isFalse();
 
         verify(logger).severe("""
-                An error occurred while loading item 'Olympia': Validation failed for GunSpec (1 constraint violations):
+                An error occurred while loading item 'Olympia': Validation failed for GunSpec (1 constraint violation):
                  - level-unlocked: value is required""");
         verify(logger).severe("""
-                An error occurred while loading item 'MP5': Validation failed for GunSpec (1 constraint violations):
+                An error occurred while loading item 'MP5': Validation failed for GunSpec (1 constraint violation):
                  - level-unlocked: value is required""");
     }
 

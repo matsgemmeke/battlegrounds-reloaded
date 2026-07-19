@@ -265,11 +265,9 @@ public class BattlegroundsModule implements Module {
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
 
         // Factory bindings
-        binder.install(new FactoryModuleBuilder()
-                .build(ArenaSettingsConfigurationFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .build(DeploymentFactory.class));
+        binder.install(new FactoryModuleBuilder().build(ArenaSettingsConfigurationFactory.class));
+        binder.install(new FactoryModuleBuilder().build(ArenaSettingsConfigurationFactory.class));
+        binder.install(new FactoryModuleBuilder().build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)
