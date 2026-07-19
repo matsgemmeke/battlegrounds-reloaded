@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena.mapper;
 
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsSpec;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 
 public class ArenaSettingsMapper {

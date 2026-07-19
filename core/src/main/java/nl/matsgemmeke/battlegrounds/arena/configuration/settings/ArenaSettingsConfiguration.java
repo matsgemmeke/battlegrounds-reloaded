@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration.settings;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;

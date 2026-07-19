@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.arena;
 
-import nl.matsgemmeke.battlegrounds.arena.configuration.*;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfiguration;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;

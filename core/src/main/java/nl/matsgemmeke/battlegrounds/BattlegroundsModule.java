@@ -13,7 +13,7 @@ import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
-import nl.matsgemmeke.battlegrounds.arena.configuration.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;

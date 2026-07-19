@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.arena.configuration;
+package nl.matsgemmeke.battlegrounds.arena.configuration.settings;
 
 public class InvalidArenaSettingsSpecException extends RuntimeException {
 
