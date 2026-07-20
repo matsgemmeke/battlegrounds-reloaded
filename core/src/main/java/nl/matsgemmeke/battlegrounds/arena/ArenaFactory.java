@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsCo
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 
@@ -20,19 +20,19 @@ public class ArenaFactory {
 
     private final ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider;
     private final ArenaSettingsMapper arenaSettingsMapper;
-    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     private final Clock clock;
 
     @Inject
     public ArenaFactory(
             ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider,
             ArenaSettingsMapper arenaSettingsMapper,
-            ArenaSetupConfigurationResolver arenaSetupConfigurationResolver,
+            ArenaSetupConfigurationProvider arenaSetupConfigurationProvider,
             Clock clock
     ) {
         this.arenaSettingsConfigurationProvider = arenaSettingsConfigurationProvider;
         this.arenaSettingsMapper = arenaSettingsMapper;
-        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
+        this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
         this.clock = clock;
     }
 
@@ -52,7 +52,7 @@ public class ArenaFactory {
         settingsConfiguration.saveArenaSettings(spec);
 
         // Create setup.yml file
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(id);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(id);
         setupConfiguration.setCreatedAt(Instant.now(clock));
         setupConfiguration.setCreatedBy(createdBy);
         setupConfiguration.save();

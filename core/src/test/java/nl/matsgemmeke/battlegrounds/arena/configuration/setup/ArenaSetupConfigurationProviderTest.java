@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class ArenaSetupConfigurationResolverTest {
+class ArenaSetupConfigurationProviderTest {
 
     private static final int ARENA_ID = 1;
 
@@ -31,18 +31,18 @@ class ArenaSetupConfigurationResolverTest {
     @Mock
     private YamlConfigurationFileFactory yamlConfigurationFileFactory;
     @InjectMocks
-    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
 
     @Test
-    @DisplayName("resolve")
-    void resolve() {
+    @DisplayName("get returns ArenaSetupConfiguration with a file location inside the arenas folder")
+    void get() {
         YamlConfigurationFile configurationFile = mock(YamlConfigurationFile.class);
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
 
         when(yamlConfigurationFileFactory.create(any(File.class))).thenReturn(configurationFile);
         when(arenaSetupConfigurationFactory.create(configurationFile)).thenReturn(setupConfiguration);
 
-        ArenaSetupConfiguration result = arenaSetupConfigurationResolver.resolve(ARENA_ID);
+        ArenaSetupConfiguration result = arenaSetupConfigurationProvider.get(ARENA_ID);
 
         ArgumentCaptor<File> setupFileCaptor = ArgumentCaptor.forClass(File.class);
         verify(yamlConfigurationFileFactory).create(setupFileCaptor.capture());

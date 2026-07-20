@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.junit.jupiter.api.DisplayName;
@@ -45,7 +45,7 @@ class ArenaLoaderTest {
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
-    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     @InjectMocks
     private ArenaLoader arenaLoader;
 
@@ -75,7 +75,7 @@ class ArenaLoaderTest {
         when(setupConfiguration.getMaps()).thenReturn(List.of(mapData));
 
         when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
-        when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(setupConfiguration);
+        when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
 
         arenaLoader.loadArena(ARENA_ID);
 

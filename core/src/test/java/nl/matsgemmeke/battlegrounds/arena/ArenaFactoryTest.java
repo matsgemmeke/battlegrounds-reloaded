@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsCo
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import org.junit.jupiter.api.DisplayName;
@@ -36,7 +36,7 @@ class ArenaFactoryTest {
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
-    private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     @Spy
     private Clock clock = Clock.fixed(INSTANT, ZoneOffset.UTC);
     @InjectMocks
@@ -50,7 +50,7 @@ class ArenaFactoryTest {
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
 
         when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
-        when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(setupConfiguration);
+        when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
 
         Arena arena = arenaFactory.create(ARENA_ID, settings, PLAYER_ID);
 

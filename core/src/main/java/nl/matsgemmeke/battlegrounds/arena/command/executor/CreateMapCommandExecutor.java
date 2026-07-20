@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
@@ -20,14 +20,14 @@ import java.util.UUID;
 public class CreateMapCommandExecutor {
 
     private final ArenaRegistry arenaRegistry;
-    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     private final Clock clock;
     private final Translator translator;
 
     @Inject
-    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationResolver arenaSetupConfigurationResolver, Clock clock, Translator translator) {
+    public CreateMapCommandExecutor(ArenaRegistry arenaRegistry, ArenaSetupConfigurationProvider arenaSetupConfigurationProvider, Clock clock, Translator translator) {
         this.arenaRegistry = arenaRegistry;
-        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
+        this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
         this.clock = clock;
         this.translator = translator;
     }
@@ -47,7 +47,7 @@ public class CreateMapCommandExecutor {
         UUID createdBy = player.getUniqueId();
         MapCreationInfo mapCreationInfo = new MapCreationInfo(mapName, createdAt, createdBy);
 
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(arenaId);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.createMap(mapCreationInfo);
         setupConfiguration.save();
 

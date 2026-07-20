@@ -8,17 +8,17 @@ import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFact
 import java.io.File;
 
 /**
- * This is a separate factory class on top of {@link ArenaSetupConfigurationFactory}, since the construction of
+ * This is a separate provider class on top of {@link ArenaSetupConfigurationFactory}, since the construction of
  * {@link ArenaSetupConfiguration} requires both assisted variables and a custom provider setup.
  */
-public class ArenaSetupConfigurationResolver {
+public class ArenaSetupConfigurationProvider {
 
     private final ArenaSetupConfigurationFactory arenaSetupConfigurationFactory;
     private final File arenasFolder;
     private final YamlConfigurationFileFactory yamlConfigurationFileFactory;
 
     @Inject
-    public ArenaSetupConfigurationResolver(
+    public ArenaSetupConfigurationProvider(
             ArenaSetupConfigurationFactory arenaSetupConfigurationFactory,
             @Named("ArenasFolder") File arenasFolder,
             YamlConfigurationFileFactory yamlConfigurationFileFactory
@@ -28,7 +28,7 @@ public class ArenaSetupConfigurationResolver {
         this.yamlConfigurationFileFactory = yamlConfigurationFileFactory;
     }
 
-    public ArenaSetupConfiguration resolve(int arenaId) {
+    public ArenaSetupConfiguration get(int arenaId) {
         File arenaFolder = new File(arenasFolder, "arena-" + arenaId);
         File setupFile = new File(arenaFolder, "setup.yml");
         YamlConfigurationFile configurationFile = yamlConfigurationFileFactory.create(setupFile);

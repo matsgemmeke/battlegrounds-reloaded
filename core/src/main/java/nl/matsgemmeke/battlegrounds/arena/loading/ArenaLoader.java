@@ -6,13 +6,11 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-
-import java.io.File;
 
 /**
  * Responsible for loading in a single arena.
@@ -22,19 +20,19 @@ public class ArenaLoader {
     private final ArenaRegistry arenaRegistry;
     private final ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider;
     private final ArenaSettingsMapper arenaSettingsMapper;
-    private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
+    private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
 
     @Inject
     public ArenaLoader(
             ArenaRegistry arenaRegistry,
             ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider,
             ArenaSettingsMapper arenaSettingsMapper,
-            ArenaSetupConfigurationResolver arenaSetupConfigurationResolver
+            ArenaSetupConfigurationProvider arenaSetupConfigurationProvider
     ) {
         this.arenaRegistry = arenaRegistry;
         this.arenaSettingsConfigurationProvider = arenaSettingsConfigurationProvider;
         this.arenaSettingsMapper = arenaSettingsMapper;
-        this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
+        this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
     }
 
     public void loadArena(int arenaId) {
@@ -46,7 +44,7 @@ public class ArenaLoader {
 
         Arena arena = new Arena(arenaId, settings);
 
-        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationResolver.resolve(arenaId);
+        ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
 
         for (ArenaMapData mapData : setupConfiguration.getMaps()) {
             String name = mapData.name();
