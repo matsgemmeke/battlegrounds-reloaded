@@ -61,6 +61,6 @@ public class ArenaSetupLoader {
             throw new InvalidArenaSetupException("Failed to load arena: the id \"%s\" is invalid".formatted(arenaIdValue));
         }
 
-        arenaLoader.loadArena(arenaId, arenaFolder);
+        arenaLoader.loadArena(arenaId);
     }
 }

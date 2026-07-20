@@ -1,20 +1,14 @@
 package nl.matsgemmeke.battlegrounds.arena;
 
 import com.google.inject.Inject;
-import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
-import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
-import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import org.bukkit.plugin.Plugin;
 
-import java.io.File;
-import java.io.InputStream;
 import java.time.Clock;
 import java.time.Instant;
 import java.util.UUID;
@@ -24,31 +18,22 @@ import java.util.UUID;
  */
 public class ArenaFactory {
 
-    private final ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
+    private final ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider;
     private final ArenaSettingsMapper arenaSettingsMapper;
     private final ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
     private final Clock clock;
-    private final File arenasFolder;
-    private final Plugin plugin;
-    private final YamlConfigurationFileFactory yamlConfigurationFileFactory;
 
     @Inject
     public ArenaFactory(
-            ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory,
+            ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider,
             ArenaSettingsMapper arenaSettingsMapper,
             ArenaSetupConfigurationResolver arenaSetupConfigurationResolver,
-            Clock clock,
-            @Named("ArenasFolder") File arenasFolder,
-            Plugin plugin,
-            YamlConfigurationFileFactory yamlConfigurationFileFactory
+            Clock clock
     ) {
-        this.arenaSettingsConfigurationFactory = arenaSettingsConfigurationFactory;
+        this.arenaSettingsConfigurationProvider = arenaSettingsConfigurationProvider;
         this.arenaSettingsMapper = arenaSettingsMapper;
         this.arenaSetupConfigurationResolver = arenaSetupConfigurationResolver;
         this.clock = clock;
-        this.arenasFolder = arenasFolder;
-        this.plugin = plugin;
-        this.yamlConfigurationFileFactory = yamlConfigurationFileFactory;
     }
 
     /**
@@ -60,16 +45,10 @@ public class ArenaFactory {
      * @return          a new arena instance
      */
     public Arena create(int id, ArenaSettings settings, UUID createdBy) {
-        File arenaFolder = new File(arenasFolder, "arena-" + id);
-
         // Create settings.yml file
-        File settingsFile = new File(arenaFolder, "settings.yml");
-        InputStream settingsResource = plugin.getResource("arenas/settings.yml");
-        YamlConfigurationFile settingsConfigurationFile = yamlConfigurationFileFactory.create(settingsFile, settingsResource);
-
         ArenaSettingsSpec spec = arenaSettingsMapper.toSpec(settings);
 
-        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationFactory.create(settingsConfigurationFile);
+        ArenaSettingsConfiguration settingsConfiguration = arenaSettingsConfigurationProvider.get(id);
         settingsConfiguration.saveArenaSettings(spec);
 
         // Create setup.yml file

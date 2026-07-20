@@ -2,17 +2,12 @@ package nl.matsgemmeke.battlegrounds.arena.loading;
 
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfiguration;
-import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
-import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsSpec;
-import nl.matsgemmeke.battlegrounds.arena.configuration.settings.InvalidArenaSettingsSpecException;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationResolver;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
-import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,8 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.InputStream;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -48,29 +41,23 @@ class ArenaLoaderTest {
     @Mock
     private ArenaRegistry arenaRegistry;
     @Mock
-    private ArenaSettingsConfigurationFactory arenaSettingsConfigurationFactory;
+    private ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider;
     @Spy
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
     private ArenaSetupConfigurationResolver arenaSetupConfigurationResolver;
-    @Mock
-    private ResourceProvider resourceProvider;
     @InjectMocks
     private ArenaLoader arenaLoader;
 
     @Test
     @DisplayName("loadArena throws InvalidArenaSetupException when failing to load arena settings")
     void loadArena_settingsLoadFail() {
-        File arenaFolder = new File("src/test/resources/arena-setups/valid/arena-1");
-        InputStream settingsResource = InputStream.nullInputStream();
-
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         when(settingsConfiguration.getArenaSettings()).thenThrow(new InvalidArenaSettingsSpecException("error"));
 
-        when(resourceProvider.getResource("arenas/settings.yml")).thenReturn(settingsResource);
-        when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
+        when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
 
-        assertThatThrownBy(() -> arenaLoader.loadArena(ARENA_ID, arenaFolder))
+        assertThatThrownBy(() -> arenaLoader.loadArena(ARENA_ID))
                 .isInstanceOf(InvalidArenaSetupException.class)
                 .hasMessage("Failed to load setup for arena 1");
     }
@@ -78,8 +65,6 @@ class ArenaLoaderTest {
     @Test
     @DisplayName("loadArena loads content from configuration files and registers new arena instance to the game context provider")
     void loadArena_successful() {
-        File arenaFolder = new File("src/test/resources/arena-setups/valid/arena-1");
-        InputStream settingsResource = InputStream.nullInputStream();
         ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
         ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY);
 
@@ -89,11 +74,10 @@ class ArenaLoaderTest {
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
         when(setupConfiguration.getMaps()).thenReturn(List.of(mapData));
 
-        when(resourceProvider.getResource("arenas/settings.yml")).thenReturn(settingsResource);
-        when(arenaSettingsConfigurationFactory.create(any(ConfigurationFile.class))).thenReturn(settingsConfiguration);
+        when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
         when(arenaSetupConfigurationResolver.resolve(ARENA_ID)).thenReturn(setupConfiguration);
 
-        arenaLoader.loadArena(ARENA_ID, arenaFolder);
+        arenaLoader.loadArena(ARENA_ID);
 
         ArgumentCaptor<Arena> arenaCaptor = ArgumentCaptor.forClass(Arena.class);
         verify(arenaRegistry).addArena(eq(GameKey.ofArena(ARENA_ID)), arenaCaptor.capture());

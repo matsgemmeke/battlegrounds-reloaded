@@ -9,8 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.File;
 import java.util.logging.Logger;
 
-import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
@@ -67,7 +65,7 @@ class ArenaSetupLoaderTest {
         arenaSetupLoader.loadArenas();
 
         verify(logger).info("Found 1 saved arena");
-        verify(arenaLoader).loadArena(eq(1), argThat(file -> file.equals(new File("src/test/resources/arena-setups/valid/arena-1"))));
+        verify(arenaLoader).loadArena(1);
     }
 
     @Test
@@ -75,7 +73,7 @@ class ArenaSetupLoaderTest {
     void loadArenas_loadArenaFolderError() {
         File arenasFolder = new File("src/test/resources/arena-setups/valid");
 
-        doThrow(new InvalidArenaSetupException("error")).when(arenaLoader).loadArena(eq(1), argThat(file -> file.equals(new File("src/test/resources/arena-setups/valid/arena-1"))));
+        doThrow(new InvalidArenaSetupException("error")).when(arenaLoader).loadArena(1);
 
         arenaSetupLoader = new ArenaSetupLoader(arenaLoader, arenasFolder, logger);
         arenaSetupLoader.loadArenas();
