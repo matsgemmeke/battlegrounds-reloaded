@@ -29,6 +29,7 @@ commands:
   description-map: "Manage the maps that appear in a given arena"
   description-reload: "Reloads all configuration files"
   description-remove-arena: "Removes an arena and all of its content"
+  description-remove-map: "Removes a map from a given arena"
   description-set-main-lobby: "Sets the main lobby location"
   description-show-hitboxes: "Shows hitboxes of nearby entities"
   description-tools: "Provides miscellaneous tools for operating the plugin"
