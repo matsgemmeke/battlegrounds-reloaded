@@ -61,6 +61,13 @@ public class ArenaSetupConfiguration {
         configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
     }
 
+    public void removeMap(String mapName) {
+        String mapPathName = TextUtil.toKebabCase(mapName);
+
+        configurationFile.removeSection(MAPS_PATH + "." + mapPathName);
+        configurationFile.save();
+    }
+
     public Collection<ArenaMapData> getMaps() {
         ConfigurationSection mapsSection = configurationFile.getConfigurationSection(MAPS_PATH).orElse(null);
 

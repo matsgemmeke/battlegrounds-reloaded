@@ -36,6 +36,10 @@ public class Arena extends BaseGame {
         maps.add(map);
     }
 
+    public void removeMap(ArenaMap map) {
+        maps.remove(map);
+    }
+
     public Optional<ArenaMap> getMap(String name) {
         return maps.stream().filter(map -> map.getName().equals(name)).findFirst();
     }

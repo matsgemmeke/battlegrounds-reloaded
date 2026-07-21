@@ -36,6 +36,29 @@ class ArenaTest {
     }
 
     @Test
+    @DisplayName("addMap adds map to list")
+    void addMap() {
+        ArenaMap map = new ArenaMap(MAP_NAME);
+
+        arena.addMap(map);
+        Optional<ArenaMap> mapOptional = arena.getMap(MAP_NAME);
+
+        assertThat(mapOptional).hasValue(map);
+    }
+
+    @Test
+    @DisplayName("removeMap removes map from list")
+    void removeMap() {
+        ArenaMap map = new ArenaMap(MAP_NAME);
+
+        arena.addMap(map);
+        arena.removeMap(map);
+        Optional<ArenaMap> mapOptional = arena.getMap(MAP_NAME);
+
+        assertThat(mapOptional).isEmpty();
+    }
+
+    @Test
     @DisplayName("getMap returns empty optional when arena does not have a map by the given name")
     void getMap_unknownMap() {
         Optional<ArenaMap> mapOptional = arena.getMap(MAP_NAME);

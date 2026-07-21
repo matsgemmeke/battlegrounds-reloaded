@@ -46,6 +46,13 @@ public interface ConfigurationFile {
     Optional<String> getString(String path);
 
     /**
+     * Removes an existing configuration section.
+     *
+     * @param path the section path
+     */
+    void removeSection(String path);
+
+    /**
      * Loads the contents from the configuration file into the configuration.
      */
     void load();

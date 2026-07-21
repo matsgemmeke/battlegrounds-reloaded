@@ -60,6 +60,12 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
+    public void removeSection(String path) {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        yamlConfiguration.set(path, null);
+    }
+
+    @Override
     public void set(String path, Object value) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         yamlConfiguration.set(path, value);

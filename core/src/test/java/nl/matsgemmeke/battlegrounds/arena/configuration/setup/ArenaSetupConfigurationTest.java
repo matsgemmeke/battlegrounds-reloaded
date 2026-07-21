@@ -118,6 +118,15 @@ class ArenaSetupConfigurationTest {
     }
 
     @Test
+    @DisplayName("removeMap removes map section from configuration file")
+    void removeMap() {
+        setupConfiguration.removeMap(MAP_NAME);
+
+        verify(configurationFile).removeSection("maps.level-1");
+        verify(configurationFile).save();
+    }
+
+    @Test
     @DisplayName("getMaps returns empty list when maps section does not exist")
     void getMaps_mapsSectionNotExists() {
         when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.empty());

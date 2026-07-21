@@ -97,6 +97,22 @@ class YamlConfigurationFileTest {
     }
 
     @Test
+    @DisplayName("removeSection sets section path value to null")
+    void removeSection() {
+        File yamlFile = new File(tempDir, "test.yml");
+        YamlConfiguration yamlConfiguration = mock(YamlConfiguration.class);
+
+        try (MockedStatic<YamlConfiguration> yamlConfigurationStatic = mockStatic(YamlConfiguration.class)) {
+            yamlConfigurationStatic.when(() -> YamlConfiguration.loadConfiguration(yamlFile)).thenReturn(yamlConfiguration);
+
+            YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile);
+            yamlConfigurationFile.removeSection("section");
+
+            verify(yamlConfiguration).set("section", null);
+        }
+    }
+
+    @Test
     @DisplayName("set sets value in yaml configuration")
     void set() {
         File yamlFile = new File(tempDir, "test.yml");

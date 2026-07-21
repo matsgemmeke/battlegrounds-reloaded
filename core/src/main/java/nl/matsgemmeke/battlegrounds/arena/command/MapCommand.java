@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
@@ -20,13 +21,15 @@ import java.util.List;
 public class MapCommand extends BaseCommand {
 
     private final CreateMapCommandExecutor createMapCommandExecutor;
+    private final RemoveMapCommandExecutor removeMapCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public MapCommand(CreateMapCommandExecutor createMapCommandExecutor, HelpMenu helpMenu, Translator translator) {
+    public MapCommand(CreateMapCommandExecutor createMapCommandExecutor, RemoveMapCommandExecutor removeMapCommandExecutor, HelpMenu helpMenu, Translator translator) {
         this.createMapCommandExecutor = createMapCommandExecutor;
+        this.removeMapCommandExecutor = removeMapCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -71,7 +74,7 @@ public class MapCommand extends BaseCommand {
     @CommandCompletion("@arena-id @map-name @nothing")
     @CommandPermission("battlegrounds.map.remove")
     @Subcommand("remove")
-    public void onRemove(CommandSender sender, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
-        sender.sendMessage(mapName);
+    public void onRemove(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
+        removeMapCommandExecutor.execute(player, arenaId, mapName);
     }
 }
