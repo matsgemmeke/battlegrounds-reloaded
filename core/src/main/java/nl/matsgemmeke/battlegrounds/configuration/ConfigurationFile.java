@@ -10,6 +10,14 @@ import java.util.Optional;
 public interface ConfigurationFile {
 
     /**
+     * Gets whether a value exists at the given path.
+     *
+     * @param path the path to check
+     * @return     whether the given exists in the configuration file
+     */
+    boolean exists(String path);
+
+    /**
      * Creates an empty {@link ConfigurationSection} at the specified path.
      *
      * @param path the path to create the section at

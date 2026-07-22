@@ -7,6 +7,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.MockedStatic;
 
 import java.io.File;
@@ -24,6 +26,20 @@ class YamlConfigurationFileTest {
 
     @TempDir
     private File tempDir;
+
+    @ParameterizedTest
+    @CsvSource({ "hello,true", "section,true", "unknown,false" })
+    @DisplayName("exists returns whether given path exists in configuration file")
+    void exists(String path, boolean expectedExists) throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        boolean exists = yamlConfigurationFile.exists(path);
+
+        assertThat(exists).isEqualTo(expectedExists);
+    }
 
     @Test
     @DisplayName("createSection creates and returns new configuration section in yaml configuration")

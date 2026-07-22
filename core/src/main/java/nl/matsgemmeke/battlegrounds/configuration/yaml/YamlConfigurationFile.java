@@ -31,6 +31,12 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
+    public boolean exists(String path) {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        return yamlConfiguration.get(path) != null;
+    }
+
+    @Override
     public ConfigurationSection createSection(String path) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return yamlConfiguration.createSection(path);
