@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 
 public class YamlConfigurationFile implements ConfigurationFile {
@@ -63,6 +64,12 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public Optional<String> getString(String path) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return Optional.ofNullable(yamlConfiguration.getString(path));
+    }
+
+    @Override
+    public List<String> getStringList(String path) {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        return yamlConfiguration.getStringList(path);
     }
 
     @Override

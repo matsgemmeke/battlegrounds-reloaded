@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -52,6 +53,14 @@ public interface ConfigurationFile {
      * @return     an optional with the string value of the given path or empty if the path does not lead to a value
      */
     Optional<String> getString(String path);
+
+    /**
+     * Gets the requested list of String by the given path. If the path does not exist, this will return an empty list.
+     *
+     * @param path the path to the list
+     * @return     the list of String values at the given path
+     */
+    List<String> getStringList(String path);
 
     /**
      * Gets whether at the given path is a list. Always returns false when the given path does not exist.

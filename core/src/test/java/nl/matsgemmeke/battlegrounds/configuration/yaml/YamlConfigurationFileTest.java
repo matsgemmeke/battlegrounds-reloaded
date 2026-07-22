@@ -16,6 +16,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -47,7 +48,7 @@ class YamlConfigurationFileTest {
     }
 
     @ParameterizedTest
-    @CsvSource({ "hello,true", "section,true", "unknown,false" })
+    @CsvSource({ "string,true", "section,true", "unknown,false" })
     @DisplayName("exists returns whether given path exists in configuration file")
     void exists(String path, boolean expectedExists) throws FileNotFoundException {
         File yamlFile = new File(tempDir, "test.yml");
@@ -112,8 +113,34 @@ class YamlConfigurationFileTest {
         assertThat(yamlConfigurationFile.getInt("int")).hasValue(100);
     }
 
+    @Test
+    @DisplayName("getStringList returns empty list when given path leads to no list")
+    void getStringList_empty() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        List<String> list = yamlConfigurationFile.getStringList("string");
+
+        assertThat(list).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getStringList returns list of strings at the given path")
+    void getStringList_successful() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        List<String> list = yamlConfigurationFile.getStringList("string-list");
+
+        assertThat(list).containsExactly("some", "words");
+    }
+
     @ParameterizedTest
-    @CsvSource({ "list,true", "hello,false" })
+    @CsvSource({ "string-list,true", "hello,false" })
     @DisplayName("isList returns whether given path leads to a list value")
     void isList(String path, boolean expected) throws FileNotFoundException {
         File yamlFile = new File(tempDir, "test.yml");
@@ -179,7 +206,7 @@ class YamlConfigurationFileTest {
         YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
         yamlConfigurationFile.load();
 
-        assertThat(yamlConfigurationFile.getString("hello")).hasValue("world");
+        assertThat(yamlConfigurationFile.getString("string")).hasValue("world");
     }
 
     @Test
