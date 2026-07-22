@@ -16,6 +16,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
     private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
 
+    private static final String MAP_COMMAND_USAGE = "/bg arena map";
+    private static final String MAP_COMMAND_SUGGESTION = "/bg arena map";
+    private static final String[] MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map" };
+
     private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <id>";
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
@@ -43,11 +47,13 @@ public class ArenaCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
-        String createArenaDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
-        String removeArenaDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
+        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
+        String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
+        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
 
-        arenaCommand.addCommandInfo(new CommandInfo(createArenaDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS));
-        arenaCommand.addCommandInfo(new CommandInfo(removeArenaDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
+        arenaCommand.addCommandInfo(new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS));
+        arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
+        arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
         commandManager.registerCommand(arenaCommand);
 

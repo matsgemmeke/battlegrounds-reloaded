@@ -125,7 +125,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
         // Disable ORMLite logs
         com.j256.ormlite.logger.Logger.setGlobalLogLevel(com.j256.ormlite.logger.Level.ERROR);
 
-        // Disable hibernate validator logs (Minecraft uses Log4j2, not JUL)
+        // Disable hibernate validator logs
         Configurator.setLevel("org.hibernate.validator", Level.WARN);
     }
 }
