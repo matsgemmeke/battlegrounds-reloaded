@@ -1,0 +1,113 @@
+package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
+
+import com.google.inject.Inject;
+import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.util.TextUtil;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
+import org.bukkit.configuration.ConfigurationSection;
+
+import java.time.Instant;
+import java.time.format.DateTimeParseException;
+import java.util.*;
+import java.util.logging.Logger;
+
+public class ArenaSetupConfiguration {
+
+    private static final String CREATED_AT_PATH = "created-at";
+    private static final String CREATED_BY_PATH = "created-by";
+    private static final String MAPS_PATH = "maps";
+    private static final String MAP_NAME_PATH = "name";
+    private static final String MAP_CREATED_AT_PATH = "created-at";
+    private static final String MAP_CREATED_BY_PATH = "created-by";
+
+    private final ConfigurationFile configurationFile;
+    private final Logger logger;
+    private final ObjectValidator objectValidator;
+
+    @Inject
+    public ArenaSetupConfiguration(Logger logger, ObjectValidator objectValidator, @Assisted ConfigurationFile configurationFile) {
+        this.logger = logger;
+        this.objectValidator = objectValidator;
+        this.configurationFile = configurationFile;
+    }
+
+    public void save() {
+        configurationFile.save();
+    }
+
+    public Optional<Instant> getCreatedAt() {
+        return configurationFile.getString(CREATED_AT_PATH).map(Instant::parse);
+    }
+
+    public void setCreatedAt(Instant instant) {
+        configurationFile.set(CREATED_AT_PATH, instant.toString());
+    }
+
+    public Optional<UUID> getCreatedBy() {
+        return configurationFile.getString(CREATED_BY_PATH).map(UUID::fromString);
+    }
+
+    public void setCreatedBy(UUID uuid) {
+        configurationFile.set(CREATED_BY_PATH, uuid.toString());
+    }
+
+    public void createMap(MapCreationInfo mapCreationInfo) {
+        String mapPathName = TextUtil.toKebabCase(mapCreationInfo.mapName());
+
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, mapCreationInfo.mapName());
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_AT_PATH, mapCreationInfo.createdAt().toString());
+        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
+    }
+
+    public void removeMap(String mapName) {
+        String mapPathName = TextUtil.toKebabCase(mapName);
+
+        configurationFile.removeSection(MAPS_PATH + "." + mapPathName);
+        configurationFile.save();
+    }
+
+    public Collection<ArenaMapData> getMaps() {
+        ConfigurationSection mapsSection = configurationFile.getConfigurationSection(MAPS_PATH).orElse(null);
+
+        if (mapsSection == null) {
+            return Collections.emptySet();
+        }
+
+        Set<ArenaMapData> mapDataList = new HashSet<>();
+
+        for (String mapsKey : mapsSection.getKeys(false)) {
+            String name = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_NAME_PATH).orElse(null);
+            Instant createdAt = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
+            UUID createdBy = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
+
+            ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy);
+
+            try {
+                objectValidator.validate(mapData);
+                mapDataList.add(mapData);
+            } catch (ValidationException ex) {
+                logger.severe("Failed to load map %s: %s".formatted(mapsKey, ex.getMessage()));
+            }
+        }
+
+        return mapDataList;
+    }
+
+    private Instant parseInstant(String value) {
+        try {
+            return Instant.parse(value);
+        } catch (DateTimeParseException ex) {
+            return null;
+        }
+    }
+
+    private UUID parseUUID(String value) {
+        try {
+            return UUID.fromString(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
+    }
+}

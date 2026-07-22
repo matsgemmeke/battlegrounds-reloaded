@@ -5,10 +5,17 @@ import com.google.inject.*;
 import com.google.inject.Module;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import jakarta.validation.ConstraintValidatorFactory;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
+import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
+import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
+import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
@@ -52,7 +59,6 @@ import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandl
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinderProvider;
-import nl.matsgemmeke.battlegrounds.game.configuration.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.FreeplayTargetFinder;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
@@ -117,6 +123,7 @@ import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
+import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import nl.matsgemmeke.battlegrounds.validation.GuiceConstraintValidatorFactory;
 import org.bukkit.plugin.Plugin;
@@ -168,11 +175,13 @@ public class BattlegroundsModule implements Module {
         binder.bind(PaperCommandManager.class).toInstance(commandManager);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
+        binder.bind(ResourceProvider.class).toInstance(plugin::getResource);
         binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
 
         // Singleton bindings
+        binder.bind(ArenaRegistry.class).in(Singleton.class);
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(DamageEventTracker.class).in(Singleton.class);
         binder.bind(EventDispatcher.class).in(Singleton.class);
@@ -182,6 +191,10 @@ public class BattlegroundsModule implements Module {
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
+
+        Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
+        commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
+        commandExtensionBinder.addBinding().to(MapCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
@@ -253,11 +266,9 @@ public class BattlegroundsModule implements Module {
         binder.bind(TargetFinder.class).toProvider(TargetFinderProvider.class).in(GameScoped.class);
 
         // Factory bindings
-        binder.install(new FactoryModuleBuilder()
-                .build(ArenaSettingsConfigurationFactory.class));
-
-        binder.install(new FactoryModuleBuilder()
-                .build(DeploymentFactory.class));
+        binder.install(new FactoryModuleBuilder().build(ArenaSettingsConfigurationFactory.class));
+        binder.install(new FactoryModuleBuilder().build(ArenaSetupConfigurationFactory.class));
+        binder.install(new FactoryModuleBuilder().build(DeploymentFactory.class));
 
         binder.install(new FactoryModuleBuilder()
                 .implement(GamePlayer.class, DefaultGamePlayer.class)

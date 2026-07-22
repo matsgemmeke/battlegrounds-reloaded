@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
-import com.j256.ormlite.logger.Level;
+import nl.matsgemmeke.battlegrounds.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
@@ -13,6 +13,8 @@ import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -73,6 +75,7 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         this.setUpEventHandlers();
         injector.getInstance(CommandBootstrapper.class).initialize();
+        injector.getInstance(ArenaSetupLoader.class).loadArenas();
         this.setUpJobs();
     }
 
@@ -120,6 +123,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private void setUpLogging() {
         // Disable ORMLite logs
-        com.j256.ormlite.logger.Logger.setGlobalLogLevel(Level.ERROR);
+        com.j256.ormlite.logger.Logger.setGlobalLogLevel(com.j256.ormlite.logger.Level.ERROR);
+
+        // Disable hibernate validator logs
+        Configurator.setLevel("org.hibernate.validator", Level.WARN);
     }
 }

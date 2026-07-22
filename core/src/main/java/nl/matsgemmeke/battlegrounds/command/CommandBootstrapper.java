@@ -2,13 +2,12 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.command.arena.ArenaCommand;
-import nl.matsgemmeke.battlegrounds.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+
+import java.util.Set;
 
 public class CommandBootstrapper {
 
@@ -32,53 +31,40 @@ public class CommandBootstrapper {
     private static final String TOOLS_COMMAND_SUGGESTION = "/bg tools";
     private static final String[] TOOLS_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools" };
 
-    private static final String CREATE_ARENA_COMMAND_USAGE = "/bg arena create <id>";
-    private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
-    private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
-
-    private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <id>";
-    private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
-    private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
-
     private static final String SHOW_HITBOXES_COMMAND_USAGE = "/bg tools showhitboxes <seconds> <range>";
     private static final String SHOW_HITBOXES_COMMAND_SUGGESTION = "/bg tools showhitboxes ";
     private static final String[] SHOW_HITBOXES_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools.showhitboxes" };
 
     private final PaperCommandManager commandManager;
+    private final Set<CommandExtension> commandExtensions;
     private final Translator translator;
 
     private final BattlegroundsCommand bgCommand;
-    private final ArenaCommand arenaCommand;
     private final ToolsCommand toolsCommand;
 
-    private final ExistentArenaIdCondition existentArenaIdCondition;
-    private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
 
     @Inject
     public CommandBootstrapper(
             PaperCommandManager commandManager,
+            Set<CommandExtension> commandExtensions,
             Translator translator,
             BattlegroundsCommand bgCommand,
-            ArenaCommand arenaCommand,
             ToolsCommand toolsCommand,
-            ExistentArenaIdCondition existentArenaIdCondition,
-            NonexistentArenaIdCondition nonexistentArenaIdCondition,
             FreeplayModePresenceCondition freeplayModePresenceCondition
     ) {
         this.commandManager = commandManager;
+        this.commandExtensions = commandExtensions;
         this.translator = translator;
         this.bgCommand = bgCommand;
-        this.arenaCommand = arenaCommand;
         this.toolsCommand = toolsCommand;
-        this.existentArenaIdCondition = existentArenaIdCondition;
-        this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
     }
 
     public void initialize() {
+        commandExtensions.forEach(extension -> extension.configure(commandManager));
+
         this.registerBattlegroundsCommand();
-        this.registerArenaCommand();
         this.registerToolsCommand();
         this.registerConditions();
     }
@@ -105,19 +91,6 @@ public class CommandBootstrapper {
         commandManager.registerCommand(bgCommand);
     }
 
-    private void registerArenaCommand() {
-        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
-        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
-
-        CommandInfo createArenaCommandInfo = new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS);
-        CommandInfo removeArenaCommandInfo = new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS);
-
-        arenaCommand.addCommandInfo(createArenaCommandInfo);
-        arenaCommand.addCommandInfo(removeArenaCommandInfo);
-
-        commandManager.registerCommand(arenaCommand);
-    }
-
     private void registerToolsCommand() {
         String showHitboxesCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SHOW_HITBOXES.getPath()).getText();
 
@@ -131,7 +104,5 @@ public class CommandBootstrapper {
     private void registerConditions() {
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
-        commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
-        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
     }
 }

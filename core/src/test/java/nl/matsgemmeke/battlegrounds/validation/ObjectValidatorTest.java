@@ -29,7 +29,7 @@ class ObjectValidatorTest {
         assertThatThrownBy(() -> objectValidator.validate(validationObject))
                 .isInstanceOf(ValidationException.class)
                 .hasMessage("""
-                     Validation failed for TestValidationObject (1 constraint violations):
+                     Validation failed for TestValidationObject (1 constraint violation):
                       - enum-value: invalid value "fail" for enum Particle""");
     }
 

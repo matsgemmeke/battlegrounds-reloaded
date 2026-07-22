@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.game.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.freeplay.Freeplay;
 
 import java.util.*;
@@ -60,6 +60,19 @@ public class GameContextProvider {
 
         games.put(gameKey, freeplay);
         return true;
+    }
+
+    /**
+     * Returns a list of id's of all arenas that are currently registered.
+     *
+     * @return a list of all arena id's
+     */
+    public List<Integer> getArenaIds() {
+        return games.values().stream()
+                .filter(Arena.class::isInstance)
+                .map(Arena.class::cast)
+                .map(Arena::getId)
+                .toList();
     }
 
     /**

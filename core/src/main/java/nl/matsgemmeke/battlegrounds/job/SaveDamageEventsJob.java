@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.job;
 
 import com.google.inject.Inject;
+import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageEventTracker;
 import nl.matsgemmeke.battlegrounds.scheduling.TaskRunner;
 import nl.matsgemmeke.battlegrounds.storage.stats.StatsStorage;
@@ -18,7 +19,7 @@ public class SaveDamageEventsJob implements Job {
     private final TaskRunner taskRunner;
 
     @Inject
-    public SaveDamageEventsJob(DamageEventTracker damageEventTracker, Logger logger, StatsStorage statsStorage, TaskRunner taskRunner) {
+    public SaveDamageEventsJob(DamageEventTracker damageEventTracker, @Named("Battlegrounds") Logger logger, StatsStorage statsStorage, TaskRunner taskRunner) {
         this.damageEventTracker = damageEventTracker;
         this.logger = logger;
         this.statsStorage = statsStorage;
@@ -34,7 +35,7 @@ public class SaveDamageEventsJob implements Job {
                 statsStorage.saveDamageEvents(trackedDamageEvents);
 
                 String eventNoun = TextUtil.pluralize(trackedDamageEvents.size(), "event", "events");
-                logger.info("[Battlegrounds] Saved %s damage %s to the database".formatted(trackedDamageEvents.size(), eventNoun));
+                logger.info("Saved %s damage %s to the database".formatted(trackedDamageEvents.size(), eventNoun));
             }
         });
     }
