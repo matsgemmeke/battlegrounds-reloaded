@@ -50,7 +50,7 @@ class ArenaCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(arenaCommand, times(2)).addCommandInfo(any(CommandInfo.class));
+        verify(arenaCommand, times(3)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(arenaCommand);
 

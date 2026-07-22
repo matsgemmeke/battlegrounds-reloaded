@@ -27,20 +27,6 @@ class YamlConfigurationFileTest {
     @TempDir
     private File tempDir;
 
-    @ParameterizedTest
-    @CsvSource({ "hello,true", "section,true", "unknown,false" })
-    @DisplayName("exists returns whether given path exists in configuration file")
-    void exists(String path, boolean expectedExists) throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        boolean exists = yamlConfigurationFile.exists(path);
-
-        assertThat(exists).isEqualTo(expectedExists);
-    }
-
     @Test
     @DisplayName("createSection creates and returns new configuration section in yaml configuration")
     void createSection() {
@@ -58,6 +44,20 @@ class YamlConfigurationFileTest {
 
             assertThat(result).isEqualTo(section);
         }
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "hello,true", "section,true", "unknown,false" })
+    @DisplayName("exists returns whether given path exists in configuration file")
+    void exists(String path, boolean expectedExists) throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        boolean exists = yamlConfigurationFile.exists(path);
+
+        assertThat(exists).isEqualTo(expectedExists);
     }
 
     @Test
@@ -110,6 +110,20 @@ class YamlConfigurationFileTest {
         yamlConfigurationFile.load();
 
         assertThat(yamlConfigurationFile.getInt("int")).hasValue(100);
+    }
+
+    @ParameterizedTest
+    @CsvSource({ "list,true", "hello,false" })
+    @DisplayName("isList returns whether given path leads to a list value")
+    void isList(String path, boolean expected) throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        boolean list = yamlConfigurationFile.isList(path);
+
+        assertThat(list).isEqualTo(expected);
     }
 
     @Test

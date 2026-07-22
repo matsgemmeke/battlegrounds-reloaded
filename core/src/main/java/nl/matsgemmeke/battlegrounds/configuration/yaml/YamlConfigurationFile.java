@@ -31,15 +31,15 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
-    public boolean exists(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.get(path) != null;
-    }
-
-    @Override
     public ConfigurationSection createSection(String path) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return yamlConfiguration.createSection(path);
+    }
+
+    @Override
+    public boolean exists(String path) {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        return yamlConfiguration.get(path) != null;
     }
 
     @Override
@@ -63,6 +63,12 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public Optional<String> getString(String path) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return Optional.ofNullable(yamlConfiguration.getString(path));
+    }
+
+    @Override
+    public boolean isList(String path) {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        return yamlConfiguration.isList(path);
     }
 
     @Override

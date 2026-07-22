@@ -10,20 +10,20 @@ import java.util.Optional;
 public interface ConfigurationFile {
 
     /**
-     * Gets whether a value exists at the given path.
-     *
-     * @param path the path to check
-     * @return     whether the given exists in the configuration file
-     */
-    boolean exists(String path);
-
-    /**
      * Creates an empty {@link ConfigurationSection} at the specified path.
      *
      * @param path the path to create the section at
      * @return the newly created section
      */
     ConfigurationSection createSection(String path);
+
+    /**
+     * Gets whether a value exists at the given path.
+     *
+     * @param path the path to check
+     * @return     whether the given exists in the configuration file
+     */
+    boolean exists(String path);
 
     /**
      * Gets a configuration section from the configuration file. Returns an empty optional if the given path does not
@@ -52,6 +52,14 @@ public interface ConfigurationFile {
      * @return     an optional with the string value of the given path or empty if the path does not lead to a value
      */
     Optional<String> getString(String path);
+
+    /**
+     * Gets whether at the given path is a list. Always returns false when the given path does not exist.
+     *
+     * @param path the path to check
+     * @return     whether the given path leads to a list
+     */
+    boolean isList(String path);
 
     /**
      * Removes an existing configuration section.
