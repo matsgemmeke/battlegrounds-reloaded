@@ -1,48 +1,73 @@
 package nl.matsgemmeke.battlegrounds.configuration.lang;
 
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Locale;
+import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-public class LanguageConfigurationTest {
+@ExtendWith(MockitoExtension.class)
+class LanguageConfigurationTest {
 
-    private File langFile;
+    private static final String PATH = "path";
+    private static final String TEXT_VALUE = "hello";
 
-    @BeforeEach
-    public void setUp(@TempDir File tempDir) throws IOException {
-        File langFolder = new File(tempDir.getPath() + "/Battlegrounds/lang");
+    @Mock
+    private ConfigurationFile configurationFile;
+    @InjectMocks
+    private LanguageConfiguration languageConfiguration;
 
-        this.langFile = new File(langFolder, "lang_en.yml");
+    @Test
+    @DisplayName("getTextValue returns empty optional when given path does not exist")
+    void getTextValue_nonexistentPath() {
+        when(configurationFile.exists(PATH)).thenReturn(false);
 
-        langFile.delete();
+        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textValueOptional).isEmpty();
     }
 
     @Test
-    public void shouldBeAbleToGetLocale() {
-        Locale locale = Locale.ENGLISH;
-        LanguageConfiguration languageConfiguration = new LanguageConfiguration(langFile, null, locale);
+    @DisplayName("getTextValue returns empty optional when given path leads to empty list")
+    void getTextValue_emptyList() {
+        when(configurationFile.exists(PATH)).thenReturn(true);
+        when(configurationFile.isList(PATH)).thenReturn(true);
+        when(configurationFile.getStringList(PATH)).thenReturn(List.of());
 
-        assertEquals(Locale.ENGLISH, languageConfiguration.getLocale());
+        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textValueOptional).isEmpty();
     }
 
     @Test
-    public void shouldCreateNewFileWithResourceContentsUponFirstLoad() throws IOException {
-        File resourceFile = new File("src/main/resources/lang/lang_en.yml");
-        InputStream resource = new FileInputStream(resourceFile);
-        Locale locale = Locale.ENGLISH;
+    @DisplayName("getTextValue returns optional with joined strings from list")
+    void getTextValue_stringList() {
+        when(configurationFile.exists(PATH)).thenReturn(true);
+        when(configurationFile.isList(PATH)).thenReturn(true);
+        when(configurationFile.getStringList(PATH)).thenReturn(List.of(TEXT_VALUE, "world"));
 
-        LanguageConfiguration languageConfiguration = new LanguageConfiguration(langFile, resource, locale);
-        languageConfiguration.load();
+        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
 
-        assertNotNull(languageConfiguration.getString("admin.reload-failed"));
+        assertThat(textValueOptional).hasValue("hello\nworld");
+    }
+
+    @Test
+    @DisplayName("getTextValue returns optional with string value at given path")
+    void getTextValue_singleString() {
+        when(configurationFile.exists(PATH)).thenReturn(true);
+        when(configurationFile.isList(PATH)).thenReturn(false);
+        when(configurationFile.getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
+
+        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textValueOptional).hasValue(TEXT_VALUE);
     }
 }

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.text;
 
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
 import org.bukkit.ChatColor;
 
@@ -9,10 +10,12 @@ import org.bukkit.ChatColor;
  */
 public class Translator {
 
+    private final BattlegroundsConfiguration battlegroundsConfiguration;
     private final LanguageConfiguration languageConfiguration;
 
     @Inject
-    public Translator(LanguageConfiguration languageConfiguration) {
+    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration) {
+        this.battlegroundsConfiguration = battlegroundsConfiguration;
         this.languageConfiguration = languageConfiguration;
     }
 
@@ -23,13 +26,12 @@ public class Translator {
      * @return the translation message from the message path as a text template
      */
     public TextTemplate translate(String key) {
-        String translation = languageConfiguration.getString(key);
+        String textValue = languageConfiguration.getTextValue(key).orElse(null);
 
-        if (translation == null) {
-            throw new InvalidTranslationKeyException("Translation for key \"" + key + "\" in language configuration '"
-                    + languageConfiguration.getLocale().getCountry() + "' not found");
+        if (textValue == null) {
+            throw new InvalidTranslationKeyException("Translation for key \"" + key + "\" in language configuration '" + battlegroundsConfiguration.getLanguage() + "' not found");
         }
 
-        return new TextTemplate(ChatColor.translateAlternateColorCodes('&', translation));
+        return new TextTemplate(ChatColor.translateAlternateColorCodes('&', textValue));
     }
 }

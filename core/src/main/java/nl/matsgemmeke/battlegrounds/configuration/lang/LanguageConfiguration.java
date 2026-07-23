@@ -1,27 +1,33 @@
 package nl.matsgemmeke.battlegrounds.configuration.lang;
 
-import nl.matsgemmeke.battlegrounds.configuration.BasePluginConfiguration;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.Locale;
+import java.util.List;
+import java.util.Optional;
 
-public class LanguageConfiguration extends BasePluginConfiguration {
+public class LanguageConfiguration {
 
-    private static final boolean READ_ONLY = true;
+    private final ConfigurationFile configurationFile;
 
-    @NotNull
-    private final Locale locale;
-
-    public LanguageConfiguration(@NotNull File file, @Nullable InputStream resource, @NotNull Locale locale) {
-        super(file, resource, READ_ONLY);
-        this.locale = locale;
+    public LanguageConfiguration(ConfigurationFile configurationFile) {
+        this.configurationFile = configurationFile;
     }
 
-    @NotNull
-    public Locale getLocale() {
-        return locale;
+    public Optional<String> getTextValue(String path) {
+        if (!configurationFile.exists(path)) {
+            return Optional.empty();
+        }
+
+        if (configurationFile.isList(path)) {
+            List<String> lines = configurationFile.getStringList(path);
+
+            if (lines.isEmpty()) {
+                return Optional.empty();
+            }
+
+            return Optional.of(String.join("\n", lines));
+        } else {
+            return configurationFile.getString(path);
+        }
     }
 }

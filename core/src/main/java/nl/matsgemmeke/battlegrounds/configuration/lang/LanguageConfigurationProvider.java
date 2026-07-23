@@ -4,43 +4,45 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
+import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
 
 import java.io.File;
 import java.io.InputStream;
-import java.util.Locale;
 
 public class LanguageConfigurationProvider implements Provider<LanguageConfiguration> {
 
-    @NotNull
+    private static final String DEFAULT_FILE_NAME = "lang_%s.yml";
+
     private final BattlegroundsConfiguration configuration;
-    @NotNull
     private final File langFolder;
-    @NotNull
-    private final Plugin plugin;
+    private final ResourceProvider resourceProvider;
+    private final YamlConfigurationFileFactory yamlConfigurationFileFactory;
 
     @Inject
     public LanguageConfigurationProvider(
-            @NotNull BattlegroundsConfiguration configuration,
-            @Named("LangFolder") @NotNull File langFolder,
-            @NotNull Plugin plugin
+            BattlegroundsConfiguration configuration,
+            @Named("LangFolder") File langFolder,
+            ResourceProvider resourceProvider,
+            YamlConfigurationFileFactory yamlConfigurationFileFactory
     ) {
         this.configuration = configuration;
         this.langFolder = langFolder;
-        this.plugin = plugin;
+        this.resourceProvider = resourceProvider;
+        this.yamlConfigurationFileFactory = yamlConfigurationFileFactory;
     }
 
+    @Override
     public LanguageConfiguration get() {
         String language = configuration.getLanguage();
-        String fileName = "lang_" + language + ".yml";
+        String fileName = DEFAULT_FILE_NAME.formatted(language);
 
-        File langFile = langFolder.toPath().resolve(fileName).toFile();
-        InputStream resource = plugin.getResource("lang/" + fileName);
-        Locale locale = Locale.forLanguageTag(language);
+        File langFile = new File(langFolder, fileName);
+        InputStream resource = resourceProvider.getResource("lang/" + fileName);
 
-        LanguageConfiguration languageConfiguration = new LanguageConfiguration(langFile, resource, locale);
-        languageConfiguration.load();
-        return languageConfiguration;
+        YamlConfigurationFile configurationFile = yamlConfigurationFileFactory.create(langFile, resource);
+
+        return new LanguageConfiguration(configurationFile);
     }
 }

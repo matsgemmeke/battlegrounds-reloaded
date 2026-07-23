@@ -1,9 +1,17 @@
 package nl.matsgemmeke.battlegrounds.configuration.lang;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import org.bukkit.plugin.Plugin;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
+import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.io.TempDir;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -13,30 +21,34 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class LanguageConfigurationProviderTest {
+@ExtendWith(MockitoExtension.class)
+class LanguageConfigurationProviderTest {
 
+    @Mock
     private BattlegroundsConfiguration configuration;
+    @Spy
+    @TempDir
     private File langFolder;
-    private Plugin plugin;
-
-    @BeforeEach
-    public void setUp() {
-        configuration = mock(BattlegroundsConfiguration.class);
-        langFolder = new File("src/main/resources/lang");
-        plugin = mock(Plugin.class);
-    }
+    @Mock
+    private ResourceProvider resourceProvider;
+    @Mock
+    private YamlConfigurationFileFactory yamlConfigurationFileFactory;
+    @InjectMocks
+    private LanguageConfigurationProvider provider;
 
     @Test
-    public void getCreatesNewConfigurationWithConfigFileContent() throws FileNotFoundException {
+    @DisplayName("get creates new configuration instance with corresponding configuration file")
+    void get() throws FileNotFoundException {
         File langFile = new File("src/main/resources/lang/lang_en.yml");
-        FileInputStream inputStream = new FileInputStream(langFile);
+        FileInputStream resource = new FileInputStream(langFile);
+        YamlConfigurationFile configurationFile = mock(YamlConfigurationFile.class);
 
         when(configuration.getLanguage()).thenReturn("en");
-        when(plugin.getResource("lang_en.yml")).thenReturn(inputStream);
+        when(resourceProvider.getResource("lang/lang_en.yml")).thenReturn(resource);
+        when(yamlConfigurationFileFactory.create(new File(langFolder, "lang_en.yml"), resource)).thenReturn(configurationFile);
 
-        LanguageConfigurationProvider provider = new LanguageConfigurationProvider(configuration, langFolder, plugin);
         LanguageConfiguration configuration = provider.get();
 
-        assertThat(configuration.getString("commands.battlegrounds-help-menu-title")).isEqualTo("&6&l Battlegrounds Help Menu");
+        assertThat(configuration).isNotNull();
     }
 }
