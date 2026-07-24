@@ -22,8 +22,6 @@ import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -120,6 +118,8 @@ import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeapon
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;

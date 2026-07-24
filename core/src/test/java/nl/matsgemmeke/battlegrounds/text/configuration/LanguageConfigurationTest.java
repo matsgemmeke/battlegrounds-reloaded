@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.lang;
+package nl.matsgemmeke.battlegrounds.text.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import org.junit.jupiter.api.DisplayName;

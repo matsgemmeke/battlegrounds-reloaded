@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.text;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
 
 /**

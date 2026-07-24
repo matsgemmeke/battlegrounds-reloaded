@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.text;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

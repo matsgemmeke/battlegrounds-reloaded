@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.lang;
+package nl.matsgemmeke.battlegrounds.text.configuration;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
