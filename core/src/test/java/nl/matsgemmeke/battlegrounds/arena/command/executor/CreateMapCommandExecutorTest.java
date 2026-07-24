@@ -77,7 +77,11 @@ class CreateMapCommandExecutorTest {
         ArgumentCaptor<ArenaMap> mapCaptor = ArgumentCaptor.forClass(ArenaMap.class);
         verify(arena).addMap(mapCaptor.capture());
 
-        assertThat(mapCaptor.getValue().getName()).isEqualTo(MAP_NAME);
+        assertThat(mapCaptor.getValue()).satisfies(map -> {
+            assertThat(map.getName()).isEqualTo(MAP_NAME);
+            assertThat(map.getMetadata().createdAt()).isEqualTo(INSTANT);
+            assertThat(map.getMetadata().createdBy()).isEqualTo(PLAYER_ID);
+        });
 
         ArgumentCaptor<MapCreationInfo> mapCreationInfoCaptor = ArgumentCaptor.forClass(MapCreationInfo.class);
         verify(arenaSetupConfiguration).createMap(mapCreationInfoCaptor.capture());

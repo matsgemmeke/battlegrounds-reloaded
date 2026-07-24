@@ -50,7 +50,7 @@ class MapCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(mapCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(mapCommand, times(2)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(mapCommand);
 

@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
+import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
 import nl.matsgemmeke.battlegrounds.text.TranslationKey;
 import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
@@ -39,12 +40,13 @@ public class CreateMapCommandExecutor {
             throw new ArenaNotFoundException("Received a supposedly validated arena id %s, but the arena instance is not present".formatted(arenaId));
         }
 
-        ArenaMap map = new ArenaMap(mapName);
-
-        arena.addMap(map);
-
         Instant createdAt = Instant.now(clock);
         UUID createdBy = player.getUniqueId();
+
+        ArenaMapMetadata metadata = new ArenaMapMetadata(createdAt, createdBy);
+        ArenaMap map = new ArenaMap(mapName, metadata);
+        arena.addMap(map);
+
         MapCreationInfo mapCreationInfo = new MapCreationInfo(mapName, createdAt, createdBy);
 
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);

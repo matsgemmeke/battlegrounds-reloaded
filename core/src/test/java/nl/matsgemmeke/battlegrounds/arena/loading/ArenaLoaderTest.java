@@ -89,7 +89,11 @@ class ArenaLoaderTest {
                 assertThat(settings.getMaxPlayers()).isEqualTo(MAX_PLAYERS);
                 assertThat(settings.getMinPlayers()).isEqualTo(MIN_PLAYERS);
             });
-            assertThat(arena.getMapNames()).containsExactly(MAP_NAME);
+            assertThat(arena.getMaps()).satisfiesExactly(map -> {
+                assertThat(map.getName()).isEqualTo(MAP_NAME);
+                assertThat(map.getMetadata().createdAt()).isEqualTo(MAP_CREATED_AT);
+                assertThat(map.getMetadata().createdBy()).isEqualTo(MAP_CREATED_BY);
+            });
         });
     }
 }

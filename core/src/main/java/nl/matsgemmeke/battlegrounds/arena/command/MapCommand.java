@@ -4,7 +4,6 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
-import nl.matsgemmeke.battlegrounds.arena.command.executor.MapListCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
@@ -22,7 +21,6 @@ import java.util.List;
 public class MapCommand extends BaseCommand {
 
     private final CreateMapCommandExecutor createMapCommandExecutor;
-    private final MapListCommandExecutor mapListCommandExecutor;
     private final RemoveMapCommandExecutor removeMapCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
@@ -31,12 +29,10 @@ public class MapCommand extends BaseCommand {
     @Inject
     public MapCommand(
             CreateMapCommandExecutor createMapCommandExecutor,
-            MapListCommandExecutor mapListCommandExecutor,
             RemoveMapCommandExecutor removeMapCommandExecutor,
             HelpMenu helpMenu,
             Translator translator) {
         this.createMapCommandExecutor = createMapCommandExecutor;
-        this.mapListCommandExecutor = mapListCommandExecutor;
         this.removeMapCommandExecutor = removeMapCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
@@ -68,13 +64,6 @@ public class MapCommand extends BaseCommand {
     @Subcommand("create")
     public void onCreate(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("nonexistent-map-name") String mapName) {
         createMapCommandExecutor.execute(player, arenaId, mapName);
-    }
-
-    @CommandCompletion("@arena-id")
-    @CommandPermission("battlegrounds.map.list")
-    @Subcommand("list")
-    public void onList(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId) {
-        mapListCommandExecutor.execute(player, arenaId);
     }
 
     // NOTE: The trailing "@nothing" in @CommandCompletion is intentional! The param mapName is a greedy String, so at
