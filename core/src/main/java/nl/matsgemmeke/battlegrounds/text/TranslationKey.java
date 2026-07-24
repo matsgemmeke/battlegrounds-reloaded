@@ -17,6 +17,7 @@ public enum TranslationKey {
     DESCRIPTION_CREATE_MAP("commands.description-create-map"),
     DESCRIPTION_GIVE_WEAPON("commands.description-give-weapon"),
     DESCRIPTION_MAP("commands.description-map"),
+    DESCRIPTION_MAP_LIST("commands.description-map-list"),
     DESCRIPTION_RELOAD("commands.description-reload"),
     DESCRIPTION_REMOVE_ARENA("commands.description-remove-arena"),
     DESCRIPTION_REMOVE_MAP("commands.description-remove-map"),

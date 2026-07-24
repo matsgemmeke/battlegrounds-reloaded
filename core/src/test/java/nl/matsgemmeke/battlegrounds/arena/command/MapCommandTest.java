@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
 import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.MapListCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
@@ -37,6 +38,8 @@ class MapCommandTest {
 
     @Mock
     private CreateMapCommandExecutor createMapCommandExecutor;
+    @Mock
+    private MapListCommandExecutor mapListCommandExecutor;
     @Mock
     private RemoveMapCommandExecutor removeMapCommandExecutor;
     @Mock
@@ -93,6 +96,14 @@ class MapCommandTest {
         command.onCreate(player, ARENA_ID, MAP_NAME);
 
         verify(createMapCommandExecutor).execute(player, ARENA_ID, MAP_NAME);
+    }
+
+    @Test
+    @DisplayName("onList deletes to MapListCommandExecutor")
+    void onList() {
+        command.onList(player, ARENA_ID);
+
+        verify(mapListCommandExecutor).execute(player, ARENA_ID);
     }
 
     @Test
