@@ -36,6 +36,16 @@ commands:
   description-tools: "Provides miscellaneous tools for operating the plugin"
   help-menu-command: " - %bg_usage%"
   map-help-menu-title: "&6&l Map commands"
+  map-list-header:
+    - " "
+    - " &6&l Maps in arena %bg_arena%"
+    - " "
+  map-list-entry:
+    - " &6Name: &f%bg_map%"
+    - " &6Created by: &f%bg_map_created_by%"
+    - " &6Creation date: &f%bg_map_creation_date%"
+  map-list-footer:
+    - " "
   tools-help-menu-title: "&6&l List of tools"
   weapon-given: "&6You have been given a %bg_weapon%."
 
