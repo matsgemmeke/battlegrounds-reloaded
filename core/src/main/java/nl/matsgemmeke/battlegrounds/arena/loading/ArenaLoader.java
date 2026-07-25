@@ -8,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
+import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
@@ -48,7 +49,9 @@ public class ArenaLoader {
 
         for (ArenaMapData mapData : setupConfiguration.getMaps()) {
             String name = mapData.name();
-            ArenaMap map = new ArenaMap(name);
+            ArenaMapMetadata metadata = new ArenaMapMetadata(mapData.createdAt(), mapData.createdBy());
+
+            ArenaMap map = new ArenaMap(name, metadata);
 
             arena.addMap(map);
         }

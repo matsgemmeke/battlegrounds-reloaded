@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompl
 import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -50,7 +50,7 @@ class MapCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(mapCommand, times(2)).addCommandInfo(any(CommandInfo.class));
+        verify(mapCommand, times(3)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(mapCommand);
 

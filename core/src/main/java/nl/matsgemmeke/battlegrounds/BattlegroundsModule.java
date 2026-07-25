@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -22,8 +23,6 @@ import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.lang.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayerFactory;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -67,6 +66,9 @@ import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRe
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -119,7 +121,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateReposito
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
-import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -181,6 +182,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
 
         // Singleton bindings
+        binder.bind(ArenaMapSelector.class).in(Singleton.class);
         binder.bind(ArenaRegistry.class).in(Singleton.class);
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(DamageEventTracker.class).in(Singleton.class);

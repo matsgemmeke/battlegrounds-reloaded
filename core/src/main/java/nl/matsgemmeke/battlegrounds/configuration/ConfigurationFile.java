@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration;
 
 import org.bukkit.configuration.ConfigurationSection;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -16,6 +17,14 @@ public interface ConfigurationFile {
      * @return the newly created section
      */
     ConfigurationSection createSection(String path);
+
+    /**
+     * Gets whether a value exists at the given path.
+     *
+     * @param path the path to check
+     * @return     whether the given exists in the configuration file
+     */
+    boolean exists(String path);
 
     /**
      * Gets a configuration section from the configuration file. Returns an empty optional if the given path does not
@@ -44,6 +53,22 @@ public interface ConfigurationFile {
      * @return     an optional with the string value of the given path or empty if the path does not lead to a value
      */
     Optional<String> getString(String path);
+
+    /**
+     * Gets the requested list of String by the given path. If the path does not exist, this will return an empty list.
+     *
+     * @param path the path to the list
+     * @return     the list of String values at the given path
+     */
+    List<String> getStringList(String path);
+
+    /**
+     * Gets whether at the given path is a list. Always returns false when the given path does not exist.
+     *
+     * @param path the path to check
+     * @return     whether the given path leads to a list
+     */
+    boolean isList(String path);
 
     /**
      * Removes an existing configuration section.

@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondi
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 public class MapCommandExtension implements CommandExtension {
 
@@ -19,6 +19,10 @@ public class MapCommandExtension implements CommandExtension {
     private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <id> <name>";
     private static final String REMOVE_MAP_COMMAND_SUGGESTION = "/bg arena map remove ";
     private static final String[] REMOVE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.remove" };
+
+    private static final String SELECT_COMMAND_USAGE = "/bg arena map select <id> <name>";
+    private static final String SELECT_COMMAND_SUGGESTION = "/bg arena map select ";
+    private static final String[] SELECT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.select" };
 
     private final MapCommand mapCommand;
     private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
@@ -45,12 +49,15 @@ public class MapCommandExtension implements CommandExtension {
     public void configure(PaperCommandManager commandManager) {
         String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
         String removeMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_MAP.getPath()).getText();
+        String selectCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP_SELECT.getPath()).getText();
 
         CommandInfo createMapCommandInfo = new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS);
         CommandInfo removeMapCommandInfo = new CommandInfo(removeMapCommandDescription, REMOVE_MAP_COMMAND_USAGE, REMOVE_MAP_COMMAND_SUGGESTION, REMOVE_MAP_COMMAND_PERMISSIONS);
+        CommandInfo selectCommandInfo = new CommandInfo(selectCommandDescription, SELECT_COMMAND_USAGE, SELECT_COMMAND_SUGGESTION, SELECT_COMMAND_PERMISSIONS);
 
         mapCommand.addCommandInfo(createMapCommandInfo);
         mapCommand.addCommandInfo(removeMapCommandInfo);
+        mapCommand.addCommandInfo(selectCommandInfo);
 
         commandManager.registerCommand(mapCommand);
 

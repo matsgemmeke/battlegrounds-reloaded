@@ -2,11 +2,12 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 
 import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.SelectMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
@@ -39,6 +40,8 @@ class MapCommandTest {
     private CreateMapCommandExecutor createMapCommandExecutor;
     @Mock
     private RemoveMapCommandExecutor removeMapCommandExecutor;
+    @Mock
+    private SelectMapCommandExecutor selectMapCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -101,5 +104,13 @@ class MapCommandTest {
         command.onRemove(player, ARENA_ID, MAP_NAME);
 
         verify(removeMapCommandExecutor).execute(player, ARENA_ID, MAP_NAME);
+    }
+
+    @Test
+    @DisplayName("onSelect delegates to SelectMapCommandExecutor")
+    void onSelect() {
+        command.onSelect(player, ARENA_ID, MAP_NAME);
+
+        verify(selectMapCommandExecutor).execute(player, ARENA_ID, MAP_NAME);
     }
 }

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text;
+package nl.matsgemmeke.battlegrounds.i18n;
 
 public enum TranslationKey {
 
@@ -17,6 +17,7 @@ public enum TranslationKey {
     DESCRIPTION_CREATE_MAP("commands.description-create-map"),
     DESCRIPTION_GIVE_WEAPON("commands.description-give-weapon"),
     DESCRIPTION_MAP("commands.description-map"),
+    DESCRIPTION_MAP_SELECT("commands.description-map-select"),
     DESCRIPTION_RELOAD("commands.description-reload"),
     DESCRIPTION_REMOVE_ARENA("commands.description-remove-arena"),
     DESCRIPTION_REMOVE_MAP("commands.description-remove-map"),
@@ -34,6 +35,7 @@ public enum TranslationKey {
     MAP_HELP_MENU_TITLE("commands.map-help-menu-title"),
     MAP_REMOVAL_FAILED("admin.map-removal-failed"),
     MAP_REMOVED("admin.map-removed"),
+    MAP_SELECTED("admin.map-selected"),
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),

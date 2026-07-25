@@ -4,8 +4,8 @@ import co.aikar.commands.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 import java.util.Map;
 

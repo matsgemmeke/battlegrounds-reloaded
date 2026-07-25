@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text;
+package nl.matsgemmeke.battlegrounds.i18n;
 
 import java.util.Map;
 import java.util.Map.Entry;

@@ -7,9 +7,9 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -77,7 +77,11 @@ class CreateMapCommandExecutorTest {
         ArgumentCaptor<ArenaMap> mapCaptor = ArgumentCaptor.forClass(ArenaMap.class);
         verify(arena).addMap(mapCaptor.capture());
 
-        assertThat(mapCaptor.getValue().getName()).isEqualTo(MAP_NAME);
+        assertThat(mapCaptor.getValue()).satisfies(map -> {
+            assertThat(map.getName()).isEqualTo(MAP_NAME);
+            assertThat(map.getMetadata().createdAt()).isEqualTo(INSTANT);
+            assertThat(map.getMetadata().createdBy()).isEqualTo(PLAYER_ID);
+        });
 
         ArgumentCaptor<MapCreationInfo> mapCreationInfoCaptor = ArgumentCaptor.forClass(MapCreationInfo.class);
         verify(arenaSetupConfiguration).createMap(mapCreationInfoCaptor.capture());

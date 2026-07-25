@@ -4,10 +4,7 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Represents an arena which groups multiple players to play various kinds of game modes.
@@ -38,6 +35,10 @@ public class Arena extends BaseGame {
 
     public void removeMap(ArenaMap map) {
         maps.remove(map);
+    }
+
+    public List<ArenaMap> getMaps() {
+        return new ArrayList<>(maps);
     }
 
     public Optional<ArenaMap> getMap(String name) {

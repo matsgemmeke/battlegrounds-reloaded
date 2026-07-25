@@ -1,4 +1,7 @@
-hello: world
+string: world
 int: 100
 section:
   key: value
+string-list:
+  - some
+  - words
