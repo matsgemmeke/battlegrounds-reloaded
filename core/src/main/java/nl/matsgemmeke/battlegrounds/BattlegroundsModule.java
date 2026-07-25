@@ -15,6 +15,7 @@ import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.command.MapCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -181,6 +182,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
 
         // Singleton bindings
+        binder.bind(ArenaMapSelector.class).in(Singleton.class);
         binder.bind(ArenaRegistry.class).in(Singleton.class);
         binder.bind(BukkitEntityFinder.class).in(Singleton.class);
         binder.bind(DamageEventTracker.class).in(Singleton.class);
