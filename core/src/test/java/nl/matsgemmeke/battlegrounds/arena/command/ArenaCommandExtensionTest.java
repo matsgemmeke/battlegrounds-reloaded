@@ -25,6 +25,9 @@ class ArenaCommandExtensionTest {
     @Mock
     private ArenaCommand arenaCommand;
     @Mock
+    private ElementCommand elementCommand;
+
+    @Mock
     private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
     private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
@@ -53,6 +56,7 @@ class ArenaCommandExtensionTest {
         verify(arenaCommand, times(3)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(arenaCommand);
+        verify(commandManager).registerCommand(elementCommand);
 
         verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
 

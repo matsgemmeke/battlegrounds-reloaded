@@ -25,20 +25,26 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
     private final ArenaCommand arenaCommand;
+    private final ElementCommand elementCommand;
+
     private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
+
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
+
     private final Translator translator;
 
     @Inject
     public ArenaCommandExtension(
             ArenaCommand arenaCommand,
+            ElementCommand elementCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
             Translator translator
     ) {
         this.arenaCommand = arenaCommand;
+        this.elementCommand = elementCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
@@ -56,6 +62,7 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
         commandManager.registerCommand(arenaCommand);
+        commandManager.registerCommand(elementCommand);
 
         commandManager.getCommandCompletions().registerCompletion("arena-id", arenaIdCommandCompletionHandler);
         commandManager.getCommandConditions().addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
