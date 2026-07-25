@@ -36,6 +36,7 @@ public enum TranslationKey {
     MAP_REMOVAL_FAILED("admin.map-removal-failed"),
     MAP_REMOVED("admin.map-removed"),
     MAP_SELECTED("admin.map-selected"),
+    NO_MAP_SELECTED("errors.no-map-selected"),
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),

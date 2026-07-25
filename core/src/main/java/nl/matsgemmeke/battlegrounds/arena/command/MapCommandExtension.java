@@ -4,6 +4,7 @@ import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondition;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.MapSelectedCondition;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
@@ -28,6 +29,7 @@ public class MapCommandExtension implements CommandExtension {
     private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
     private final ExistentMapNameCondition existentMapNameCondition;
     private final NonexistentMapNameCondition nonexistentMapNameCondition;
+    private final MapSelectedCondition mapSelectedCondition;
     private final Translator translator;
 
     @Inject
@@ -36,12 +38,14 @@ public class MapCommandExtension implements CommandExtension {
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
             ExistentMapNameCondition existentMapNameCondition,
             NonexistentMapNameCondition nonexistentMapNameCondition,
+            MapSelectedCondition mapSelectedCondition,
             Translator translator
     ) {
         this.mapCommand = mapCommand;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
         this.existentMapNameCondition = existentMapNameCondition;
         this.nonexistentMapNameCondition = nonexistentMapNameCondition;
+        this.mapSelectedCondition = mapSelectedCondition;
         this.translator = translator;
     }
 
@@ -62,6 +66,7 @@ public class MapCommandExtension implements CommandExtension {
         commandManager.registerCommand(mapCommand);
 
         commandManager.getCommandCompletions().registerCompletion("map-name", mapNameCommandCompletionHandler);
+        commandManager.getCommandConditions().addCondition("map-selected", mapSelectedCondition);
         commandManager.getCommandConditions().addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandManager.getCommandConditions().addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
     }

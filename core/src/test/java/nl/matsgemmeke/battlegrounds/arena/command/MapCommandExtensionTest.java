@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondition;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.MapSelectedCondition;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -35,6 +36,8 @@ class MapCommandExtensionTest {
     @Mock
     private NonexistentMapNameCondition nonexistentMapNameCondition;
     @Mock
+    private MapSelectedCondition mapSelectedCondition;
+    @Mock
     private PaperCommandManager commandManager;
     @Mock
     private Translator translator;
@@ -56,6 +59,7 @@ class MapCommandExtensionTest {
 
         verify(commandCompletions).registerCompletion("map-name", mapNameCommandCompletionHandler);
 
+        verify(commandConditions).addCondition("map-selected", mapSelectedCondition);
         verify(commandConditions).addCondition(String.class, "existent-map-name", existentMapNameCondition);
         verify(commandConditions).addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
     }
