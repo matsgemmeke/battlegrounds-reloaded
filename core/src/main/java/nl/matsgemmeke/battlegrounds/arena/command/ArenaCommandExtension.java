@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
-import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
@@ -24,13 +24,30 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
+    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
+    private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
+    private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
+
+    private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <id> <name>";
+    private static final String REMOVE_MAP_COMMAND_SUGGESTION = "/bg arena map remove ";
+    private static final String[] REMOVE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.remove" };
+
+    private static final String SELECT_MAP_COMMAND_USAGE = "/bg arena map select <id> <name>";
+    private static final String SELECT_MAP_COMMAND_SUGGESTION = "/bg arena map select ";
+    private static final String[] SELECT_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.select" };
+
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
+    private final MapCommand mapCommand;
 
     private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
+    private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
 
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
+    private final ExistentMapNameCondition existentMapNameCondition;
+    private final NonexistentMapNameCondition nonexistentMapNameCondition;
+    private final MapSelectedCondition mapSelectedCondition;
 
     private final Translator translator;
 
@@ -38,16 +55,26 @@ public class ArenaCommandExtension implements CommandExtension {
     public ArenaCommandExtension(
             ArenaCommand arenaCommand,
             ElementCommand elementCommand,
+            MapCommand mapCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
+            MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
+            ExistentMapNameCondition existentMapNameCondition,
+            NonexistentMapNameCondition nonexistentMapNameCondition,
+            MapSelectedCondition mapSelectedCondition,
             Translator translator
     ) {
         this.arenaCommand = arenaCommand;
         this.elementCommand = elementCommand;
+        this.mapCommand = mapCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
+        this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
+        this.existentMapNameCondition = existentMapNameCondition;
+        this.nonexistentMapNameCondition = nonexistentMapNameCondition;
+        this.mapSelectedCondition = mapSelectedCondition;
         this.translator = translator;
     }
 
@@ -61,11 +88,27 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
+        String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
+        String removeMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_MAP.getPath()).getText();
+        String selectMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP_SELECT.getPath()).getText();
+
+        mapCommand.addCommandInfo(new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS));
+        mapCommand.addCommandInfo(new CommandInfo(removeMapCommandDescription, REMOVE_MAP_COMMAND_USAGE, REMOVE_MAP_COMMAND_SUGGESTION, REMOVE_MAP_COMMAND_PERMISSIONS));
+        mapCommand.addCommandInfo(new CommandInfo(selectMapCommandDescription, SELECT_MAP_COMMAND_USAGE, SELECT_MAP_COMMAND_SUGGESTION, SELECT_MAP_COMMAND_PERMISSIONS));
+
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);
+        commandManager.registerCommand(mapCommand);
 
-        commandManager.getCommandCompletions().registerCompletion("arena-id", arenaIdCommandCompletionHandler);
-        commandManager.getCommandConditions().addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
-        commandManager.getCommandConditions().addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        var commandCompletions = commandManager.getCommandCompletions();
+        commandCompletions.registerCompletion("arena-id", arenaIdCommandCompletionHandler);
+        commandCompletions.registerCompletion("map-name", mapNameCommandCompletionHandler);
+
+        var commandConditions = commandManager.getCommandConditions();
+        commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
+        commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
+        commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
+        commandConditions.addCondition("map-selected", mapSelectedCondition);
     }
 }
