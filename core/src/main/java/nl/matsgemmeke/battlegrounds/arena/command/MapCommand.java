@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.SelectMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
@@ -15,13 +16,14 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+@Subcommand("arena map")
 @CommandAlias("battlegrounds|bg|battle")
 @CommandPermission("battlegrounds.map")
-@Subcommand("arena map")
 public class MapCommand extends BaseCommand {
 
     private final CreateMapCommandExecutor createMapCommandExecutor;
     private final RemoveMapCommandExecutor removeMapCommandExecutor;
+    private final SelectMapCommandExecutor selectMapCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
@@ -30,10 +32,12 @@ public class MapCommand extends BaseCommand {
     public MapCommand(
             CreateMapCommandExecutor createMapCommandExecutor,
             RemoveMapCommandExecutor removeMapCommandExecutor,
+            SelectMapCommandExecutor selectMapCommandExecutor,
             HelpMenu helpMenu,
             Translator translator) {
         this.createMapCommandExecutor = createMapCommandExecutor;
         this.removeMapCommandExecutor = removeMapCommandExecutor;
+        this.selectMapCommandExecutor = selectMapCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -59,9 +63,9 @@ public class MapCommand extends BaseCommand {
         }
     }
 
+    @Subcommand("create")
     @CommandCompletion("@arena-id @nothing")
     @CommandPermission("battlegrounds.map.create")
-    @Subcommand("create")
     public void onCreate(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("nonexistent-map-name") String mapName) {
         createMapCommandExecutor.execute(player, arenaId, mapName);
     }
@@ -75,10 +79,17 @@ public class MapCommand extends BaseCommand {
     //
     // Downside: no tab-complete help for the 2nd+ word of a map name (e.g. typing "My " won't suggest anything) - but
     // manual typing still parses correctly.
+    @Subcommand("remove")
     @CommandCompletion("@arena-id @map-name @nothing")
     @CommandPermission("battlegrounds.map.remove")
-    @Subcommand("remove")
     public void onRemove(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
         removeMapCommandExecutor.execute(player, arenaId, mapName);
+    }
+
+    @Subcommand("select")
+    @CommandCompletion("@arena-id @map-name @nothing")
+    @CommandPermission("battlegrounds.map.select")
+    public void onSelect(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
+        selectMapCommandExecutor.execute(player, arenaId, mapName);
     }
 }
