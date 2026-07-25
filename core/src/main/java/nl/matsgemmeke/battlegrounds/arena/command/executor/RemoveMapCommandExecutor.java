@@ -7,10 +7,10 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;

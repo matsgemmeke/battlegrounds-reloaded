@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text;
+package nl.matsgemmeke.battlegrounds.i18n;
 
 public enum TranslationKey {
 

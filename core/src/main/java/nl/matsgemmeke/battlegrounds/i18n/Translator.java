@@ -1,8 +1,8 @@
-package nl.matsgemmeke.battlegrounds.text;
+package nl.matsgemmeke.battlegrounds.i18n;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
 
 /**

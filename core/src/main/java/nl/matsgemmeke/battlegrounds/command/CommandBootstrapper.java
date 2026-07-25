@@ -4,8 +4,8 @@ import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 import java.util.Set;
 

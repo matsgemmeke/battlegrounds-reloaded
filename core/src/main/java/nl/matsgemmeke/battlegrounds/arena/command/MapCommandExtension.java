@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentMapNameCondi
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentMapNameCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 public class MapCommandExtension implements CommandExtension {
 

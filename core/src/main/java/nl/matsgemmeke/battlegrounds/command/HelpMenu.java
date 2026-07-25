@@ -5,8 +5,8 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 

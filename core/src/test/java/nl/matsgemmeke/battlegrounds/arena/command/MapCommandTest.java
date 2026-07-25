@@ -4,9 +4,9 @@ import nl.matsgemmeke.battlegrounds.arena.command.executor.CreateMapCommandExecu
 import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;

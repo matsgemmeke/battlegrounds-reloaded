@@ -5,8 +5,8 @@ import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompl
 import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentArenaIdCondition;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

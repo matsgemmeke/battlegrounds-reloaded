@@ -9,8 +9,8 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
 import java.time.Clock;

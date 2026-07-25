@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text.configuration;
+package nl.matsgemmeke.battlegrounds.i18n.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import org.junit.jupiter.api.DisplayName;

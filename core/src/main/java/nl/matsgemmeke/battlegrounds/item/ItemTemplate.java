@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item;
 
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.util.UUIDDataType;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

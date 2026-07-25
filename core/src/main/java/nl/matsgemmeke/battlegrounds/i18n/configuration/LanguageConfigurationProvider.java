@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text.configuration;
+package nl.matsgemmeke.battlegrounds.i18n.configuration;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;

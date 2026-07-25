@@ -7,9 +7,9 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

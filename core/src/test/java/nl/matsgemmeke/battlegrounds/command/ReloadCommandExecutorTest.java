@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.text.TextTemplate;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 

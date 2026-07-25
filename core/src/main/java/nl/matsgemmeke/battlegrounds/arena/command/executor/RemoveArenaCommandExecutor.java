@@ -3,10 +3,10 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 import com.google.inject.Inject;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
-import nl.matsgemmeke.battlegrounds.text.TranslationKey;
-import nl.matsgemmeke.battlegrounds.text.Translator;
 import nl.matsgemmeke.battlegrounds.util.FileUtil;
 import org.bukkit.command.CommandSender;
 

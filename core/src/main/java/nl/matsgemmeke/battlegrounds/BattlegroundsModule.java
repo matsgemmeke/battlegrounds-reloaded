@@ -65,6 +65,9 @@ import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRe
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -117,9 +120,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateReposito
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
-import nl.matsgemmeke.battlegrounds.text.Translator;
-import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.text.configuration.LanguageConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;

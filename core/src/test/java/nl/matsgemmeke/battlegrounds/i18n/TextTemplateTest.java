@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.text;
+package nl.matsgemmeke.battlegrounds.i18n;
 
 import org.junit.jupiter.api.Test;
 
