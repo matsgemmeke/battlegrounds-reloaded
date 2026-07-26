@@ -51,3 +51,6 @@ errors:
   not-in-freeplay-mode: "&cUnable to perform action; you are not in freeplay mode."
   freeplay-mode-not-exists: "&cUnable to perform action; freeplay mode is not enabled."
   unknown-command: "&cUnknown command, please type /bg help"
+
+setup:
+  specify-element-type: "&cSpecify an element type to add."

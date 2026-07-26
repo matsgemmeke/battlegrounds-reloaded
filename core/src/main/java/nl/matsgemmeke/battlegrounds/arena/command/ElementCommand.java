@@ -52,6 +52,11 @@ public class ElementCommand extends BaseCommand {
         }
     }
 
+    @Subcommand("add")
+    public void onAdd(Player player) {
+        player.sendMessage(translator.translate(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath()).getText());
+    }
+
     @Subcommand("add spawnpoint")
     @Conditions("map-selected")
     @CommandPermission("battlegrounds.element.add")

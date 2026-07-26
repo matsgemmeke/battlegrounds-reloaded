@@ -25,6 +25,7 @@ class ElementCommandTest {
     private static final int TEAM_ID = 1;
     private static final String UNKNOWN_COMMAND_TEXT = "unknown command";
     private static final String ELEMENT_HELP_MENU_HEADER_TEXT = "header";
+    private static final String SPECIFY_ELEMENT_TYPE_TEXT = "specify element type";
 
     @Mock
     private AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
@@ -77,8 +78,18 @@ class ElementCommandTest {
     }
 
     @Test
+    @DisplayName("onAdd sends specify element type message")
+    void onAdd() {
+        when(translator.translate(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath())).thenReturn(new TextTemplate(SPECIFY_ELEMENT_TYPE_TEXT));
+
+        command.onAdd(player);
+
+        verify(player).sendMessage(SPECIFY_ELEMENT_TYPE_TEXT);
+    }
+
+    @Test
     @DisplayName("onAddSpawnPoint delegates to AddSpawnPointCommandExecutor")
-    void onSelect() {
+    void onAddSpawnPoint() {
         command.onAddSpawnPoint(player, TEAM_ID);
 
         verify(addSpawnPointCommandExecutor).execute(player, TEAM_ID);
