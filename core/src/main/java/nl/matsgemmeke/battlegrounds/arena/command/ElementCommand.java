@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.BaseCommand;
-import co.aikar.commands.annotation.CommandAlias;
-import co.aikar.commands.annotation.CommandPermission;
-import co.aikar.commands.annotation.Default;
-import co.aikar.commands.annotation.Subcommand;
+import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
@@ -21,12 +19,14 @@ import java.util.List;
 @CommandPermission("battlegrounds.element")
 public class ElementCommand extends BaseCommand {
 
+    private final AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public ElementCommand(HelpMenu helpMenu, Translator translator) {
+    public ElementCommand(AddSpawnPointCommandExecutor addSpawnPointCommandExecutor, HelpMenu helpMenu, Translator translator) {
+        this.addSpawnPointCommandExecutor = addSpawnPointCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -50,5 +50,12 @@ public class ElementCommand extends BaseCommand {
         } else {
             helpMenu.sendHelpMenuAsNormalMessages(sender, header, commandInfoList);
         }
+    }
+
+    @Subcommand("add spawnpoint")
+    @Conditions("map-selected")
+    @CommandPermission("battlegrounds.element.add")
+    public void onAddSpawnPoint(Player player, @Default("1") Integer teamId) {
+        addSpawnPointCommandExecutor.execute(player, teamId);
     }
 }

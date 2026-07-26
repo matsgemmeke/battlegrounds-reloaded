@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -21,9 +22,12 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ElementCommandTest {
 
+    private static final int TEAM_ID = 1;
     private static final String UNKNOWN_COMMAND_TEXT = "unknown command";
     private static final String ELEMENT_HELP_MENU_HEADER_TEXT = "header";
 
+    @Mock
+    private AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -70,5 +74,13 @@ class ElementCommandTest {
         command.onDefault(sender, null);
 
         verify(helpMenu).sendHelpMenuAsNormalMessages(sender, ELEMENT_HELP_MENU_HEADER_TEXT, List.of(commandInfo));
+    }
+
+    @Test
+    @DisplayName("onAddSpawnPoint delegates to AddSpawnPointCommandExecutor")
+    void onSelect() {
+        command.onAddSpawnPoint(player, TEAM_ID);
+
+        verify(addSpawnPointCommandExecutor).execute(player, TEAM_ID);
     }
 }

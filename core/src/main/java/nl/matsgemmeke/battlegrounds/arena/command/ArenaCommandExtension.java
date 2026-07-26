@@ -36,6 +36,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String SELECT_MAP_COMMAND_SUGGESTION = "/bg arena map select ";
     private static final String[] SELECT_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.select" };
 
+    private static final String ADD_ELEMENT_COMMAND_USAGE = "/bg element add <type>";
+    private static final String ADD_ELEMENT_COMMAND_SUGGESTION = "/bg element add ";
+    private static final String[] ADD_ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element.add" };
+
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
     private final MapCommand mapCommand;
@@ -80,6 +84,7 @@ public class ArenaCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
+        // Arena commands
         String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
         String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
@@ -88,6 +93,7 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
+        // Map commands
         String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
         String removeMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_MAP.getPath()).getText();
         String selectMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP_SELECT.getPath()).getText();
@@ -95,6 +101,11 @@ public class ArenaCommandExtension implements CommandExtension {
         mapCommand.addCommandInfo(new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS));
         mapCommand.addCommandInfo(new CommandInfo(removeMapCommandDescription, REMOVE_MAP_COMMAND_USAGE, REMOVE_MAP_COMMAND_SUGGESTION, REMOVE_MAP_COMMAND_PERMISSIONS));
         mapCommand.addCommandInfo(new CommandInfo(selectMapCommandDescription, SELECT_MAP_COMMAND_USAGE, SELECT_MAP_COMMAND_SUGGESTION, SELECT_MAP_COMMAND_PERMISSIONS));
+
+        // Element commands
+        String addElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_ADD.getPath()).getText();
+
+        elementCommand.addCommandInfo(new CommandInfo(addElementCommandDescription, ADD_ELEMENT_COMMAND_USAGE, ADD_ELEMENT_COMMAND_SUGGESTION, ADD_ELEMENT_COMMAND_PERMISSIONS));
 
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);
