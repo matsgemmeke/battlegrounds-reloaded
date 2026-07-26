@@ -3,6 +3,8 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationLoadException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
@@ -88,6 +90,21 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public void set(String path, Object value) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         yamlConfiguration.set(path, value);
+    }
+
+    @Override
+    public void setLocation(String path, Location location) {
+        World world = location.getWorld();
+
+        if (world == null) {
+            throw new IllegalArgumentException("World may not be null");
+        }
+
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        yamlConfiguration.set(path + ".world", world.getName());
+        yamlConfiguration.set(path + ".x", location.getX());
+        yamlConfiguration.set(path + ".y", location.getY());
+        yamlConfiguration.set(path + ".z", location.getZ());
     }
 
     @Override

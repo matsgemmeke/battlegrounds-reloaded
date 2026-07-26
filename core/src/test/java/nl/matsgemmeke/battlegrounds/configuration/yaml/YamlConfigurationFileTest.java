@@ -2,6 +2,8 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationLoadException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -24,6 +26,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class YamlConfigurationFileTest {
+
+    private static final String LOCATION_WORLD = "testworld";
+    private static final double LOCATION_X = 1.1;
+    private static final double LOCATION_Y = 2.2;
+    private static final double LOCATION_Z = 3.3;
 
     @TempDir
     private File tempDir;
@@ -173,7 +180,6 @@ class YamlConfigurationFileTest {
     @DisplayName("set sets value in yaml configuration")
     void set() {
         File yamlFile = new File(tempDir, "test.yml");
-
         YamlConfiguration yamlConfiguration = mock(YamlConfiguration.class);
 
         try (MockedStatic<YamlConfiguration> yamlConfigurationStatic = mockStatic(YamlConfiguration.class)) {
@@ -183,6 +189,46 @@ class YamlConfigurationFileTest {
             yamlConfigurationFile.set("test", "test");
 
             verify(yamlConfiguration).set("test", "test");
+        }
+    }
+
+    @Test
+    @DisplayName("setLocation throws IllegalArgumentException when given location has no world")
+    void setLocation_noWorld() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+        Location location = new Location(null, 1, 2, 3);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+
+        assertThatThrownBy(() -> yamlConfigurationFile.setLocation("test", location))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("World may not be null");
+    }
+
+    @Test
+    @DisplayName("setLocation throws IllegalArgumentException when given location has no world")
+    void setLocation_successful() {
+        File yamlFile = new File(tempDir, "test.yml");
+
+        World world = mock(World.class);
+        when(world.getName()).thenReturn(LOCATION_WORLD);
+
+        Location location = new Location(world, LOCATION_X, LOCATION_Y, LOCATION_Z);
+
+        YamlConfiguration yamlConfiguration = mock(YamlConfiguration.class);
+
+        try (MockedStatic<YamlConfiguration> yamlConfigurationStatic = mockStatic(YamlConfiguration.class)) {
+            yamlConfigurationStatic.when(() -> YamlConfiguration.loadConfiguration(yamlFile)).thenReturn(yamlConfiguration);
+
+            YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile);
+            yamlConfigurationFile.setLocation("test", location);
+
+            verify(yamlConfiguration).set("test.world", LOCATION_WORLD);
+            verify(yamlConfiguration).set("test.x", LOCATION_X);
+            verify(yamlConfiguration).set("test.y", LOCATION_Y);
+            verify(yamlConfiguration).set("test.z", LOCATION_Z);
         }
     }
 
