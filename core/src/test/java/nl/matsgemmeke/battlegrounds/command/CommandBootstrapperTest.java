@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,8 +35,6 @@ class CommandBootstrapperTest {
     @Mock
     private BattlegroundsCommand bgCommand;
     @Mock
-    private ToolsCommand toolsCommand;
-    @Mock
     private FreeplayModePresenceCondition freeplayModePresenceCondition;
     @InjectMocks
     private CommandBootstrapper commandBootstrapper;
@@ -56,10 +53,8 @@ class CommandBootstrapperTest {
         commandBootstrapper.initialize();
 
         verify(bgCommand, times(6)).addCommandInfo(any(CommandInfo.class));
-        verify(toolsCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(bgCommand);
-        verify(commandManager).registerCommand(toolsCommand);
 
         verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
     }

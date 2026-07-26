@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tools;
+package nl.matsgemmeke.battlegrounds.tools;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;

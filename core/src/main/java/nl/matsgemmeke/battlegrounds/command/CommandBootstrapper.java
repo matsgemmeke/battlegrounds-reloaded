@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
-import nl.matsgemmeke.battlegrounds.command.tools.ToolsCommand;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
@@ -35,16 +34,11 @@ public class CommandBootstrapper {
     private static final String TOOLS_COMMAND_SUGGESTION = "/bg tools";
     private static final String[] TOOLS_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools" };
 
-    private static final String SHOW_HITBOXES_COMMAND_USAGE = "/bg tools showhitboxes <seconds> <range>";
-    private static final String SHOW_HITBOXES_COMMAND_SUGGESTION = "/bg tools showhitboxes ";
-    private static final String[] SHOW_HITBOXES_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools.showhitboxes" };
-
     private final PaperCommandManager commandManager;
     private final Set<CommandExtension> commandExtensions;
     private final Translator translator;
 
     private final BattlegroundsCommand bgCommand;
-    private final ToolsCommand toolsCommand;
 
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
 
@@ -54,14 +48,12 @@ public class CommandBootstrapper {
             Set<CommandExtension> commandExtensions,
             Translator translator,
             BattlegroundsCommand bgCommand,
-            ToolsCommand toolsCommand,
             FreeplayModePresenceCondition freeplayModePresenceCondition
     ) {
         this.commandManager = commandManager;
         this.commandExtensions = commandExtensions;
         this.translator = translator;
         this.bgCommand = bgCommand;
-        this.toolsCommand = toolsCommand;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
     }
 
@@ -69,7 +61,6 @@ public class CommandBootstrapper {
         commandExtensions.forEach(extension -> extension.configure(commandManager));
 
         this.registerBattlegroundsCommand();
-        this.registerToolsCommand();
         this.registerConditions();
     }
 
@@ -96,16 +87,6 @@ public class CommandBootstrapper {
         bgCommand.addCommandInfo(toolsCommandInfo);
 
         commandManager.registerCommand(bgCommand);
-    }
-
-    private void registerToolsCommand() {
-        String showHitboxesCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SHOW_HITBOXES.getPath()).getText();
-
-        CommandInfo showHitboxesCommandInfo = new CommandInfo(showHitboxesCommandDescription, SHOW_HITBOXES_COMMAND_USAGE, SHOW_HITBOXES_COMMAND_SUGGESTION, SHOW_HITBOXES_COMMAND_PERMISSIONS);
-
-        toolsCommand.addCommandInfo(showHitboxesCommandInfo);
-
-        commandManager.registerCommand(toolsCommand);
     }
 
     private void registerConditions() {

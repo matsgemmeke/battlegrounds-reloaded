@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tools;
+package nl.matsgemmeke.battlegrounds.tools;
 
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;

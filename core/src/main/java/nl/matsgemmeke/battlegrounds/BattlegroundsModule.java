@@ -120,6 +120,7 @@ import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponStateReposito
 import nl.matsgemmeke.battlegrounds.storage.state.melee.sqlite.SqliteMeleeWeaponStateRepositoryProvider;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.DamageEventRepository;
 import nl.matsgemmeke.battlegrounds.storage.stats.damage.sqlite.SqliteDamageEventRepositoryProvider;
+import nl.matsgemmeke.battlegrounds.tools.ToolsCommandExtension;
 import nl.matsgemmeke.battlegrounds.util.BukkitEntityFinder;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
@@ -195,6 +196,7 @@ public class BattlegroundsModule implements Module {
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
+        commandExtensionBinder.addBinding().to(ToolsCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
