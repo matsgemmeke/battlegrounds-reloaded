@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
@@ -21,6 +22,9 @@ public class ArenaSetupConfiguration {
     private static final String MAP_NAME_PATH = "name";
     private static final String MAP_CREATED_AT_PATH = "created-at";
     private static final String MAP_CREATED_BY_PATH = "created-by";
+    private static final String MAP_SPAWN_POINT_PATH = "elements.spawn-point";
+    private static final String MAP_SPAWN_POINT_LOCATION_PATH = "location";
+    private static final String MAP_SPAWN_POINT_TEAM_ID_PATH = "team-id";
 
     private final ConfigurationFile configurationFile;
     private final Logger logger;
@@ -109,5 +113,20 @@ public class ArenaSetupConfiguration {
         } catch (IllegalArgumentException ex) {
             return null;
         }
+    }
+
+    public void createSpawnPoint(CreateSpawnPointData data) {
+        try {
+            objectValidator.validate(data);
+        } catch (ValidationException ex) {
+            throw new IllegalArgumentException("Cannot create spawn point for invalid data", ex);
+        }
+
+        String mapPathName = TextUtil.toKebabCase(data.mapName());
+        String spawnPointPath = MAPS_PATH + "." + mapPathName + "." + MAP_SPAWN_POINT_PATH + "." + data.elementId();
+
+        configurationFile.setLocation(spawnPointPath + "." + MAP_SPAWN_POINT_LOCATION_PATH, data.location());
+        configurationFile.set(spawnPointPath + "." + MAP_SPAWN_POINT_TEAM_ID_PATH, data.teamId());
+        configurationFile.save();
     }
 }

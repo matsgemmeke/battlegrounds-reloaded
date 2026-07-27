@@ -1,8 +1,11 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
+import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,6 +22,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -31,6 +35,12 @@ class ArenaSetupConfigurationTest {
 
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
+
+    private static final int SPAWN_POINT_ELEMENT_ID = 1;
+    private static final int SPAWN_POINT_TEAM_ID = 2;
+    private static final double SPAWN_POINT_LOCATION_X = 1.1;
+    private static final double SPAWN_POINT_LOCATION_Y = 2.2;
+    private static final double SPAWN_POINT_LOCATION_Z = 3.3;
 
     @Mock
     private ConfigurationFile configurationFile;
@@ -211,5 +221,29 @@ class ArenaSetupConfigurationTest {
         });
 
         verifyNoInteractions(logger);
+    }
+
+    @Test
+    @DisplayName("createSpawnPoint throws IllegalArgumentException when given spawn point is invalid")
+    void createSpawnPoint_invalid() {
+        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, -1, null, -1);
+
+        assertThatThrownBy(() -> setupConfiguration.createSpawnPoint(data))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot create spawn point for invalid data");
+    }
+
+    @Test
+    @DisplayName("createSpawnPoint saves values of given data object to elements section of map")
+    void createSpawnPoint_successful() {
+        World world = mock(World.class);
+        Location location = new Location(world, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z);
+        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, SPAWN_POINT_ELEMENT_ID, location, SPAWN_POINT_TEAM_ID);
+
+        setupConfiguration.createSpawnPoint(data);
+
+        verify(configurationFile).setLocation("maps.level-1.elements.spawn-point.1.location", location);
+        verify(configurationFile).set("maps.level-1.elements.spawn-point.1.team-id", SPAWN_POINT_TEAM_ID);
+        verify(configurationFile).save();
     }
 }
