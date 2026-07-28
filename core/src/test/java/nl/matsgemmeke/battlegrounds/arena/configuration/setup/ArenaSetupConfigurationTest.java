@@ -242,8 +242,9 @@ class ArenaSetupConfigurationTest {
 
         setupConfiguration.createSpawnPoint(data);
 
-        verify(configurationFile).setLocation("maps.level-1.elements.spawn-point.1.location", location);
-        verify(configurationFile).set("maps.level-1.elements.spawn-point.1.team-id", SPAWN_POINT_TEAM_ID);
+        verify(configurationFile).set("maps.level-1.elements.1.type", "SPAWN_POINT");
+        verify(configurationFile).setLocation("maps.level-1.elements.1.location", location);
+        verify(configurationFile).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
         verify(configurationFile).save();
     }
 }

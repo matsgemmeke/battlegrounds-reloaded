@@ -53,4 +53,5 @@ errors:
   unknown-command: "&cUnknown command, please type /bg help"
 
 setup:
+  spawn-point-added: "&6You have added a spawn point element by the id of &f%bg_element_id% &6to the map &f%bg_map_name%&6."
   specify-element-type: "&cSpecify an element type to add."
