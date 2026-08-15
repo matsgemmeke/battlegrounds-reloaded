@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
@@ -33,6 +34,7 @@ class ArenaSetupConfigurationTest {
     private static final String CREATED_BY_TEXT = "2c11afe2-48f0-4399-9a04-195bb8ac640e";
     private static final UUID CREATED_BY = UUID.fromString(CREATED_BY_TEXT);
 
+    private static final String MAP_KEY = "level-1";
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
 
@@ -163,7 +165,7 @@ class ArenaSetupConfigurationTest {
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of missing name")
     void getMaps_missingName() {
         ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        when(mapsSection.getKeys(false)).thenReturn(Set.of(MAP_KEY));
 
         when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
         when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.empty());
@@ -173,7 +175,7 @@ class ArenaSetupConfigurationTest {
         assertThat(maps).isEmpty();
 
         verify(logger).severe("""
-                Failed to load map level-1: Validation failed for ArenaMapData (1 constraint violation):
+                Failed to load map level-1: Validation failed for object ArenaMapData (1 constraint violation)
                  - name: value is required""");
     }
 
@@ -181,7 +183,7 @@ class ArenaSetupConfigurationTest {
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of a future createdAt date")
     void getMaps_futureCreatedAt() {
         ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        when(mapsSection.getKeys(false)).thenReturn(Set.of(MAP_KEY));
 
         when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
         when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
@@ -192,8 +194,8 @@ class ArenaSetupConfigurationTest {
         assertThat(maps).isEmpty();
 
         verify(logger).severe("""
-                Failed to load map level-1: Validation failed for ArenaMapData (1 constraint violation):
-                 - created-at: map creation date must be in the past""");
+                Failed to load map level-1: Validation failed for object ArenaMapData (1 constraint violation)
+                 - createdAt: map creation date must be in the past""");
     }
 
     @ParameterizedTest

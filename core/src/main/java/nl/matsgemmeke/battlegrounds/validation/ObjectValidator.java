@@ -5,12 +5,10 @@ import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 
+import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class ObjectValidator {
-
-    private static final String PROPERTY_VIOLATION_FORMAT = "%s: %s";
 
     private final Validator validator;
 
@@ -20,32 +18,37 @@ public class ObjectValidator {
     }
 
     public <T> void validate(T object) {
-        Set<ConstraintViolation<T>> violations = validator.validate(object);
+        Set<ConstraintViolation<T>> constraintViolations = validator.validate(object);
 
-        if (violations.isEmpty()) {
+        if (constraintViolations.isEmpty()) {
             return;
         }
 
-        String violationNoun = TextUtil.pluralize(violations.size(), "violation", "violations");
-        String violationsMessage = violations.stream()
-                .map(this::createViolationMessage)
-                .collect(Collectors.joining("\n - ", " - ", ""));
-        String errorMessage = "Validation failed for %s (%d constraint %s):\n%s"
-                .formatted(object.getClass().getSimpleName(), violations.size(), violationNoun, violationsMessage);
+        String violationNoun = TextUtil.pluralize(constraintViolations.size(), "violation", "violations");
+        String errorMessage = "Validation failed for object %s (%d constraint %s)".formatted(object.getClass().getSimpleName(), constraintViolations.size(), violationNoun);
+        List<Violation> violations = constraintViolations.stream().map(this::createViolationObject).toList();
 
-        throw new ValidationException(errorMessage);
+        throw new ValidationException(errorMessage, violations);
     }
 
-    private <T> String createViolationMessage(ConstraintViolation<T> violation) {
-        String propertyPath = convertCamelCaseToKebabCase(violation.getPropertyPath().toString());
+    public <T> void validateValue(Class<T> objectType, String valueName, Object value) {
+        Set<ConstraintViolation<T>> constraintViolations = validator.validateValue(objectType, valueName, value);
 
-        return PROPERTY_VIOLATION_FORMAT.formatted(propertyPath, violation.getMessage());
+        if (constraintViolations.isEmpty()) {
+            return;
+        }
+
+        String violationNoun = TextUtil.pluralize(constraintViolations.size(), "violation", "violations");
+        String errorMessage = "Validation failed for value %s (%d constraint %s)".formatted(valueName, constraintViolations.size(), violationNoun);
+        List<Violation> violations = constraintViolations.stream().map(this::createViolationObject).toList();
+
+        throw new ValidationException(errorMessage, violations);
     }
 
-    private static String convertCamelCaseToKebabCase(String input) {
-        return input
-                .replaceAll("([A-Z])(?=[A-Z])", "$1-")
-                .replaceAll("([a-z])([A-Z])", "$1-$2")
-                .toLowerCase();
+    private Violation createViolationObject(ConstraintViolation<?> constraintViolation) {
+        String propertyPath = constraintViolation.getPropertyPath().toString();
+        String message = constraintViolation.getMessage();
+
+        return new Violation(propertyPath, message);
     }
 }

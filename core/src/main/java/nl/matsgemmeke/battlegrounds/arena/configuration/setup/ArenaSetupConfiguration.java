@@ -2,18 +2,23 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
+import nl.matsgemmeke.battlegrounds.validation.Violation;
 import org.bukkit.configuration.ConfigurationSection;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
 import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ArenaSetupConfiguration {
 
@@ -82,24 +87,28 @@ public class ArenaSetupConfiguration {
             return Collections.emptySet();
         }
 
-        Set<ArenaMapData> mapDataList = new HashSet<>();
+        return mapsSection.getKeys(false).stream()
+                .map(this::readArenaMapData)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+    }
 
-        for (String mapsKey : mapsSection.getKeys(false)) {
-            String name = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_NAME_PATH).orElse(null);
-            Instant createdAt = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
-            UUID createdBy = configurationFile.getString(MAPS_PATH + "." + mapsKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
+    @Nullable
+    private ArenaMapData readArenaMapData(String mapKey) {
+        String name = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_NAME_PATH).orElse(null);
+        Instant createdAt = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
+        UUID createdBy = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
+        List<ElementData> elements = this.readElements(MAPS_PATH + "." + mapKey + "." + MAP_ELEMENTS_PATH);
 
-            ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy);
+        ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy, elements);
 
-            try {
-                objectValidator.validate(mapData);
-                mapDataList.add(mapData);
-            } catch (ValidationException ex) {
-                logger.severe("Failed to load map %s: %s".formatted(mapsKey, ex.getMessage()));
-            }
+        try {
+            objectValidator.validate(mapData);
+            return mapData;
+        } catch (ValidationException ex) {
+            this.logValidationError(mapKey, ex.getMessage(), ex.getViolations());
+            return null;
         }
-
-        return mapDataList;
     }
 
     private Instant parseInstant(String value) {
@@ -116,6 +125,18 @@ public class ArenaSetupConfiguration {
         } catch (IllegalArgumentException ex) {
             return null;
         }
+    }
+
+    private List<ElementData> readElements(String elementsPath) {
+        return List.of();
+    }
+
+    private void logValidationError(String mapKey, String exceptionMessage, List<Violation> violations) {
+        String violationsMessage = violations.stream()
+                .map(violation -> " - " + violation.propertyPath() + ": " + violation.message())
+                .collect(Collectors.joining("\n"));
+
+        logger.severe("Failed to load map %s: %s\n%s".formatted(mapKey, exceptionMessage, violationsMessage));
     }
 
     public void createSpawnPoint(CreateSpawnPointData data) {

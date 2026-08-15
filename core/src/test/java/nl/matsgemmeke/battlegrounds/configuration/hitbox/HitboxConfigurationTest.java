@@ -12,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.*;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -53,7 +54,7 @@ class HitboxConfigurationTest {
         File resourceFile = new File("src/main/resources/hitboxes.yml");
         InputStream resource = new FileInputStream(resourceFile);
 
-        doThrow(new ValidationException("error")).when(objectValidator).validate(any(HitboxDefinition.class));
+        doThrow(new ValidationException("error", List.of())).when(objectValidator).validate(any(HitboxDefinition.class));
 
         HitboxConfiguration hitboxConfiguration = new HitboxConfiguration(objectValidator, hitboxesFile, resource);
         hitboxConfiguration.load();
