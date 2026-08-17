@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnP
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -198,6 +199,30 @@ class ArenaSetupConfigurationTest {
                  - createdAt: map creation date must be in the past""");
     }
 
+    @Test
+    @DisplayName("getMaps returns list with map data without elements")
+    void getMaps_withoutElements() {
+        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
+        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+
+        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(configurationFile.getString("maps.level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(configurationFile.getConfigurationSection("maps.level-1.elements")).thenReturn(Optional.empty());
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+
+        verifyNoInteractions(logger);
+    }
+
     @ParameterizedTest
     @CsvSource(value = {
             "2026-06-30T18:00:00Z,2026-06-30T18:00:00Z,2c11afe2-48f0-4399-9a04-195bb8ac640e,2c11afe2-48f0-4399-9a04-195bb8ac640e",
@@ -232,7 +257,10 @@ class ArenaSetupConfigurationTest {
 
         assertThatThrownBy(() -> setupConfiguration.createSpawnPoint(data))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Cannot create spawn point for invalid data");
+                .hasMessage("Cannot create spawn point for invalid data")
+                .cause()
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Validation failed for object CreateSpawnPointData (3 constraint violations)");
     }
 
     @Test

@@ -3,9 +3,9 @@ package nl.matsgemmeke.battlegrounds.arena.loading;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.junit.jupiter.api.DisplayName;
@@ -66,7 +66,7 @@ class ArenaLoaderTest {
     @DisplayName("loadArena loads content from configuration files and registers new arena instance to the game context provider")
     void loadArena_successful() {
         ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
-        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY);
+        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY, List.of());
 
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);

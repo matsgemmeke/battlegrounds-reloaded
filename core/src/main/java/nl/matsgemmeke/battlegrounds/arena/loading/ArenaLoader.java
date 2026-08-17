@@ -4,9 +4,9 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
@@ -46,15 +46,7 @@ public class ArenaLoader {
         Arena arena = new Arena(arenaId, settings);
 
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
-
-        for (ArenaMapData mapData : setupConfiguration.getMaps()) {
-            String name = mapData.name();
-            ArenaMapMetadata metadata = new ArenaMapMetadata(mapData.createdAt(), mapData.createdBy());
-
-            ArenaMap map = new ArenaMap(name, metadata);
-
-            arena.addMap(map);
-        }
+        setupConfiguration.getMaps().forEach(data -> this.loadMap(arena, data));
 
         arenaRegistry.addArena(gameKey, arena);
     }
@@ -65,5 +57,14 @@ public class ArenaLoader {
         } catch (InvalidArenaSettingsSpecException ex) {
             throw new InvalidArenaSetupException("Failed to load setup for arena %s".formatted(arenaId), ex);
         }
+    }
+
+    private void loadMap(Arena arena, ArenaMapData mapData) {
+        String name = mapData.name();
+        ArenaMapMetadata metadata = new ArenaMapMetadata(mapData.createdAt(), mapData.createdBy());
+
+        ArenaMap map = new ArenaMap(name, metadata);
+
+        arena.addMap(map);
     }
 }

@@ -128,6 +128,12 @@ public class ArenaSetupConfiguration {
     }
 
     private List<ElementData> readElements(String elementsPath) {
+        ConfigurationSection elementsSection = configurationFile.getConfigurationSection(elementsPath).orElse(null);
+
+        if (elementsSection == null) {
+            return Collections.emptyList();
+        }
+
         return List.of();
     }
 
