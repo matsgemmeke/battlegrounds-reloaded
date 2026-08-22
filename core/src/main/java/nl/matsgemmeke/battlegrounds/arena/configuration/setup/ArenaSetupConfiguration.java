@@ -50,7 +50,7 @@ public class ArenaSetupConfiguration {
     }
 
     public Optional<Instant> getCreatedAt() {
-        return configurationFile.getString(CREATED_AT_PATH).map(Instant::parse);
+        return configurationFile.getRootSection().getString(CREATED_AT_PATH).map(Instant::parse);
     }
 
     public void setCreatedAt(Instant instant) {
@@ -58,7 +58,7 @@ public class ArenaSetupConfiguration {
     }
 
     public Optional<UUID> getCreatedBy() {
-        return configurationFile.getString(CREATED_BY_PATH).map(UUID::fromString);
+        return configurationFile.getRootSection().getString(CREATED_BY_PATH).map(UUID::fromString);
     }
 
     public void setCreatedBy(UUID uuid) {

@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.configuration;
 import org.bukkit.Location;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a set of plugin configurations stored inside a yaml file.
@@ -16,15 +15,6 @@ public interface ConfigurationFile {
      * @return the file's root section
      */
     Section getRootSection();
-
-    /**
-     * Gets a string value from the configuration file. Returns an empty optional if the given path does not lead to a
-     * value.
-     *
-     * @param path the path to the value
-     * @return     an optional with the string value of the given path or empty if the path does not lead to a value
-     */
-    Optional<String> getString(String path);
 
     /**
      * Gets the requested list of String by the given path. If the path does not exist, this will return an empty list.

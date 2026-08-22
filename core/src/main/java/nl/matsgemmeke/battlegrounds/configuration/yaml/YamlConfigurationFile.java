@@ -40,12 +40,6 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
-    public Optional<String> getString(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return Optional.ofNullable(yamlConfiguration.getString(path));
-    }
-
-    @Override
     public List<String> getStringList(String path) {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return yamlConfiguration.getStringList(path);

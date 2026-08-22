@@ -66,7 +66,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedAt returns empty optional when configuration file does not have a value")
     void getCreatedAt_valueNotFound() {
-        when(configurationFile.getString("created-at")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.empty());
 
         Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
 
@@ -76,7 +76,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedAt returns optional with configuration file value as instant")
     void getCreatedAt_successful() {
-        when(configurationFile.getString("created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
 
         Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
 
@@ -94,7 +94,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedBy returns empty optional when configuration file does not have a value")
     void getCreatedBy_valueNotFound() {
-        when(configurationFile.getString("created-by")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.empty());
 
         Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
 
@@ -104,7 +104,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedBy returns optional with configuration file value as uuid")
     void getCreatedBy_successful() {
-        when(configurationFile.getString("created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
 
         Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
 

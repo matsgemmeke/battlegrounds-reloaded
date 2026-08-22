@@ -167,7 +167,7 @@ class YamlConfigurationFileTest {
 
         YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile);
 
-        assertThat(yamlConfigurationFile.getString("hello")).isEmpty();
+        assertThat(yamlConfigurationFile.getRootSection().getString("hello")).isEmpty();
     }
 
     @Test
@@ -180,7 +180,7 @@ class YamlConfigurationFileTest {
         YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
         yamlConfigurationFile.load();
 
-        assertThat(yamlConfigurationFile.getString("string")).hasValue("words");
+        assertThat(yamlConfigurationFile.getRootSection().getString("string")).hasValue("words");
     }
 
     @Test
