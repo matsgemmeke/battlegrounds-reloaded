@@ -34,6 +34,15 @@ public class YamlSection implements Section {
     }
 
     @Override
+    public Optional<Double> getDouble(String path) {
+        if (!configurationSection.isDouble(path)) {
+            return Optional.empty();
+        } else {
+            return Optional.of(configurationSection.getDouble(path));
+        }
+    }
+
+    @Override
     public Optional<Integer> getInt(String path) {
         if (!configurationSection.isInt(path)) {
             return Optional.empty();

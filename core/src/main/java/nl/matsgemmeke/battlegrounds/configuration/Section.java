@@ -33,6 +33,14 @@ public interface Section {
     boolean exists(String path);
 
     /**
+     * Gets a double value inside the section. Returns an empty optional if the given path does not lead to a value.
+     *
+     * @param path the path to the value
+     * @return     an optional with the double value of the given path or empty if the path does not lead to a value
+     */
+    Optional<Double> getDouble(String path);
+
+    /**
      * Gets an integer value inside the section. Returns an empty optional if the given path does not lead to a value.
      *
      * @param path the path to the value

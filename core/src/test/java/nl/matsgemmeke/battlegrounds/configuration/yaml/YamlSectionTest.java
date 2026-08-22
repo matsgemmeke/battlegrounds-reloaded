@@ -24,6 +24,7 @@ class YamlSectionTest {
     private static final String ABSOLUTE_PATH = "section";
     private static final String PATH = "example.path";
     private static final String KEY = "example-key";
+    private static final double EXAMPLE_DOUBLE = 5.5;
     private static final int EXAMPLE_INT = 10;
     private static final String EXAMPLE_STRING = "hello";
 
@@ -57,6 +58,27 @@ class YamlSectionTest {
         boolean exists = yamlSection.exists(PATH);
 
         assertThat(exists).isEqualTo(expectedExists);
+    }
+
+    @Test
+    @DisplayName("getDouble returns empty optional when given path does not lead to a double value in configuration section")
+    void getDouble_noDouble() {
+        when(configurationSection.isDouble(PATH)).thenReturn(false);
+
+        Optional<Double> doubleOptional = yamlSection.getDouble(PATH);
+
+        assertThat(doubleOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getDouble returns optional with double value from given path")
+    void getDouble_successful() {
+        when(configurationSection.isDouble(PATH)).thenReturn(true);
+        when(configurationSection.getDouble(PATH)).thenReturn(EXAMPLE_DOUBLE);
+
+        Optional<Double> doubleOptional = yamlSection.getDouble(PATH);
+
+        assertThat(doubleOptional).hasValue(EXAMPLE_DOUBLE);
     }
 
     @Test
