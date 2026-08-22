@@ -3,17 +3,18 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -45,7 +46,7 @@ class ArenaSetupConfigurationTest {
     private static final double SPAWN_POINT_LOCATION_Y = 2.2;
     private static final double SPAWN_POINT_LOCATION_Z = 3.3;
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
     @Mock
     private Logger logger;
@@ -142,7 +143,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when maps section does not exist")
     void getMaps_mapsSectionNotExists() {
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.empty());
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -152,10 +153,10 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when maps section has no keys")
     void getMaps_emptyMapsSection() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of());
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of());
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -165,11 +166,11 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of missing name")
     void getMaps_missingName() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of(MAP_KEY));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.empty());
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -183,12 +184,12 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of a future createdAt date")
     void getMaps_futureCreatedAt() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of(MAP_KEY));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(MAP_CREATED_AT_TEXT_FUTURE));
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
-        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(MAP_CREATED_AT_TEXT_FUTURE));
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -202,14 +203,14 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns list with map data without elements")
     void getMaps_withoutElements() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.empty());
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
-        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
-        when(configurationFile.getString("maps.level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
-        when(configurationFile.getConfigurationSection("maps.level-1.elements")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -231,13 +232,13 @@ class ArenaSetupConfigurationTest {
     }, nullValues = "null")
     @DisplayName("getMaps returns list with valid map data")
     void getMaps_successful(String createdAt, Instant expectedCreatedAt, String createdBy, UUID expectedCreatedBy) {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(createdAt));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(createdBy));
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
-        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(createdAt));
-        when(configurationFile.getString("maps.level-1.created-by")).thenReturn(Optional.of(createdBy));
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 

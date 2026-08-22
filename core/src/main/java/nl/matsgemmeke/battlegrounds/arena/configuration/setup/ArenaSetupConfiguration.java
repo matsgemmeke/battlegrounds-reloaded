@@ -7,11 +7,11 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementTyp
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import nl.matsgemmeke.battlegrounds.validation.Violation;
-import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.Instant;
@@ -81,24 +81,24 @@ public class ArenaSetupConfiguration {
     }
 
     public Collection<ArenaMapData> getMaps() {
-        ConfigurationSection mapsSection = configurationFile.getConfigurationSection(MAPS_PATH).orElse(null);
+        Section mapsSection = configurationFile.getRootSection().getSection(MAPS_PATH).orElse(null);
 
         if (mapsSection == null) {
             return Collections.emptySet();
         }
 
-        return mapsSection.getKeys(false).stream()
-                .map(this::readArenaMapData)
+        return mapsSection.getKeys().stream()
+                .map(mapsKey -> this.readArenaMapData(mapsSection, mapsKey))
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
     }
 
     @Nullable
-    private ArenaMapData readArenaMapData(String mapKey) {
-        String name = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_NAME_PATH).orElse(null);
-        Instant createdAt = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
-        UUID createdBy = configurationFile.getString(MAPS_PATH + "." + mapKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
-        List<ElementData> elements = this.readElements(MAPS_PATH + "." + mapKey + "." + MAP_ELEMENTS_PATH);
+    private ArenaMapData readArenaMapData(Section mapsSection, String mapKey) {
+        String name = mapsSection.getString(mapKey + "." + MAP_NAME_PATH).orElse(null);
+        Instant createdAt = mapsSection.getString(mapKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
+        UUID createdBy = mapsSection.getString(mapKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
+        List<ElementData> elements = mapsSection.getSection(mapKey + "." + MAP_ELEMENTS_PATH).map(this::readElements).orElse(Collections.emptyList());
 
         ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy, elements);
 
@@ -127,13 +127,7 @@ public class ArenaSetupConfiguration {
         }
     }
 
-    private List<ElementData> readElements(String elementsPath) {
-        ConfigurationSection elementsSection = configurationFile.getConfigurationSection(elementsPath).orElse(null);
-
-        if (elementsSection == null) {
-            return Collections.emptyList();
-        }
-
+    private List<ElementData> readElements(Section elementsSection) {
         return List.of();
     }
 

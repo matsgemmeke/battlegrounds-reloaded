@@ -1,4 +1,4 @@
-string: world
+string: words
 int: 100
 section:
   key: value

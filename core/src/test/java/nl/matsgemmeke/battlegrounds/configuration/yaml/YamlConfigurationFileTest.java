@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationLoadException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -34,6 +35,20 @@ class YamlConfigurationFileTest {
 
     @TempDir
     private File tempDir;
+
+    @Test
+    @DisplayName("getRootSection returns YamlSection with yaml configuration")
+    void getRootSection() throws FileNotFoundException {
+        File yamlFile = new File(tempDir, "test.yml");
+        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
+        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
+
+        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
+        Section section = yamlConfigurationFile.getRootSection();
+
+        assertThat(section).isInstanceOf(YamlSection.class);
+        assertThat(section.getString("string")).hasValue("words");
+    }
 
     @Test
     @DisplayName("createSection creates and returns new configuration section in yaml configuration")
@@ -252,7 +267,7 @@ class YamlConfigurationFileTest {
         YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
         yamlConfigurationFile.load();
 
-        assertThat(yamlConfigurationFile.getString("string")).hasValue("world");
+        assertThat(yamlConfigurationFile.getString("string")).hasValue("words");
     }
 
     @Test

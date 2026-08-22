@@ -12,6 +12,13 @@ import java.util.Optional;
 public interface ConfigurationFile {
 
     /**
+     * Returns the section that sits at the root of the file
+     *
+     * @return the file's root section
+     */
+    Section getRootSection();
+
+    /**
      * Creates an empty {@link ConfigurationSection} at the specified path.
      *
      * @param path the path to create the section at

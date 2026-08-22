@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationLoadException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.ConfigurationSection;
@@ -31,6 +32,12 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public YamlConfigurationFile(File file, @Nullable InputStream resource) {
         this.file = file;
         this.resource = resource;
+    }
+
+    @Override
+    public Section getRootSection() {
+        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
+        return new YamlSection(yamlConfiguration);
     }
 
     @Override
