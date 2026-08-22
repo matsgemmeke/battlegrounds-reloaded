@@ -10,6 +10,13 @@ import java.util.Set;
 public interface Section {
 
     /**
+     * Gets the absolute path where the section is located in its file.
+     *
+     * @return the section's absolute path
+     */
+    String getAbsolutePath();
+
+    /**
      * Creates an empty section at the specified path.
      *
      * @param path the path to create the section at

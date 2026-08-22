@@ -2,12 +2,12 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 
 import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.configuration.ConfigurationSection;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -21,6 +21,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class YamlSectionTest {
 
+    private static final String ABSOLUTE_PATH = "section";
     private static final String PATH = "example.path";
     private static final String KEY = "example-key";
     private static final int EXAMPLE_INT = 10;
@@ -28,13 +29,21 @@ class YamlSectionTest {
 
     @Mock
     private ConfigurationSection configurationSection;
-    @InjectMocks
+
     private YamlSection yamlSection;
+
+    @BeforeEach
+    void setUp() {
+        yamlSection = new YamlSection(configurationSection, ABSOLUTE_PATH);
+    }
 
     @Test
     @DisplayName("createSection creates new configuration section")
     void createSection() {
-        yamlSection.createSection(PATH);
+        Section section = yamlSection.createSection(PATH);
+
+        assertThat(section).isInstanceOf(YamlSection.class);
+        assertThat(section.getAbsolutePath()).isEqualTo("section.example.path");
 
         verify(configurationSection).createSection(PATH);
     }
@@ -102,6 +111,7 @@ class YamlSectionTest {
 
         assertThat(sectionOptional).hasValueSatisfying(section -> {
             assertThat(section).isInstanceOf(YamlSection.class);
+            assertThat(section.getAbsolutePath()).isEqualTo("section.example.path");
         });
     }
 

@@ -10,14 +10,22 @@ import java.util.Set;
 public class YamlSection implements Section {
 
     private final ConfigurationSection configurationSection;
+    private final String absolutePath;
 
-    public YamlSection(ConfigurationSection configurationSection) {
+    public YamlSection(ConfigurationSection configurationSection, String absolutePath) {
         this.configurationSection = configurationSection;
+        this.absolutePath = absolutePath;
+    }
+
+    @Override
+    public String getAbsolutePath() {
+        return absolutePath;
     }
 
     @Override
     public Section createSection(String path) {
-        return new YamlSection(configurationSection.createSection(path));
+        String childAbsolutePath = absolutePath + "." + path;
+        return new YamlSection(configurationSection.createSection(path), childAbsolutePath);
     }
 
     @Override
@@ -41,10 +49,11 @@ public class YamlSection implements Section {
 
     @Override
     public Optional<Section> getSection(String path) {
-        ConfigurationSection result = configurationSection.getConfigurationSection(path);
+        ConfigurationSection childConfigurationSection = configurationSection.getConfigurationSection(path);
 
-        if (result != null) {
-            return Optional.of(new YamlSection(result));
+        if (childConfigurationSection != null) {
+            String childAbsolutePath = absolutePath + "." + path;
+            return Optional.of(new YamlSection(childConfigurationSection, childAbsolutePath));
         } else {
             return Optional.empty();
         }

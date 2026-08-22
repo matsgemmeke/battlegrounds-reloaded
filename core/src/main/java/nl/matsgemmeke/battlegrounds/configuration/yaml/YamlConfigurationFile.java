@@ -16,6 +16,8 @@ import java.nio.file.Files;
 
 public class YamlConfigurationFile implements ConfigurationFile {
 
+    private static final String ROOT_SECTION_PATH = "";
+
     private final File file;
     @Nullable
     private final InputStream resource;
@@ -34,7 +36,7 @@ public class YamlConfigurationFile implements ConfigurationFile {
     @Override
     public Section getRootSection() {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return new YamlSection(yamlConfiguration);
+        return new YamlSection(yamlConfiguration, ROOT_SECTION_PATH);
     }
 
     @Override

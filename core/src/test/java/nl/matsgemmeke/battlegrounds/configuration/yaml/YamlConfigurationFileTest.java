@@ -42,6 +42,7 @@ class YamlConfigurationFileTest {
         Section section = yamlConfigurationFile.getRootSection();
 
         assertThat(section).isInstanceOf(YamlSection.class);
+        assertThat(section.getAbsolutePath()).isEqualTo("");
         assertThat(section.getString("string")).hasValue("words");
     }
 
