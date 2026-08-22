@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -33,7 +34,7 @@ class ArenaSettingsConfigurationTest {
     private static final int MIN_PLAYERS = 2;
     private static final int MIN_PLAYERS_INVALID = -100;
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
     @Spy
     private ObjectValidator objectValidator = TestValidatorFactory.createObjectValidator();
@@ -41,12 +42,12 @@ class ArenaSettingsConfigurationTest {
     private ArenaSettingsConfiguration settingsConfiguration;
 
     @ParameterizedTest
-    @CsvSource(value = {"null,10,2,lobby-countdown-length", "30,null,2,max-players", "30,10,null,min-players"}, nullValues = "null")
     @DisplayName("getArenaSettings throws InvalidArenaSettingsSpecException when a required value is missing")
+    @CsvSource(value = {"null,10,2,lobby-countdown-length", "30,null,2,max-players", "30,10,null,min-players"}, nullValues = "null")
     void getArenaSettings_missingValue(Integer lobbyCountdownLength, Integer maxPlayers, Integer minPlayers, String expectedPath) {
-        lenient().when(configurationFile.getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.ofNullable(lobbyCountdownLength));
-        lenient().when(configurationFile.getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.ofNullable(maxPlayers));
-        lenient().when(configurationFile.getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.ofNullable(minPlayers));
+        lenient().when(configurationFile.getRootSection().getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.ofNullable(lobbyCountdownLength));
+        lenient().when(configurationFile.getRootSection().getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.ofNullable(maxPlayers));
+        lenient().when(configurationFile.getRootSection().getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.ofNullable(minPlayers));
 
         assertThatThrownBy(settingsConfiguration::getArenaSettings)
                 .isInstanceOf(InvalidArenaSettingsSpecException.class)
@@ -56,9 +57,9 @@ class ArenaSettingsConfigurationTest {
     @Test
     @DisplayName("getArenaSettings throws InvalidArenaSettingsSpecException when values in configuration are invalid")
     void getArenaSettings_invalid() {
-        when(configurationFile.getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.of(LOBBY_COUNTDOWN_LENGTH_INVALID));
-        when(configurationFile.getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.of(MAX_PLAYERS_INVALID));
-        when(configurationFile.getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.of(MIN_PLAYERS_INVALID));
+        when(configurationFile.getRootSection().getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.of(LOBBY_COUNTDOWN_LENGTH_INVALID));
+        when(configurationFile.getRootSection().getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.of(MAX_PLAYERS_INVALID));
+        when(configurationFile.getRootSection().getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.of(MIN_PLAYERS_INVALID));
 
         assertThatThrownBy(settingsConfiguration::getArenaSettings)
                 .isInstanceOf(InvalidArenaSettingsSpecException.class)
@@ -68,9 +69,9 @@ class ArenaSettingsConfigurationTest {
     @Test
     @DisplayName("getArenaSettings returns ArenaSettingSpec with valid mapped configuration values")
     void getArenaSettings_valid() {
-        when(configurationFile.getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.of(LOBBY_COUNTDOWN_LENGTH));
-        when(configurationFile.getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.of(MAX_PLAYERS));
-        when(configurationFile.getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.of(MIN_PLAYERS));
+        when(configurationFile.getRootSection().getInt(LOBBY_COUNTDOWN_LENGTH_PATH)).thenReturn(Optional.of(LOBBY_COUNTDOWN_LENGTH));
+        when(configurationFile.getRootSection().getInt(MAX_PLAYERS_PATH)).thenReturn(Optional.of(MAX_PLAYERS));
+        when(configurationFile.getRootSection().getInt(MIN_PLAYERS_PATH)).thenReturn(Optional.of(MIN_PLAYERS));
 
         ArenaSettingsSpec spec = settingsConfiguration.getArenaSettings();
 

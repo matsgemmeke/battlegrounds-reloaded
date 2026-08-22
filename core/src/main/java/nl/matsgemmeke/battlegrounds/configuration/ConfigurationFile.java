@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,41 +16,6 @@ public interface ConfigurationFile {
      * @return the file's root section
      */
     Section getRootSection();
-
-    /**
-     * Creates an empty {@link ConfigurationSection} at the specified path.
-     *
-     * @param path the path to create the section at
-     * @return the newly created section
-     */
-    ConfigurationSection createSection(String path);
-
-    /**
-     * Gets whether a value exists at the given path.
-     *
-     * @param path the path to check
-     * @return     whether the given exists in the configuration file
-     */
-    boolean exists(String path);
-
-    /**
-     * Gets a configuration section from the configuration file. Returns an empty optional if the given path does not
-     * lead to a section.
-     *
-     * @param path the path to the configuration section
-     * @return     an optional with the configuration section of the given path or empty if the path does not lead to a
-     *             section
-     */
-    Optional<ConfigurationSection> getConfigurationSection(String path);
-
-    /**
-     * Gets an integer value from the configuration file. Returns an empty optional if the given path does not lead to
-     * a value.
-     *
-     * @param path the path to the value
-     * @return     an optional with the integer value of the given path or empty if the path does not lead to a value
-     */
-    Optional<Integer> getInt(String path);
 
     /**
      * Gets a string value from the configuration file. Returns an empty optional if the given path does not lead to a

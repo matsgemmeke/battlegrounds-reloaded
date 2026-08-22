@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +19,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -48,91 +46,6 @@ class YamlConfigurationFileTest {
 
         assertThat(section).isInstanceOf(YamlSection.class);
         assertThat(section.getString("string")).hasValue("words");
-    }
-
-    @Test
-    @DisplayName("createSection creates and returns new configuration section in yaml configuration")
-    void createSection() {
-        File yamlFile = new File(tempDir, "test.yml");
-        ConfigurationSection section = mock(ConfigurationSection.class);
-
-        YamlConfiguration yamlConfiguration = mock(YamlConfiguration.class);
-        when(yamlConfiguration.createSection("test")).thenReturn(section);
-
-        try (MockedStatic<YamlConfiguration> yamlConfigurationStatic = mockStatic(YamlConfiguration.class)) {
-            yamlConfigurationStatic.when(() -> YamlConfiguration.loadConfiguration(yamlFile)).thenReturn(yamlConfiguration);
-
-            YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile);
-            ConfigurationSection result = yamlConfigurationFile.createSection("test");
-
-            assertThat(result).isEqualTo(section);
-        }
-    }
-
-    @ParameterizedTest
-    @CsvSource({ "string,true", "section,true", "unknown,false" })
-    @DisplayName("exists returns whether given path exists in configuration file")
-    void exists(String path, boolean expectedExists) throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        boolean exists = yamlConfigurationFile.exists(path);
-
-        assertThat(exists).isEqualTo(expectedExists);
-    }
-
-    @Test
-    @DisplayName("getConfigurationSection returns empty optional when given path is not a configuration section")
-    void getConfigurationSection_noSection() throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        Optional<ConfigurationSection> configurationSectionOptional = yamlConfigurationFile.getConfigurationSection("hello");
-
-        assertThat(configurationSectionOptional).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getConfigurationSection returns optional with corresponding configuration section from given path")
-    void getConfigurationSection_successful() throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        Optional<ConfigurationSection> configurationSectionOptional = yamlConfigurationFile.getConfigurationSection("section");
-
-        assertThat(configurationSectionOptional).hasValueSatisfying(configurationSection -> configurationSection.get("key").equals("value"));
-    }
-
-    @Test
-    @DisplayName("getInt returns empty optional when given path is not an int")
-    void getInt_notAnInt() throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        yamlConfigurationFile.load();
-
-        assertThat(yamlConfigurationFile.getInt("hello")).isEmpty();
-    }
-
-    @Test
-    @DisplayName("getInt returns optional with int value from given path")
-    void getInt_successful() throws FileNotFoundException {
-        File yamlFile = new File(tempDir, "test.yml");
-        File resourceFile = new File("src/test/resources/yaml-configuration/test.yml");
-        FileInputStream resourceInputStream = new FileInputStream(resourceFile);
-
-        YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile, resourceInputStream);
-        yamlConfigurationFile.load();
-
-        assertThat(yamlConfigurationFile.getInt("int")).hasValue(100);
     }
 
     @Test

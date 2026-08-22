@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.i18n.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +15,14 @@ public class LanguageConfiguration {
     }
 
     public Optional<String> getTextValue(String path) {
-        if (!configurationFile.exists(path)) {
+        Section rootSection = configurationFile.getRootSection();
+
+        if (!rootSection.exists(path)) {
             return Optional.empty();
         }
 
-        if (configurationFile.isList(path)) {
-            List<String> lines = configurationFile.getStringList(path);
+        if (rootSection.isList(path)) {
+            List<String> lines = rootSection.getStringList(path);
 
             if (lines.isEmpty()) {
                 return Optional.empty();
@@ -27,7 +30,7 @@ public class LanguageConfiguration {
 
             return Optional.of(String.join("\n", lines));
         } else {
-            return configurationFile.getString(path);
+            return rootSection.getString(path);
         }
     }
 }

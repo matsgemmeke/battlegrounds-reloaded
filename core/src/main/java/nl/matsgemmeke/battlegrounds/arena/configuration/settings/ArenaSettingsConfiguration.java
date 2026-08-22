@@ -37,7 +37,7 @@ public class ArenaSettingsConfiguration {
     }
 
     private int getInt(String path) {
-        return configurationFile.getInt(path).orElseThrow(() -> new InvalidArenaSettingsSpecException("Missing required value at " + path));
+        return configurationFile.getRootSection().getInt(path).orElseThrow(() -> new InvalidArenaSettingsSpecException("Missing required value at " + path));
     }
 
     public void saveArenaSettings(ArenaSettingsSpec spec) {

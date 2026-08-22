@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
@@ -38,35 +37,6 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public Section getRootSection() {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return new YamlSection(yamlConfiguration);
-    }
-
-    @Override
-    public ConfigurationSection createSection(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.createSection(path);
-    }
-
-    @Override
-    public boolean exists(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.get(path) != null;
-    }
-
-    @Override
-    public Optional<ConfigurationSection> getConfigurationSection(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return Optional.ofNullable(yamlConfiguration.getConfigurationSection(path));
-    }
-
-    @Override
-    public Optional<Integer> getInt(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-
-        if (!yamlConfiguration.isInt(path)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(yamlConfiguration.getInt(path));
-        }
     }
 
     @Override
