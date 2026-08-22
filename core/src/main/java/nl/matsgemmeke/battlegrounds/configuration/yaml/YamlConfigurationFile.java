@@ -13,8 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Optional;
 
 public class YamlConfigurationFile implements ConfigurationFile {
 
@@ -37,24 +35,6 @@ public class YamlConfigurationFile implements ConfigurationFile {
     public Section getRootSection() {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
         return new YamlSection(yamlConfiguration);
-    }
-
-    @Override
-    public List<String> getStringList(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.getStringList(path);
-    }
-
-    @Override
-    public boolean isList(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.isList(path);
-    }
-
-    @Override
-    public void removeSection(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        yamlConfiguration.set(path, null);
     }
 
     @Override

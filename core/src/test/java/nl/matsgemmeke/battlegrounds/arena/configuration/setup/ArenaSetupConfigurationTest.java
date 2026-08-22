@@ -136,7 +136,7 @@ class ArenaSetupConfigurationTest {
     void removeMap() {
         setupConfiguration.removeMap(MAP_NAME);
 
-        verify(configurationFile).removeSection("maps.level-1");
+        verify(configurationFile.getRootSection()).removeSection("maps.level-1");
         verify(configurationFile).save();
     }
 
