@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.model;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotBlank;
 
 /**
  * A configuration representation of a Bukkit location.
  */
-public record LocationData(@Required String world, double x, double y, double z, float yaw, float pitch) {
+public record LocationData(@NotBlank String world, double x, double y, double z, float yaw, float pitch) {
 }

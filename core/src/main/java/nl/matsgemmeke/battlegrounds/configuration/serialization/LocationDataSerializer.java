@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import java.util.Optional;
 import java.util.function.Function;
 
-public class LocationDataSerializer {
+public class LocationDataSerializer implements DataSerializer<LocationData> {
     
     private static final String WORLD_KEY = "world";
     private static final String X_KEY = "x";
@@ -15,6 +15,7 @@ public class LocationDataSerializer {
     private static final String YAW_KEY = "yaw";
     private static final String PITCH_KEY = "pitch";
 
+    @Override
     public void serialize(LocationData data, Section section) {
         section.set(WORLD_KEY, data.world());
         section.set(X_KEY, data.x());
@@ -24,6 +25,7 @@ public class LocationDataSerializer {
         section.set(PITCH_KEY, data.pitch());
     }
 
+    @Override
     public LocationData deserialize(Section section) {
         String world = this.require(section, WORLD_KEY, section::getString);
         double x = this.require(section, X_KEY, section::getDouble);
