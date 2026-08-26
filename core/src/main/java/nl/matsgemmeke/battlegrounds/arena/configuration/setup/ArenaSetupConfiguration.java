@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
@@ -35,11 +36,18 @@ public class ArenaSetupConfiguration {
     private static final String MAP_SPAWN_POINT_TEAM_ID_PATH = "team-id";
 
     private final ConfigurationFile configurationFile;
+    private final ElementDataFactory elementDataFactory;
     private final Logger logger;
     private final ObjectValidator objectValidator;
 
     @Inject
-    public ArenaSetupConfiguration(Logger logger, ObjectValidator objectValidator, @Assisted ConfigurationFile configurationFile) {
+    public ArenaSetupConfiguration(
+            ElementDataFactory elementDataFactory,
+            Logger logger,
+            ObjectValidator objectValidator,
+            @Assisted ConfigurationFile configurationFile
+    ) {
+        this.elementDataFactory = elementDataFactory;
         this.logger = logger;
         this.objectValidator = objectValidator;
         this.configurationFile = configurationFile;
@@ -111,6 +119,7 @@ public class ArenaSetupConfiguration {
         }
     }
 
+    @Nullable
     private Instant parseInstant(String value) {
         try {
             return Instant.parse(value);
@@ -119,6 +128,7 @@ public class ArenaSetupConfiguration {
         }
     }
 
+    @Nullable
     private UUID parseUUID(String value) {
         try {
             return UUID.fromString(value);
@@ -128,7 +138,28 @@ public class ArenaSetupConfiguration {
     }
 
     private List<ElementData> readElements(Section elementsSection) {
-        return List.of();
+        List<Section> elementSections = elementsSection.getKeys().stream()
+                .map(elementsSection::getSection)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+
+        return elementSections.stream()
+                .map(elementSection -> elementSection.getString("element-type")
+                        .map(this::parseElementType)
+                        .map(elementType -> elementDataFactory.create(elementType, elementSection)))
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
+    }
+
+    @Nullable
+    private ElementType parseElementType(String value) {
+        try {
+            return ElementType.valueOf(value);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
     }
 
     private void logValidationError(String mapKey, String exceptionMessage, List<Violation> violations) {

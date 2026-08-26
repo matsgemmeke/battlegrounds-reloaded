@@ -14,6 +14,8 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.command.ArenaCommandExtension;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.ArenaSettingsConfigurationFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactoryProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
@@ -202,6 +204,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
         binder.bind(DamageEventRepository.class).toProvider(SqliteDamageEventRepositoryProvider.class).in(Singleton.class);
         binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
+        binder.bind(ElementDataFactory.class).toProvider(ElementDataFactoryProvider.class).in(Singleton.class);
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);

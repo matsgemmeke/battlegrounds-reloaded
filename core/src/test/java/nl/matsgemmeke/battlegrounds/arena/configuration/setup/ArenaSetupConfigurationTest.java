@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
@@ -48,6 +51,8 @@ class ArenaSetupConfigurationTest {
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
+    @Mock
+    private ElementDataFactory elementDataFactory;
     @Mock
     private Logger logger;
     @Spy
@@ -220,8 +225,61 @@ class ArenaSetupConfigurationTest {
             assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
             assertThat(mapData.elements()).isEmpty();
         });
+    }
 
-        verifyNoInteractions(logger);
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_elementSectionNotFound() {
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.empty());
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_invalidElementType() {
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("unknown-element"));
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
     }
 
     @ParameterizedTest
@@ -232,13 +290,24 @@ class ArenaSetupConfigurationTest {
     }, nullValues = "null")
     @DisplayName("getMaps returns list with valid map data")
     void getMaps_successful(String createdAt, Instant expectedCreatedAt, String createdBy, UUID expectedCreatedBy) {
+        ElementData elementData = mock(ElementData.class);
+
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
         Section mapsSection = mock(Section.class);
         when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
         when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
         when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(createdAt));
         when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(createdBy));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(elementData);
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -246,9 +315,8 @@ class ArenaSetupConfigurationTest {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
             assertThat(mapData.createdAt()).isEqualTo(expectedCreatedAt);
             assertThat(mapData.createdBy()).isEqualTo(expectedCreatedBy);
+            assertThat(mapData.elements()).containsExactly(elementData);
         });
-
-        verifyNoInteractions(logger);
     }
 
     @Test
