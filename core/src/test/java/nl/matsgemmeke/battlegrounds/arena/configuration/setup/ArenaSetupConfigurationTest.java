@@ -294,8 +294,8 @@ class ArenaSetupConfigurationTest {
         SpawnPointData spawnPointData = new SpawnPointData();
         spawnPointData.setElementId(SPAWN_POINT_ELEMENT_ID);
         spawnPointData.setElementType(SPAWN_POINT_ELEMENT_TYPE);
-        spawnPointData.setLocationData(new LocationData(null, 0, 0, 0, 0, 0));
-        spawnPointData.setTeamId(0);
+        spawnPointData.setLocationData(new LocationData(null, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH));
+        spawnPointData.setTeamId(SPAWN_POINT_TEAM_ID);
 
         Section elementSection = mock(Section.class);
         when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
@@ -325,8 +325,7 @@ class ArenaSetupConfigurationTest {
         });
 
         verify(logger).severe("""
-                Failed to load element located at 'maps.level-1.elements.1': Validation failed for object SpawnPointData (2 constraint violations)
-                 - teamId: team id must be greater than zero
+                Failed to load element located at 'maps.level-1.elements.1': Validation failed for object SpawnPointData (1 constraint violation)
                  - locationData.world: locations in configurations must have a defined world
                 """.trim());
     }

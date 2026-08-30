@@ -28,7 +28,7 @@ class SpawnPointFactoryTest {
 
     @Test
     void create() {
-        LocationData locationData = new LocationData(null, 0, 0, 0, 0, 0);
+        LocationData locationData = new LocationData(null, null, null, null, null, null);
         Location location = new Location(null, 0, 0, 0, 0, 0);
 
         SpawnPointData spawnPointData = new SpawnPointData();
