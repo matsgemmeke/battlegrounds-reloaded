@@ -5,7 +5,6 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.arena.map.element.ElementRegistry;
 import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
@@ -89,12 +88,9 @@ class AddSpawnPointCommandExecutorTest {
         Arena arena = mock(Arena.class);
         when(arena.getId()).thenReturn(ARENA_ID);
 
-        ElementRegistry elementRegistry = mock(ElementRegistry.class);
-        when(elementRegistry.generateNextId()).thenReturn(ELEMENT_ID);
-
         ArenaMap map = mock(ArenaMap.class);
         when(map.getName()).thenReturn(MAP_NAME);
-        when(map.getElementRegistry()).thenReturn(elementRegistry);
+        when(map.generateNextElementId()).thenReturn(ELEMENT_ID);
 
         TextTemplate spawnPointAddedTextTemplate = mock(TextTemplate.class);
         when(spawnPointAddedTextTemplate.replace(anyMap())).thenReturn(SPAWN_POINT_ADDED_TEXT);
@@ -110,7 +106,7 @@ class AddSpawnPointCommandExecutorTest {
         commandExecutor.execute(player, TEAM_ID);
 
         ArgumentCaptor<SpawnPoint> spawnPointCaptor = ArgumentCaptor.forClass(SpawnPoint.class);
-        verify(elementRegistry).addElement(spawnPointCaptor.capture());
+        verify(map).addElement(spawnPointCaptor.capture());
 
         assertThat(spawnPointCaptor.getValue()).satisfies(spawnPoint -> {
             assertThat(spawnPoint.getId()).isEqualTo(ELEMENT_ID);

@@ -5,7 +5,10 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
+import nl.matsgemmeke.battlegrounds.arena.loading.element.CompositeElementFactory;
+import nl.matsgemmeke.battlegrounds.arena.map.element.Element;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.junit.jupiter.api.DisplayName;
@@ -46,6 +49,8 @@ class ArenaLoaderTest {
     private ArenaSettingsMapper arenaSettingsMapper;
     @Mock
     private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
+    @Mock
+    private CompositeElementFactory compositeElementFactory;
     @InjectMocks
     private ArenaLoader arenaLoader;
 
@@ -66,7 +71,9 @@ class ArenaLoaderTest {
     @DisplayName("loadArena loads content from configuration files and registers new arena instance to the game context provider")
     void loadArena_successful() {
         ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
-        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY, List.of());
+        ElementData elementData = mock(ElementData.class);
+        Element element = mock(Element.class);
+        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY, List.of(elementData));
 
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);
@@ -76,6 +83,7 @@ class ArenaLoaderTest {
 
         when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
+        when(compositeElementFactory.create(elementData)).thenReturn(element);
 
         arenaLoader.loadArena(ARENA_ID);
 
@@ -93,6 +101,7 @@ class ArenaLoaderTest {
                 assertThat(map.getName()).isEqualTo(MAP_NAME);
                 assertThat(map.getMetadata().createdAt()).isEqualTo(MAP_CREATED_AT);
                 assertThat(map.getMetadata().createdBy()).isEqualTo(MAP_CREATED_BY);
+                assertThat(map.getElements()).containsExactly(element);
             });
         });
     }

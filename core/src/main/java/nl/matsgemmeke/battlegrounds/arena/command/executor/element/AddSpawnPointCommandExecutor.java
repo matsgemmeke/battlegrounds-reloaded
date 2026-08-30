@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.arena.map.element.ElementRegistry;
 import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
@@ -60,13 +59,12 @@ public class AddSpawnPointCommandExecutor {
 
         int arenaId = arena.getId();
         String mapName = map.getName();
-        ElementRegistry elementRegistry = map.getElementRegistry();
 
-        int elementId = elementRegistry.generateNextId();
+        int elementId = map.generateNextElementId();
         Location location = this.getCenterLocation(player.getLocation());
         SpawnPoint spawnPoint = new SpawnPoint(elementId, teamId, location);
 
-        elementRegistry.addElement(spawnPoint);
+        map.addElement(spawnPoint);
 
         CreateSpawnPointData data = new CreateSpawnPointData(mapName, elementId, location, teamId);
 

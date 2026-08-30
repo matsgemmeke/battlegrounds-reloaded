@@ -10,18 +10,18 @@ public class SpawnPointData extends ElementData {
 
     @NotNull
     @Valid
-    private LocationData location;
+    private LocationData locationData;
 
     @NotNull
     @Min(value = 1, message = "team id must be greater than zero")
     private Integer teamId;
 
-    public LocationData getLocation() {
-        return location;
+    public LocationData getLocationData() {
+        return locationData;
     }
 
-    public void setLocation(LocationData location) {
-        this.location = location;
+    public void setLocationData(LocationData locationData) {
+        this.locationData = locationData;
     }
 
     public Integer getTeamId() {

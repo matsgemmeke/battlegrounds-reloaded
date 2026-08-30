@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.settings.*;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
+import nl.matsgemmeke.battlegrounds.arena.loading.element.CompositeElementFactory;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
@@ -22,18 +23,21 @@ public class ArenaLoader {
     private final ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider;
     private final ArenaSettingsMapper arenaSettingsMapper;
     private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
+    private final CompositeElementFactory compositeElementFactory;
 
     @Inject
     public ArenaLoader(
             ArenaRegistry arenaRegistry,
             ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider,
             ArenaSettingsMapper arenaSettingsMapper,
-            ArenaSetupConfigurationProvider arenaSetupConfigurationProvider
+            ArenaSetupConfigurationProvider arenaSetupConfigurationProvider,
+            CompositeElementFactory compositeElementFactory
     ) {
         this.arenaRegistry = arenaRegistry;
         this.arenaSettingsConfigurationProvider = arenaSettingsConfigurationProvider;
         this.arenaSettingsMapper = arenaSettingsMapper;
         this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
+        this.compositeElementFactory = compositeElementFactory;
     }
 
     public void loadArena(int arenaId) {
@@ -64,6 +68,10 @@ public class ArenaLoader {
         ArenaMapMetadata metadata = new ArenaMapMetadata(mapData.createdAt(), mapData.createdBy());
 
         ArenaMap map = new ArenaMap(name, metadata);
+
+        mapData.elements().stream()
+                .map(compositeElementFactory::create)
+                .forEach(map::addElement);
 
         arena.addMap(map);
     }

@@ -19,12 +19,14 @@ public class SpawnPointDataReader implements ElementDataReader {
     @Override
     public ElementData read(Section section) {
         Integer elementId = section.getInt("element-id").orElse(null);
-        LocationData location = section.getSection("location").map(locationDataSerializer::deserialize).orElse(null);
+        String elementType = section.getString("element-type").orElse(null);
+        LocationData locationData = section.getSection("location").map(locationDataSerializer::deserialize).orElse(null);
         Integer teamId = section.getInt("team-id").orElse(null);
 
         SpawnPointData spawnPointData = new SpawnPointData();
         spawnPointData.setElementId(elementId);
-        spawnPointData.setLocation(location);
+        spawnPointData.setElementType(elementType);
+        spawnPointData.setLocationData(locationData);
         spawnPointData.setTeamId(teamId);
         return spawnPointData;
     }

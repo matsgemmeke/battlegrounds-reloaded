@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
+import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
@@ -43,7 +44,7 @@ public class ArenaSetupConfiguration {
     @Inject
     public ArenaSetupConfiguration(
             ElementDataFactory elementDataFactory,
-            Logger logger,
+            @Named("Battlegrounds") Logger logger,
             ObjectValidator objectValidator,
             @Assisted ConfigurationFile configurationFile
     ) {
@@ -114,7 +115,7 @@ public class ArenaSetupConfiguration {
             objectValidator.validate(mapData);
             return mapData;
         } catch (ValidationException ex) {
-            this.logValidationError(mapKey, ex.getMessage(), ex.getViolations());
+            this.logMapViolations(mapKey, ex.getMessage(), ex.getViolations());
             return null;
         }
     }
@@ -147,7 +148,8 @@ public class ArenaSetupConfiguration {
         return elementSections.stream()
                 .map(elementSection -> elementSection.getString("element-type")
                         .map(this::parseElementType)
-                        .map(elementType -> elementDataFactory.create(elementType, elementSection)))
+                        .map(elementType -> elementDataFactory.create(elementType, elementSection))
+                        .map(elementData -> this.validateElementData(elementData, elementSection)))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .toList();
@@ -162,7 +164,26 @@ public class ArenaSetupConfiguration {
         }
     }
 
-    private void logValidationError(String mapKey, String exceptionMessage, List<Violation> violations) {
+    @Nullable
+    private ElementData validateElementData(ElementData elementData, Section elementSection) {
+        try {
+            objectValidator.validate(elementData);
+            return elementData;
+        } catch (ValidationException ex) {
+            this.logElementViolations(elementSection.getAbsolutePath(), ex.getMessage(), ex.getViolations());
+            return null;
+        }
+    }
+
+    private void logElementViolations(String elementPath, String exceptionMessage, List<Violation> violations) {
+        String violationsMessage = violations.stream()
+                .map(violation -> " - " + violation.propertyPath() + ": " + violation.message())
+                .collect(Collectors.joining("\n"));
+
+        logger.severe("Failed to load element located at '%s': %s\n%s".formatted(elementPath, exceptionMessage, violationsMessage));
+    }
+
+    private void logMapViolations(String mapKey, String exceptionMessage, List<Violation> violations) {
         String violationsMessage = violations.stream()
                 .map(violation -> " - " + violation.propertyPath() + ": " + violation.message())
                 .collect(Collectors.joining("\n"));

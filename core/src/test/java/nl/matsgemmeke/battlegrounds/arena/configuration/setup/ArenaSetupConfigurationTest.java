@@ -1,12 +1,13 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
-import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.spawn.SpawnPointData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
@@ -43,11 +44,16 @@ class ArenaSetupConfigurationTest {
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
 
+    private static final String SPAWN_POINT_SECTION_PATH = "maps.level-1.elements.1";
     private static final int SPAWN_POINT_ELEMENT_ID = 1;
+    private static final String SPAWN_POINT_ELEMENT_TYPE = "SPAWN_POINT";
     private static final int SPAWN_POINT_TEAM_ID = 2;
+    private static final String SPAWN_POINT_LOCATION_WORLD = "world";
     private static final double SPAWN_POINT_LOCATION_X = 1.1;
     private static final double SPAWN_POINT_LOCATION_Y = 2.2;
     private static final double SPAWN_POINT_LOCATION_Z = 3.3;
+    private static final float SPAWN_POINT_LOCATION_YAW = 180.0f;
+    private static final float SPAWN_POINT_LOCATION_PITCH = 90.0f;
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
@@ -183,7 +189,7 @@ class ArenaSetupConfigurationTest {
 
         verify(logger).severe("""
                 Failed to load map level-1: Validation failed for object ArenaMapData (1 constraint violation)
-                 - name: value is required""");
+                 - name: name is required""");
     }
 
     @Test
@@ -282,6 +288,49 @@ class ArenaSetupConfigurationTest {
         });
     }
 
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_elementWithViolations() {
+        SpawnPointData spawnPointData = new SpawnPointData();
+        spawnPointData.setElementId(SPAWN_POINT_ELEMENT_ID);
+        spawnPointData.setElementType(SPAWN_POINT_ELEMENT_TYPE);
+        spawnPointData.setLocationData(new LocationData(null, 0, 0, 0, 0, 0));
+        spawnPointData.setTeamId(0);
+
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
+        when(elementSection.getAbsolutePath()).thenReturn(SPAWN_POINT_SECTION_PATH);
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+
+        verify(logger).severe("""
+                Failed to load element located at 'maps.level-1.elements.1': Validation failed for object SpawnPointData (2 constraint violations)
+                 - teamId: team id must be greater than zero
+                 - locationData.world: locations in configurations must have a defined world
+                """.trim());
+    }
+
     @ParameterizedTest
     @CsvSource(value = {
             "2026-06-30T18:00:00Z,2026-06-30T18:00:00Z,2c11afe2-48f0-4399-9a04-195bb8ac640e,2c11afe2-48f0-4399-9a04-195bb8ac640e",
@@ -290,7 +339,11 @@ class ArenaSetupConfigurationTest {
     }, nullValues = "null")
     @DisplayName("getMaps returns list with valid map data")
     void getMaps_successful(String createdAt, Instant expectedCreatedAt, String createdBy, UUID expectedCreatedBy) {
-        ElementData elementData = mock(ElementData.class);
+        SpawnPointData spawnPointData = new SpawnPointData();
+        spawnPointData.setElementId(SPAWN_POINT_ELEMENT_ID);
+        spawnPointData.setElementType(SPAWN_POINT_ELEMENT_TYPE);
+        spawnPointData.setLocationData(new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH));
+        spawnPointData.setTeamId(SPAWN_POINT_TEAM_ID);
 
         Section elementSection = mock(Section.class);
         when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
@@ -307,7 +360,7 @@ class ArenaSetupConfigurationTest {
         when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(elementData);
+        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -315,7 +368,7 @@ class ArenaSetupConfigurationTest {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
             assertThat(mapData.createdAt()).isEqualTo(expectedCreatedAt);
             assertThat(mapData.createdBy()).isEqualTo(expectedCreatedBy);
-            assertThat(mapData.elements()).containsExactly(elementData);
+            assertThat(mapData.elements()).containsExactly(spawnPointData);
         });
     }
 
