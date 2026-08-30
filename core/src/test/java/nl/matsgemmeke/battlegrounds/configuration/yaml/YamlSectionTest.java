@@ -38,15 +38,17 @@ class YamlSectionTest {
         yamlSection = new YamlSection(configurationSection, ABSOLUTE_PATH);
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("createSection creates new configuration section")
-    void createSection() {
-        Section section = yamlSection.createSection(PATH);
+    @CsvSource({ "'',example.path,example.path", "section,example.path,section.example.path" })
+    void createSection(String absolutePath, String childPath, String expectedChildPath) {
+        YamlSection yamlSection = new YamlSection(configurationSection, absolutePath);
+        Section section = yamlSection.createSection(childPath);
 
         assertThat(section).isInstanceOf(YamlSection.class);
-        assertThat(section.getAbsolutePath()).isEqualTo("section.example.path");
+        assertThat(section.getAbsolutePath()).isEqualTo(expectedChildPath);
 
-        verify(configurationSection).createSection(PATH);
+        verify(configurationSection).createSection(childPath);
     }
 
     @ParameterizedTest
@@ -122,18 +124,20 @@ class YamlSectionTest {
         assertThat(sectionOptional).isEmpty();
     }
 
-    @Test
+    @ParameterizedTest
     @DisplayName("getSection returns optional with section from given path")
-    void getSection_successful() {
+    @CsvSource({ "'',example.path,example.path", "section,example.path,section.example.path" })
+    void getSection_successful(String absolutePath, String childPath, String expectedChildPath) {
         ConfigurationSection nestedConfigurationSection = mock(ConfigurationSection.class);
 
-        when(configurationSection.getConfigurationSection(PATH)).thenReturn(nestedConfigurationSection);
+        when(configurationSection.getConfigurationSection(childPath)).thenReturn(nestedConfigurationSection);
 
-        Optional<Section> sectionOptional = yamlSection.getSection(PATH);
+        YamlSection yamlSection = new YamlSection(configurationSection, absolutePath);
+        Optional<Section> sectionOptional = yamlSection.getSection(childPath);
 
         assertThat(sectionOptional).hasValueSatisfying(section -> {
             assertThat(section).isInstanceOf(YamlSection.class);
-            assertThat(section.getAbsolutePath()).isEqualTo("section.example.path");
+            assertThat(section.getAbsolutePath()).isEqualTo(expectedChildPath);
         });
     }
 

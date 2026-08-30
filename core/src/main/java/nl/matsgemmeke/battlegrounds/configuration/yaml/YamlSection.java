@@ -24,7 +24,7 @@ public class YamlSection implements Section {
 
     @Override
     public Section createSection(String path) {
-        String childAbsolutePath = absolutePath + "." + path;
+        String childAbsolutePath = this.createChildAbsolutePath(path);
         return new YamlSection(configurationSection.createSection(path), childAbsolutePath);
     }
 
@@ -61,7 +61,7 @@ public class YamlSection implements Section {
         ConfigurationSection childConfigurationSection = configurationSection.getConfigurationSection(path);
 
         if (childConfigurationSection != null) {
-            String childAbsolutePath = absolutePath + "." + path;
+            String childAbsolutePath = this.createChildAbsolutePath(path);
             return Optional.of(new YamlSection(childConfigurationSection, childAbsolutePath));
         } else {
             return Optional.empty();
@@ -91,5 +91,13 @@ public class YamlSection implements Section {
     @Override
     public void set(String path, Object value) {
         configurationSection.set(path, value);
+    }
+
+    private String createChildAbsolutePath(String path) {
+        if (absolutePath.isBlank()) {
+            return path;
+        } else {
+            return absolutePath + "." + path;
+        }
     }
 }
