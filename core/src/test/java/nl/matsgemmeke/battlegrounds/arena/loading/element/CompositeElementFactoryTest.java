@@ -24,7 +24,7 @@ class CompositeElementFactoryTest {
 
     @Test
     void create_spawnPoint() {
-        SpawnPointData spawnPointData = new SpawnPointData();
+        SpawnPointData spawnPointData = new SpawnPointData(null, null, null);
         SpawnPoint spawnPoint = mock(SpawnPoint.class);
 
         when(spawnPointFactory.create(spawnPointData)).thenReturn(spawnPoint);

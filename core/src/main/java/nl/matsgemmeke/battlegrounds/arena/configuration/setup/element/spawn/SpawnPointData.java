@@ -6,29 +6,20 @@ import jakarta.validation.constraints.NotNull;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementData;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 
-public class SpawnPointData extends ElementData {
+public record SpawnPointData(
+        @NotNull(message = "element id is required")
+        @Min(value = 1, message = "element id must be greater than zero")
+        Integer elementId,
+        @NotNull
+        @Valid
+        LocationData locationData,
+        @NotNull
+        @Min(value = 1, message = "team id must be greater than zero")
+        Integer teamId
+) implements ElementData {
 
-    @NotNull
-    @Valid
-    private LocationData locationData;
-
-    @NotNull
-    @Min(value = 1, message = "team id must be greater than zero")
-    private Integer teamId;
-
-    public LocationData getLocationData() {
-        return locationData;
-    }
-
-    public void setLocationData(LocationData locationData) {
-        this.locationData = locationData;
-    }
-
-    public Integer getTeamId() {
-        return teamId;
-    }
-
-    public void setTeamId(Integer teamId) {
-        this.teamId = teamId;
+    @Override
+    public String elementType() {
+        return "SPAWN_POINT";
     }
 }

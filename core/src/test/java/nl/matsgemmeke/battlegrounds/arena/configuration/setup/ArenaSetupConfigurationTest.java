@@ -291,11 +291,8 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
     void getMaps_elementWithViolations() {
-        SpawnPointData spawnPointData = new SpawnPointData();
-        spawnPointData.setElementId(SPAWN_POINT_ELEMENT_ID);
-        spawnPointData.setElementType(SPAWN_POINT_ELEMENT_TYPE);
-        spawnPointData.setLocationData(new LocationData(null, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH));
-        spawnPointData.setTeamId(SPAWN_POINT_TEAM_ID);
+        LocationData locationData = new LocationData(null, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        SpawnPointData spawnPointData = new SpawnPointData(SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
 
         Section elementSection = mock(Section.class);
         when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
@@ -338,11 +335,8 @@ class ArenaSetupConfigurationTest {
     }, nullValues = "null")
     @DisplayName("getMaps returns list with valid map data")
     void getMaps_successful(String createdAt, Instant expectedCreatedAt, String createdBy, UUID expectedCreatedBy) {
-        SpawnPointData spawnPointData = new SpawnPointData();
-        spawnPointData.setElementId(SPAWN_POINT_ELEMENT_ID);
-        spawnPointData.setElementType(SPAWN_POINT_ELEMENT_TYPE);
-        spawnPointData.setLocationData(new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH));
-        spawnPointData.setTeamId(SPAWN_POINT_TEAM_ID);
+        LocationData locationData = new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        SpawnPointData spawnPointData = new SpawnPointData(SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
 
         Section elementSection = mock(Section.class);
         when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));

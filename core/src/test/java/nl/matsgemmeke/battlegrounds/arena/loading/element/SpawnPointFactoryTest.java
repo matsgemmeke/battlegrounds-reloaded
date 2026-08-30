@@ -18,7 +18,6 @@ import static org.mockito.Mockito.when;
 class SpawnPointFactoryTest {
 
     private static final int ELEMENT_ID = 1;
-    private static final String ELEMENT_TYPE = "SPAWN_POINT";
     private static final int TEAM_ID = 2;
 
     @Mock
@@ -30,12 +29,7 @@ class SpawnPointFactoryTest {
     void create() {
         LocationData locationData = new LocationData(null, null, null, null, null, null);
         Location location = new Location(null, 0, 0, 0, 0, 0);
-
-        SpawnPointData spawnPointData = new SpawnPointData();
-        spawnPointData.setElementId(ELEMENT_ID);
-        spawnPointData.setElementType(ELEMENT_TYPE);
-        spawnPointData.setLocationData(locationData);
-        spawnPointData.setTeamId(TEAM_ID);
+        SpawnPointData spawnPointData = new SpawnPointData(ELEMENT_ID, locationData, TEAM_ID);
 
         when(locationMapper.toLocation(locationData)).thenReturn(location);
 

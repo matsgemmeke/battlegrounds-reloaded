@@ -17,9 +17,9 @@ public class SpawnPointFactory implements ElementFactory<SpawnPointData, SpawnPo
 
     @Override
     public SpawnPoint create(SpawnPointData data) {
-        int elementId = data.getElementId();
-        int teamId = data.getTeamId();
-        Location location = locationMapper.toLocation(data.getLocationData());
+        int elementId = data.elementId();
+        int teamId = data.teamId();
+        Location location = locationMapper.toLocation(data.locationData());
 
         return new SpawnPoint(elementId, teamId, location);
     }

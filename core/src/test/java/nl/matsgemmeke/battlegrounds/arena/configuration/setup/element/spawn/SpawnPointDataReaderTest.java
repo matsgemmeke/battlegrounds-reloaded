@@ -21,7 +21,6 @@ import static org.mockito.Mockito.when;
 class SpawnPointDataReaderTest {
 
     private static final int ELEMENT_ID = 1;
-    private static final String ELEMENT_TYPE = "SPAWN_POINT";
     private static final LocationData LOCATION_DATA = new LocationData("world", 1.1, 2.2, 3.3, 90.0f, 90.0f);
     private static final int TEAM_ID = 2;
 
@@ -36,17 +35,16 @@ class SpawnPointDataReaderTest {
     @DisplayName("read returns SpawnPointData with null values when given section does not contain them")
     void read_unknownValues() {
         when(section.getInt("element-id")).thenReturn(Optional.empty());
-        when(section.getString("element-type")).thenReturn(Optional.empty());
         when(section.getSection("location")).thenReturn(Optional.empty());
         when(section.getInt("team-id")).thenReturn(Optional.empty());
 
         ElementData elementData = spawnPointDataReader.read(section);
 
         assertThat(elementData).isInstanceOfSatisfying(SpawnPointData.class, spawnPointData -> {
-            assertThat(spawnPointData.getElementId()).isNull();
-            assertThat(spawnPointData.getElementType()).isNull();
-            assertThat(spawnPointData.getLocationData()).isNull();
-            assertThat(spawnPointData.getTeamId()).isNull();
+            assertThat(spawnPointData.elementId()).isNull();
+            assertThat(spawnPointData.elementType()).isEqualTo("SPAWN_POINT");
+            assertThat(spawnPointData.locationData()).isNull();
+            assertThat(spawnPointData.teamId()).isNull();
         });
     }
 
@@ -56,7 +54,6 @@ class SpawnPointDataReaderTest {
         Section locationSection = mock(Section.class);
 
         when(section.getInt("element-id")).thenReturn(Optional.of(ELEMENT_ID));
-        when(section.getString("element-type")).thenReturn(Optional.of(ELEMENT_TYPE));
         when(section.getSection("location")).thenReturn(Optional.of(locationSection));
         when(locationDataSerializer.deserialize(locationSection)).thenReturn(LOCATION_DATA);
         when(section.getInt("team-id")).thenReturn(Optional.of(TEAM_ID));
@@ -64,10 +61,10 @@ class SpawnPointDataReaderTest {
         ElementData elementData = spawnPointDataReader.read(section);
 
         assertThat(elementData).isInstanceOfSatisfying(SpawnPointData.class, spawnPointData -> {
-            assertThat(spawnPointData.getElementId()).isEqualTo(ELEMENT_ID);
-            assertThat(spawnPointData.getElementType()).isEqualTo(ELEMENT_TYPE);
-            assertThat(spawnPointData.getLocationData()).isEqualTo(LOCATION_DATA);
-            assertThat(spawnPointData.getTeamId()).isEqualTo(TEAM_ID);
+            assertThat(spawnPointData.elementId()).isEqualTo(ELEMENT_ID);
+            assertThat(spawnPointData.elementType()).isEqualTo("SPAWN_POINT");
+            assertThat(spawnPointData.locationData()).isEqualTo(LOCATION_DATA);
+            assertThat(spawnPointData.teamId()).isEqualTo(TEAM_ID);
         });
     }
 }
