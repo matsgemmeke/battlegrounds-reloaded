@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSerializer;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
@@ -30,25 +31,28 @@ public class ArenaSetupConfiguration {
     private static final String MAP_NAME_PATH = "name";
     private static final String MAP_CREATED_AT_PATH = "created-at";
     private static final String MAP_CREATED_BY_PATH = "created-by";
-    private static final String MAP_ELEMENTS_PATH = "elements";
-    private static final String MAP_ELEMENT_TYPE_PATH = "type";
 
-    private static final String MAP_SPAWN_POINT_LOCATION_PATH = "location";
-    private static final String MAP_SPAWN_POINT_TEAM_ID_PATH = "team-id";
+    private static final String ELEMENTS_PATH = "elements";
+    private static final String ELEMENT_TYPE_PATH = "type";
+    private static final String SPAWN_POINT_LOCATION_PATH = "location";
+    private static final String SPAWN_POINT_TEAM_ID_PATH = "team-id";
 
     private final ConfigurationFile configurationFile;
     private final ElementDataFactory elementDataFactory;
+    private final LocationDataSerializer locationDataSerializer;
     private final Logger logger;
     private final ObjectValidator objectValidator;
 
     @Inject
     public ArenaSetupConfiguration(
             ElementDataFactory elementDataFactory,
+            LocationDataSerializer locationDataSerializer,
             @Named("Battlegrounds") Logger logger,
             ObjectValidator objectValidator,
             @Assisted ConfigurationFile configurationFile
     ) {
         this.elementDataFactory = elementDataFactory;
+        this.locationDataSerializer = locationDataSerializer;
         this.logger = logger;
         this.objectValidator = objectValidator;
         this.configurationFile = configurationFile;
@@ -107,7 +111,7 @@ public class ArenaSetupConfiguration {
         String name = mapsSection.getString(mapKey + "." + MAP_NAME_PATH).orElse(null);
         Instant createdAt = mapsSection.getString(mapKey + "." + MAP_CREATED_AT_PATH).map(this::parseInstant).orElse(null);
         UUID createdBy = mapsSection.getString(mapKey + "." + MAP_CREATED_BY_PATH).map(this::parseUUID).orElse(null);
-        List<ElementData> elements = mapsSection.getSection(mapKey + "." + MAP_ELEMENTS_PATH).map(this::readElements).orElse(Collections.emptyList());
+        List<ElementData> elements = mapsSection.getSection(mapKey + "." + ELEMENTS_PATH).map(this::readElements).orElse(Collections.emptyList());
 
         ArenaMapData mapData = new ArenaMapData(name, createdAt, createdBy, elements);
 
@@ -199,11 +203,13 @@ public class ArenaSetupConfiguration {
         }
 
         String mapPathName = TextUtil.toKebabCase(data.mapName());
-        String spawnPointPath = MAPS_PATH + "." + mapPathName + "." + MAP_ELEMENTS_PATH + "." + data.elementId();
+        String spawnPointPath = MAPS_PATH + "." + mapPathName + "." + ELEMENTS_PATH + "." + data.elementId();
+        String spawnPointLocationPath = spawnPointPath + "." + SPAWN_POINT_LOCATION_PATH;
+        Section locationSection = configurationFile.getRootSection().createSection(spawnPointLocationPath);
 
-        configurationFile.set(spawnPointPath + "." + MAP_ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
-        configurationFile.setLocation(spawnPointPath + "." + MAP_SPAWN_POINT_LOCATION_PATH, data.location());
-        configurationFile.set(spawnPointPath + "." + MAP_SPAWN_POINT_TEAM_ID_PATH, data.teamId());
+        locationDataSerializer.serialize(data.locationData(), locationSection);
+        configurationFile.set(spawnPointPath + "." + ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
+        configurationFile.set(spawnPointPath + "." + SPAWN_POINT_LOCATION_PATH, data.teamId());
         configurationFile.save();
     }
 }

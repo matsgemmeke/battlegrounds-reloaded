@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -42,9 +43,12 @@ class AddSpawnPointCommandExecutorTest {
     private static final String MAP_NAME = "Level 1";
     private static final int ELEMENT_ID = 2;
     private static final int TEAM_ID = 3;
+    private static final String LOCATION_WORLD = "world";
     private static final double LOCATION_X = 1.1;
     private static final double LOCATION_Y = 2.2;
     private static final double LOCATION_Z = 3.3;
+    private static final float LOCATION_YAW = 90.0f;
+    private static final float LOCATION_PITCH = 0.0f;
 
     private static final String GENERIC_ERROR_TEXT = "generic error";
     private static final String SPAWN_POINT_ADDED_TEXT = "spawn point added";
@@ -53,6 +57,8 @@ class AddSpawnPointCommandExecutorTest {
     private ArenaMapSelector mapSelector;
     @Mock
     private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
+    @Mock
+    private LocationMapper locationMapper;
     @Mock
     private Logger logger;
     @Mock
@@ -81,9 +87,10 @@ class AddSpawnPointCommandExecutorTest {
     @Test
     @DisplayName("execute adds a spawn point to the map and the arena setup configuration")
     void execute_successful() {
-        World world = mock(World.class);
-        Location playerLocation = new Location(world, LOCATION_X, LOCATION_Y, LOCATION_Z);
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+
+        World world = mock(World.class);
+        when(world.getName()).thenReturn(LOCATION_WORLD);
 
         Arena arena = mock(Arena.class);
         when(arena.getId()).thenReturn(ARENA_ID);
@@ -96,10 +103,12 @@ class AddSpawnPointCommandExecutorTest {
         when(spawnPointAddedTextTemplate.replace(anyMap())).thenReturn(SPAWN_POINT_ADDED_TEXT);
 
         ArenaMapSelection selection = new ArenaMapSelection(arena, map);
+        Location playerLocation = new Location(world, LOCATION_X, LOCATION_Y, LOCATION_Z, LOCATION_YAW, LOCATION_PITCH);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(mapSelector.getSelection(PLAYER_ID)).thenReturn(Optional.of(selection));
         when(player.getLocation()).thenReturn(playerLocation);
+        when(locationMapper.toLocationData(any(Location.class))).thenCallRealMethod();
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
         when(translator.translate(TranslationKey.SPAWN_POINT_ADDED.getPath())).thenReturn(spawnPointAddedTextTemplate);
 
@@ -126,11 +135,13 @@ class AddSpawnPointCommandExecutorTest {
             assertThat(data.mapName()).isEqualTo(MAP_NAME);
             assertThat(data.elementId()).isEqualTo(ELEMENT_ID);
             assertThat(data.teamId()).isEqualTo(TEAM_ID);
-            assertThat(data.location()).satisfies(location -> {
-                assertThat(location.getWorld()).isEqualTo(world);
-                assertThat(location.getX()).isEqualTo(1.5);
-                assertThat(location.getY()).isEqualTo(LOCATION_Y);
-                assertThat(location.getZ()).isEqualTo(3.5);
+            assertThat(data.locationData()).satisfies(locationData -> {
+                assertThat(locationData.world()).isEqualTo(LOCATION_WORLD);
+                assertThat(locationData.x()).isEqualTo(1.5);
+                assertThat(locationData.y()).isEqualTo(LOCATION_Y);
+                assertThat(locationData.z()).isEqualTo(3.5);
+                assertThat(locationData.yaw()).isEqualTo(LOCATION_YAW);
+                assertThat(locationData.pitch()).isEqualTo(LOCATION_PITCH);
             });
         });
 

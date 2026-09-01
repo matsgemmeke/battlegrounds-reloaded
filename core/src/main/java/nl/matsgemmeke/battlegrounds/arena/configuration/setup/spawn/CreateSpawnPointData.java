@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
-import nl.matsgemmeke.battlegrounds.validation.constraint.HasWorld;
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
-import org.bukkit.Location;
+import jakarta.validation.constraints.NotNull;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 
 public record CreateSpawnPointData(
-        @Required
+        @NotNull(message = "a map name must be specified to create a spawn point")
         String mapName,
         @Min(value = 1, message = "element id must be greater than zero")
         int elementId,
-        @Required
-        @HasWorld
-        Location location,
+        @NotNull(message = "location data must be specified to create a spawn point")
+        @Valid
+        LocationData locationData,
         @Min(value = 1, message = "team id must be greater than zero")
         int teamId
 ) {

@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.configuration;
 
-import org.bukkit.Location;
-
 /**
  * Represents a set of plugin configurations stored inside a yaml file.
  */
@@ -32,13 +30,4 @@ public interface ConfigurationFile {
      * @param value the new value to set the path to
      */
     void set(String path, Object value);
-
-    /**
-     * Sets the specified path to the given location.
-     *
-     * @param path                      the path of the location
-     * @param location                  the location
-     * @throws IllegalArgumentException when the given location has no world
-     */
-    void setLocation(String path, Location location);
 }

@@ -8,11 +8,10 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnP
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSerializer;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
-import org.bukkit.Location;
-import org.bukkit.World;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -46,7 +45,6 @@ class ArenaSetupConfigurationTest {
 
     private static final String SPAWN_POINT_SECTION_PATH = "maps.level-1.elements.1";
     private static final int SPAWN_POINT_ELEMENT_ID = 1;
-    private static final String SPAWN_POINT_ELEMENT_TYPE = "SPAWN_POINT";
     private static final int SPAWN_POINT_TEAM_ID = 2;
     private static final String SPAWN_POINT_LOCATION_WORLD = "world";
     private static final double SPAWN_POINT_LOCATION_X = 1.1;
@@ -59,6 +57,8 @@ class ArenaSetupConfigurationTest {
     private ConfigurationFile configurationFile;
     @Mock
     private ElementDataFactory elementDataFactory;
+    @Mock
+    private LocationDataSerializer locationDataSerializer;
     @Mock
     private Logger logger;
     @Spy
@@ -381,14 +381,16 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("createSpawnPoint saves values of given data object to elements section of map")
     void createSpawnPoint_successful() {
-        World world = mock(World.class);
-        Location location = new Location(world, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z);
-        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, SPAWN_POINT_ELEMENT_ID, location, SPAWN_POINT_TEAM_ID);
+        LocationData locationData = new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
+        Section locationSection = mock(Section.class);
+
+        when(configurationFile.getRootSection().createSection("maps.level-1.elements.1.location")).thenReturn(locationSection);
 
         setupConfiguration.createSpawnPoint(data);
 
+        verify(locationDataSerializer).serialize(locationData, locationSection);
         verify(configurationFile).set("maps.level-1.elements.1.type", "SPAWN_POINT");
-        verify(configurationFile).setLocation("maps.level-1.elements.1.location", location);
         verify(configurationFile).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
         verify(configurationFile).save();
     }

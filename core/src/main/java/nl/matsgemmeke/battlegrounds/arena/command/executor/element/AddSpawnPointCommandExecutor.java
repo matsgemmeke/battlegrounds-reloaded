@@ -10,8 +10,10 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -27,6 +29,7 @@ public class AddSpawnPointCommandExecutor {
 
     private final ArenaMapSelector mapSelector;
     private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
+    private final LocationMapper locationMapper;
     private final Logger logger;
     private final Translator translator;
 
@@ -34,11 +37,13 @@ public class AddSpawnPointCommandExecutor {
     public AddSpawnPointCommandExecutor(
             ArenaMapSelector mapSelector,
             ArenaSetupConfigurationProvider arenaSetupConfigurationProvider,
+            LocationMapper locationMapper,
             @Named("Battlegrounds") Logger logger,
             Translator translator
     ) {
         this.mapSelector = mapSelector;
         this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
+        this.locationMapper = locationMapper;
         this.logger = logger;
         this.translator = translator;
     }
@@ -62,11 +67,12 @@ public class AddSpawnPointCommandExecutor {
 
         int elementId = map.generateNextElementId();
         Location location = this.getCenterLocation(player.getLocation());
+        LocationData locationData = locationMapper.toLocationData(location);
         SpawnPoint spawnPoint = new SpawnPoint(elementId, teamId, location);
 
         map.addElement(spawnPoint);
 
-        CreateSpawnPointData data = new CreateSpawnPointData(mapName, elementId, location, teamId);
+        CreateSpawnPointData data = new CreateSpawnPointData(mapName, elementId, locationData, teamId);
 
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.createSpawnPoint(data);
@@ -84,6 +90,8 @@ public class AddSpawnPointCommandExecutor {
         double x = Math.floor(original.getX()) + BLOCK_CENTER_OFFSET;
         double y = original.getY();
         double z = Math.floor(original.getZ()) + BLOCK_CENTER_OFFSET;
-        return new Location(world, x, y, z);
+        float yaw = original.getYaw();
+        float pitch = original.getPitch();
+        return new Location(world, x, y, z, yaw, pitch);
     }
 }
