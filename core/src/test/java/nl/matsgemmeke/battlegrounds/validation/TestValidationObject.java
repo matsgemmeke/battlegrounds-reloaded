@@ -1,7 +1,9 @@
 package nl.matsgemmeke.battlegrounds.validation;
 
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
+import nl.matsgemmeke.battlegrounds.validation.constraint.HasWorld;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import org.bukkit.Location;
 import org.bukkit.Particle;
 
 public class TestValidationObject {
@@ -11,4 +13,7 @@ public class TestValidationObject {
 
     @EnumValue(type = Particle.class)
     public String enumValue;
+
+    @HasWorld
+    public Location hasWorld;
 }

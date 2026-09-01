@@ -51,7 +51,6 @@ public class CreateMapCommandExecutor {
 
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.createMap(mapCreationInfo);
-        setupConfiguration.save();
 
         Map<String, Object> values = Map.of("bg_arena", arenaId, "bg_map", mapName);
 

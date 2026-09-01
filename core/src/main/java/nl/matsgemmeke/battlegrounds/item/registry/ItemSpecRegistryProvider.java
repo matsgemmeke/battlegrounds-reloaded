@@ -8,15 +8,19 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
+import nl.matsgemmeke.battlegrounds.validation.Violation;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public class ItemSpecRegistryProvider implements Provider<ItemSpecRegistry> {
 
@@ -109,8 +113,8 @@ public class ItemSpecRegistryProvider implements Provider<ItemSpecRegistry> {
             this.addItemSpec(registry, itemFile, configuration);
         } catch (IllegalArgumentException e) {
             logger.severe("Unable to load item configuration file '%s': %s".formatted(itemFile.getName(), e.getMessage()));
-        } catch (ValidationException e) {
-            logger.severe("An error occurred while loading item '%s': %s".formatted(id, e.getMessage()));
+        } catch (ValidationException ex) {
+            this.logValidationError(id, ex.getMessage(), ex.getViolations());
         }
     }
 
@@ -145,5 +149,13 @@ public class ItemSpecRegistryProvider implements Provider<ItemSpecRegistry> {
         }
 
         logger.severe("An error occurred while loading item '%s': no item type is specified".formatted(name));
+    }
+
+    private void logValidationError(String id, String exceptionMessage, List<Violation> violations) {
+        String violationsMessage = violations.stream()
+                .map(violation -> " - " + TextUtil.toKebabCase(violation.propertyPath()) + ": " + violation.message())
+                .collect(Collectors.joining("\n"));
+
+        logger.severe("An error occurred while loading item '%s': %s\n%s".formatted(id, exceptionMessage, violationsMessage));
     }
 }

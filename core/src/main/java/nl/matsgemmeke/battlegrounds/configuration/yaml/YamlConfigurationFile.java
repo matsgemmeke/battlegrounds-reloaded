@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.configuration.yaml;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationLoadException;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationSaveException;
-import org.bukkit.configuration.ConfigurationSection;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Nullable;
 
@@ -11,10 +11,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
-import java.util.List;
-import java.util.Optional;
 
 public class YamlConfigurationFile implements ConfigurationFile {
+
+    private static final String ROOT_SECTION_PATH = "";
 
     private final File file;
     @Nullable
@@ -32,62 +32,9 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
-    public ConfigurationSection createSection(String path) {
+    public Section getRootSection() {
         YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.createSection(path);
-    }
-
-    @Override
-    public boolean exists(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.get(path) != null;
-    }
-
-    @Override
-    public Optional<ConfigurationSection> getConfigurationSection(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return Optional.ofNullable(yamlConfiguration.getConfigurationSection(path));
-    }
-
-    @Override
-    public Optional<Integer> getInt(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-
-        if (!yamlConfiguration.isInt(path)) {
-            return Optional.empty();
-        } else {
-            return Optional.of(yamlConfiguration.getInt(path));
-        }
-    }
-
-    @Override
-    public Optional<String> getString(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return Optional.ofNullable(yamlConfiguration.getString(path));
-    }
-
-    @Override
-    public List<String> getStringList(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.getStringList(path);
-    }
-
-    @Override
-    public boolean isList(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        return yamlConfiguration.isList(path);
-    }
-
-    @Override
-    public void removeSection(String path) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        yamlConfiguration.set(path, null);
-    }
-
-    @Override
-    public void set(String path, Object value) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        yamlConfiguration.set(path, value);
+        return new YamlSection(yamlConfiguration, ROOT_SECTION_PATH);
     }
 
     @Override

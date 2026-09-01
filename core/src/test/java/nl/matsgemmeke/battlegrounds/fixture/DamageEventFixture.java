@@ -27,7 +27,6 @@ public final class DamageEventFixture {
     private static final Instant TIMESTAMP = Instant.parse("2026-05-25T18:00:00.00Z");
 
     public static DamageEvent createDefault() {
-        return new DamageEvent(GAME_KEY, DAMAGER_ID, DAMAGER_ENTITY_KEY, VICTIM_ID, VICTIM_ENTITY_KEY, ITEM, DAMAGE_AMOUNT, DAMAGE_TYPE, HITBOX_COMPONENT_TYPE, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP
-        );
+        return new DamageEvent(GAME_KEY, DAMAGER_ID, DAMAGER_ENTITY_KEY, VICTIM_ID, VICTIM_ENTITY_KEY, ITEM, DAMAGE_AMOUNT, DAMAGE_TYPE, HITBOX_COMPONENT_TYPE, DISTANCE, KILL, FRIENDLY_FIRE, TIMESTAMP);
     }
 }

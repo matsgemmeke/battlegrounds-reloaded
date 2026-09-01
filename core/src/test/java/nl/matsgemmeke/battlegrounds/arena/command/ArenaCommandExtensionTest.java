@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
-import nl.matsgemmeke.battlegrounds.arena.command.condition.ExistentArenaIdCondition;
-import nl.matsgemmeke.battlegrounds.arena.command.condition.NonexistentArenaIdCondition;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
@@ -25,19 +25,35 @@ class ArenaCommandExtensionTest {
     @Mock
     private ArenaCommand arenaCommand;
     @Mock
+    private ElementCommand elementCommand;
+    @Mock
+    private MapCommand mapCommand;
+
+    @Mock
     private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
-    private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
-    @Mock
-    private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
+    private MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+
     @Mock
     private ExistentArenaIdCondition existentArenaIdCondition;
     @Mock
     private NonexistentArenaIdCondition nonexistentArenaIdCondition;
     @Mock
+    private ExistentMapNameCondition existentMapNameCondition;
+    @Mock
+    private NonexistentMapNameCondition nonexistentMapNameCondition;
+    @Mock
+    private MapSelectedCondition mapSelectedCondition;
+
+    @Mock
+    private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
+    @Mock
+    private CommandConditions<BukkitCommandIssuer, BukkitCommandExecutionContext, BukkitConditionContext> commandConditions;
+    @Mock
     private PaperCommandManager commandManager;
     @Mock
     private Translator translator;
+
     @InjectMocks
     private ArenaCommandExtension commandExtension;
 
@@ -51,12 +67,20 @@ class ArenaCommandExtensionTest {
         commandExtension.configure(commandManager);
 
         verify(arenaCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(mapCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(elementCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(arenaCommand);
+        verify(commandManager).registerCommand(elementCommand);
+        verify(commandManager).registerCommand(mapCommand);
 
         verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
+        verify(commandCompletions).registerCompletion("map-name", mapNameCommandCompletionHandler);
 
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        verify(commandConditions).addCondition(String.class, "existent-map-name", existentMapNameCondition);
+        verify(commandConditions).addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
+        verify(commandConditions).addCondition("map-selected", mapSelectedCondition);
     }
 }

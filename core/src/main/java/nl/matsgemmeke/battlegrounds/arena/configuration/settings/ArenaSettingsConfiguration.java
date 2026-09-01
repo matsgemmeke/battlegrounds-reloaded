@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.configuration.settings;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 
@@ -37,7 +38,7 @@ public class ArenaSettingsConfiguration {
     }
 
     private int getInt(String path) {
-        return configurationFile.getInt(path).orElseThrow(() -> new InvalidArenaSettingsSpecException("Missing required value at " + path));
+        return configurationFile.getRootSection().getInt(path).orElseThrow(() -> new InvalidArenaSettingsSpecException("Missing required value at " + path));
     }
 
     public void saveArenaSettings(ArenaSettingsSpec spec) {
@@ -47,9 +48,11 @@ public class ArenaSettingsConfiguration {
             throw new InvalidArenaSettingsSpecException("Cannot save invalid arena settings specification", ex);
         }
 
-        configurationFile.set(LOBBY_COUNTDOWN_LENGTH_PATH, spec.lobbyCountdownLength());
-        configurationFile.set(MAX_PLAYERS_PATH, spec.maxPlayers());
-        configurationFile.set(MIN_PLAYERS_PATH, spec.minPlayers());
+        Section rootSection = configurationFile.getRootSection();
+        rootSection.set(LOBBY_COUNTDOWN_LENGTH_PATH, spec.lobbyCountdownLength());
+        rootSection.set(MAX_PLAYERS_PATH, spec.maxPlayers());
+        rootSection.set(MIN_PLAYERS_PATH, spec.minPlayers());
+
         configurationFile.save();
     }
 }

@@ -6,8 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 class ObjectValidatorTest {
 
@@ -27,10 +26,13 @@ class ObjectValidatorTest {
         validationObject.enumValue = "fail";
 
         assertThatThrownBy(() -> objectValidator.validate(validationObject))
-                .isInstanceOf(ValidationException.class)
-                .hasMessage("""
-                     Validation failed for TestValidationObject (1 constraint violation):
-                      - enum-value: invalid value "fail" for enum Particle""");
+                .isInstanceOfSatisfying(ValidationException.class, exception -> {
+                    assertThat(exception.getViolations()).satisfiesExactly(violation -> {
+                        assertThat(violation.propertyPath()).isEqualTo("enumValue");
+                        assertThat(violation.message()).isEqualTo("invalid value \"fail\" for enum Particle");
+                    });
+                })
+                .hasMessage("Validation failed for object TestValidationObject (1 constraint violation)");
     }
 
     @Test
@@ -39,5 +41,24 @@ class ObjectValidatorTest {
         TestValidationObject validationObject = new TestValidationObject();
 
         assertThatCode(() -> objectValidator.validate(validationObject)).doesNotThrowAnyException();
+    }
+
+    @Test
+    @DisplayName("validateValue throws ValidationException when given object has constraint violations")
+    void validateValue_invalidObject() {
+        assertThatThrownBy(() -> objectValidator.validateValue(TestValidationObject.class, "enumValue", "fail"))
+                .isInstanceOfSatisfying(ValidationException.class, exception -> {
+                    assertThat(exception.getViolations()).satisfiesExactly(violation -> {
+                        assertThat(violation.propertyPath()).isEqualTo("enumValue");
+                        assertThat(violation.message()).isEqualTo("invalid value \"fail\" for enum Particle");
+                    });
+                })
+                .hasMessage("Validation failed for value enumValue (1 constraint violation)");
+    }
+
+    @Test
+    @DisplayName("validateValue does nothing when given object has no constraint violations")
+    void validateValue_validObject() {
+        assertThatCode(() -> objectValidator.validateValue(TestValidationObject.class, "enumValue", "FLAME")).doesNotThrowAnyException();
     }
 }

@@ -1,14 +1,23 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.setup;
 
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementType;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.spawn.SpawnPointData;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSerializer;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
-import org.bukkit.configuration.ConfigurationSection;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -19,6 +28,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -29,30 +39,39 @@ class ArenaSetupConfigurationTest {
     private static final String CREATED_BY_TEXT = "2c11afe2-48f0-4399-9a04-195bb8ac640e";
     private static final UUID CREATED_BY = UUID.fromString(CREATED_BY_TEXT);
 
+    private static final String MAP_KEY = "level-1";
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
 
-    @Mock
+    private static final String SPAWN_POINT_SECTION_PATH = "maps.level-1.elements.1";
+    private static final int SPAWN_POINT_ELEMENT_ID = 1;
+    private static final int SPAWN_POINT_TEAM_ID = 2;
+    private static final String SPAWN_POINT_LOCATION_WORLD = "world";
+    private static final double SPAWN_POINT_LOCATION_X = 1.1;
+    private static final double SPAWN_POINT_LOCATION_Y = 2.2;
+    private static final double SPAWN_POINT_LOCATION_Z = 3.3;
+    private static final float SPAWN_POINT_LOCATION_YAW = 180.0f;
+    private static final float SPAWN_POINT_LOCATION_PITCH = 90.0f;
+
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
+    @Mock
+    private ElementDataFactory elementDataFactory;
+    @Mock
+    private LocationDataSerializer locationDataSerializer;
     @Mock
     private Logger logger;
     @Spy
     private ObjectValidator objectValidator = TestValidatorFactory.createObjectValidator();
+    @Mock
+    private Section rootSection;
     @InjectMocks
     private ArenaSetupConfiguration setupConfiguration;
 
     @Test
-    @DisplayName("save saves the configuration file")
-    void save() {
-        setupConfiguration.save();
-
-        verify(configurationFile).save();
-    }
-
-    @Test
     @DisplayName("getCreatedAt returns empty optional when configuration file does not have a value")
     void getCreatedAt_valueNotFound() {
-        when(configurationFile.getString("created-at")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.empty());
 
         Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
 
@@ -62,7 +81,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedAt returns optional with configuration file value as instant")
     void getCreatedAt_successful() {
-        when(configurationFile.getString("created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
 
         Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
 
@@ -72,15 +91,18 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("setCreatedAt sets given instant as string in configuration file")
     void setCreatedAt() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.setCreatedAt(CREATED_AT);
 
-        verify(configurationFile).set("created-at", CREATED_AT_TEXT);
+        verify(rootSection).set("created-at", CREATED_AT_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
     @DisplayName("getCreatedBy returns empty optional when configuration file does not have a value")
     void getCreatedBy_valueNotFound() {
-        when(configurationFile.getString("created-by")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.empty());
 
         Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
 
@@ -90,7 +112,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getCreatedBy returns optional with configuration file value as uuid")
     void getCreatedBy_successful() {
-        when(configurationFile.getString("created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
 
         Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
 
@@ -100,9 +122,12 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("setCreatedBy sets given uuid as string in configuration file")
     void setCreatedBy() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.setCreatedBy(CREATED_BY);
 
-        verify(configurationFile).set("created-by", CREATED_BY_TEXT);
+        verify(rootSection).set("created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
@@ -110,11 +135,14 @@ class ArenaSetupConfigurationTest {
     void createMap() {
         MapCreationInfo mapCreationInfo = new MapCreationInfo(MAP_NAME, CREATED_AT, CREATED_BY);
 
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.createMap(mapCreationInfo);
 
-        verify(configurationFile).set("maps.level-1.name", MAP_NAME);
-        verify(configurationFile).set("maps.level-1.created-at", CREATED_AT_TEXT);
-        verify(configurationFile).set("maps.level-1.created-by", CREATED_BY_TEXT);
+        verify(rootSection).set("maps.level-1.name", MAP_NAME);
+        verify(rootSection).set("maps.level-1.created-at", CREATED_AT_TEXT);
+        verify(rootSection).set("maps.level-1.created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
@@ -122,14 +150,14 @@ class ArenaSetupConfigurationTest {
     void removeMap() {
         setupConfiguration.removeMap(MAP_NAME);
 
-        verify(configurationFile).removeSection("maps.level-1");
+        verify(configurationFile.getRootSection()).removeSection("maps.level-1");
         verify(configurationFile).save();
     }
 
     @Test
     @DisplayName("getMaps returns empty list when maps section does not exist")
     void getMaps_mapsSectionNotExists() {
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.empty());
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -139,10 +167,10 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when maps section has no keys")
     void getMaps_emptyMapsSection() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of());
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of());
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -152,38 +180,154 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of missing name")
     void getMaps_missingName() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.empty());
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.empty());
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
 
         verify(logger).severe("""
-                Failed to load map level-1: Validation failed for ArenaMapData (1 constraint violation):
-                 - name: value is required""");
+                Failed to load map level-1: Validation failed for object ArenaMapData (1 constraint violation)
+                 - name: name is required""");
     }
 
     @Test
     @DisplayName("getMaps returns empty list when a single saved map is invalid because of a future createdAt date")
     void getMaps_futureCreatedAt() {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(MAP_CREATED_AT_TEXT_FUTURE));
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
-        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(MAP_CREATED_AT_TEXT_FUTURE));
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
 
         verify(logger).severe("""
-                Failed to load map level-1: Validation failed for ArenaMapData (1 constraint violation):
-                 - created-at: map creation date must be in the past""");
+                Failed to load map level-1: Validation failed for object ArenaMapData (1 constraint violation)
+                 - createdAt: map creation date must be in the past""");
+    }
+
+    @Test
+    @DisplayName("getMaps returns list with map data without elements")
+    void getMaps_withoutElements() {
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.empty());
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_elementSectionNotFound() {
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.empty());
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_invalidElementType() {
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("unknown-element"));
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("getMaps returns list with map data without elements whose section cannot be found")
+    void getMaps_elementWithViolations() {
+        LocationData locationData = new LocationData(null, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        SpawnPointData spawnPointData = new SpawnPointData(SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
+
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
+        when(elementSection.getAbsolutePath()).thenReturn(SPAWN_POINT_SECTION_PATH);
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
+
+        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+
+        assertThat(maps).satisfiesExactly(mapData -> {
+            assertThat(mapData.name()).isEqualTo(MAP_NAME);
+            assertThat(mapData.createdAt()).isEqualTo(CREATED_AT);
+            assertThat(mapData.createdBy()).isEqualTo(CREATED_BY);
+            assertThat(mapData.elements()).isEmpty();
+        });
+
+        verify(logger).severe("""
+                Failed to load element located at 'maps.level-1.elements.1': Validation failed for object SpawnPointData (1 constraint violation)
+                 - locationData.world: locations in configurations must have a defined world
+                """.trim());
     }
 
     @ParameterizedTest
@@ -194,13 +338,25 @@ class ArenaSetupConfigurationTest {
     }, nullValues = "null")
     @DisplayName("getMaps returns list with valid map data")
     void getMaps_successful(String createdAt, Instant expectedCreatedAt, String createdBy, UUID expectedCreatedBy) {
-        ConfigurationSection mapsSection = mock(ConfigurationSection.class);
-        when(mapsSection.getKeys(false)).thenReturn(Set.of("level-1"));
+        LocationData locationData = new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        SpawnPointData spawnPointData = new SpawnPointData(SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
 
-        when(configurationFile.getConfigurationSection("maps")).thenReturn(Optional.of(mapsSection));
-        when(configurationFile.getString("maps.level-1.name")).thenReturn(Optional.of(MAP_NAME));
-        when(configurationFile.getString("maps.level-1.created-at")).thenReturn(Optional.of(createdAt));
-        when(configurationFile.getString("maps.level-1.created-by")).thenReturn(Optional.of(createdBy));
+        Section elementSection = mock(Section.class);
+        when(elementSection.getString("element-type")).thenReturn(Optional.of("SPAWN_POINT"));
+
+        Section elementsSection = mock(Section.class);
+        when(elementsSection.getKeys()).thenReturn(Set.of(String.valueOf(SPAWN_POINT_ELEMENT_ID)));
+        when(elementsSection.getSection(String.valueOf(SPAWN_POINT_ELEMENT_ID))).thenReturn(Optional.of(elementSection));
+
+        Section mapsSection = mock(Section.class);
+        when(mapsSection.getKeys()).thenReturn(Set.of(MAP_KEY));
+        when(mapsSection.getString("level-1.name")).thenReturn(Optional.of(MAP_NAME));
+        when(mapsSection.getString("level-1.created-at")).thenReturn(Optional.of(createdAt));
+        when(mapsSection.getString("level-1.created-by")).thenReturn(Optional.of(createdBy));
+        when(mapsSection.getSection("level-1.elements")).thenReturn(Optional.of(elementsSection));
+
+        when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
+        when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
 
         Collection<ArenaMapData> maps = setupConfiguration.getMaps();
 
@@ -208,8 +364,38 @@ class ArenaSetupConfigurationTest {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
             assertThat(mapData.createdAt()).isEqualTo(expectedCreatedAt);
             assertThat(mapData.createdBy()).isEqualTo(expectedCreatedBy);
+            assertThat(mapData.elements()).containsExactly(spawnPointData);
         });
+    }
 
-        verifyNoInteractions(logger);
+    @Test
+    @DisplayName("createSpawnPoint throws IllegalArgumentException when given spawn point is invalid")
+    void createSpawnPoint_invalid() {
+        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, -1, null, -1);
+
+        assertThatThrownBy(() -> setupConfiguration.createSpawnPoint(data))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("Cannot create spawn point for invalid data")
+                .cause()
+                .isInstanceOf(ValidationException.class)
+                .hasMessage("Validation failed for object CreateSpawnPointData (3 constraint violations)");
+    }
+
+    @Test
+    @DisplayName("createSpawnPoint saves values of given data object to elements section of map")
+    void createSpawnPoint_successful() {
+        LocationData locationData = new LocationData(SPAWN_POINT_LOCATION_WORLD, SPAWN_POINT_LOCATION_X, SPAWN_POINT_LOCATION_Y, SPAWN_POINT_LOCATION_Z, SPAWN_POINT_LOCATION_YAW, SPAWN_POINT_LOCATION_PITCH);
+        CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
+        Section locationSection = mock(Section.class);
+
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(configurationFile.getRootSection().createSection("maps.level-1.elements.1.location")).thenReturn(locationSection);
+
+        setupConfiguration.createSpawnPoint(data);
+
+        verify(locationDataSerializer).serialize(locationData, locationSection);
+        verify(rootSection).set("maps.level-1.elements.1.type", "SPAWN_POINT");
+        verify(rootSection).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
+        verify(configurationFile).save();
     }
 }

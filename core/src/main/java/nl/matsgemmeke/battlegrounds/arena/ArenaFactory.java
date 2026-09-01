@@ -55,7 +55,6 @@ public class ArenaFactory {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(id);
         setupConfiguration.setCreatedAt(Instant.now(clock));
         setupConfiguration.setCreatedBy(createdBy);
-        setupConfiguration.save();
 
         return new Arena(id, settings);
     }

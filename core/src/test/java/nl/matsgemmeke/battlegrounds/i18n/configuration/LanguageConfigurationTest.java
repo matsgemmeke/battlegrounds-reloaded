@@ -4,6 +4,7 @@ import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -20,7 +21,7 @@ class LanguageConfigurationTest {
     private static final String PATH = "path";
     private static final String TEXT_VALUE = "hello";
 
-    @Mock
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private ConfigurationFile configurationFile;
     @InjectMocks
     private LanguageConfiguration languageConfiguration;
@@ -28,7 +29,7 @@ class LanguageConfigurationTest {
     @Test
     @DisplayName("getTextValue returns empty optional when given path does not exist")
     void getTextValue_nonexistentPath() {
-        when(configurationFile.exists(PATH)).thenReturn(false);
+        when(configurationFile.getRootSection().exists(PATH)).thenReturn(false);
 
         Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
 
@@ -38,9 +39,9 @@ class LanguageConfigurationTest {
     @Test
     @DisplayName("getTextValue returns empty optional when given path leads to empty list")
     void getTextValue_emptyList() {
-        when(configurationFile.exists(PATH)).thenReturn(true);
-        when(configurationFile.isList(PATH)).thenReturn(true);
-        when(configurationFile.getStringList(PATH)).thenReturn(List.of());
+        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(configurationFile.getRootSection().isList(PATH)).thenReturn(true);
+        when(configurationFile.getRootSection().getStringList(PATH)).thenReturn(List.of());
 
         Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
 
@@ -50,9 +51,9 @@ class LanguageConfigurationTest {
     @Test
     @DisplayName("getTextValue returns optional with joined strings from list")
     void getTextValue_stringList() {
-        when(configurationFile.exists(PATH)).thenReturn(true);
-        when(configurationFile.isList(PATH)).thenReturn(true);
-        when(configurationFile.getStringList(PATH)).thenReturn(List.of(TEXT_VALUE, "world"));
+        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(configurationFile.getRootSection().isList(PATH)).thenReturn(true);
+        when(configurationFile.getRootSection().getStringList(PATH)).thenReturn(List.of(TEXT_VALUE, "world"));
 
         Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
 
@@ -62,9 +63,9 @@ class LanguageConfigurationTest {
     @Test
     @DisplayName("getTextValue returns optional with string value at given path")
     void getTextValue_singleString() {
-        when(configurationFile.exists(PATH)).thenReturn(true);
-        when(configurationFile.isList(PATH)).thenReturn(false);
-        when(configurationFile.getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
+        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(configurationFile.getRootSection().isList(PATH)).thenReturn(false);
+        when(configurationFile.getRootSection().getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
 
         Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
 

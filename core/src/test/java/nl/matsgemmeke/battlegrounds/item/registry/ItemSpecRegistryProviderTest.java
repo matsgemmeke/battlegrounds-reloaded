@@ -121,7 +121,7 @@ class ItemSpecRegistryProviderTest {
     }
 
     @Test
-    @DisplayName("get logs error message when item file contains error in its specification")
+    @DisplayName("get logs error message when an item file contains errors in its specification")
     void get_itemSpecificationContainsError() {
         File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_invalid");
 
@@ -132,10 +132,10 @@ class ItemSpecRegistryProviderTest {
         assertThat(registry.exists("MP5")).isFalse();
 
         verify(logger).severe("""
-                An error occurred while loading item 'Olympia': Validation failed for GunSpec (1 constraint violation):
+                An error occurred while loading item 'Olympia': Validation failed for object GunSpec (1 constraint violation)
                  - level-unlocked: value is required""");
         verify(logger).severe("""
-                An error occurred while loading item 'MP5': Validation failed for GunSpec (1 constraint violation):
+                An error occurred while loading item 'MP5': Validation failed for object GunSpec (1 constraint violation)
                  - level-unlocked: value is required""");
     }
 

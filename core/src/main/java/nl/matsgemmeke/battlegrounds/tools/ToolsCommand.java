@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.command.tools;
+package nl.matsgemmeke.battlegrounds.tools;
 
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
