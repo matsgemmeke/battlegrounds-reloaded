@@ -68,6 +68,5 @@ class ArenaFactoryTest {
 
         verify(setupConfiguration).setCreatedAt(INSTANT);
         verify(setupConfiguration).setCreatedBy(PLAYER_ID);
-        verify(setupConfiguration).save();
     }
 }

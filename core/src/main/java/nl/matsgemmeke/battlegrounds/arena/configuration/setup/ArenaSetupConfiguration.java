@@ -58,16 +58,13 @@ public class ArenaSetupConfiguration {
         this.configurationFile = configurationFile;
     }
 
-    public void save() {
-        configurationFile.save();
-    }
-
     public Optional<Instant> getCreatedAt() {
         return configurationFile.getRootSection().getString(CREATED_AT_PATH).map(Instant::parse);
     }
 
     public void setCreatedAt(Instant instant) {
-        configurationFile.set(CREATED_AT_PATH, instant.toString());
+        configurationFile.getRootSection().set(CREATED_AT_PATH, instant.toString());
+        configurationFile.save();
     }
 
     public Optional<UUID> getCreatedBy() {
@@ -75,15 +72,19 @@ public class ArenaSetupConfiguration {
     }
 
     public void setCreatedBy(UUID uuid) {
-        configurationFile.set(CREATED_BY_PATH, uuid.toString());
+        configurationFile.getRootSection().set(CREATED_BY_PATH, uuid.toString());
+        configurationFile.save();
     }
 
     public void createMap(MapCreationInfo mapCreationInfo) {
         String mapPathName = TextUtil.toKebabCase(mapCreationInfo.mapName());
 
-        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, mapCreationInfo.mapName());
-        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_AT_PATH, mapCreationInfo.createdAt().toString());
-        configurationFile.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
+        Section rootSection = configurationFile.getRootSection();
+        rootSection.set(MAPS_PATH + "." + mapPathName + "." + MAP_NAME_PATH, mapCreationInfo.mapName());
+        rootSection.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_AT_PATH, mapCreationInfo.createdAt().toString());
+        rootSection.set(MAPS_PATH + "." + mapPathName + "." + MAP_CREATED_BY_PATH, mapCreationInfo.createdBy().toString());
+
+        configurationFile.save();
     }
 
     public void removeMap(String mapName) {
@@ -208,8 +209,8 @@ public class ArenaSetupConfiguration {
         Section locationSection = configurationFile.getRootSection().createSection(spawnPointLocationPath);
 
         locationDataSerializer.serialize(data.locationData(), locationSection);
-        configurationFile.set(spawnPointPath + "." + ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
-        configurationFile.set(spawnPointPath + "." + SPAWN_POINT_LOCATION_PATH, data.teamId());
+        configurationFile.getRootSection().set(spawnPointPath + "." + ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
+        configurationFile.getRootSection().set(spawnPointPath + "." + SPAWN_POINT_TEAM_ID_PATH, data.teamId());
         configurationFile.save();
     }
 }

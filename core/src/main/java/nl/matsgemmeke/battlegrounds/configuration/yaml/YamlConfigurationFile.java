@@ -38,12 +38,6 @@ public class YamlConfigurationFile implements ConfigurationFile {
     }
 
     @Override
-    public void set(String path, Object value) {
-        YamlConfiguration yamlConfiguration = this.getYamlConfiguration();
-        yamlConfiguration.set(path, value);
-    }
-
-    @Override
     public void load() {
         try {
             if (!file.exists() && resource != null) {

@@ -40,22 +40,6 @@ class YamlConfigurationFileTest {
     }
 
     @Test
-    @DisplayName("set sets value in yaml configuration")
-    void set() {
-        File yamlFile = new File(tempDir, "test.yml");
-        YamlConfiguration yamlConfiguration = mock(YamlConfiguration.class);
-
-        try (MockedStatic<YamlConfiguration> yamlConfigurationStatic = mockStatic(YamlConfiguration.class)) {
-            yamlConfigurationStatic.when(() -> YamlConfiguration.loadConfiguration(yamlFile)).thenReturn(yamlConfiguration);
-
-            YamlConfigurationFile yamlConfigurationFile = new YamlConfigurationFile(yamlFile);
-            yamlConfigurationFile.set("test", "test");
-
-            verify(yamlConfiguration).set("test", "test");
-        }
-    }
-
-    @Test
     @DisplayName("load loads yaml configuration without creating copy")
     void load_withoutResource() {
         File yamlFile = new File(tempDir, "test.yml");

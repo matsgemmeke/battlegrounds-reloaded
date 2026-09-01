@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.configuration.settings;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import org.junit.jupiter.api.DisplayName;
@@ -95,10 +96,14 @@ class ArenaSettingsConfigurationTest {
     void saveArenaSettings_valid() {
         ArenaSettingsSpec spec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
 
+        Section rootSection = mock(Section.class);
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         settingsConfiguration.saveArenaSettings(spec);
 
-        verify(configurationFile).set(LOBBY_COUNTDOWN_LENGTH_PATH, LOBBY_COUNTDOWN_LENGTH);
-        verify(configurationFile).set(MAX_PLAYERS_PATH, MAX_PLAYERS);
-        verify(configurationFile).set(MIN_PLAYERS_PATH, MIN_PLAYERS);
+        verify(rootSection).set(LOBBY_COUNTDOWN_LENGTH_PATH, LOBBY_COUNTDOWN_LENGTH);
+        verify(rootSection).set(MAX_PLAYERS_PATH, MAX_PLAYERS);
+        verify(rootSection).set(MIN_PLAYERS_PATH, MIN_PLAYERS);
+        verify(configurationFile).save();
     }
 }

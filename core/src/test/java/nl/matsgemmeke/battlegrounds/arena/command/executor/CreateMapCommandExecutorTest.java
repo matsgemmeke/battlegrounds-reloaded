@@ -98,7 +98,5 @@ class CreateMapCommandExecutorTest {
                 entry("bg_arena", ARENA_ID),
                 entry("bg_map", MAP_NAME)
         );
-
-        verify(arenaSetupConfiguration).save();
     }
 }

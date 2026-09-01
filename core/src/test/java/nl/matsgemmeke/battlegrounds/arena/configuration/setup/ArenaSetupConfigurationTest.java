@@ -63,16 +63,10 @@ class ArenaSetupConfigurationTest {
     private Logger logger;
     @Spy
     private ObjectValidator objectValidator = TestValidatorFactory.createObjectValidator();
+    @Mock
+    private Section rootSection;
     @InjectMocks
     private ArenaSetupConfiguration setupConfiguration;
-
-    @Test
-    @DisplayName("save saves the configuration file")
-    void save() {
-        setupConfiguration.save();
-
-        verify(configurationFile).save();
-    }
 
     @Test
     @DisplayName("getCreatedAt returns empty optional when configuration file does not have a value")
@@ -97,9 +91,12 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("setCreatedAt sets given instant as string in configuration file")
     void setCreatedAt() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.setCreatedAt(CREATED_AT);
 
-        verify(configurationFile).set("created-at", CREATED_AT_TEXT);
+        verify(rootSection).set("created-at", CREATED_AT_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
@@ -125,9 +122,12 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("setCreatedBy sets given uuid as string in configuration file")
     void setCreatedBy() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.setCreatedBy(CREATED_BY);
 
-        verify(configurationFile).set("created-by", CREATED_BY_TEXT);
+        verify(rootSection).set("created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
@@ -135,11 +135,14 @@ class ArenaSetupConfigurationTest {
     void createMap() {
         MapCreationInfo mapCreationInfo = new MapCreationInfo(MAP_NAME, CREATED_AT, CREATED_BY);
 
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
         setupConfiguration.createMap(mapCreationInfo);
 
-        verify(configurationFile).set("maps.level-1.name", MAP_NAME);
-        verify(configurationFile).set("maps.level-1.created-at", CREATED_AT_TEXT);
-        verify(configurationFile).set("maps.level-1.created-by", CREATED_BY_TEXT);
+        verify(rootSection).set("maps.level-1.name", MAP_NAME);
+        verify(rootSection).set("maps.level-1.created-at", CREATED_AT_TEXT);
+        verify(rootSection).set("maps.level-1.created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
     }
 
     @Test
@@ -385,13 +388,14 @@ class ArenaSetupConfigurationTest {
         CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, SPAWN_POINT_ELEMENT_ID, locationData, SPAWN_POINT_TEAM_ID);
         Section locationSection = mock(Section.class);
 
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
         when(configurationFile.getRootSection().createSection("maps.level-1.elements.1.location")).thenReturn(locationSection);
 
         setupConfiguration.createSpawnPoint(data);
 
         verify(locationDataSerializer).serialize(locationData, locationSection);
-        verify(configurationFile).set("maps.level-1.elements.1.type", "SPAWN_POINT");
-        verify(configurationFile).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
+        verify(rootSection).set("maps.level-1.elements.1.type", "SPAWN_POINT");
+        verify(rootSection).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
         verify(configurationFile).save();
     }
 }

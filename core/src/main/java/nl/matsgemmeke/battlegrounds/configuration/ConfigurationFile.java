@@ -21,13 +21,4 @@ public interface ConfigurationFile {
      * Save the configuration values into the configuration file.
      */
     void save();
-
-    /**
-     * Sets the specified path to the given value. If value is null, the entry will be removed. Any existing entry will
-     * be replaced, regardless of what the new value is.
-     *
-     * @param path  the path of the value to set
-     * @param value the new value to set the path to
-     */
-    void set(String path, Object value);
 }
