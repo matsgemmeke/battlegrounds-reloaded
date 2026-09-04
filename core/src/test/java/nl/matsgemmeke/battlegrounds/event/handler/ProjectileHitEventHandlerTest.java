@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
@@ -31,8 +30,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ProjectileHitEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -71,30 +69,9 @@ class ProjectileHitEventHandlerTest {
 
         ProjectileHitEvent event = new ProjectileHitEvent(projectile);
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
         eventHandler.handle(event);
-
-        verifyNoInteractions(gameScope);
-    }
-
-    @Test
-    @DisplayName("handle throws EventHandlingException when GameContext cannot be found for GameKey")
-    void handle_throwsEventHandlingException_whenGameContextNotFound() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        Projectile projectile = mock(Projectile.class);
-        when(projectile.getShooter()).thenReturn(player);
-
-        ProjectileHitEvent event = new ProjectileHitEvent(projectile);
-
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> eventHandler.handle(event))
-                .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process ProjectileHitEvent for game key FREEPLAY, no corresponding game context was found");
 
         verifyNoInteractions(gameScope);
     }
@@ -113,8 +90,7 @@ class ProjectileHitEventHandlerTest {
         ProjectileHitActionRegistry projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         when(projectileHitActionRegistry.getProjectileHitAction(projectile)).thenReturn(Optional.empty());
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(projectileHitActionRegistryProvider.get()).thenReturn(projectileHitActionRegistry);
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
@@ -138,8 +114,7 @@ class ProjectileHitEventHandlerTest {
         ProjectileHitActionRegistry projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         when(projectileHitActionRegistry.getProjectileHitAction(projectile)).thenReturn(Optional.of(projectileHitAction));
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(projectileHitActionRegistryProvider.get()).thenReturn(projectileHitActionRegistry);
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
@@ -171,8 +146,7 @@ class ProjectileHitEventHandlerTest {
         ProjectileHitActionRegistry projectileHitActionRegistry = mock(ProjectileHitActionRegistry.class);
         when(projectileHitActionRegistry.getProjectileHitAction(projectile)).thenReturn(Optional.of(projectileHitAction));
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(projectileHitActionRegistryProvider.get()).thenReturn(projectileHitActionRegistry);
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
@@ -26,14 +25,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class PlayerDropItemEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
@@ -70,7 +67,7 @@ class PlayerDropItemEventHandlerTest {
     void handle_playerNotInGameContext() {
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
         eventHandler.handle(event);
 
@@ -78,25 +75,11 @@ class PlayerDropItemEventHandlerTest {
     }
 
     @Test
-    @DisplayName("handle throws EventHandlingException when unable to find game context for player game key")
-    void handle_invalidGameKey() {
-        PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
-
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> eventHandler.handle(event))
-                .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerDropItemEvent for game key FREEPLAY, no corresponding game context was found");
-    }
-
-    @Test
     @DisplayName("handle does nothing when player is not registered in player registry")
     void handle_playerNotRegistered() {
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
 
@@ -114,8 +97,7 @@ class PlayerDropItemEventHandlerTest {
         PlayerDropItemEvent event = new PlayerDropItemEvent(player, item);
         DispatchResult result = new DispatchResult(true, resultCancelEvent);
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);

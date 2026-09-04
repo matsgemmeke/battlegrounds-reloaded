@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
@@ -28,14 +27,12 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class EntityPickupItemEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContext GAME_CONTEXT = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+    private static final GameContext GAME_CONTEXT = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
@@ -82,25 +79,11 @@ class EntityPickupItemEventHandlerTest {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isFalse();
-    }
-
-    @Test
-    @DisplayName("handle throws EventHandlingException when unable to find game context for player game key")
-    void handle_playerGameKeyHasNoGameContext() {
-        EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
-
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> eventHandler.handle(event))
-                .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process EntityPickupItemEvent for game key FREEPLAY, no corresponding game context was found");
     }
 
     @Test
@@ -109,8 +92,7 @@ class EntityPickupItemEventHandlerTest {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(item.getItemStack()).thenReturn(ITEM_STACK);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
@@ -129,8 +111,7 @@ class EntityPickupItemEventHandlerTest {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(item.getItemStack()).thenReturn(ITEM_STACK);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
@@ -162,8 +143,7 @@ class EntityPickupItemEventHandlerTest {
         event.setCancelled(eventCancelled);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(item.getItemStack()).thenReturn(ITEM_STACK);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));

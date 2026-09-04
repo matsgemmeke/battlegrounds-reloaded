@@ -4,10 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
@@ -46,14 +44,12 @@ public class EntityPickupItemEventHandler implements EventHandler<EntityPickupIt
         }
 
         UUID playerId = player.getUniqueId();
-        GameKey gameKey = gameContextProvider.getGameKeyByEntityId(playerId).orElse(null);
+        GameContext gameContext = gameContextProvider.getGameContext(playerId).orElse(null);
 
-        if (gameKey == null) {
+        if (gameContext == null) {
             return;
         }
 
-        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new EventHandlingException("Unable to process EntityPickupItemEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
         ItemStack itemStack = event.getItem().getItemStack();
 
         gameScope.runInScope(gameContext, () -> this.performAction(event, player, itemStack));

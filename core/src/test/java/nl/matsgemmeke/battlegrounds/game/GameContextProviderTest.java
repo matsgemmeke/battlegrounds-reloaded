@@ -99,22 +99,24 @@ class GameContextProviderTest {
     }
 
     @Test
-    @DisplayName("getGameKeyByEntityId returns empty optional when no link of given entity id exists")
-    void getGameKeyByEntityId_notFound() {
-        Optional<GameKey> gameKeyOptional = gameContextProvider.getGameKeyByEntityId(ENTITY_ID);
+    @DisplayName("getGameContext returns empty optional when no link of given entity id exists")
+    void getGameContext_notFound() {
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(ENTITY_ID);
 
-        assertThat(gameKeyOptional).isEmpty();
+        assertThat(gameContextOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("getGameKeyByEntityId returns optional with game key linked to given entity id")
-    void getGameKeyByEntityId_success() {
+    @DisplayName("getGameContext returns optional with game context registered to given entity id")
+    void getGameContext_registeredEntityId() {
         GameKey gameKey = GameKey.ofFreeplay();
+        GameContext gameContext = new GameContext(gameKey, GameContextType.FREEPLAY_MODE);
 
+        gameContextProvider.addGameContext(gameKey, gameContext);
         gameContextProvider.registerEntity(ENTITY_ID, gameKey);
-        Optional<GameKey> gameKeyOptional = gameContextProvider.getGameKeyByEntityId(ENTITY_ID);
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(ENTITY_ID);
 
-        assertThat(gameKeyOptional).hasValue(gameKey);
+        assertThat(gameContextOptional).hasValue(gameContext);
     }
 
     @Test

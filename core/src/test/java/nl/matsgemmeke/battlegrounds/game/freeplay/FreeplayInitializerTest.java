@@ -90,8 +90,8 @@ class FreeplayInitializerTest {
         assertThat(gameContextProvider.getGameContext(GameKey.ofFreeplay())).hasValueSatisfying(gameContext ->
                 assertThat(gameContext.getType()).isEqualTo(GameContextType.FREEPLAY_MODE)
         );
-        assertThat(gameContextProvider.getGameKeyByEntityId(playerId)).hasValueSatisfying(gameKey ->
-                assertThat(gameKey).isEqualTo(GameKey.ofFreeplay())
+        assertThat(gameContextProvider.getGameContext(playerId)).hasValueSatisfying(gameContext ->
+                assertThat(gameContext.getGameKey()).isEqualTo(GameKey.ofFreeplay())
         );
 
         verify(eventDispatcher).registerEventHandler(EntityDamageEvent.class, entityDamageEventHandler);
