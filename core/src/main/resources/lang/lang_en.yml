@@ -45,6 +45,7 @@ commands:
   weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:
+  already-in-arena-mode: "&cUnable to perform action; you are already participating in an arena."
   command-sender-must-be-player: "&cMust be a player to use this command."
   generic-error: "&cAn unexpected error occurred while processing this command. Please try again or contact an administrator."
   no-map-selected: "&cYou must select a map first! Use /bg arena map select <id> <name>."

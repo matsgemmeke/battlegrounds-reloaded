@@ -123,11 +123,11 @@ public class ArenaCommandExtension implements CommandExtension {
         commandCompletions.registerCompletion("map-name", mapNameCommandCompletionHandler);
 
         var commandConditions = commandManager.getCommandConditions();
-        commandConditions.addCondition(Integer.class, "arena-absence", arenaModeAbsenceCondition);
         commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
         commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
+        commandConditions.addCondition("arena-absence", arenaModeAbsenceCondition);
         commandConditions.addCondition("map-selected", mapSelectedCondition);
     }
 }
