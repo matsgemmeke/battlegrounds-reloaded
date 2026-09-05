@@ -33,6 +33,7 @@ public enum TranslationKey {
     FREEPLAY_MODE_NOT_EXISTS("errors.freeplay-mode-not-exists"),
     GENERIC_ERROR("errors.generic-error"),
     HELP_MENU_COMMAND("commands.help-menu-command"),
+    INVALID_SYNTAX("errors.invalid-syntax"),
     MAIN_LOBBY_SET("admin.main-lobby-set"),
     MAP_ALREADY_EXISTS("admin.map-already-exists"),
     MAP_CONFIRM_REMOVAL("admin.map-confirm-removal"),

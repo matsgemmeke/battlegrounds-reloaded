@@ -12,9 +12,5 @@ freeplay-mode-register-players-as-passive: false
 # Change this value to a lower number for a smoother effect. However, this also increases the amount of traffic flow.
 item-camera-movement-recoil-duration-millis: 20
 
-# Value used for defining the general amount of gun damage. Edit this value if you want more or less gun damage. A
-# higher number will lead to more damage, a lower number will lead to less damage.
-item-gun-damage-amplifier: 1.0
-
 # How often the save damage events job runs, in milliseconds (e.g. 60000 = 1 minute).
 job-save-damage-events-period-millis: 60000
