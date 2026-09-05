@@ -60,15 +60,17 @@ public class ArenaCommand extends BaseCommand {
         }
     }
 
-    @CommandPermission("battlegrounds.arena.create")
     @Subcommand("create")
+    @Syntax("<id>")
+    @CommandPermission("battlegrounds.arena.create")
     public void onCreate(Player player, @Conditions("nonexistent-arena-id") Integer id) {
         createArenaCommandExecutor.execute(player, id);
     }
 
+    @Subcommand("remove")
+    @Syntax("<id>")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.arena.remove")
-    @Subcommand("remove")
     public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId) {
         removeArenaCommandExecutor.execute(sender, arenaId);
     }

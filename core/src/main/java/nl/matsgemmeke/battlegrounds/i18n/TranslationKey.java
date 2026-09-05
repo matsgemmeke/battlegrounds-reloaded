@@ -19,6 +19,7 @@ public enum TranslationKey {
     DESCRIPTION_ELEMENT("commands.description-element"),
     DESCRIPTION_ELEMENT_ADD("commands.description-element-add"),
     DESCRIPTION_GIVE_WEAPON("commands.description-give-weapon"),
+    DESCRIPTION_JOIN("commands.description-join"),
     DESCRIPTION_MAP("commands.description-map"),
     DESCRIPTION_MAP_SELECT("commands.description-map-select"),
     DESCRIPTION_RELOAD("commands.description-reload"),

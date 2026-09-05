@@ -17,6 +17,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactoryProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
+import nl.matsgemmeke.battlegrounds.command.BattlegroundsCommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
@@ -198,6 +199,7 @@ public class BattlegroundsModule implements Module {
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
+        commandExtensionBinder.addBinding().to(BattlegroundsCommandExtension.class).in(Singleton.class);
         commandExtensionBinder.addBinding().to(ToolsCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
