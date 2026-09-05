@@ -17,10 +17,10 @@ public class JoinCommand extends BaseCommand {
     }
 
     @Subcommand("join")
+    @Syntax("<arena>")
     @Conditions("arena-absence")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.join")
-    @Syntax("<arena>")
     public void onJoin(Player player, @Conditions("existent-arena-id") Integer arenaId) {
         joinCommandExecutor.execute(player, arenaId);
     }

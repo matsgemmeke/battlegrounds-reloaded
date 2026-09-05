@@ -58,6 +58,7 @@ public class ElementCommand extends BaseCommand {
     }
 
     @Subcommand("add spawnpoint")
+    @Syntax("<team>")
     @Conditions("map-selected")
     @CommandPermission("battlegrounds.element.add")
     public void onAddSpawnPoint(Player player, @Default("1") Integer teamId) {

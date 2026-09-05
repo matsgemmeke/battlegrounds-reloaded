@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+@Subcommand("arena")
 @CommandAlias("battlegrounds|bg|battle")
 @CommandPermission("battlegrounds.arena")
-@Subcommand("arena")
 public class ArenaCommand extends BaseCommand {
 
     private final CreateArenaCommandExecutor createArenaCommandExecutor;
@@ -61,14 +61,14 @@ public class ArenaCommand extends BaseCommand {
     }
 
     @Subcommand("create")
-    @Syntax("<id>")
+    @Syntax("<arena>")
     @CommandPermission("battlegrounds.arena.create")
     public void onCreate(Player player, @Conditions("nonexistent-arena-id") Integer id) {
         createArenaCommandExecutor.execute(player, id);
     }
 
     @Subcommand("remove")
-    @Syntax("<id>")
+    @Syntax("<arena>")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.arena.remove")
     public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId) {

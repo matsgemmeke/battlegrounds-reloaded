@@ -64,6 +64,7 @@ public class MapCommand extends BaseCommand {
     }
 
     @Subcommand("create")
+    @Syntax("<arena> <map>")
     @CommandCompletion("@arena-id @nothing")
     @CommandPermission("battlegrounds.map.create")
     public void onCreate(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("nonexistent-map-name") String mapName) {
@@ -80,6 +81,7 @@ public class MapCommand extends BaseCommand {
     // Downside: no tab-complete help for the 2nd+ word of a map name (e.g. typing "My " won't suggest anything) - but
     // manual typing still parses correctly.
     @Subcommand("remove")
+    @Syntax("<arena> <map>")
     @CommandCompletion("@arena-id @map-name @nothing")
     @CommandPermission("battlegrounds.map.remove")
     public void onRemove(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {
@@ -87,6 +89,7 @@ public class MapCommand extends BaseCommand {
     }
 
     @Subcommand("select")
+    @Syntax("<arena> <map>")
     @CommandCompletion("@arena-id @map-name @nothing")
     @CommandPermission("battlegrounds.map.select")
     public void onSelect(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId, @Conditions("existent-map-name") String mapName) {

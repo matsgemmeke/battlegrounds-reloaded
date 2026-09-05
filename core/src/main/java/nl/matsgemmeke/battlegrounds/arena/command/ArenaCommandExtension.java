@@ -12,7 +12,7 @@ import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 public class ArenaCommandExtension implements CommandExtension {
 
-    private static final String CREATE_ARENA_COMMAND_USAGE = "/bg arena create <id>";
+    private static final String CREATE_ARENA_COMMAND_USAGE = "/bg arena create <arena>";
     private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
     private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
 
@@ -20,19 +20,19 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String MAP_COMMAND_SUGGESTION = "/bg arena map";
     private static final String[] MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map" };
 
-    private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <id>";
+    private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <arena>";
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
-    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
+    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <arena> <map>";
     private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
     private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
 
-    private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <id> <name>";
+    private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <arena> <map>";
     private static final String REMOVE_MAP_COMMAND_SUGGESTION = "/bg arena map remove ";
     private static final String[] REMOVE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.remove" };
 
-    private static final String SELECT_MAP_COMMAND_USAGE = "/bg arena map select <id> <name>";
+    private static final String SELECT_MAP_COMMAND_USAGE = "/bg arena map select <arena> <map>";
     private static final String SELECT_MAP_COMMAND_SUGGESTION = "/bg arena map select ";
     private static final String[] SELECT_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.select" };
 
