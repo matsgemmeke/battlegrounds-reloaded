@@ -8,6 +8,7 @@ public enum TranslationKey {
     ARENA_CREATED("admin.arena-created"),
     ARENA_CREATION_FAILED("admin.arena-creation-failed"),
     ARENA_HELP_MENU_TITLE("commands.arena-help-menu-title"),
+    ARENA_NOT_AVAILABLE("errors.arena-not-available"),
     ARENA_NOT_EXISTS("admin.arena-not-exists"),
     ARENA_REMOVAL_FAILED("admin.arena-removal-failed"),
     ARENA_REMOVED("admin.arena-removed"),
