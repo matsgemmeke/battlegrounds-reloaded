@@ -6,7 +6,6 @@ public enum TranslationKey {
     ARENA_ALREADY_EXISTS("admin.arena-already-exists"),
     ARENA_CONFIRM_REMOVAL("admin.arena-confirm-removal"),
     ARENA_CREATED("admin.arena-created"),
-    ARENA_CREATION_FAILED("admin.arena-creation-failed"),
     ARENA_HELP_MENU_TITLE("commands.arena-help-menu-title"),
     ARENA_NOT_AVAILABLE("errors.arena-not-available"),
     ARENA_NOT_EXISTS("admin.arena-not-exists"),

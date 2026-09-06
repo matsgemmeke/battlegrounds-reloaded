@@ -2,7 +2,6 @@ admin:
   arena-already-exists: "&cAn arena by the id %bg_arena% already exists"
   arena-confirm-removal: "&cAre you sure you want to remove arena %bg_arena%? Rerun the command to confirm the removal."
   arena-created: "&6You have created a new arena by the id &f%bg_arena%&6."
-  arena-creation-failed: "&cFailed to create arena %bg_arena%!"
   arena-not-exists: "&cAn arena by the id %bg_arena% doesn't exist"
   arena-removal-failed: "&cFailed to remove arena %bg_arena%!"
   arena-removed: "&6You have removed arena &f%bg_arena% &6and its content."
