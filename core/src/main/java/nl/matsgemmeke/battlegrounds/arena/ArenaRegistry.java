@@ -30,6 +30,10 @@ public class ArenaRegistry {
         arenas.put(gameKey, arena);
     }
 
+    public boolean exists(int id) {
+        return arenas.values().stream().anyMatch(arena -> arena.getId() == id);
+    }
+
     public Optional<Arena> getArena(int id) {
         GameKey gameKey = GameKey.ofArena(id);
 
