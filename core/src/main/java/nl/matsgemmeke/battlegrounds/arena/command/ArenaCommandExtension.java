@@ -16,6 +16,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
     private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
 
+    private static final String LOBBY_COMMAND_USAGE = "/bg arena lobby";
+    private static final String LOBBY_COMMAND_SUGGESTION = "/bg arena lobby";
+    private static final String[] LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby" };
+
     private static final String MAP_COMMAND_USAGE = "/bg arena map";
     private static final String MAP_COMMAND_SUGGESTION = "/bg arena map";
     private static final String[] MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map" };
@@ -43,6 +47,7 @@ public class ArenaCommandExtension implements CommandExtension {
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
     private final JoinCommand joinCommand;
+    private final LobbyCommand lobbyCommand;
     private final MapCommand mapCommand;
 
     private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
@@ -62,6 +67,7 @@ public class ArenaCommandExtension implements CommandExtension {
             ArenaCommand arenaCommand,
             ElementCommand elementCommand,
             JoinCommand joinCommand,
+            LobbyCommand lobbyCommand,
             MapCommand mapCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
@@ -76,6 +82,7 @@ public class ArenaCommandExtension implements CommandExtension {
         this.arenaCommand = arenaCommand;
         this.elementCommand = elementCommand;
         this.joinCommand = joinCommand;
+        this.lobbyCommand = lobbyCommand;
         this.mapCommand = mapCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
@@ -92,10 +99,12 @@ public class ArenaCommandExtension implements CommandExtension {
     public void configure(PaperCommandManager commandManager) {
         // Arena commands
         String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
+        String lobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY.getPath()).getText();
         String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
 
         arenaCommand.addCommandInfo(new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS));
+        arenaCommand.addCommandInfo(new CommandInfo(lobbyCommandDescription, LOBBY_COMMAND_USAGE, LOBBY_COMMAND_SUGGESTION, LOBBY_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
@@ -116,6 +125,7 @@ public class ArenaCommandExtension implements CommandExtension {
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);
         commandManager.registerCommand(joinCommand);
+        commandManager.registerCommand(lobbyCommand);
         commandManager.registerCommand(mapCommand);
 
         var commandCompletions = commandManager.getCommandCompletions();

@@ -66,7 +66,7 @@ class ArenaCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(arenaCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(arenaCommand, times(4)).addCommandInfo(any(CommandInfo.class));
         verify(mapCommand, times(3)).addCommandInfo(any(CommandInfo.class));
         verify(elementCommand, times(1)).addCommandInfo(any(CommandInfo.class));
 
