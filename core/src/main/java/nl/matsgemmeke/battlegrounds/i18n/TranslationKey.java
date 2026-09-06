@@ -28,6 +28,7 @@ public enum TranslationKey {
     DESCRIPTION_RELOAD("commands.description-reload"),
     DESCRIPTION_REMOVE_ARENA("commands.description-remove-arena"),
     DESCRIPTION_REMOVE_MAP("commands.description-remove-map"),
+    DESCRIPTION_SET_LOBBY("commands.description-set-lobby"),
     DESCRIPTION_SET_MAIN_LOBBY("commands.description-set-main-lobby"),
     DESCRIPTION_SHOW_HITBOXES("commands.description-show-hitboxes"),
     DESCRIPTION_TOOLS("commands.description-tools"),

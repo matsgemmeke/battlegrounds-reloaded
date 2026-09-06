@@ -28,6 +28,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
+    private static final String SET_LOBBY_COMMAND_USAGE = "/bg arena lobby set <arena>";
+    private static final String SET_LOBBY_COMMAND_SUGGESTION = "/bg arena lobby set ";
+    private static final String[] SET_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby.set" };
+
     private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <arena> <map>";
     private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
     private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
@@ -107,6 +111,11 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(lobbyCommandDescription, LOBBY_COMMAND_USAGE, LOBBY_COMMAND_SUGGESTION, LOBBY_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
+
+        // Lobby commands
+        String setLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SET_LOBBY.getPath()).getText();
+
+        lobbyCommand.addCommandInfo(new CommandInfo(setLobbyCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
 
         // Map commands
         String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
