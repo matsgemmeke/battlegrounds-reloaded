@@ -39,6 +39,8 @@ class ArenaSetupConfigurationTest {
     private static final String CREATED_BY_TEXT = "2c11afe2-48f0-4399-9a04-195bb8ac640e";
     private static final UUID CREATED_BY = UUID.fromString(CREATED_BY_TEXT);
 
+    private static final LocationData LOBBY_LOCATION_DATA = new LocationData("world", 1.1, 2.2, 3.3, 90.0f, 0.0f);
+
     private static final String MAP_KEY = "level-1";
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
@@ -127,6 +129,58 @@ class ArenaSetupConfigurationTest {
         setupConfiguration.setCreatedBy(CREATED_BY);
 
         verify(rootSection).set("created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("getLobby returns empty optional when lobby section doesn't exist")
+    void getLobby_sectionNotExists() {
+        when(configurationFile.getRootSection().getSection("lobby")).thenReturn(Optional.empty());
+
+        Optional<LocationData> locationDataOptional = setupConfiguration.getLobby();
+
+        assertThat(locationDataOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getLobby returns empty optional when lobby section doesn't exist")
+    void getLobby_successful() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection().getSection("lobby")).thenReturn(Optional.of(lobbySection));
+        when(locationDataSerializer.deserialize(lobbySection)).thenReturn(LOBBY_LOCATION_DATA);
+
+        Optional<LocationData> locationDataOptional = setupConfiguration.getLobby();
+
+        assertThat(locationDataOptional).hasValue(LOBBY_LOCATION_DATA);
+    }
+
+    @Test
+    @DisplayName("setLobby sets given location in a newly created section when the lobby section does not exist")
+    void setLobby_withoutPreviousLobby() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("lobby")).thenReturn(Optional.empty());
+        when(rootSection.createSection("lobby")).thenReturn(lobbySection);
+
+        setupConfiguration.setLobby(LOBBY_LOCATION_DATA);
+
+        verify(locationDataSerializer).serialize(LOBBY_LOCATION_DATA, lobbySection);
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("setLobby sets given location in an existing lobby section")
+    void setLobby_withPreviousLobby() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("lobby")).thenReturn(Optional.of(lobbySection));
+
+        setupConfiguration.setLobby(LOBBY_LOCATION_DATA);
+
+        verify(locationDataSerializer).serialize(LOBBY_LOCATION_DATA, lobbySection);
         verify(configurationFile).save();
     }
 
