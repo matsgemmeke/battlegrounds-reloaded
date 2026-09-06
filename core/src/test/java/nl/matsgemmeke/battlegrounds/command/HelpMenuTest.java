@@ -30,7 +30,6 @@ import static org.mockito.Mockito.verify;
 @ExtendWith(MockitoExtension.class)
 class HelpMenuTest {
 
-    private static final String HELP_MENU_TITLE = "help menu";
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg test";
@@ -58,7 +57,7 @@ class HelpMenuTest {
 
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        helpMenu.sendHelpMenuAsNormalMessages(sender, HELP_MENU_TITLE, List.of(permittedCommandInfo, forbiddenCommandInfo));
+        helpMenu.sendHelpMenuAsNormalMessages(sender, List.of(permittedCommandInfo, forbiddenCommandInfo));
 
         verify(helpMenuCommandTextTemplate).replace(valuesCaptor.capture());
 
@@ -67,7 +66,6 @@ class HelpMenuTest {
                 entry("bg_usage", SUBCOMMAND_USAGE)
         );
 
-        verify(sender).sendMessage(HELP_MENU_TITLE);
         verify(sender).sendMessage(" - /bg test <nr>");
     }
 
@@ -88,7 +86,7 @@ class HelpMenuTest {
 
         when(translator.translate(TranslationKey.HELP_MENU_COMMAND.getPath())).thenReturn(helpMenuCommandTextTemplate);
 
-        helpMenu.sendHelpMenuAsJsonMessages(player, HELP_MENU_TITLE, List.of(permittedCommandInfo, forbiddenCommandInfo));
+        helpMenu.sendHelpMenuAsJsonMessages(player, List.of(permittedCommandInfo, forbiddenCommandInfo));
 
         ArgumentCaptor<TextComponent> textComponentCaptor = ArgumentCaptor.forClass(TextComponent.class);
         verify(spigot).sendMessage(textComponentCaptor.capture());
@@ -111,7 +109,5 @@ class HelpMenuTest {
                 entry("bg_description", SUBCOMMAND_DESCRIPTION),
                 entry("bg_usage", SUBCOMMAND_USAGE)
         );
-
-        verify(player).sendMessage(HELP_MENU_TITLE);
     }
 }

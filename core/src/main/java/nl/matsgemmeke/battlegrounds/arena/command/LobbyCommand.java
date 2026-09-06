@@ -43,20 +43,22 @@ public class LobbyCommand extends BaseCommand {
             return;
         }
 
-        String header = translator.translate(TranslationKey.LOBBY_HELP_MENU_HEADER.getPath()).getText();
+        sender.sendMessage(translator.translate(TranslationKey.LOBBY_HELP_MENU_HEADER.getPath()).getText());
 
         if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, header, commandInfoList);
+            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
         } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, header, commandInfoList);
+            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
         }
+
+        sender.sendMessage(translator.translate(TranslationKey.LOBBY_HELP_MENU_FOOTER.getPath()).getText());
     }
 
     @Subcommand("set")
     @Syntax("<arena>")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.lobby.set")
-    public void onSet(Player player, @Conditions("existent-arena-id") @Name("arena-id") Integer arenaId) {
+    public void onSet(Player player, @Conditions("existent-arena-id") Integer arenaId) {
         setLobbyCommandExecutor.execute(player, arenaId);
     }
 }

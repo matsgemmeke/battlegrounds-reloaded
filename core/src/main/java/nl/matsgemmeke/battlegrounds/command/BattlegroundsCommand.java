@@ -44,13 +44,15 @@ public class BattlegroundsCommand extends BaseCommand {
     @Default
     @HelpCommand
     public void onDefault(CommandSender sender) {
-        String title = translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_TITLE.getPath()).getText();
+        sender.sendMessage(translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_HEADER.getPath()).getText());
 
         if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, title, commandInfoList);
+            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
         } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, title, commandInfoList);
+            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
         }
+
+        sender.sendMessage(translator.translate(TranslationKey.BATTLEGROUNDS_HELP_MENU_FOOTER.getPath()).getText());
     }
 
     @CatchUnknown

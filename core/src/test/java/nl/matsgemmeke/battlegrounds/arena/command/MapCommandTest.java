@@ -29,7 +29,8 @@ class MapCommandTest {
     private static final int ARENA_ID = 1;
     private static final String MAP_NAME = "The Map";
 
-    private static final String MAP_HELP_MENU_TITLE = "map help menu";
+    private static final String MAP_HELP_MENU_HEADER_TEXT = "map help menu header";
+    private static final String MAP_HELP_MENU_FOOTER_TEXT = "map help menu footer";
     private static final String SUBCOMMAND_DESCRIPTION = "just a map command";
     private static final String SUBCOMMAND_USAGE = "/bg arena map test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena map test ";
@@ -68,12 +69,15 @@ class MapCommandTest {
     void onDefault_playerSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
 
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.MAP_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(player, null);
 
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, MAP_HELP_MENU_TITLE, List.of(commandInfo));
+        verify(player).sendMessage(MAP_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(player).sendMessage(MAP_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test
@@ -82,12 +86,15 @@ class MapCommandTest {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
         CommandSender sender = mock(CommandSender.class);
 
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.MAP_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(sender, null);
 
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, MAP_HELP_MENU_TITLE, List.of(commandInfo));
+        verify(sender).sendMessage(MAP_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
+        verify(sender).sendMessage(MAP_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test

@@ -20,8 +20,10 @@ admin:
   weapon-not-exists: "&cA weapon with the id %bg_weapon% doesn't exist"
 
 commands:
-  arena-help-menu-title: "&6&l Arena commands"
-  battlegrounds-help-menu-title: "&6&l Battlegrounds Help Menu"
+  arena-help-menu-footer: " "
+  arena-help-menu-header: " \n&6&l Arena commands\n "
+  battlegrounds-help-menu-footer: " "
+  battlegrounds-help-menu-header: " \n&6&l Battlegrounds Help Menu\n "
   description-arena: "Manage arenas: create, remove, and configure"
   description-create-arena: "Creates a new arena by the given id"
   description-create-map: "Creates a new map by the given name"
@@ -39,11 +41,14 @@ commands:
   description-show-hitboxes: "Shows hitboxes of nearby entities"
   description-tools: "Provides miscellaneous tools for operating the plugin"
   element-help-menu-footer: " "
-  element-help-menu-header: "&6&l Element commands"
+  element-help-menu-header: " \n&6&l Element commands\n "
   help-menu-command: " - %bg_usage%"
-  lobby-help-menu-header: "&6&l Lobby commands"
-  map-help-menu-title: "&6&l Map commands"
-  tools-help-menu-title: "&6&l List of tools"
+  lobby-help-menu-footer: " "
+  lobby-help-menu-header: " \n&6&l Lobby commands\n "
+  map-help-menu-footer: " "
+  map-help-menu-header: " \n&6&l Map commands\n "
+  tools-help-menu-footer: " "
+  tools-help-menu-header: " \n&6&l List of tools\n "
   weapon-given: "&6You have been given a %bg_weapon%."
 
 errors:
