@@ -65,5 +65,7 @@ errors:
   unknown-command: "&cUnknown command, please type /bg help"
 
 setup:
+  set-lobby-failed: "&cCurrently unable to set the lobby for this arena at the moment. Please try again later."
+  set-lobby-successful: "&6You have set the waiting lobby of arena &f%bg_arena_id%&6 to your current location."
   spawn-point-added: "&6You have added a spawn point element by the id of &f%bg_element_id% &6to the map &f%bg_map_name%&6."
   specify-element-type: "&cSpecify an element type to add."

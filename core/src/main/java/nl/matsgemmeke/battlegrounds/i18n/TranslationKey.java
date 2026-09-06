@@ -55,6 +55,8 @@ public enum TranslationKey {
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),
     RELOAD_FAILED("admin.reload-failed"),
     RELOAD_SUCCESS("admin.reload-success"),
+    SET_LOBBY_FAILED("setup.set-lobby-failed"),
+    SET_LOBBY_SUCCESSFUL("setup.set-lobby-successful"),
     SPAWN_POINT_ADDED("setup.spawn-point-added"),
     SPECIFY_ELEMENT_TYPE("setup.specify-element-type"),
     TOOL_HITBOX_SUCCESS("admin.tool-hitbox-success"),
