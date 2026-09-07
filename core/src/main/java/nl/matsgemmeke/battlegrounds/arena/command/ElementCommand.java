@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.RemoveElementCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
@@ -20,13 +21,20 @@ import java.util.List;
 public class ElementCommand extends BaseCommand {
 
     private final AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
+    private final RemoveElementCommandExecutor removeElementCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public ElementCommand(AddSpawnPointCommandExecutor addSpawnPointCommandExecutor, HelpMenu helpMenu, Translator translator) {
+    public ElementCommand(
+            AddSpawnPointCommandExecutor addSpawnPointCommandExecutor,
+            RemoveElementCommandExecutor removeElementCommandExecutor,
+            HelpMenu helpMenu,
+            Translator translator
+    ) {
         this.addSpawnPointCommandExecutor = addSpawnPointCommandExecutor;
+        this.removeElementCommandExecutor = removeElementCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -65,5 +73,13 @@ public class ElementCommand extends BaseCommand {
     @CommandPermission("battlegrounds.element.add")
     public void onAddSpawnPoint(Player player, @Default("1") Integer teamId) {
         addSpawnPointCommandExecutor.execute(player, teamId);
+    }
+
+    @Subcommand("remove")
+    @Syntax("<element>")
+    @Conditions("map-selected")
+    @CommandPermission("battlegrounds.element.remove")
+    public void onRemove(Player player, Integer elementId) {
+        removeElementCommandExecutor.execute(player, elementId);
     }
 }

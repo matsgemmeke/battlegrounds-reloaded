@@ -48,6 +48,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String ADD_ELEMENT_COMMAND_SUGGESTION = "/bg element add ";
     private static final String[] ADD_ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element.add" };
 
+    private static final String REMOVE_ELEMENT_COMMAND_USAGE = "/bg element remove <element>";
+    private static final String REMOVE_ELEMENT_COMMAND_SUGGESTION = "/bg element remove ";
+    private static final String[] REMOVE_ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element.remove" };
+
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
     private final JoinCommand joinCommand;
@@ -113,9 +117,9 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
         // Lobby commands
-        String setLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SET_LOBBY.getPath()).getText();
+        String lobbySetCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_SET.getPath()).getText();
 
-        lobbyCommand.addCommandInfo(new CommandInfo(setLobbyCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
+        lobbyCommand.addCommandInfo(new CommandInfo(lobbySetCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
 
         // Map commands
         String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
@@ -128,8 +132,10 @@ public class ArenaCommandExtension implements CommandExtension {
 
         // Element commands
         String addElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_ADD.getPath()).getText();
+        String removeElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_REMOVE.getPath()).getText();
 
         elementCommand.addCommandInfo(new CommandInfo(addElementCommandDescription, ADD_ELEMENT_COMMAND_USAGE, ADD_ELEMENT_COMMAND_SUGGESTION, ADD_ELEMENT_COMMAND_PERMISSIONS));
+        elementCommand.addCommandInfo(new CommandInfo(removeElementCommandDescription, REMOVE_ELEMENT_COMMAND_USAGE, REMOVE_ELEMENT_COMMAND_SUGGESTION, REMOVE_ELEMENT_COMMAND_PERMISSIONS));
 
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);

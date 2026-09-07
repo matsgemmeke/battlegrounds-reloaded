@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
 import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.RemoveElementCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -22,7 +23,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ElementCommandTest {
 
-    private static final int TEAM_ID = 1;
+    private static final int ELEMENT_ID = 1;
+    private static final int TEAM_ID = 2;
     private static final String UNKNOWN_COMMAND_TEXT = "unknown command";
     private static final String ELEMENT_HELP_MENU_HEADER_TEXT = "header";
     private static final String ELEMENT_HELP_MENU_FOOTER_TEXT = "footer";
@@ -30,6 +32,8 @@ class ElementCommandTest {
 
     @Mock
     private AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
+    @Mock
+    private RemoveElementCommandExecutor removeElementCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -100,5 +104,13 @@ class ElementCommandTest {
         command.onAddSpawnPoint(player, TEAM_ID);
 
         verify(addSpawnPointCommandExecutor).execute(player, TEAM_ID);
+    }
+
+    @Test
+    @DisplayName("onRemove delegates to RemoveElementCommandExecutor")
+    void onRemove() {
+        command.onRemove(player, ELEMENT_ID);
+
+        verify(removeElementCommandExecutor).execute(player, ELEMENT_ID);
     }
 }
