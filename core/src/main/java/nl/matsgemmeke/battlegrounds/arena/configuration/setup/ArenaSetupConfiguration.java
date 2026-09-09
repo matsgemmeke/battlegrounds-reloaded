@@ -35,7 +35,8 @@ public class ArenaSetupConfiguration {
     private static final String MAP_CREATED_BY_PATH = "created-by";
 
     private static final String ELEMENTS_PATH = "elements";
-    private static final String ELEMENT_TYPE_PATH = "type";
+    private static final String ELEMENT_ID_PATH = "element-id";
+    private static final String ELEMENT_TYPE_PATH = "element-type";
     private static final String SPAWN_POINT_LOCATION_PATH = "location";
     private static final String SPAWN_POINT_TEAM_ID_PATH = "team-id";
 
@@ -222,8 +223,9 @@ public class ArenaSetupConfiguration {
         String spawnPointLocationPath = spawnPointPath + "." + SPAWN_POINT_LOCATION_PATH;
         Section locationSection = configurationFile.getRootSection().createSection(spawnPointLocationPath);
 
-        locationDataSerializer.serialize(data.locationData(), locationSection);
+        configurationFile.getRootSection().set(spawnPointPath + "." + ELEMENT_ID_PATH, data.elementId());
         configurationFile.getRootSection().set(spawnPointPath + "." + ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
+        locationDataSerializer.serialize(data.locationData(), locationSection);
         configurationFile.getRootSection().set(spawnPointPath + "." + SPAWN_POINT_TEAM_ID_PATH, data.teamId());
         configurationFile.save();
     }

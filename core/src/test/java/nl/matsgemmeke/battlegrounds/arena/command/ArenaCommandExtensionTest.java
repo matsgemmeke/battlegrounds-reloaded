@@ -46,6 +46,8 @@ class ArenaCommandExtensionTest {
     private NonexistentMapNameCondition nonexistentMapNameCondition;
     @Mock
     private MapSelectedCondition mapSelectedCondition;
+    @Mock
+    private ExistentElementIdCondition existentElementIdCondition;
 
     @Mock
     private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
@@ -83,6 +85,7 @@ class ArenaCommandExtensionTest {
 
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        verify(commandConditions).addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         verify(commandConditions).addCondition(String.class, "existent-map-name", existentMapNameCondition);
         verify(commandConditions).addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
         verify(commandConditions).addCondition("map-selected", mapSelectedCondition);

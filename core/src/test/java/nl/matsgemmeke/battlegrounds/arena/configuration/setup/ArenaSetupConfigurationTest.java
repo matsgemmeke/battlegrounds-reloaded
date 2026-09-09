@@ -447,8 +447,9 @@ class ArenaSetupConfigurationTest {
 
         setupConfiguration.createSpawnPoint(data);
 
+        verify(rootSection).set("maps.level-1.elements.1.element-id", SPAWN_POINT_ELEMENT_ID);
+        verify(rootSection).set("maps.level-1.elements.1.element-type", "SPAWN_POINT");
         verify(locationDataSerializer).serialize(locationData, locationSection);
-        verify(rootSection).set("maps.level-1.elements.1.type", "SPAWN_POINT");
         verify(rootSection).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
         verify(configurationFile).save();
     }

@@ -67,6 +67,7 @@ public class ArenaCommandExtension implements CommandExtension {
     private final ExistentMapNameCondition existentMapNameCondition;
     private final NonexistentMapNameCondition nonexistentMapNameCondition;
     private final MapSelectedCondition mapSelectedCondition;
+    private final ExistentElementIdCondition existentElementIdCondition;
 
     private final Translator translator;
 
@@ -85,6 +86,7 @@ public class ArenaCommandExtension implements CommandExtension {
             ExistentMapNameCondition existentMapNameCondition,
             NonexistentMapNameCondition nonexistentMapNameCondition,
             MapSelectedCondition mapSelectedCondition,
+            ExistentElementIdCondition existentElementIdCondition,
             Translator translator
     ) {
         this.arenaCommand = arenaCommand;
@@ -100,6 +102,7 @@ public class ArenaCommandExtension implements CommandExtension {
         this.existentMapNameCondition = existentMapNameCondition;
         this.nonexistentMapNameCondition = nonexistentMapNameCondition;
         this.mapSelectedCondition = mapSelectedCondition;
+        this.existentElementIdCondition = existentElementIdCondition;
         this.translator = translator;
     }
 
@@ -150,6 +153,7 @@ public class ArenaCommandExtension implements CommandExtension {
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        commandConditions.addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
         commandConditions.addCondition("arena-absence", arenaModeAbsenceCondition);

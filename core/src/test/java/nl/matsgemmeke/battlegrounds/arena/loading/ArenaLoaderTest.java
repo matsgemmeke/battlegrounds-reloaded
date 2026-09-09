@@ -101,7 +101,6 @@ class ArenaLoaderTest {
                 assertThat(map.getName()).isEqualTo(MAP_NAME);
                 assertThat(map.getMetadata().createdAt()).isEqualTo(MAP_CREATED_AT);
                 assertThat(map.getMetadata().createdBy()).isEqualTo(MAP_CREATED_BY);
-                assertThat(map.getElements()).containsExactly(element);
             });
         });
     }

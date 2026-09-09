@@ -79,7 +79,7 @@ public class ElementCommand extends BaseCommand {
     @Syntax("<element>")
     @Conditions("map-selected")
     @CommandPermission("battlegrounds.element.remove")
-    public void onRemove(Player player, Integer elementId) {
+    public void onRemove(Player player, @Conditions("existent-element-id") Integer elementId) {
         removeElementCommandExecutor.execute(player, elementId);
     }
 }

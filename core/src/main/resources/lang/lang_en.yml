@@ -63,9 +63,11 @@ errors:
   no-map-selected: "&cYou must select a map first! Use /bg arena map select <arena> <map>."
   not-in-arena-mode: "&cUnable to perform action; you are not participating in an arena."
   not-in-freeplay-mode: "&cUnable to perform action; you are not in freeplay mode."
+  player-only-command: "&cOnly players can use this command."
   unknown-command: "&cUnknown command, please type /bg help"
 
 setup:
+  element-not-exists: "&cThe selected map %bg_map_name% does not contain an element with the id %bg_element_id%."
   set-lobby-failed: "&cCurrently unable to set the lobby for this arena at the moment. Please try again later."
   set-lobby-successful: "&6You have set the waiting lobby of arena &f%bg_arena_id%&6 to your current location."
   spawn-point-added: "&6You have added a spawn point element by the id of &f%bg_element_id% &6to the map &f%bg_map_name%&6."

@@ -19,10 +19,6 @@ public class ArenaMap {
         this.elementsByType = new HashMap<>();
     }
 
-    public List<Element> getElements() {
-        return elements;
-    }
-
     public ArenaMapMetadata getMetadata() {
         return metadata;
     }
@@ -34,6 +30,10 @@ public class ArenaMap {
     public void addElement(Element element) {
         elements.add(element);
         elementsByType.computeIfAbsent(element.getClass(), elements -> new ArrayList<>()).add(element);
+    }
+
+    public boolean elementExists(int elementId) {
+        return elements.stream().anyMatch(element -> element.getId() == elementId);
     }
 
     public int generateNextElementId() {
