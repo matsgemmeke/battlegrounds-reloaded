@@ -36,6 +36,10 @@ public class ArenaMap {
         return elements.stream().anyMatch(element -> element.getId() == elementId);
     }
 
+    public List<Integer> getElementIds() {
+        return elements.stream().map(Element::getId).toList();
+    }
+
     public int generateNextElementId() {
         Set<Integer> usedIds = elements.stream().map(Element::getId).collect(Collectors.toSet());
         int candidate = 1;

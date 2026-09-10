@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.ElementIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
@@ -60,6 +61,7 @@ public class ArenaCommandExtension implements CommandExtension {
 
     private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+    private final ElementIdCommandCompletionHandler elementIdCommandCompletionHandler;
 
     private final ArenaModeAbsenceCondition arenaModeAbsenceCondition;
     private final ExistentArenaIdCondition existentArenaIdCondition;
@@ -80,6 +82,7 @@ public class ArenaCommandExtension implements CommandExtension {
             MapCommand mapCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
+            ElementIdCommandCompletionHandler elementIdCommandCompletionHandler,
             ArenaModeAbsenceCondition arenaModeAbsenceCondition,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
@@ -96,6 +99,7 @@ public class ArenaCommandExtension implements CommandExtension {
         this.mapCommand = mapCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
+        this.elementIdCommandCompletionHandler = elementIdCommandCompletionHandler;
         this.arenaModeAbsenceCondition = arenaModeAbsenceCondition;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
@@ -149,6 +153,7 @@ public class ArenaCommandExtension implements CommandExtension {
         var commandCompletions = commandManager.getCommandCompletions();
         commandCompletions.registerCompletion("arena-id", arenaIdCommandCompletionHandler);
         commandCompletions.registerCompletion("map-name", mapNameCommandCompletionHandler);
+        commandCompletions.registerCompletion("element-id", elementIdCommandCompletionHandler);
 
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);

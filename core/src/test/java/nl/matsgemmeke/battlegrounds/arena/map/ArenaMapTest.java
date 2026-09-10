@@ -8,6 +8,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,6 +40,18 @@ class ArenaMapTest {
         boolean elementExists = map.elementExists(elementId);
 
         assertThat(elementExists).isEqualTo(expectedResult);
+    }
+
+    @Test
+    @DisplayName("getElementIds returns list of all registered element id's")
+    void getElementIds() {
+        Element element = mock(Element.class);
+        when(element.getId()).thenReturn(ELEMENT_ID);
+
+        map.addElement(element);
+        List<Integer> elementIds = map.getElementIds();
+
+        assertThat(elementIds).containsExactly(ELEMENT_ID);
     }
 
     @Test

@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.ElementIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
@@ -35,6 +36,8 @@ class ArenaCommandExtensionTest {
     private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
     private MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+    @Mock
+    private ElementIdCommandCompletionHandler elementIdCommandCompletionHandler;
 
     @Mock
     private ExistentArenaIdCondition existentArenaIdCondition;
@@ -82,6 +85,7 @@ class ArenaCommandExtensionTest {
 
         verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
         verify(commandCompletions).registerCompletion("map-name", mapNameCommandCompletionHandler);
+        verify(commandCompletions).registerCompletion("element-id", elementIdCommandCompletionHandler);
 
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);

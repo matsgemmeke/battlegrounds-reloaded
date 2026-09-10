@@ -78,6 +78,7 @@ public class ElementCommand extends BaseCommand {
     @Subcommand("remove")
     @Syntax("<element>")
     @Conditions("map-selected")
+    @CommandCompletion("@element-id")
     @CommandPermission("battlegrounds.element.remove")
     public void onRemove(Player player, @Conditions("existent-element-id") Integer elementId) {
         removeElementCommandExecutor.execute(player, elementId);
