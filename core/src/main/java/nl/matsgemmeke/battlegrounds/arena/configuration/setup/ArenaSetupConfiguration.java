@@ -229,4 +229,11 @@ public class ArenaSetupConfiguration {
         configurationFile.getRootSection().set(spawnPointPath + "." + SPAWN_POINT_TEAM_ID_PATH, data.teamId());
         configurationFile.save();
     }
+
+    public void removeElement(String mapName, int elementId) {
+        String mapPathName = TextUtil.toKebabCase(mapName);
+
+        configurationFile.getRootSection().removeSection(MAPS_PATH + "." + mapPathName + "." + ELEMENTS_PATH + "." + elementId);
+        configurationFile.save();
+    }
 }

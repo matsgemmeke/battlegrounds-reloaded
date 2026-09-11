@@ -453,4 +453,15 @@ class ArenaSetupConfigurationTest {
         verify(rootSection).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
         verify(configurationFile).save();
     }
+
+    @Test
+    @DisplayName("removeElement removes the element's section")
+    void removeElement() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
+        setupConfiguration.removeElement(MAP_NAME, SPAWN_POINT_ELEMENT_ID);
+
+        verify(rootSection).removeSection("maps.level-1.elements.1");
+        verify(configurationFile).save();
+    }
 }

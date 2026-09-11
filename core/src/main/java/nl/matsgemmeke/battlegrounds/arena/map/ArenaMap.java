@@ -32,8 +32,23 @@ public class ArenaMap {
         elementsByType.computeIfAbsent(element.getClass(), elements -> new ArrayList<>()).add(element);
     }
 
+    public void removeElement(Element element) {
+        elements.remove(element);
+
+        List<Element> typeList = elementsByType.get(element.getClass());
+
+        if (typeList != null) {
+            typeList.remove(element);
+            elementsByType.remove(element.getClass());
+        }
+    }
+
     public boolean elementExists(int elementId) {
         return elements.stream().anyMatch(element -> element.getId() == elementId);
+    }
+
+    public Optional<Element> getElement(int elementId) {
+        return elements.stream().filter(element -> element.getId() == elementId).findFirst();
     }
 
     public List<Integer> getElementIds() {

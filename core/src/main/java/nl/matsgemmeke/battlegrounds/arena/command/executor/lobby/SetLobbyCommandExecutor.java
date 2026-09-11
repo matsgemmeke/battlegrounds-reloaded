@@ -45,7 +45,7 @@ public class SetLobbyCommandExecutor {
 
         if (arena == null) {
             logger.warning("Player %s attempted to set the lobby for arena %s, however no arena was found for this validated arena id".formatted(player.getName(), arenaId));
-            player.sendMessage(translator.translate(TranslationKey.SET_LOBBY_FAILED.getPath()).getText());
+            player.sendMessage(translator.translate(TranslationKey.LOBBY_SET_FAILED.getPath()).getText());
             return;
         }
 
@@ -59,6 +59,6 @@ public class SetLobbyCommandExecutor {
 
         Map<String, Object> values = Map.of("bg_arena_id", arenaId);
 
-        player.sendMessage(translator.translate(TranslationKey.SET_LOBBY_SUCCESSFUL.getPath()).replace(values));
+        player.sendMessage(translator.translate(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()).replace(values));
     }
 }

@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.map;
 
 import nl.matsgemmeke.battlegrounds.arena.map.element.Element;
+import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +31,18 @@ class ArenaMapTest {
         map = new ArenaMap(NAME, new ArenaMapMetadata(CREATED_AT, CREATED_BY));
     }
 
+    @Test
+    @DisplayName("removeElement removes element from map")
+    void removeElement() {
+        SpawnPoint spawnPoint = mock(SpawnPoint.class);
+        when(spawnPoint.getId()).thenReturn(ELEMENT_ID);
+
+        map.addElement(spawnPoint);
+        map.removeElement(spawnPoint);
+
+        assertThat(map.getElementIds()).isEmpty();
+    }
+
     @ParameterizedTest
     @DisplayName("elementExists returns an element by the given id is added")
     @CsvSource({ "1,true", "5000,false" })
@@ -40,6 +54,26 @@ class ArenaMapTest {
         boolean elementExists = map.elementExists(elementId);
 
         assertThat(elementExists).isEqualTo(expectedResult);
+    }
+
+    @Test
+    @DisplayName("getElement returns empty optional when given element id is not registered")
+    void getElement_unregisteredElementId() {
+        Optional<Element> elementOptional = map.getElement(ELEMENT_ID);
+
+        assertThat(elementOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getElement returns optional with corresponding element")
+    void getElement_registeredElementId() {
+        Element element = mock(Element.class);
+        when(element.getId()).thenReturn(ELEMENT_ID);
+
+        map.addElement(element);
+        Optional<Element> elementOptional = map.getElement(ELEMENT_ID);
+
+        assertThat(elementOptional).hasValue(element);
     }
 
     @Test
