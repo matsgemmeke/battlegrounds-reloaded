@@ -59,6 +59,9 @@ class ArenaMapTest {
     @Test
     @DisplayName("getElement returns empty optional when given element id is not registered")
     void getElement_unregisteredElementId() {
+        Element element = mock(Element.class);
+        when(element.getId()).thenReturn(Integer.MAX_VALUE);
+
         Optional<Element> elementOptional = map.getElement(ELEMENT_ID);
 
         assertThat(elementOptional).isEmpty();
