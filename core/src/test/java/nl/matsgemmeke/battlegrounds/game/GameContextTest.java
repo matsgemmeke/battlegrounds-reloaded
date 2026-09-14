@@ -2,49 +2,51 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import com.google.inject.Key;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class GameContextTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
-    private static final GameContextType TYPE = GameContextType.FREEPLAY_MODE;
 
     @Test
-    public void getScopedObjectReturnsResultFromGivenProviderWhenKeyIsNotStored() {
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        Key<PlayerRegistry> key = mock();
+    @DisplayName("getScopedObject only creates instances once")
+    void getScopedObject_createInstanceOnce() {
+        GameContext context = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+        Key<String> key = Key.get(String.class);
+        AtomicInteger creationCount = new AtomicInteger();
 
-        Provider<PlayerRegistry> provider = mock();
-        when(provider.get()).thenReturn(playerRegistry);
+        Provider<String> creator = () -> {
+            creationCount.incrementAndGet();
+            return "instance";
+        };
 
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        PlayerRegistry result = gameContext.getScopedObject(key, provider);
+        String first = context.getScopedObject(key, creator);
+        String second = context.getScopedObject(key, creator);
 
-        assertThat(result).isEqualTo(playerRegistry);
+        assertThat(first).isSameAs(second);
+        assertThat(creationCount).hasValue(1);
     }
 
     @Test
-    public void getScopedObjectReturnsStoredInstanceWhenKeyIsAlreadyStored() {
-        PlayerRegistry firstPlayerRegistry = mock(PlayerRegistry.class);
-        PlayerRegistry secondPlayerRegistry = mock(PlayerRegistry.class);
-        Key<PlayerRegistry> key = mock();
+    @DisplayName("getScopedObject runs side effects of creator once")
+    void getScopedObject_runsSideEffectsOnce() {
+        GameContext context = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+        Key<String> key = Key.get(String.class);
+        AtomicInteger sideEffectCounter = new AtomicInteger();
 
-        Provider<PlayerRegistry> firstProvider = mock();
-        when(firstProvider.get()).thenReturn(firstPlayerRegistry);
+        Provider<String> creator = () -> {
+            sideEffectCounter.incrementAndGet();
+            return "instance";
+        };
 
-        Provider<PlayerRegistry> secondProvider = mock();
-        when(secondProvider.get()).thenReturn(secondPlayerRegistry);
+        context.getScopedObject(key, creator);
+        context.getScopedObject(key, creator);
 
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        gameContext.getScopedObject(key, firstProvider);
-        PlayerRegistry result = gameContext.getScopedObject(key, secondProvider);
-
-        assertThat(result).isEqualTo(firstPlayerRegistry);
-        assertThat(result).isNotEqualTo(secondPlayerRegistry);
+        assertThat(sideEffectCounter).hasValue(1);
     }
 }
