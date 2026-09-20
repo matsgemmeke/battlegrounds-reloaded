@@ -20,6 +20,7 @@ public abstract class ComponentRouterProvider<T> implements Provider<T> {
         this.typeLiteral = typeLiteral;
     }
 
+    @Override
     public T get() {
         GameContext gameContext = gameScope.getCurrentGameContext().orElseThrow(() -> {
             String message = String.format("Cannot provide instance of %s: the game scope is empty", this.getTypeName());

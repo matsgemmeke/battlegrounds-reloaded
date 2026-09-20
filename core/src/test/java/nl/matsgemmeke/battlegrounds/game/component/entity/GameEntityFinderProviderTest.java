@@ -2,17 +2,20 @@ package nl.matsgemmeke.battlegrounds.game.component.entity;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
 import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameEntityFinder;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -24,52 +27,52 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class GameEntityFinderProviderTest {
 
-    private static final TypeLiteral<GameEntityFinder> TYPE_LITERAL = TypeLiteral.get(GameEntityFinder.class);
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
 
     @Mock
     private GameScope gameScope;
+    @Spy
+    private Map<GameContextType, Provider<GameEntityFinder>> implementations = new HashMap<>();
+    @Spy
+    private TypeLiteral<GameEntityFinder> TYPE_LITERAL = TypeLiteral.get(GameEntityFinder.class);
+    @InjectMocks
+    private GameEntityFinderProvider gameEntityFinderProvider;
 
     @Test
-    void getThrowsComponentProvisionExceptionWhenGameScopeHasNoEnteredGameContext() {
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of();
-
+    @DisplayName("get throws ComponentProvisionException when game scope has no entered game context")
+    void get_noEnteredGameContext() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        GameEntityFinderProvider provider = new GameEntityFinderProvider(gameScope, implementations, TYPE_LITERAL);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(gameEntityFinderProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
                 .hasMessage("Cannot provide instance of GameEntityFinder: the game scope is empty");
     }
 
     @Test
-    void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
+    @DisplayName("get throws ComponentProvisionException when implementations contains no provider for current game context")
+    void get_noCompatibleProvider() {
+        implementations.put(GameContextType.ARENA_MODE, mock());
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        GameEntityFinderProvider provider = new GameEntityFinderProvider(gameScope, implementations, TYPE_LITERAL);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(gameEntityFinderProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of GameEntityFinder: no implementation bound for ARENA_MODE");
+                .hasMessage("Cannot provide instance of GameEntityFinder: no implementation bound for FREEPLAY_MODE");
     }
 
     @Test
-    void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+    @DisplayName("get returns instance bound to active game context type")
+    void get_successful() {
         FreeplayGameEntityFinder gameEntityFinder = mock(FreeplayGameEntityFinder.class);
 
-        Provider<GameEntityFinder> gameEntityFinderProvider = mock();
-        when(gameEntityFinderProvider.get()).thenReturn(gameEntityFinder);
+        Provider<GameEntityFinder> freeplayGameEntityFinderProvider = mock();
+        when(freeplayGameEntityFinderProvider.get()).thenReturn(gameEntityFinder);
 
-        Map<GameContextType, Provider<GameEntityFinder>> implementations = Map.of(GameContextType.FREEPLAY_MODE, gameEntityFinderProvider);
+        implementations.put(GameContextType.FREEPLAY_MODE, freeplayGameEntityFinderProvider);
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        GameEntityFinderProvider provider = new GameEntityFinderProvider(gameScope, implementations, TYPE_LITERAL);
-        GameEntityFinder result = provider.get();
+        GameEntityFinder result = gameEntityFinderProvider.get();
 
         assertThat(result).isEqualTo(gameEntityFinder);
     }
