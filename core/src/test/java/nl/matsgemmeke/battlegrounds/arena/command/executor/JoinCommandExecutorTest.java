@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.arena.ArenaGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -26,6 +27,7 @@ class JoinCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final GameKey GAME_KEY = GameKey.ofArena(ARENA_ID);
+    private static final ArenaGameContext GAME_CONTEXT = new ArenaGameContext(GAME_KEY, null);
 
     private static final UUID PLAYER_ID = UUID.randomUUID();
     private static final String PLAYER_NAME = "TestPlayer";
@@ -66,10 +68,8 @@ class JoinCommandExecutorTest {
     @Test
     @DisplayName("execute logs warning message when the player is somehow already registered in the arena after validation")
     void execute_playerAlreadyRegistered() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.ARENA_MODE);
-
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
-        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(true);
@@ -86,10 +86,8 @@ class JoinCommandExecutorTest {
     @Test
     @DisplayName("execute registers player to player registry")
     void execute_successful() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.ARENA_MODE);
-
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
-        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(false);

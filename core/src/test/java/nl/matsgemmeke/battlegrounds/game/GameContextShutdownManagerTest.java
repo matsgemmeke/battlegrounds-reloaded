@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,6 +19,7 @@ import static org.mockito.Mockito.*;
 class GameContextShutdownManagerTest {
 
     private static final GameKey FREEPLAY_GAME_KEY = GameKey.ofFreeplay();
+    private static final FreeplayGameContext FREEPLAY_GAME_CONTEXT = new FreeplayGameContext();
 
     @Mock
     private GameContextProvider gameContextProvider;
@@ -42,17 +44,16 @@ class GameContextShutdownManagerTest {
     @Test
     @DisplayName("shutdown saves freeplay mode state")
     void shutdown_savesFreeplay() {
-        GameContext gameContext = new GameContext(FREEPLAY_GAME_KEY, GameContextType.FREEPLAY_MODE);
         StatePersistenceHandler statePersistenceHandler = mock(StatePersistenceHandler.class);
 
-        when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)).thenReturn(Optional.of(FREEPLAY_GAME_CONTEXT));
         when(statePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
         GameContextShutdownManager gameContextShutdownManager = new GameContextShutdownManager(gameContextProvider, gameScope, statePersistenceHandlerProvider);
         gameContextShutdownManager.shutdown();
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
+        verify(gameScope).runInScope(eq(FREEPLAY_GAME_CONTEXT), runnableCaptor.capture());
 
         runnableCaptor.getValue().run();
 

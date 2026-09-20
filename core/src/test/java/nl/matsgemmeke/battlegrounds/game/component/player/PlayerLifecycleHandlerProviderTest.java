@@ -2,15 +2,19 @@ package nl.matsgemmeke.battlegrounds.game.component.player;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,27 +23,26 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@ExtendWith(MockitoExtension.class)
 class PlayerLifecycleHandlerProviderTest {
 
-    private GameScope gameScope;
-    private TypeLiteral<PlayerLifecycleHandler> typeLiteral;
+    private final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
 
-    @BeforeEach
-    void setUp() {
-        gameScope = mock(GameScope.class);
-        typeLiteral = TypeLiteral.get(PlayerLifecycleHandler.class);
-    }
+    @Mock
+    private GameScope gameScope;
+    @Spy
+    private Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations = new HashMap<>();
+    @Spy
+    private TypeLiteral<PlayerLifecycleHandler> typeLiteral = TypeLiteral.get(PlayerLifecycleHandler.class);
+    @InjectMocks
+    private PlayerLifecycleHandlerProvider playerLifecycleHandlerProvider;
 
     @Test
     @DisplayName("get throws ComponentProvisionException when game scope has no current game context")
     void get_withoutEnteredGameContext() {
-        Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations = Map.of();
-
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(playerLifecycleHandlerProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
                 .hasMessage("Cannot provide instance of PlayerLifecycleHandler: the game scope is empty");
     }
@@ -47,33 +50,28 @@ class PlayerLifecycleHandlerProviderTest {
     @Test
     @DisplayName("get throws ComponentProvisionException when provider contains no implementation type for game context type")
     void get_noImplementationTypesFound() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
+        implementations.put(GameContextType.ARENA_MODE, mock());
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(playerLifecycleHandlerProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of PlayerLifecycleHandler: no implementation bound for ARENA_MODE");
+                .hasMessage("Cannot provide instance of PlayerLifecycleHandler: no implementation bound for FREEPLAY_MODE");
     }
 
     @Test
     @DisplayName("get returns instance bound to type of active game context")
     void get_successful() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
         PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
 
         Provider<PlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider = mock();
         when(freeplayPlayerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
-        Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayPlayerLifecycleHandlerProvider);
+        implementations.put(GameContextType.FREEPLAY_MODE, freeplayPlayerLifecycleHandlerProvider);
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        PlayerLifecycleHandlerProvider provider = new PlayerLifecycleHandlerProvider(gameScope, implementations, typeLiteral);
-        PlayerLifecycleHandler result = provider.get();
+        PlayerLifecycleHandler result = playerLifecycleHandlerProvider.get();
 
         assertThat(result).isEqualTo(playerLifecycleHandler);
     }

@@ -4,6 +4,7 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
 class FreeplayModePresenceConditionTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -80,8 +82,6 @@ class FreeplayModePresenceConditionTest {
     @Test
     @DisplayName("validateCondition does nothing when player is registered in freeplay mode")
     void validateCondition_passes() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
-
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -89,13 +89,13 @@ class FreeplayModePresenceConditionTest {
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(true);
 
         when(issuer.getPlayer()).thenReturn(player);
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
 
         condition.validateCondition(conditionContext);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
 
         assertThatCode(() -> runnableCaptor.getValue().run()).doesNotThrowAnyException();
     }
@@ -103,8 +103,6 @@ class FreeplayModePresenceConditionTest {
     @Test
     @DisplayName("validateCondition throws ConditionFailedException when player is not in freeplay mode")
     void validationCondition_playerNotInFreeplayMode() {
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
-
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -112,14 +110,14 @@ class FreeplayModePresenceConditionTest {
         when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(false);
 
         when(issuer.getPlayer()).thenReturn(player);
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
 
         condition.validateCondition(conditionContext);
 
         ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
+        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
 
         assertThatThrownBy(() -> runnableCaptor.getValue().run())
                 .isInstanceOf(ConditionFailedException.class)

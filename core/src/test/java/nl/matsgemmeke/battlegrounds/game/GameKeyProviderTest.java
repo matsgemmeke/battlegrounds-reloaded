@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game;
 
 import com.google.inject.OutOfScopeException;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +17,8 @@ import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class GameKeyProviderTest {
+
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
 
     @Mock
     private GameScope gameScope;
@@ -35,13 +38,10 @@ class GameKeyProviderTest {
     @Test
     @DisplayName("get returns GameKey of entered game context")
     void get_successful() {
-        GameKey gameKey = GameKey.ofFreeplay();
-        GameContext gameContext = new GameContext(gameKey, GameContextType.FREEPLAY_MODE);
-
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
         GameKey result = provider.get();
 
-        assertThat(result).isEqualTo(gameKey);
+        assertThat(result).isEqualTo(GameKey.ofFreeplay());
     }
 }
