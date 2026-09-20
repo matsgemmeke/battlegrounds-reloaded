@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 
 import java.util.HashMap;
@@ -24,7 +22,7 @@ public class ArenaRegistry {
     }
 
     public void addArena(GameKey gameKey, Arena arena) {
-        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
+        ArenaGameContext gameContext = new ArenaGameContext(gameKey, arena);
         gameContextProvider.addGameContext(gameKey, gameContext);
 
         arenas.put(gameKey, arena);

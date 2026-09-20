@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena;
 
-import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,13 +34,35 @@ class ArenaRegistryTest {
 
         arenaRegistry.addArena(GAME_KEY, arena);
 
-        ArgumentCaptor<GameContext> gameContextCaptor = ArgumentCaptor.forClass(GameContext.class);
+        ArgumentCaptor<ArenaGameContext> gameContextCaptor = ArgumentCaptor.forClass(ArenaGameContext.class);
         verify(gameContextProvider).addGameContext(eq(GAME_KEY), gameContextCaptor.capture());
 
         assertThat(gameContextCaptor.getValue()).satisfies(gameContext -> {
             assertThat(gameContext.getGameKey()).isEqualTo(GAME_KEY);
-            assertThat(gameContext.getType()).isEqualTo(GameContextType.ARENA_MODE);
+            assertThat(gameContext.getArena()).isEqualTo(arena);
         });
+    }
+
+    @Test
+    @DisplayName("exists return false when none of the arenas have the given id")
+    void exists_unregistered() {
+        boolean exists = arenaRegistry.exists(ARENA_ID);
+
+        assertThat(exists).isFalse();
+    }
+
+    @Test
+    @DisplayName("exists return true when any of the arenas have the given id")
+    void exists_registered() {
+        GameKey gameKey = GameKey.ofArena(ARENA_ID);
+
+        Arena arena = mock(Arena.class);
+        when(arena.getId()).thenReturn(ARENA_ID);
+
+        arenaRegistry.addArena(gameKey, arena);
+        boolean exists = arenaRegistry.exists(ARENA_ID);
+
+        assertThat(exists).isTrue();
     }
 
     @Test

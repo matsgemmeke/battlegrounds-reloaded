@@ -21,6 +21,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -68,7 +69,8 @@ class ArenaModeAbsenceConditionTest {
     @Test
     @DisplayName("validateCondition does nothing when the player issuer is not a freeplay game context")
     void validateCondition_playerInFreeplayGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getType()).thenReturn(GameContextType.FREEPLAY_MODE);
 
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
@@ -80,7 +82,8 @@ class ArenaModeAbsenceConditionTest {
     @Test
     @DisplayName("validateCondition throws ConditionFailedException when player issuer is registered in arena game context")
     void validateCondition_issuerPresentInArena() {
-        GameContext gameContext = new GameContext(GameKey.ofArena(1), GameContextType.ARENA_MODE);
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getType()).thenReturn(GameContextType.ARENA_MODE);
 
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);

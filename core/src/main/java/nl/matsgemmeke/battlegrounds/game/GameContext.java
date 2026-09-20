@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.game;
 import com.google.inject.Key;
 import com.google.inject.Provider;
 
+import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 public class GameContext {
 
@@ -15,7 +15,7 @@ public class GameContext {
     public GameContext(GameKey gameKey, GameContextType type) {
         this.type = type;
         this.gameKey = gameKey;
-        this.scopedObjects = new ConcurrentHashMap<>();
+        this.scopedObjects = new HashMap<>();
     }
 
     public GameKey getGameKey() {
@@ -27,7 +27,14 @@ public class GameContext {
     }
 
     @SuppressWarnings("unchecked")
-    public <T> T getScopedObject(Key<T> key, Provider<T> creator) {
-        return (T) scopedObjects.computeIfAbsent(key, k -> creator.get());
+    public synchronized <T> T getScopedObject(Key<T> key, Provider<T> unscoped) {
+        Object object = scopedObjects.get(key);
+
+        if (object == null) {
+            object = unscoped.get();
+            scopedObjects.put(key, object);
+        }
+
+        return (T) object;
     }
 }
