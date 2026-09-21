@@ -32,7 +32,7 @@ class MobRegistryProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<MobRegistry>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<MobRegistry>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<MobRegistry> TYPE_LITERAL = TypeLiteral.get(MobRegistry.class);
     @InjectMocks
@@ -49,13 +49,13 @@ class MobRegistryProviderTest {
     }
 
     @Test
-    @DisplayName("get throws ComponentProvisionException when implementations contains no provider for current game context type")
+    @DisplayName("get throws ComponentProvisionException when no provider is available for current game context type")
     void get_noCompatibleProvider() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        MobRegistryProvider provider = new MobRegistryProvider(gameScope, implementations, TYPE_LITERAL);
+        MobRegistryProvider provider = new MobRegistryProvider(gameScope, providers, TYPE_LITERAL);
 
         assertThatThrownBy(provider::get)
                 .isInstanceOf(ComponentProvisionException.class)
@@ -70,7 +70,7 @@ class MobRegistryProviderTest {
         Provider<MobRegistry> freeplayMobRegistryProvider = mock();
         when(freeplayMobRegistryProvider.get()).thenReturn(mobRegistry);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayMobRegistryProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayMobRegistryProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

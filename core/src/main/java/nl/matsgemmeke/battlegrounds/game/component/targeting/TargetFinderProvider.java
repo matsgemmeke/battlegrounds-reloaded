@@ -12,7 +12,7 @@ import java.util.Map;
 public class TargetFinderProvider extends ComponentRouterProvider<TargetFinder> {
 
     @Inject
-    public TargetFinderProvider(GameScope gameScope, Map<GameContextType, Provider<TargetFinder>> implementations, TypeLiteral<TargetFinder> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public TargetFinderProvider(GameScope gameScope, Map<GameContextType, Provider<TargetFinder>> providers, TypeLiteral<TargetFinder> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }

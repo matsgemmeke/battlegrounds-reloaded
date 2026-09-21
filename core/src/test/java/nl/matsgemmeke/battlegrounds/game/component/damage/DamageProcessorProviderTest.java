@@ -32,7 +32,7 @@ class DamageProcessorProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<DamageProcessor>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<DamageProcessor>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<DamageProcessor> typeLiteral = TypeLiteral.get(DamageProcessor.class);
     @InjectMocks
@@ -51,7 +51,7 @@ class DamageProcessorProviderTest {
     @Test
     @DisplayName("get throws ComponentProvisionException when no provider is available for game context type")
     void get_noCompatibleProvider() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
@@ -68,7 +68,7 @@ class DamageProcessorProviderTest {
         Provider<DamageProcessor> freeplayDamageProcessorProvider = mock();
         when(freeplayDamageProcessorProvider.get()).thenReturn(damageProcessor);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

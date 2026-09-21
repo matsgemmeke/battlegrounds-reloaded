@@ -32,7 +32,7 @@ class StatePersistenceHandlerProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<StatePersistenceHandler>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<StatePersistenceHandler>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<StatePersistenceHandler> typeLiteral = TypeLiteral.get(StatePersistenceHandler.class);
     @InjectMocks
@@ -51,7 +51,7 @@ class StatePersistenceHandlerProviderTest {
     @Test
     @DisplayName("get throws ComponentProvisionException when no provider is available for game context type")
     void get_noCompatibleProvider() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
@@ -68,7 +68,7 @@ class StatePersistenceHandlerProviderTest {
         Provider<StatePersistenceHandler> freeplayStatePersistenceHandlerProvider = mock();
         when(freeplayStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

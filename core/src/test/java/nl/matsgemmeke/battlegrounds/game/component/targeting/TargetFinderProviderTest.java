@@ -32,7 +32,7 @@ class TargetFinderProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<TargetFinder>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<TargetFinder>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<TargetFinder> typeLiteral = TypeLiteral.get(TargetFinder.class);
     @InjectMocks
@@ -49,15 +49,13 @@ class TargetFinderProviderTest {
     }
 
     @Test
-    @DisplayName("get throws ComponentProvisionException when implementations contains no provider for entered game context type")
+    @DisplayName("get throws ComponentProvisionException when no provider is available for entered game context type")
     void get_noCompatibleProvider() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        TargetFinderProvider provider = new TargetFinderProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(targetFinderProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
                 .hasMessage("Cannot provide instance of TargetFinder: no implementation bound for FREEPLAY_MODE");
     }
@@ -70,7 +68,7 @@ class TargetFinderProviderTest {
         Provider<TargetFinder> freeplayTargetFinderProvider = mock();
         when(freeplayTargetFinderProvider.get()).thenReturn(targetFinder);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayTargetFinderProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayTargetFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

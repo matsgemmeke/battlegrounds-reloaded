@@ -32,7 +32,7 @@ class GameEntityFinderProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<GameEntityFinder>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<GameEntityFinder>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<GameEntityFinder> TYPE_LITERAL = TypeLiteral.get(GameEntityFinder.class);
     @InjectMocks
@@ -49,9 +49,9 @@ class GameEntityFinderProviderTest {
     }
 
     @Test
-    @DisplayName("get throws ComponentProvisionException when implementations contains no provider for current game context")
+    @DisplayName("get throws ComponentProvisionException when no provider is available for current game context")
     void get_noCompatibleProvider() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
@@ -68,7 +68,7 @@ class GameEntityFinderProviderTest {
         Provider<GameEntityFinder> freeplayGameEntityFinderProvider = mock();
         when(freeplayGameEntityFinderProvider.get()).thenReturn(gameEntityFinder);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayGameEntityFinderProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayGameEntityFinderProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

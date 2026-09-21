@@ -29,7 +29,7 @@ class EventDamageAdapterProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<EventDamageAdapter>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<EventDamageAdapter>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<EventDamageAdapter> typeLiteral = TypeLiteral.get(EventDamageAdapter.class);
     @InjectMocks
@@ -42,7 +42,7 @@ class EventDamageAdapterProviderTest {
         Provider<EventDamageAdapter> freeplayEventDamageAdapterProvider = mock();
         when(freeplayEventDamageAdapterProvider.get()).thenReturn(eventDamageAdapter);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayEventDamageAdapterProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayEventDamageAdapterProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

@@ -12,7 +12,7 @@ import java.util.Map;
 public class DamageProcessorProvider extends ComponentRouterProvider<DamageProcessor> {
 
     @Inject
-    public DamageProcessorProvider(GameScope gameScope, Map<GameContextType, Provider<DamageProcessor>> implementations, TypeLiteral<DamageProcessor> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public DamageProcessorProvider(GameScope gameScope, Map<GameContextType, Provider<DamageProcessor>> providers, TypeLiteral<DamageProcessor> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }

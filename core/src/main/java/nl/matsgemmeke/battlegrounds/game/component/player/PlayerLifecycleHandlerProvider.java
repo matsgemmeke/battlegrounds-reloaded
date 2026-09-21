@@ -12,7 +12,7 @@ import java.util.Map;
 public class PlayerLifecycleHandlerProvider extends ComponentRouterProvider<PlayerLifecycleHandler> {
 
     @Inject
-    public PlayerLifecycleHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations, TypeLiteral<PlayerLifecycleHandler> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public PlayerLifecycleHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<PlayerLifecycleHandler>> providers, TypeLiteral<PlayerLifecycleHandler> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }

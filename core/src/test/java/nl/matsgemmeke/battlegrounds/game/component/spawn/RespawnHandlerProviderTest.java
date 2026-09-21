@@ -32,7 +32,7 @@ class RespawnHandlerProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<RespawnHandler>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<RespawnHandler>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<RespawnHandler> typeLiteral = TypeLiteral.get(RespawnHandler.class);
     @InjectMocks
@@ -51,7 +51,7 @@ class RespawnHandlerProviderTest {
     @Test
     @DisplayName("get throws ComponentProvisionException when provider contains no implementation type for game context type")
     void get_noImplementationTypesFound() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
@@ -68,7 +68,7 @@ class RespawnHandlerProviderTest {
         Provider<RespawnHandler> freeplayRespawnHandlerProvider = mock();
         when(freeplayRespawnHandlerProvider.get()).thenReturn(respawnHandler);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayRespawnHandlerProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayRespawnHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

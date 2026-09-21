@@ -31,7 +31,7 @@ class PlayerLifecycleHandlerProviderTest {
     @Mock
     private GameScope gameScope;
     @Spy
-    private Map<GameContextType, Provider<PlayerLifecycleHandler>> implementations = new HashMap<>();
+    private Map<GameContextType, Provider<PlayerLifecycleHandler>> providers = new HashMap<>();
     @Spy
     private TypeLiteral<PlayerLifecycleHandler> typeLiteral = TypeLiteral.get(PlayerLifecycleHandler.class);
     @InjectMocks
@@ -50,7 +50,7 @@ class PlayerLifecycleHandlerProviderTest {
     @Test
     @DisplayName("get throws ComponentProvisionException when provider contains no implementation type for game context type")
     void get_noImplementationTypesFound() {
-        implementations.put(GameContextType.ARENA_MODE, mock());
+        providers.put(GameContextType.ARENA_MODE, mock());
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
@@ -67,7 +67,7 @@ class PlayerLifecycleHandlerProviderTest {
         Provider<PlayerLifecycleHandler> freeplayPlayerLifecycleHandlerProvider = mock();
         when(freeplayPlayerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
 
-        implementations.put(GameContextType.FREEPLAY_MODE, freeplayPlayerLifecycleHandlerProvider);
+        providers.put(GameContextType.FREEPLAY_MODE, freeplayPlayerLifecycleHandlerProvider);
 
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 

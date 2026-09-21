@@ -12,11 +12,7 @@ import java.util.Map;
 public class StatePersistenceHandlerProvider extends ComponentRouterProvider<StatePersistenceHandler> {
 
     @Inject
-    public StatePersistenceHandlerProvider(
-            GameScope gameScope,
-            Map<GameContextType, Provider<StatePersistenceHandler>> implementations,
-            TypeLiteral<StatePersistenceHandler> typeLiteral
-    ) {
-        super(gameScope, implementations, typeLiteral);
+    public StatePersistenceHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<StatePersistenceHandler>> providers, TypeLiteral<StatePersistenceHandler> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }
