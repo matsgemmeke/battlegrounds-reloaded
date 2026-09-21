@@ -2,15 +2,20 @@ package nl.matsgemmeke.battlegrounds.game.component.storage;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,58 +24,55 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class StatePersistenceHandlerProviderTest {
+@ExtendWith(MockitoExtension.class)
+class StatePersistenceHandlerProviderTest {
 
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
+
+    @Mock
     private GameScope gameScope;
-    private TypeLiteral<StatePersistenceHandler> typeLiteral;
-
-    @BeforeEach
-    public void setUp() {
-        gameScope = mock(GameScope.class);
-        typeLiteral = TypeLiteral.get(StatePersistenceHandler.class);
-    }
+    @Spy
+    private Map<GameContextType, Provider<StatePersistenceHandler>> implementations = new HashMap<>();
+    @Spy
+    private TypeLiteral<StatePersistenceHandler> typeLiteral = TypeLiteral.get(StatePersistenceHandler.class);
+    @InjectMocks
+    private StatePersistenceHandlerProvider statePersistenceHandlerProvider;
 
     @Test
-    public void getThrowsComponentProvisionExceptionWhenGameScopeHasNoEnteredGameContext() {
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of();
-
+    @DisplayName("get throws ComponentProvisionException when game scope has no entered game context")
+    void get_noEnteredGameContext() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        StatePersistenceHandlerProvider provider = new StatePersistenceHandlerProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(statePersistenceHandlerProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
                 .hasMessage("Cannot provide instance of StatePersistenceHandler: the game scope is empty");
     }
 
     @Test
-    public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
+    @DisplayName("get throws ComponentProvisionException when no provider is available for game context type")
+    void get_noCompatibleProvider() {
+        implementations.put(GameContextType.ARENA_MODE, mock());
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        StatePersistenceHandlerProvider provider = new StatePersistenceHandlerProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(statePersistenceHandlerProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of StatePersistenceHandler: no implementation bound for ARENA_MODE");
+                .hasMessage("Cannot provide instance of StatePersistenceHandler: no implementation bound for FREEPLAY_MODE");
     }
 
     @Test
-    public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+    @DisplayName("get returns instance bound to game context type")
+    void get_successful() {
         FreeplayStatePersistenceHandler statePersistenceHandler = mock(FreeplayStatePersistenceHandler.class);
 
         Provider<StatePersistenceHandler> freeplayStatePersistenceHandlerProvider = mock();
         when(freeplayStatePersistenceHandlerProvider.get()).thenReturn(statePersistenceHandler);
 
-        Map<GameContextType, Provider<StatePersistenceHandler>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
+        implementations.put(GameContextType.FREEPLAY_MODE, freeplayStatePersistenceHandlerProvider);
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        StatePersistenceHandlerProvider provider = new StatePersistenceHandlerProvider(gameScope, implementations, typeLiteral);
-        StatePersistenceHandler result = provider.get();
+        StatePersistenceHandler result = statePersistenceHandlerProvider.get();
 
         assertThat(result).isEqualTo(statePersistenceHandler);
     }

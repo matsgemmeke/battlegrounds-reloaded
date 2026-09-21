@@ -61,7 +61,9 @@ class GameContextProviderTest {
     @DisplayName("getGameContext returns optional with game context corresponding to given game key")
     void getGameContext_matchingGameKey() {
         GameKey gameKey = GameKey.ofFreeplay();
-        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
+
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getGameKey()).thenReturn(gameKey);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
         Optional<GameContext> result = gameContextProvider.getGameContext(gameKey);
@@ -74,7 +76,9 @@ class GameContextProviderTest {
     void getGameContext_noMatches() {
         GameKey gameKey = GameKey.ofFreeplay();
         GameKey otherKey = GameKey.ofArena(1);
-        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
+
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getGameKey()).thenReturn(gameKey);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
         Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(otherKey);
@@ -94,7 +98,7 @@ class GameContextProviderTest {
     @DisplayName("getGameContext returns optional with game context registered to given entity id")
     void getGameContext_registeredEntityId() {
         GameKey gameKey = GameKey.ofFreeplay();
-        GameContext gameContext = new GameContext(gameKey, GameContextType.FREEPLAY_MODE);
+        GameContext gameContext = mock(GameContext.class);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
         gameContextProvider.registerEntity(ENTITY_ID, gameKey);

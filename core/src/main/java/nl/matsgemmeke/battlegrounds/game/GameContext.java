@@ -6,7 +6,7 @@ import com.google.inject.Provider;
 import java.util.HashMap;
 import java.util.Map;
 
-public class GameContext {
+public abstract class GameContext {
 
     private final GameContextType type;
     private final GameKey gameKey;

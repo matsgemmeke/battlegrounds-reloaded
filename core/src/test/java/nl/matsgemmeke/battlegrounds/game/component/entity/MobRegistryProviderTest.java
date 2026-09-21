@@ -63,7 +63,7 @@ class MobRegistryProviderTest {
     }
 
     @Test
-    @DisplayName("get returns provider bound to active game context type")
+    @DisplayName("get returns instance bound to active game context type")
     void get_successful() {
         FreeplayMobRegistry mobRegistry = mock(FreeplayMobRegistry.class);
 

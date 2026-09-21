@@ -2,15 +2,20 @@ package nl.matsgemmeke.battlegrounds.game.component.damage;
 
 import com.google.inject.Provider;
 import com.google.inject.TypeLiteral;
-import nl.matsgemmeke.battlegrounds.game.GameContext;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.ComponentProvisionException;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.damage.FreeplayDamageProcessor;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
@@ -19,58 +24,55 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DamageProcessorProviderTest {
+@ExtendWith(MockitoExtension.class)
+class DamageProcessorProviderTest {
 
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
+
+    @Mock
     private GameScope gameScope;
-    private TypeLiteral<DamageProcessor> typeLiteral;
-
-    @BeforeEach
-    public void setUp() {
-        gameScope = mock(GameScope.class);
-        typeLiteral = TypeLiteral.get(DamageProcessor.class);
-    }
+    @Spy
+    private Map<GameContextType, Provider<DamageProcessor>> implementations = new HashMap<>();
+    @Spy
+    private TypeLiteral<DamageProcessor> typeLiteral = TypeLiteral.get(DamageProcessor.class);
+    @InjectMocks
+    private DamageProcessorProvider damageProcessorProvider;
 
     @Test
-    public void getThrowsComponentProvisionExceptionWhenGameScopeHasNoEnteredGameContext() {
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of();
-
+    @DisplayName("get throws ComponentProvisionException when game scope has no entered game context")
+    void get_noEnteredGameScope() {
         when(gameScope.getCurrentGameContext()).thenReturn(Optional.empty());
 
-        DamageProcessorProvider provider = new DamageProcessorProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(damageProcessorProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
                 .hasMessage("Cannot provide instance of DamageProcessor: the game scope is empty");
     }
 
     @Test
-    public void getThrowsComponentProvisionExceptionWhenImplementationContainsNoProviderForGameContextType() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.ARENA_MODE);
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, mock());
+    @DisplayName("get throws ComponentProvisionException when no provider is available for game context type")
+    void get_noCompatibleProvider() {
+        implementations.put(GameContextType.ARENA_MODE, mock());
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        DamageProcessorProvider provider = new DamageProcessorProvider(gameScope, implementations, typeLiteral);
-
-        assertThatThrownBy(provider::get)
+        assertThatThrownBy(damageProcessorProvider::get)
                 .isInstanceOf(ComponentProvisionException.class)
-                .hasMessage("Cannot provide instance of DamageProcessor: no implementation bound for ARENA_MODE");
+                .hasMessage("Cannot provide instance of DamageProcessor: no implementation bound for FREEPLAY_MODE");
     }
 
     @Test
-    public void getReturnsInstanceBoundToTypeOfActiveGameContext() {
-        GameContext gameContext = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+    @DisplayName("get returns instance bound to game context type")
+    void get_successful() {
         FreeplayDamageProcessor damageProcessor = mock(FreeplayDamageProcessor.class);
 
         Provider<DamageProcessor> freeplayDamageProcessorProvider = mock();
         when(freeplayDamageProcessorProvider.get()).thenReturn(damageProcessor);
 
-        Map<GameContextType, Provider<DamageProcessor>> implementations = Map.of(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
+        implementations.put(GameContextType.FREEPLAY_MODE, freeplayDamageProcessorProvider);
 
-        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(gameContext));
+        when(gameScope.getCurrentGameContext()).thenReturn(Optional.of(GAME_CONTEXT));
 
-        DamageProcessorProvider provider = new DamageProcessorProvider(gameScope, implementations, typeLiteral);
-        DamageProcessor result = provider.get();
+        DamageProcessor result = damageProcessorProvider.get();
 
         assertThat(result).isEqualTo(damageProcessor);
     }

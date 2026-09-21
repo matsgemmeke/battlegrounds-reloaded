@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
@@ -30,7 +31,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class PlayerDropItemEventHandlerTest {
 
-    private static final GameContext GAME_CONTEXT = new GameContext(GameKey.ofFreeplay(), GameContextType.FREEPLAY_MODE);
+    private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
     private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
