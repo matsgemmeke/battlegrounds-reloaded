@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.game;
+package nl.matsgemmeke.battlegrounds.arena;
 
 import com.google.inject.Key;
 import com.google.inject.Provider;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -9,14 +10,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class GameContextTest {
+class ArenaGameContextTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
+    private ArenaGameContext context;
+
+    @BeforeEach
+    void setUp() {
+        context = new ArenaGameContext(null, null);
+    }
 
     @Test
     @DisplayName("getScopedObject only creates instances once")
     void getScopedObject_createInstanceOnce() {
-        GameContext context = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
         Key<String> key = Key.get(String.class);
         AtomicInteger creationCount = new AtomicInteger();
 
@@ -35,7 +40,6 @@ public class GameContextTest {
     @Test
     @DisplayName("getScopedObject runs side effects of creator once")
     void getScopedObject_runsSideEffectsOnce() {
-        GameContext context = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
         Key<String> key = Key.get(String.class);
         AtomicInteger sideEffectCounter = new AtomicInteger();
 
