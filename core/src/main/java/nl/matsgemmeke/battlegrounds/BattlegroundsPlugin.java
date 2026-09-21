@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import nl.matsgemmeke.battlegrounds.arena.ArenaModule;
 import nl.matsgemmeke.battlegrounds.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
@@ -66,8 +67,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         PaperCommandManager commandManager = new PaperCommandManager(this);
 
         BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
+        ArenaModule arenaModule = new ArenaModule();
 
-        injector = Guice.createInjector(module);
+        injector = Guice.createInjector(module, arenaModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);

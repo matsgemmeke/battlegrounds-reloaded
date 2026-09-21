@@ -17,15 +17,12 @@ import java.util.logging.Logger;
 
 public class EventDispatcher {
 
-    @NotNull
     private final Logger logger;
-    @NotNull
     private final Map<Class<? extends Event>, List<EventHandlerMethod>> eventMethods;
-    @NotNull
     private final PluginManager pluginManager;
 
     @Inject
-    public EventDispatcher(@NotNull PluginManager pluginManager, @Named("Battlegrounds") @NotNull Logger logger) {
+    public EventDispatcher(PluginManager pluginManager, @Named("Battlegrounds") Logger logger) {
         this.pluginManager = pluginManager;
         this.logger = logger;
         this.eventMethods = new HashMap<>();
@@ -37,7 +34,7 @@ public class EventDispatcher {
      *
      * @param event the event to be dispatched
      */
-    public void dispatchExternalEvent(@NotNull Event event) {
+    public void dispatchExternalEvent(Event event) {
         // Dispatch the event internally so the plugin does not have to listen for its own events
         this.dispatchInternalEvent(event);
         // Call the outgoing event to the plugin manager
@@ -49,7 +46,7 @@ public class EventDispatcher {
      *
      * @param event the event to be dispatched
      */
-    public <T extends Event> void dispatchInternalEvent(@NotNull T event) {
+    public <T extends Event> void dispatchInternalEvent(T event) {
         for (Entry<Class<? extends Event>, List<EventHandlerMethod>> entry : eventMethods.entrySet()) {
             Class<? extends Event> eventClass = entry.getKey();
 
