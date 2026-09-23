@@ -7,12 +7,12 @@ import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.membership.JoinResult;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
-import java.util.UUID;
 import java.util.logging.Logger;
 
 public class JoinCommandExecutor {
@@ -20,7 +20,7 @@ public class JoinCommandExecutor {
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
     private final Logger logger;
-    private final Provider<PlayerRegistry> playerRegistryProvider;
+    private final Provider<MembershipService> membershipServiceProvider;
     private final Translator translator;
 
     @Inject
@@ -28,13 +28,13 @@ public class JoinCommandExecutor {
             GameContextProvider gameContextProvider,
             GameScope gameScope,
             @Named("Battlegrounds") Logger logger,
-            Provider<PlayerRegistry> playerRegistryProvider,
+            Provider<MembershipService> membershipServiceProvider,
             Translator translator
     ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
         this.logger = logger;
-        this.playerRegistryProvider = playerRegistryProvider;
+        this.membershipServiceProvider = membershipServiceProvider;
         this.translator = translator;
     }
 
@@ -48,20 +48,18 @@ public class JoinCommandExecutor {
             return;
         }
 
-        gameScope.runInScope(gameContext, () -> this.registerPlayer(player));
+        gameScope.runInScope(gameContext, () -> this.joinPlayer(player));
     }
 
-    private void registerPlayer(Player player) {
-        PlayerRegistry playerRegistry = playerRegistryProvider.get();
-        UUID playerId = player.getUniqueId();
+    private void joinPlayer(Player player) {
+        MembershipService membershipService = membershipServiceProvider.get();
+        JoinResult joinResult = membershipService.join(player);
 
-        if (playerRegistry.isRegistered(playerId)) {
-            logger.warning("Player %s passed arena join validation, but was already registered in its player registry".formatted(player.getName()));
-            player.sendMessage(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath()).getText());
-            return;
+        switch (joinResult) {
+            case ALREADY_IN_GAME -> {
+                logger.warning("Player %s passed arena join validation, but was already in game".formatted(player.getName()));
+                player.sendMessage(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath()).getText());
+            }
         }
-
-        playerRegistry.register(player);
-        player.sendMessage("joined");
     }
 }

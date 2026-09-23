@@ -4,7 +4,8 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.arena.ArenaGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import nl.matsgemmeke.battlegrounds.game.component.membership.JoinResult;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
@@ -17,7 +18,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
-import java.util.UUID;
 import java.util.logging.Logger;
 
 import static org.mockito.Mockito.*;
@@ -28,8 +28,6 @@ class JoinCommandExecutorTest {
     private static final int ARENA_ID = 1;
     private static final GameKey GAME_KEY = GameKey.ofArena(ARENA_ID);
     private static final ArenaGameContext GAME_CONTEXT = new ArenaGameContext(GAME_KEY, null);
-
-    private static final UUID PLAYER_ID = UUID.randomUUID();
     private static final String PLAYER_NAME = "TestPlayer";
 
     private static final String ARENA_NOT_AVAILABLE_MESSAGE = "arena not available";
@@ -42,11 +40,11 @@ class JoinCommandExecutorTest {
     @Mock
     private Logger logger;
     @Mock
+    private MembershipService membershipService;
+    @Mock
     private Player player;
     @Mock
-    private PlayerRegistry playerRegistry;
-    @Mock
-    private Provider<PlayerRegistry> playerRegistryProvider;
+    private Provider<MembershipService> membershipServiceProvider;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -70,30 +68,14 @@ class JoinCommandExecutorTest {
     void execute_playerAlreadyRegistered() {
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(true);
+        when(membershipServiceProvider.get()).thenReturn(membershipService);
+        when(membershipService.join(player)).thenReturn(JoinResult.ALREADY_IN_GAME);
         when(player.getName()).thenReturn(PLAYER_NAME);
         when(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(ALREADY_IN_ARENA_MODE_MESSAGE));
 
         commandExecutor.execute(player, ARENA_ID);
 
-        verify(logger).warning("Player TestPlayer passed arena join validation, but was already registered in its player registry");
+        verify(logger).warning("Player TestPlayer passed arena join validation, but was already in game");
         verify(player).sendMessage(ALREADY_IN_ARENA_MODE_MESSAGE);
-        verify(playerRegistry, never()).register(any(Player.class));
-    }
-
-    @Test
-    @DisplayName("execute registers player to player registry")
-    void execute_successful() {
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
-        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
-        when(playerRegistryProvider.get()).thenReturn(playerRegistry);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-        when(playerRegistry.isRegistered(PLAYER_ID)).thenReturn(false);
-
-        commandExecutor.execute(player, ARENA_ID);
-
-        verify(playerRegistry).register(player);
     }
 }
