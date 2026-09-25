@@ -18,7 +18,7 @@ public class JoinCommand extends BaseCommand {
 
     @Subcommand("join")
     @Syntax("<arena>")
-    @Conditions("arena-absence")
+    @Conditions("arena-mode-absence")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.join")
     public void onJoin(Player player, @Conditions("existent-arena-id") Integer arenaId) {

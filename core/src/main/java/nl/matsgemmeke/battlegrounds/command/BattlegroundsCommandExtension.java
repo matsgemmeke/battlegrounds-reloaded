@@ -24,6 +24,10 @@ public class BattlegroundsCommandExtension implements CommandExtension {
     private static final String JOIN_COMMAND_SUGGESTION = "/bg join ";
     private static final String[] JOIN_COMMAND_PERMISSIONS = new String[] { "battlegrounds.join" };
 
+    private static final String LEAVE_COMMAND_USAGE = "/bg leave";
+    private static final String LEAVE_COMMAND_SUGGESTION = "/bg leave";
+    private static final String[] LEAVE_COMMAND_PERMISSIONS = new String[] { "battlegrounds.leave" };
+
     private static final String RELOAD_COMMAND_USAGE = "/bg reload";
     private static final String RELOAD_COMMAND_SUGGESTION = "/bg reload";
     private static final String[] RELOAD_COMMAND_PERMISSIONS = new String[] { "battlegrounds.reload" };
@@ -53,6 +57,7 @@ public class BattlegroundsCommandExtension implements CommandExtension {
         String elementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT.getPath()).getText();
         String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).getText();
         String joinCommandDescription = translator.translate(TranslationKey.DESCRIPTION_JOIN.getPath()).getText();
+        String leaveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LEAVE.getPath()).getText();
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
         String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SET_MAIN_LOBBY.getPath()).getText();
         String toolsCommandDescription = translator.translate(TranslationKey.DESCRIPTION_TOOLS.getPath()).getText();
@@ -61,6 +66,7 @@ public class BattlegroundsCommandExtension implements CommandExtension {
         CommandInfo elementCommandInfo = new CommandInfo(elementCommandDescription, ELEMENT_COMMAND_USAGE, ELEMENT_COMMAND_SUGGESTION, ELEMENT_COMMAND_PERMISSIONS);
         CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GIVE_WEAPON_COMMAND_USAGE, GIVE_WEAPON_COMMAND_SUGGESTION, GIVE_WEAPON_COMMAND_PERMISSIONS);
         CommandInfo joinCommandInfo = new CommandInfo(joinCommandDescription, JOIN_COMMAND_USAGE, JOIN_COMMAND_SUGGESTION, JOIN_COMMAND_PERMISSIONS);
+        CommandInfo leaveCommandInfo = new CommandInfo(leaveCommandDescription, LEAVE_COMMAND_USAGE, LEAVE_COMMAND_SUGGESTION, LEAVE_COMMAND_PERMISSIONS);
         CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, RELOAD_COMMAND_USAGE, RELOAD_COMMAND_SUGGESTION, RELOAD_COMMAND_PERMISSIONS);
         CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SET_MAIN_LOBBY_COMMAND_USAGE, SET_MAIN_LOBBY_COMMAND_SUGGESTION, SET_MAIN_LOBBY_COMMAND_PERMISSIONS);
         CommandInfo toolsCommandInfo = new CommandInfo(toolsCommandDescription, TOOLS_COMMAND_USAGE, TOOLS_COMMAND_SUGGESTION, TOOLS_COMMAND_PERMISSIONS);
@@ -69,6 +75,7 @@ public class BattlegroundsCommandExtension implements CommandExtension {
         bgCommand.addCommandInfo(elementCommandInfo);
         bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(joinCommandInfo);
+        bgCommand.addCommandInfo(leaveCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
         bgCommand.addCommandInfo(setMainLobbyCommandInfo);
         bgCommand.addCommandInfo(toolsCommandInfo);

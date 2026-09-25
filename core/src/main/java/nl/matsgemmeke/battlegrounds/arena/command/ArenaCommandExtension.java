@@ -60,6 +60,7 @@ public class ArenaCommandExtension implements CommandExtension {
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
     private final JoinCommand joinCommand;
+    private final LeaveCommand leaveCommand;
     private final LobbyCommand lobbyCommand;
     private final MapCommand mapCommand;
 
@@ -68,6 +69,7 @@ public class ArenaCommandExtension implements CommandExtension {
     private final ElementIdCommandCompletionHandler elementIdCommandCompletionHandler;
 
     private final ArenaModeAbsenceCondition arenaModeAbsenceCondition;
+    private final ArenaModePresenceCondition arenaModePresenceCondition;
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
     private final ExistentLobbyCondition existentLobbyCondition;
@@ -83,12 +85,14 @@ public class ArenaCommandExtension implements CommandExtension {
             ArenaCommand arenaCommand,
             ElementCommand elementCommand,
             JoinCommand joinCommand,
+            LeaveCommand leaveCommand,
             LobbyCommand lobbyCommand,
             MapCommand mapCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
             ElementIdCommandCompletionHandler elementIdCommandCompletionHandler,
             ArenaModeAbsenceCondition arenaModeAbsenceCondition,
+            ArenaModePresenceCondition arenaModePresenceCondition,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
             ExistentLobbyCondition existentLobbyCondition,
@@ -101,12 +105,14 @@ public class ArenaCommandExtension implements CommandExtension {
         this.arenaCommand = arenaCommand;
         this.elementCommand = elementCommand;
         this.joinCommand = joinCommand;
+        this.leaveCommand = leaveCommand;
         this.lobbyCommand = lobbyCommand;
         this.mapCommand = mapCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
         this.elementIdCommandCompletionHandler = elementIdCommandCompletionHandler;
         this.arenaModeAbsenceCondition = arenaModeAbsenceCondition;
+        this.arenaModePresenceCondition = arenaModePresenceCondition;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
         this.existentLobbyCondition = existentLobbyCondition;
@@ -156,6 +162,7 @@ public class ArenaCommandExtension implements CommandExtension {
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);
         commandManager.registerCommand(joinCommand);
+        commandManager.registerCommand(leaveCommand);
         commandManager.registerCommand(lobbyCommand);
         commandManager.registerCommand(mapCommand);
 
@@ -171,7 +178,8 @@ public class ArenaCommandExtension implements CommandExtension {
         commandConditions.addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
-        commandConditions.addCondition("arena-absence", arenaModeAbsenceCondition);
+        commandConditions.addCondition("arena-mode-absence", arenaModeAbsenceCondition);
+        commandConditions.addCondition("arena-mode-presence", arenaModePresenceCondition);
         commandConditions.addCondition("map-selected", mapSelectedCondition);
     }
 }

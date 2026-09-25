@@ -23,6 +23,7 @@ public enum TranslationKey {
     DESCRIPTION_ELEMENT_REMOVE("commands.description-element-remove"),
     DESCRIPTION_GIVE_WEAPON("commands.description-give-weapon"),
     DESCRIPTION_JOIN("commands.description-join"),
+    DESCRIPTION_LEAVE("commands.description-leave"),
     DESCRIPTION_LOBBY("commands.description-lobby"),
     DESCRIPTION_LOBBY_REMOVE("commands.description-lobby-remove"),
     DESCRIPTION_LOBBY_SET("commands.description-lobby-set"),
