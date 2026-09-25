@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
+import nl.matsgemmeke.battlegrounds.arena.command.executor.lobby.RemoveLobbyCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.lobby.SetLobbyCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
@@ -32,6 +33,8 @@ class LobbyCommandTest {
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena lobby test ";
     private static final String[] SUBCOMMAND_PERMISSIONS = new String[0];
 
+    @Mock
+    private RemoveLobbyCommandExecutor removeLobbyCommandExecutor;
     @Mock
     private SetLobbyCommandExecutor setLobbyCommandExecutor;
     @Mock
@@ -86,6 +89,14 @@ class LobbyCommandTest {
         verify(sender).sendMessage(LOBBY_HELP_MENU_HEADER_MESSAGE);
         verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
         verify(sender).sendMessage(LOBBY_HELP_MENU_FOOTER_MESSAGE);
+    }
+
+    @Test
+    @DisplayName("onRemove delegates to remove lobby executor")
+    void onRemove() {
+        command.onRemove(player, ARENA_ID);
+
+        verify(removeLobbyCommandExecutor).execute(player, ARENA_ID);
     }
 
     @Test

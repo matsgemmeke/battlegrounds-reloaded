@@ -83,6 +83,11 @@ public class ArenaSetupConfiguration {
         return configurationFile.getRootSection().getSection(LOBBY_PATH).map(locationDataSerializer::deserialize);
     }
 
+    public void removeLobby() {
+        configurationFile.getRootSection().removeSection(LOBBY_PATH);
+        configurationFile.save();
+    }
+
     public void setLobby(LocationData locationData) {
         Section rootSection = configurationFile.getRootSection();
         Section lobbySection = rootSection.getSection(LOBBY_PATH).orElseGet(() -> rootSection.createSection(LOBBY_PATH));

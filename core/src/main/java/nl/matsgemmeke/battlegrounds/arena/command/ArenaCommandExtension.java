@@ -29,6 +29,10 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
+    private static final String REMOVE_LOBBY_COMMAND_USAGE = "/bg arena lobby remove <arena>";
+    private static final String REMOVE_LOBBY_COMMAND_SUGGESTION = "/bg arena lobby remove ";
+    private static final String[] REMOVE_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby.remove" };
+
     private static final String SET_LOBBY_COMMAND_USAGE = "/bg arena lobby set <arena>";
     private static final String SET_LOBBY_COMMAND_SUGGESTION = "/bg arena lobby set ";
     private static final String[] SET_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby.set" };
@@ -66,6 +70,7 @@ public class ArenaCommandExtension implements CommandExtension {
     private final ArenaModeAbsenceCondition arenaModeAbsenceCondition;
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
+    private final ExistentLobbyCondition existentLobbyCondition;
     private final ExistentMapNameCondition existentMapNameCondition;
     private final NonexistentMapNameCondition nonexistentMapNameCondition;
     private final MapSelectedCondition mapSelectedCondition;
@@ -86,6 +91,7 @@ public class ArenaCommandExtension implements CommandExtension {
             ArenaModeAbsenceCondition arenaModeAbsenceCondition,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
+            ExistentLobbyCondition existentLobbyCondition,
             ExistentMapNameCondition existentMapNameCondition,
             NonexistentMapNameCondition nonexistentMapNameCondition,
             MapSelectedCondition mapSelectedCondition,
@@ -103,6 +109,7 @@ public class ArenaCommandExtension implements CommandExtension {
         this.arenaModeAbsenceCondition = arenaModeAbsenceCondition;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
+        this.existentLobbyCondition = existentLobbyCondition;
         this.existentMapNameCondition = existentMapNameCondition;
         this.nonexistentMapNameCondition = nonexistentMapNameCondition;
         this.mapSelectedCondition = mapSelectedCondition;
@@ -124,8 +131,10 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
         // Lobby commands
+        String lobbyRemoveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_REMOVE.getPath()).getText();
         String lobbySetCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_SET.getPath()).getText();
 
+        lobbyCommand.addCommandInfo(new CommandInfo(lobbyRemoveCommandDescription, REMOVE_LOBBY_COMMAND_USAGE, REMOVE_LOBBY_COMMAND_SUGGESTION, REMOVE_LOBBY_COMMAND_PERMISSIONS));
         lobbyCommand.addCommandInfo(new CommandInfo(lobbySetCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
 
         // Map commands
@@ -158,6 +167,7 @@ public class ArenaCommandExtension implements CommandExtension {
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        commandConditions.addCondition(Integer.class, "existent-lobby", existentLobbyCondition);
         commandConditions.addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);

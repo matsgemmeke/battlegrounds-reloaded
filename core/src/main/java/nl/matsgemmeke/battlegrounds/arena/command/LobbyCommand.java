@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.lobby.RemoveLobbyCommandExecutor;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.lobby.SetLobbyCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
@@ -19,13 +20,15 @@ import java.util.List;
 @CommandPermission("battlegrounds.lobby")
 public class LobbyCommand extends BaseCommand {
 
+    private final RemoveLobbyCommandExecutor removeLobbyCommandExecutor;
     private final SetLobbyCommandExecutor setLobbyCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public LobbyCommand(SetLobbyCommandExecutor setLobbyCommandExecutor, HelpMenu helpMenu, Translator translator) {
+    public LobbyCommand(RemoveLobbyCommandExecutor removeLobbyCommandExecutor, SetLobbyCommandExecutor setLobbyCommandExecutor, HelpMenu helpMenu, Translator translator) {
+        this.removeLobbyCommandExecutor = removeLobbyCommandExecutor;
         this.setLobbyCommandExecutor = setLobbyCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
@@ -52,6 +55,14 @@ public class LobbyCommand extends BaseCommand {
         }
 
         sender.sendMessage(translator.translate(TranslationKey.LOBBY_HELP_MENU_FOOTER.getPath()).getText());
+    }
+
+    @Subcommand("remove")
+    @Syntax("<arena>")
+    @CommandCompletion("@arena-id")
+    @CommandPermission("battlegrounds.lobby.remove")
+    public void onRemove(Player player, @Conditions("existent-arena-id|existent-lobby") Integer arenaId) {
+        removeLobbyCommandExecutor.execute(player, arenaId);
     }
 
     @Subcommand("set")

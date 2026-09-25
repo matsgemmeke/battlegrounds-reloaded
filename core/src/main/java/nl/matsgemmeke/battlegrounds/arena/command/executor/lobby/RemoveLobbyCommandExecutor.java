@@ -1,0 +1,54 @@
+package nl.matsgemmeke.battlegrounds.arena.command.executor.lobby;
+
+import com.google.inject.Inject;
+import com.google.inject.name.Named;
+import nl.matsgemmeke.battlegrounds.arena.Arena;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
+import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
+import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import org.bukkit.entity.Player;
+
+import java.util.Map;
+import java.util.logging.Logger;
+
+public class RemoveLobbyCommandExecutor {
+
+    private final ArenaRegistry arenaRegistry;
+    private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
+    private final Logger logger;
+    private final Translator translator;
+
+    @Inject
+    public RemoveLobbyCommandExecutor(
+            ArenaRegistry arenaRegistry,
+            ArenaSetupConfigurationProvider arenaSetupConfigurationProvider,
+            @Named("Battlegrounds") Logger logger,
+            Translator translator
+    ) {
+        this.arenaRegistry = arenaRegistry;
+        this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
+        this.logger = logger;
+        this.translator = translator;
+    }
+
+    public void execute(Player player, int arenaId) {
+        Arena arena = arenaRegistry.getArena(arenaId).orElse(null);
+
+        if (arena == null) {
+            logger.warning("Player %s attempted to remove the lobby for arena %s, however no arena was found for this validated arena id".formatted(player.getName(), arenaId));
+            player.sendMessage(translator.translate(TranslationKey.LOBBY_REMOVE_FAILED.getPath()).getText());
+            return;
+        }
+
+        arena.setLobbyLocation(null);
+
+        ArenaSetupConfiguration arenaSetupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
+        arenaSetupConfiguration.removeLobby();
+
+        Map<String, Object> values = Map.of("bg_arena_id", arenaId);
+
+        player.sendMessage(translator.translate(TranslationKey.LOBBY_REMOVE_SUCCESSFUL.getPath()).replace(values));
+    }
+}
