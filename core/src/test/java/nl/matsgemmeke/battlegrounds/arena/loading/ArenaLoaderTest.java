@@ -10,7 +10,10 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.loading.element.CompositeElementFactory;
 import nl.matsgemmeke.battlegrounds.arena.map.element.Element;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
+import org.bukkit.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +25,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -51,6 +55,8 @@ class ArenaLoaderTest {
     private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     @Mock
     private CompositeElementFactory compositeElementFactory;
+    @Mock
+    private LocationMapper locationMapper;
     @InjectMocks
     private ArenaLoader arenaLoader;
 
@@ -68,21 +74,50 @@ class ArenaLoaderTest {
     }
 
     @Test
-    @DisplayName("loadArena loads content from configuration files and registers new arena instance to the game context provider")
-    void loadArena_successful() {
+    @DisplayName("loadArena loads setup with lobby location from configuration files")
+    void loadArena_withoutLobby() {
         ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
-        ElementData elementData = mock(ElementData.class);
-        Element element = mock(Element.class);
-        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY, List.of(elementData));
 
         ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
         when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);
 
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        when(setupConfiguration.getLobby()).thenReturn(Optional.empty());
+        when(setupConfiguration.getMaps()).thenReturn(List.of());
+
+        when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
+        when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
+
+        arenaLoader.loadArena(ARENA_ID);
+
+        ArgumentCaptor<Arena> arenaCaptor = ArgumentCaptor.forClass(Arena.class);
+        verify(arenaRegistry).addArena(eq(GameKey.ofArena(ARENA_ID)), arenaCaptor.capture());
+
+        assertThat(arenaCaptor.getValue()).satisfies(arena -> {
+            assertThat(arena.getLobbyLocation()).isEmpty();
+        });
+    }
+
+    @Test
+    @DisplayName("loadArena loads complete setup from configuration files and registers new arena instance to the registry")
+    void loadArena_successful() {
+        ArenaSettingsSpec settingsSpec = new ArenaSettingsSpec(LOBBY_COUNTDOWN_LENGTH, MAX_PLAYERS, MIN_PLAYERS);
+        ElementData elementData = mock(ElementData.class);
+        Element element = mock(Element.class);
+        ArenaMapData mapData = new ArenaMapData(MAP_NAME, MAP_CREATED_AT, MAP_CREATED_BY, List.of(elementData));
+        LocationData lobbyLocationData = new LocationData(null, null, null, null, null, null);
+        Location lobbyLocation = new Location(null, 1.1, 2.2, 3.3, 90.0f, 0.0f);
+
+        ArenaSettingsConfiguration settingsConfiguration = mock(ArenaSettingsConfiguration.class);
+        when(settingsConfiguration.getArenaSettings()).thenReturn(settingsSpec);
+
+        ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        when(setupConfiguration.getLobby()).thenReturn(Optional.of(lobbyLocationData));
         when(setupConfiguration.getMaps()).thenReturn(List.of(mapData));
 
         when(arenaSettingsConfigurationProvider.get(ARENA_ID)).thenReturn(settingsConfiguration);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
+        when(locationMapper.toLocation(lobbyLocationData)).thenReturn(lobbyLocation);
         when(compositeElementFactory.create(elementData)).thenReturn(element);
 
         arenaLoader.loadArena(ARENA_ID);
@@ -97,6 +132,7 @@ class ArenaLoaderTest {
                 assertThat(settings.getMaxPlayers()).isEqualTo(MAX_PLAYERS);
                 assertThat(settings.getMinPlayers()).isEqualTo(MIN_PLAYERS);
             });
+            assertThat(arena.getLobbyLocation()).hasValue(lobbyLocation);
             assertThat(arena.getMaps()).satisfiesExactly(map -> {
                 assertThat(map.getName()).isEqualTo(MAP_NAME);
                 assertThat(map.getMetadata().createdAt()).isEqualTo(MAP_CREATED_AT);

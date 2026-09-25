@@ -12,7 +12,10 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
 import nl.matsgemmeke.battlegrounds.arena.mapper.ArenaSettingsMapper;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
+import org.bukkit.Location;
 
 /**
  * Responsible for loading in a single arena.
@@ -24,6 +27,7 @@ public class ArenaLoader {
     private final ArenaSettingsMapper arenaSettingsMapper;
     private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
     private final CompositeElementFactory compositeElementFactory;
+    private final LocationMapper locationMapper;
 
     @Inject
     public ArenaLoader(
@@ -31,13 +35,15 @@ public class ArenaLoader {
             ArenaSettingsConfigurationProvider arenaSettingsConfigurationProvider,
             ArenaSettingsMapper arenaSettingsMapper,
             ArenaSetupConfigurationProvider arenaSetupConfigurationProvider,
-            CompositeElementFactory compositeElementFactory
+            CompositeElementFactory compositeElementFactory,
+            LocationMapper locationMapper
     ) {
         this.arenaRegistry = arenaRegistry;
         this.arenaSettingsConfigurationProvider = arenaSettingsConfigurationProvider;
         this.arenaSettingsMapper = arenaSettingsMapper;
         this.arenaSetupConfigurationProvider = arenaSetupConfigurationProvider;
         this.compositeElementFactory = compositeElementFactory;
+        this.locationMapper = locationMapper;
     }
 
     public void loadArena(int arenaId) {
@@ -50,6 +56,7 @@ public class ArenaLoader {
         Arena arena = new Arena(arenaId, settings);
 
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
+        setupConfiguration.getLobby().ifPresent(locationData -> this.loadLobby(arena, locationData));
         setupConfiguration.getMaps().forEach(data -> this.loadMap(arena, data));
 
         arenaRegistry.addArena(gameKey, arena);
@@ -61,6 +68,12 @@ public class ArenaLoader {
         } catch (InvalidArenaSettingsSpecException ex) {
             throw new InvalidArenaSetupException("Failed to load setup for arena %s".formatted(arenaId), ex);
         }
+    }
+
+    private void loadLobby(Arena arena, LocationData locationData) {
+        Location location = locationMapper.toLocation(locationData);
+
+        arena.setLobbyLocation(location);
     }
 
     private void loadMap(Arena arena, ArenaMapData mapData) {
