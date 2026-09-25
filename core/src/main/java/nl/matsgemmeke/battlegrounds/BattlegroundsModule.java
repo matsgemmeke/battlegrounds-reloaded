@@ -48,6 +48,8 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameE
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipProvider;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
@@ -262,6 +264,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(ItemInteractionDispatcher.class).toProvider(ItemInteractionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
         binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
+        binder.bind(MembershipService.class).toProvider(MembershipProvider.class).in(GameScoped.class);
         binder.bind(MobRegistry.class).toProvider(MobRegistryProvider.class).in(GameScoped.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
