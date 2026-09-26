@@ -42,7 +42,7 @@ class BattlegroundsCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(bgCommand, times(7)).addCommandInfo(any(CommandInfo.class));
+        verify(bgCommand, times(8)).addCommandInfo(any(CommandInfo.class));
         verify(commandConditions).addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
     }
 }

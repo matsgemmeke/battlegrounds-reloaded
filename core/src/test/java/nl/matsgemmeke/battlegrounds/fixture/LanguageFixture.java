@@ -1,5 +1,6 @@
 package nl.matsgemmeke.battlegrounds.fixture;
 
+import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.IOException;
@@ -12,6 +13,20 @@ public final class LanguageFixture {
     private static Map<String, Object> translations;
 
     private LanguageFixture() {
+    }
+
+    public static TextTemplate getTextTemplate(String translationKey) {
+        if (translations == null) {
+            load();
+        }
+
+        Object value = resolve(translationKey);
+
+        if (value == null) {
+            throw new IllegalArgumentException("No translation found for key: " + translationKey);
+        }
+
+        return new TextTemplate(String.valueOf(value));
     }
 
     public static String getTranslation(String translationKey) {
