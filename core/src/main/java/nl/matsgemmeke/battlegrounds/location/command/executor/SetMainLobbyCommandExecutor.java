@@ -1,10 +1,10 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.location.command.executor;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.location.configuration.LocationConfiguration;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import nl.matsgemmeke.battlegrounds.util.world.LocationUtils;
 import org.bukkit.Location;
@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 public class SetMainLobbyCommandExecutor {
 
-    private final DataConfiguration dataConfiguration;
+    private final LocationConfiguration locationConfiguration;
     private final LocationMapper locationMapper;
     private final Translator translator;
 
     @Inject
-    public SetMainLobbyCommandExecutor(DataConfiguration dataConfiguration, LocationMapper locationMapper, Translator translator) {
-        this.dataConfiguration = dataConfiguration;
+    public SetMainLobbyCommandExecutor(LocationConfiguration locationConfiguration, LocationMapper locationMapper, Translator translator) {
+        this.locationConfiguration = locationConfiguration;
         this.locationMapper = locationMapper;
         this.translator = translator;
     }
@@ -28,7 +28,7 @@ public class SetMainLobbyCommandExecutor {
         Location location = LocationUtils.getCenterLocation(player.getLocation());
         LocationData locationData = locationMapper.toLocationData(location);
 
-        dataConfiguration.setMainLobbyLocation(locationData);
+        locationConfiguration.setMainLobbyLocation(locationData);
 
         player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath()).getText());
     }

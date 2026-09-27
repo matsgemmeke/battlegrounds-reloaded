@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.data;
+package nl.matsgemmeke.battlegrounds.location.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
@@ -15,13 +15,13 @@ import java.io.File;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @ExtendWith(MockitoExtension.class)
-class DataConfigurationFileProviderTest {
+class LocationConfigurationFileProviderTest {
 
     @Spy
     @TempDir
     private File dataFolder;
     @InjectMocks
-    private DataConfigurationFileProvider provider;
+    private LocationConfigurationFileProvider provider;
 
     @Test
     @DisplayName("get returns YamlConfigurationFile instance with loaded yml file")

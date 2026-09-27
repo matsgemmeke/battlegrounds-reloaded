@@ -1,11 +1,11 @@
-package nl.matsgemmeke.battlegrounds.command;
+package nl.matsgemmeke.battlegrounds.location.command.executor;
 
-import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.location.configuration.LocationConfiguration;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -33,11 +33,11 @@ class SetMainLobbyCommandExecutorTest {
     private static final TextTemplate MAIN_LOBBY_SET_TEXT_TEMPLATE = LanguageFixture.getTextTemplate(TranslationKey.MAIN_LOBBY_SET.getPath());
 
     @Mock
-    private DataConfiguration dataConfiguration;
-    @Mock
-    private Player player;
+    private LocationConfiguration locationConfiguration;
     @Mock
     private LocationMapper locationMapper;
+    @Mock
+    private Player player;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -56,7 +56,7 @@ class SetMainLobbyCommandExecutorTest {
         commandExecutor.execute(player);
 
         ArgumentCaptor<LocationData> locationDataCaptor = ArgumentCaptor.forClass(LocationData.class);
-        verify(dataConfiguration).setMainLobbyLocation(locationDataCaptor.capture());
+        verify(locationConfiguration).setMainLobbyLocation(locationDataCaptor.capture());
 
         assertThat(locationDataCaptor.getValue()).satisfies(locationData -> {
             assertThat(locationData.world()).isEqualTo(PLAYER_LOCATION_WORLD);

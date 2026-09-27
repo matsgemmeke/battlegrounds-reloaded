@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.data;
+package nl.matsgemmeke.battlegrounds.location.configuration;
 
 import com.google.inject.Inject;
 import com.google.inject.Provider;
@@ -8,20 +8,20 @@ import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 
 import java.io.File;
 
-public class DataConfigurationFileProvider implements Provider<ConfigurationFile> {
+public class LocationConfigurationFileProvider implements Provider<ConfigurationFile> {
 
     private final File dataFolder;
 
     @Inject
-    public DataConfigurationFileProvider(@Named("DataFolder") File dataFolder) {
+    public LocationConfigurationFileProvider(@Named("dataFolder") File dataFolder) {
         this.dataFolder = dataFolder;
     }
 
     @Override
     public ConfigurationFile get() {
-        File dataFile = new File(dataFolder.getAbsoluteFile(), "data.yml");
+        File locationsFile = new File(dataFolder.getAbsoluteFile(), "locations.yml");
 
-        YamlConfigurationFile configurationFile = new YamlConfigurationFile(dataFile);
+        YamlConfigurationFile configurationFile = new YamlConfigurationFile(locationsFile);
         configurationFile.load();
         return configurationFile;
     }

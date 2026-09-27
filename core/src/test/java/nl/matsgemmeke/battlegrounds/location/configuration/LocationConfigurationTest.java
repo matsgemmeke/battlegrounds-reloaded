@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.data;
+package nl.matsgemmeke.battlegrounds.location.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class DataConfigurationTest {
+class LocationConfigurationTest {
 
     private static final String WORLD = "world";
     private static final double X = 1.1;
@@ -34,7 +34,7 @@ class DataConfigurationTest {
     @Mock
     private Section rootSection;
     @InjectMocks
-    private DataConfiguration dataConfiguration;
+    private LocationConfiguration locationConfiguration;
 
     @Test
     @DisplayName("getMainLobbyLocation returns empty optional when main lobby section does not exist")
@@ -42,7 +42,7 @@ class DataConfigurationTest {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
         when(rootSection.getSection("main-lobby")).thenReturn(Optional.empty());
 
-        Optional<LocationData> locationDataOptional = dataConfiguration.getMainLobbyLocation();
+        Optional<LocationData> locationDataOptional = locationConfiguration.getMainLobbyLocation();
 
         assertThat(locationDataOptional).isEmpty();
     }
@@ -61,7 +61,7 @@ class DataConfigurationTest {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
         when(rootSection.getSection("main-lobby")).thenReturn(Optional.of(mainLobbySection));
 
-        Optional<LocationData> locationDataOptional = dataConfiguration.getMainLobbyLocation();
+        Optional<LocationData> locationDataOptional = locationConfiguration.getMainLobbyLocation();
 
         assertThat(locationDataOptional).hasValueSatisfying(locationData -> {
             assertThat(locationData.world()).isEqualTo(WORLD);
@@ -82,7 +82,7 @@ class DataConfigurationTest {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
         when(rootSection.getSection("main-lobby")).thenReturn(Optional.of(mainLobbySection));
 
-        dataConfiguration.setMainLobbyLocation(locationData);
+        locationConfiguration.setMainLobbyLocation(locationData);
 
         verify(locationDataSerializer).serialize(locationData, mainLobbySection);
         verify(configurationFile).save();
@@ -98,7 +98,7 @@ class DataConfigurationTest {
         when(rootSection.getSection("main-lobby")).thenReturn(Optional.empty());
         when(rootSection.createSection("main-lobby")).thenReturn(mainLobbySection);
 
-        dataConfiguration.setMainLobbyLocation(locationData);
+        locationConfiguration.setMainLobbyLocation(locationData);
 
         verify(locationDataSerializer).serialize(locationData, mainLobbySection);
         verify(configurationFile).save();

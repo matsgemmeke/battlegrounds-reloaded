@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.configuration.data;
+package nl.matsgemmeke.battlegrounds.location.configuration;
 
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSeri
 
 import java.util.Optional;
 
-public class DataConfiguration {
+public class LocationConfiguration {
 
     private static final String MAIN_LOBBY_PATH = "main-lobby";
 
@@ -17,7 +17,7 @@ public class DataConfiguration {
     private final LocationDataSerializer locationDataSerializer;
 
     @Inject
-    public DataConfiguration(@Named("data") ConfigurationFile configurationFile, LocationDataSerializer locationDataSerializer) {
+    public LocationConfiguration(@Named("data") ConfigurationFile configurationFile, LocationDataSerializer locationDataSerializer) {
         this.configurationFile = configurationFile;
         this.locationDataSerializer = locationDataSerializer;
     }

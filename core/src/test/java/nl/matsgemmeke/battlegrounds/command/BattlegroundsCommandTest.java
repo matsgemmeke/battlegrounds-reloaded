@@ -30,8 +30,6 @@ class BattlegroundsCommandTest {
     @Mock
     private ReloadCommandExecutor reloadCommandExecutor;
     @Mock
-    private SetMainLobbyCommandExecutor setMainLobbyCommandExecutor;
-    @Mock
     private HelpMenu helpMenu;
     @Mock
     private Player player;
@@ -99,13 +97,5 @@ class BattlegroundsCommandTest {
         bgCommand.onReload(player);
 
         verify(reloadCommandExecutor).execute(player);
-    }
-
-    @Test
-    @DisplayName("onSetMainLobby delegates to SetMainLobbyCommandExecutor")
-    void onSetMainLobby() {
-        bgCommand.onSetMainLobby(player);
-
-        verify(setMainLobbyCommandExecutor).execute(player);
     }
 }

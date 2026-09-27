@@ -335,7 +335,7 @@ public class BattlegroundsModule implements Module {
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("ArenasFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "arenas"));
-        binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
+        binder.bind(File.class).annotatedWith(Names.named("dataFolder")).toInstance(dataFolder);
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
     }

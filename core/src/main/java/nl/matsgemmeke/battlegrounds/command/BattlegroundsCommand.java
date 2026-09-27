@@ -16,7 +16,6 @@ public class BattlegroundsCommand extends BaseCommand {
 
     private final GiveWeaponCommandExecutor giveWeaponCommandExecutor;
     private final ReloadCommandExecutor reloadCommandExecutor;
-    private final SetMainLobbyCommandExecutor setMainLobbyCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
@@ -25,13 +24,11 @@ public class BattlegroundsCommand extends BaseCommand {
     public BattlegroundsCommand(
             GiveWeaponCommandExecutor giveWeaponCommandExecutor,
             ReloadCommandExecutor reloadCommandExecutor,
-            SetMainLobbyCommandExecutor setMainLobbyCommandExecutor,
             HelpMenu helpMenu,
             Translator translator
     ) {
         this.giveWeaponCommandExecutor = giveWeaponCommandExecutor;
         this.reloadCommandExecutor = reloadCommandExecutor;
-        this.setMainLobbyCommandExecutor = setMainLobbyCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -72,11 +69,5 @@ public class BattlegroundsCommand extends BaseCommand {
     @Subcommand("reload")
     public void onReload(CommandSender sender) {
         reloadCommandExecutor.execute(sender);
-    }
-
-    @CommandPermission("battlegrounds.setmainlobby")
-    @Subcommand("setmainlobby")
-    public void onSetMainLobby(Player player) {
-        setMainLobbyCommandExecutor.execute(player);
     }
 }
