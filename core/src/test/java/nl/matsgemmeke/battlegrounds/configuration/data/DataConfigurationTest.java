@@ -1,78 +1,106 @@
 package nl.matsgemmeke.battlegrounds.configuration.data;
 
-import org.bukkit.Location;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSerializer;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.io.TempDir;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.Mockito.*;
 
-public class DataConfigurationTest {
+@ExtendWith(MockitoExtension.class)
+class DataConfigurationTest {
 
-    private File dataFile;
-    @TempDir
-    private Path tempDir;
+    private static final String WORLD = "world";
+    private static final double X = 1.1;
+    private static final double Y = 2.2;
+    private static final double Z = 3.3;
+    private static final float YAW = 90.0f;
+    private static final float PITCH = 0.0f;
 
-    @BeforeEach
-    public void setUp() throws IOException {
-        dataFile = Files.createFile(tempDir.resolve("data.yml")).toFile();
-    }
+    @Mock
+    private ConfigurationFile configurationFile;
+    @Spy
+    private LocationDataSerializer locationDataSerializer;
+    @Mock
+    private Section rootSection;
+    @InjectMocks
+    private DataConfiguration dataConfiguration;
 
-    @AfterEach
-    public void tearDown() {
-        // Activate garbage collector to release file lock
-        System.gc();
+    @Test
+    @DisplayName("getMainLobbyLocation returns empty optional when main lobby section does not exist")
+    void getMainLobbyLocation_mainLobbyNotSet() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("main-lobby")).thenReturn(Optional.empty());
+
+        Optional<LocationData> locationDataOptional = dataConfiguration.getMainLobbyLocation();
+
+        assertThat(locationDataOptional).isEmpty();
     }
 
     @Test
-    public void shouldBeAbleToGetMainLobbyLocation() {
-        Location location = new Location(null, 1.0, 2.0, 3.0);
+    @DisplayName("getMainLobbyLocation returns optional with location data from main lobby section")
+    void getMainLobbyLocation_mainLobbySet() {
+        Section mainLobbySection = mock(Section.class);
+        when(mainLobbySection.getString("world")).thenReturn(Optional.of(WORLD));
+        when(mainLobbySection.getDouble("x")).thenReturn(Optional.of(X));
+        when(mainLobbySection.getDouble("y")).thenReturn(Optional.of(Y));
+        when(mainLobbySection.getDouble("z")).thenReturn(Optional.of(Z));
+        when(mainLobbySection.getDouble("yaw")).thenReturn(Optional.of((double) YAW));
+        when(mainLobbySection.getDouble("pitch")).thenReturn(Optional.of((double) PITCH));
 
-        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
-        dataConfiguration.load();
-        dataConfiguration.setMainLobbyLocation(location);
-        dataConfiguration.save();
-        dataConfiguration.load();
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("main-lobby")).thenReturn(Optional.of(mainLobbySection));
 
-        Location result = dataConfiguration.getMainLobbyLocation();
+        Optional<LocationData> locationDataOptional = dataConfiguration.getMainLobbyLocation();
 
-        assertEquals(location, result);
+        assertThat(locationDataOptional).hasValueSatisfying(locationData -> {
+            assertThat(locationData.world()).isEqualTo(WORLD);
+            assertThat(locationData.x()).isEqualTo(X);
+            assertThat(locationData.y()).isEqualTo(Y);
+            assertThat(locationData.z()).isEqualTo(Z);
+            assertThat(locationData.yaw()).isEqualTo(YAW);
+            assertThat(locationData.pitch()).isEqualTo(PITCH);
+        });
     }
 
     @Test
-    public void returnsNullIfMainLobbyIsNotSet() {
-        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
-        dataConfiguration.load();
+    @DisplayName("setMainLobbyLocation sets location data in existing section")
+    void setMainLobbyLocation_existingSection() {
+        Section mainLobbySection = mock(Section.class);
+        LocationData locationData = new LocationData(WORLD, X, Y, Z, YAW, PITCH);
 
-        Location result = dataConfiguration.getMainLobbyLocation();
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("main-lobby")).thenReturn(Optional.of(mainLobbySection));
 
-        assertNull(result);
+        dataConfiguration.setMainLobbyLocation(locationData);
+
+        verify(locationDataSerializer).serialize(locationData, mainLobbySection);
+        verify(configurationFile).save();
     }
 
     @Test
-    public void shouldBeAbleToSetMainLobbyLocation() {
-        double x = 1.0;
-        double y = 2.0;
-        double z = 3.0;
+    @DisplayName("setMainLobbyLocation sets location data in non-existing section")
+    void setMainLobbyLocation_nonExistingSection() {
+        Section mainLobbySection = mock(Section.class);
+        LocationData locationData = new LocationData(WORLD, X, Y, Z, YAW, PITCH);
 
-        Location location = new Location(null, x, y, z);
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("main-lobby")).thenReturn(Optional.empty());
+        when(rootSection.createSection("main-lobby")).thenReturn(mainLobbySection);
 
-        DataConfiguration dataConfiguration = new DataConfiguration(dataFile);
-        dataConfiguration.load();
-        dataConfiguration.setMainLobbyLocation(location);
+        dataConfiguration.setMainLobbyLocation(locationData);
 
-        assertThat(dataConfiguration.getValues("main-lobby"))
-                .hasSize(5)
-                .containsEntry("x", 1.0)
-                .containsEntry("y", 2.0)
-                .containsEntry("z", 3.0);
+        verify(locationDataSerializer).serialize(locationData, mainLobbySection);
+        verify(configurationFile).save();
     }
 }

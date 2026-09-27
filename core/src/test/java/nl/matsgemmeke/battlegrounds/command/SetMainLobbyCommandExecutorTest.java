@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,12 +23,21 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SetMainLobbyCommandExecutorTest {
 
-    private static final String MAIN_LOBBY_SET_MESSAGE = "hello";
+    private static final String PLAYER_LOCATION_WORLD = "world";
+    private static final double PLAYER_LOCATION_X = 1.1;
+    private static final double PLAYER_LOCATION_Y = 2.2;
+    private static final double PLAYER_LOCATION_Z = 3.3;
+    private static final float PLAYER_LOCATION_YAW = 90.0f;
+    private static final float PLAYER_LOCATION_PITCH = 0.0f;
+
+    private static final TextTemplate MAIN_LOBBY_SET_TEXT_TEMPLATE = LanguageFixture.getTextTemplate(TranslationKey.MAIN_LOBBY_SET.getPath());
 
     @Mock
     private DataConfiguration dataConfiguration;
     @Mock
     private Player player;
+    @Mock
+    private LocationMapper locationMapper;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -35,26 +46,27 @@ class SetMainLobbyCommandExecutorTest {
     @Test
     @DisplayName("execute saves main lobby location to data configuration")
     void execute() {
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(new Location(null, 1.0, 2.0, 3.0));
-
-        Location playerLocation = mock(Location.class);
-        when(playerLocation.getBlock()).thenReturn(block);
+        Location playerLocation = new Location(null, 0, 0, 0, 0, 0);
+        LocationData playerLocationData = new LocationData(PLAYER_LOCATION_WORLD, PLAYER_LOCATION_X, PLAYER_LOCATION_Y, PLAYER_LOCATION_Z, PLAYER_LOCATION_YAW, PLAYER_LOCATION_PITCH);
 
         when(player.getLocation()).thenReturn(playerLocation);
-        when(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath())).thenReturn(new TextTemplate(MAIN_LOBBY_SET_MESSAGE));
+        when(locationMapper.toLocationData(any(Location.class))).thenReturn(playerLocationData);
+        when(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath())).thenReturn(MAIN_LOBBY_SET_TEXT_TEMPLATE);
 
         commandExecutor.execute(player);
 
-        ArgumentCaptor<Location> savedLocationCaptor = ArgumentCaptor.forClass(Location.class);
-        verify(dataConfiguration).setMainLobbyLocation(savedLocationCaptor.capture());
+        ArgumentCaptor<LocationData> locationDataCaptor = ArgumentCaptor.forClass(LocationData.class);
+        verify(dataConfiguration).setMainLobbyLocation(locationDataCaptor.capture());
 
-        assertThat(savedLocationCaptor.getValue()).satisfies(location -> {
-            assertThat(location.getX()).isEqualTo(1.5);
-            assertThat(location.getY()).isEqualTo(2.0);
-            assertThat(location.getZ()).isEqualTo(3.5);
+        assertThat(locationDataCaptor.getValue()).satisfies(locationData -> {
+            assertThat(locationData.world()).isEqualTo(PLAYER_LOCATION_WORLD);
+            assertThat(locationData.x()).isEqualTo(PLAYER_LOCATION_X);
+            assertThat(locationData.y()).isEqualTo(PLAYER_LOCATION_Y);
+            assertThat(locationData.z()).isEqualTo(PLAYER_LOCATION_Z);
+            assertThat(locationData.yaw()).isEqualTo(PLAYER_LOCATION_YAW);
+            assertThat(locationData.pitch()).isEqualTo(PLAYER_LOCATION_PITCH);
         });
 
-        verify(player).sendMessage(MAIN_LOBBY_SET_MESSAGE);
+        verify(player).sendMessage("&6You have set the main lobby to your current location.");
     }
 }

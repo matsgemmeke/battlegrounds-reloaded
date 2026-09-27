@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaModule;
 import nl.matsgemmeke.battlegrounds.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
+import nl.matsgemmeke.battlegrounds.configuration.ConfigurationModule;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
@@ -68,8 +69,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
         ArenaModule arenaModule = new ArenaModule();
+        ConfigurationModule configurationModule = new ConfigurationModule();
 
-        injector = Guice.createInjector(module, arenaModule);
+        injector = Guice.createInjector(module, arenaModule, configurationModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
