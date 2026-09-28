@@ -8,18 +8,6 @@ import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 public class BattlegroundsCommandExtension implements CommandExtension {
 
-    private static final String ARENA_COMMAND_USAGE = "/bg arena";
-    private static final String ARENA_COMMAND_SUGGESTION = "/bg arena";
-    private static final String[] ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena" };
-
-    private static final String ELEMENT_COMMAND_USAGE = "/bg element";
-    private static final String ELEMENT_COMMAND_SUGGESTION = "/bg element";
-    private static final String[] ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element" };
-
-    private static final String GIVE_WEAPON_COMMAND_USAGE = "/bg giveweapon <weapon>";
-    private static final String GIVE_WEAPON_COMMAND_SUGGESTION = "/bg giveweapon ";
-    private static final String[] GIVE_WEAPON_COMMAND_PERMISSIONS = new String[] { "battlegrounds.giveweapon" };
-
     private static final String JOIN_COMMAND_USAGE = "/bg join <arena>";
     private static final String JOIN_COMMAND_SUGGESTION = "/bg join ";
     private static final String[] JOIN_COMMAND_PERMISSIONS = new String[] { "battlegrounds.join" };
@@ -28,13 +16,25 @@ public class BattlegroundsCommandExtension implements CommandExtension {
     private static final String LEAVE_COMMAND_SUGGESTION = "/bg leave";
     private static final String[] LEAVE_COMMAND_PERMISSIONS = new String[] { "battlegrounds.leave" };
 
+    private static final String GIVE_WEAPON_COMMAND_USAGE = "/bg giveweapon <weapon>";
+    private static final String GIVE_WEAPON_COMMAND_SUGGESTION = "/bg giveweapon ";
+    private static final String[] GIVE_WEAPON_COMMAND_PERMISSIONS = new String[] { "battlegrounds.giveweapon" };
+
+    private static final String ARENA_COMMAND_USAGE = "/bg arena";
+    private static final String ARENA_COMMAND_SUGGESTION = "/bg arena";
+    private static final String[] ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena" };
+
+    private static final String ELEMENT_COMMAND_USAGE = "/bg element";
+    private static final String ELEMENT_COMMAND_SUGGESTION = "/bg element";
+    private static final String[] ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element" };
+
+    private static final String MAIN_LOBBY_COMMAND_USAGE = "/bg mainlobby";
+    private static final String MAIN_LOBBY_COMMAND_SUGGESTION = "/bg mainlobby";
+    private static final String[] MAIN_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.mainlobby" };
+
     private static final String RELOAD_COMMAND_USAGE = "/bg reload";
     private static final String RELOAD_COMMAND_SUGGESTION = "/bg reload";
     private static final String[] RELOAD_COMMAND_PERMISSIONS = new String[] { "battlegrounds.reload" };
-
-    private static final String SET_MAIN_LOBBY_COMMAND_USAGE = "/bg setmainlobby";
-    private static final String SET_MAIN_LOBBY_COMMAND_SUGGESTION = "/bg setmainlobby";
-    private static final String[] SET_MAIN_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.setmainlobby" };
 
     private static final String TOOLS_COMMAND_USAGE = "/bg tools";
     private static final String TOOLS_COMMAND_SUGGESTION = "/bg tools";
@@ -53,31 +53,31 @@ public class BattlegroundsCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
-        String arenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ARENA.getPath()).getText();
-        String elementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT.getPath()).getText();
-        String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).getText();
         String joinCommandDescription = translator.translate(TranslationKey.DESCRIPTION_JOIN.getPath()).getText();
         String leaveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LEAVE.getPath()).getText();
+        String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).getText();
+        String arenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ARENA.getPath()).getText();
+        String elementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT.getPath()).getText();
+        String mainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAIN_LOBBY.getPath()).getText();
         String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
-        String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SET_MAIN_LOBBY.getPath()).getText();
         String toolsCommandDescription = translator.translate(TranslationKey.DESCRIPTION_TOOLS.getPath()).getText();
 
-        CommandInfo arenaCommandInfo = new CommandInfo(arenaCommandDescription, ARENA_COMMAND_USAGE, ARENA_COMMAND_SUGGESTION, ARENA_COMMAND_PERMISSIONS);
-        CommandInfo elementCommandInfo = new CommandInfo(elementCommandDescription, ELEMENT_COMMAND_USAGE, ELEMENT_COMMAND_SUGGESTION, ELEMENT_COMMAND_PERMISSIONS);
-        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GIVE_WEAPON_COMMAND_USAGE, GIVE_WEAPON_COMMAND_SUGGESTION, GIVE_WEAPON_COMMAND_PERMISSIONS);
         CommandInfo joinCommandInfo = new CommandInfo(joinCommandDescription, JOIN_COMMAND_USAGE, JOIN_COMMAND_SUGGESTION, JOIN_COMMAND_PERMISSIONS);
         CommandInfo leaveCommandInfo = new CommandInfo(leaveCommandDescription, LEAVE_COMMAND_USAGE, LEAVE_COMMAND_SUGGESTION, LEAVE_COMMAND_PERMISSIONS);
+        CommandInfo giveWeaponCommandInfo = new CommandInfo(giveWeaponCommandDescription, GIVE_WEAPON_COMMAND_USAGE, GIVE_WEAPON_COMMAND_SUGGESTION, GIVE_WEAPON_COMMAND_PERMISSIONS);
+        CommandInfo arenaCommandInfo = new CommandInfo(arenaCommandDescription, ARENA_COMMAND_USAGE, ARENA_COMMAND_SUGGESTION, ARENA_COMMAND_PERMISSIONS);
+        CommandInfo elementCommandInfo = new CommandInfo(elementCommandDescription, ELEMENT_COMMAND_USAGE, ELEMENT_COMMAND_SUGGESTION, ELEMENT_COMMAND_PERMISSIONS);
+        CommandInfo mainLobbyCommandInfo = new CommandInfo(mainLobbyCommandDescription, MAIN_LOBBY_COMMAND_USAGE, MAIN_LOBBY_COMMAND_SUGGESTION, MAIN_LOBBY_COMMAND_PERMISSIONS);
         CommandInfo reloadCommandInfo = new CommandInfo(reloadCommandDescription, RELOAD_COMMAND_USAGE, RELOAD_COMMAND_SUGGESTION, RELOAD_COMMAND_PERMISSIONS);
-        CommandInfo setMainLobbyCommandInfo = new CommandInfo(setMainLobbyCommandDescription, SET_MAIN_LOBBY_COMMAND_USAGE, SET_MAIN_LOBBY_COMMAND_SUGGESTION, SET_MAIN_LOBBY_COMMAND_PERMISSIONS);
         CommandInfo toolsCommandInfo = new CommandInfo(toolsCommandDescription, TOOLS_COMMAND_USAGE, TOOLS_COMMAND_SUGGESTION, TOOLS_COMMAND_PERMISSIONS);
 
-        bgCommand.addCommandInfo(arenaCommandInfo);
-        bgCommand.addCommandInfo(elementCommandInfo);
-        bgCommand.addCommandInfo(giveWeaponCommandInfo);
         bgCommand.addCommandInfo(joinCommandInfo);
         bgCommand.addCommandInfo(leaveCommandInfo);
+        bgCommand.addCommandInfo(giveWeaponCommandInfo);
+        bgCommand.addCommandInfo(arenaCommandInfo);
+        bgCommand.addCommandInfo(elementCommandInfo);
+        bgCommand.addCommandInfo(mainLobbyCommandInfo);
         bgCommand.addCommandInfo(reloadCommandInfo);
-        bgCommand.addCommandInfo(setMainLobbyCommandInfo);
         bgCommand.addCommandInfo(toolsCommandInfo);
 
         commandManager.registerCommand(bgCommand);

@@ -74,6 +74,17 @@ class LocationConfigurationTest {
     }
 
     @Test
+    @DisplayName("removeMainLobbyLocation removes main lobby section")
+    void removeMainLobbyLocation() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
+        locationConfiguration.removeMainLobbyLocation();
+
+        verify(rootSection).removeSection("main-lobby");
+        verify(configurationFile).save();
+    }
+
+    @Test
     @DisplayName("setMainLobbyLocation sets location data in existing section")
     void setMainLobbyLocation_existingSection() {
         Section mainLobbySection = mock(Section.class);

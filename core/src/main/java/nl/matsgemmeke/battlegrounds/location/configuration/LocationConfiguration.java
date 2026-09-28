@@ -26,6 +26,11 @@ public class LocationConfiguration {
         return configurationFile.getRootSection().getSection(MAIN_LOBBY_PATH).map(locationDataSerializer::deserialize);
     }
 
+    public void removeMainLobbyLocation() {
+        configurationFile.getRootSection().removeSection(MAIN_LOBBY_PATH);
+        configurationFile.save();
+    }
+
     public void setMainLobbyLocation(LocationData locationData) {
         Section rootSection = configurationFile.getRootSection();
         Section mainLobbySection = rootSection.getSection(MAIN_LOBBY_PATH).orElseGet(() -> rootSection.createSection(MAIN_LOBBY_PATH));
