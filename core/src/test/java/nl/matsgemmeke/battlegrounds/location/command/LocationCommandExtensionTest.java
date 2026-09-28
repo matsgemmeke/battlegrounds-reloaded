@@ -31,6 +31,7 @@ class LocationCommandExtensionTest {
     private PaperCommandManager commandManager;
     @Mock
     private Translator translator;
+
     @InjectMocks
     private LocationCommandExtension commandExtension;
 
