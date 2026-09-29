@@ -3,7 +3,9 @@ package nl.matsgemmeke.battlegrounds.arena.component.membership;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.membership.JoinResult;
+import nl.matsgemmeke.battlegrounds.location.MainLobbyService;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,8 @@ class ArenaMembershipServiceTest {
 
     @Mock
     private Arena arena;
+    @Mock
+    private MainLobbyService mainLobbyService;
     @Mock
     private Player player;
     @Mock
@@ -78,5 +82,37 @@ class ArenaMembershipServiceTest {
 
         verify(playerRegistry).register(player);
         verify(player).teleport(lobbyLocation);
+    }
+
+    @Test
+    @DisplayName("leave teleports player to main lobby when present")
+    void leave_mainLobbyPresent() {
+        Location mainLobbyLocation = new Location(null, 0, 0, 0);
+
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+        when(mainLobbyService.getMainLobbyLocation()).thenReturn(Optional.of(mainLobbyLocation));
+
+        arenaMembershipService.leave(player);
+
+        verify(playerRegistry).deregister(PLAYER_ID);
+        verify(player).teleport(mainLobbyLocation);
+    }
+
+    @Test
+    @DisplayName("leave teleports player to world spawn location when main lobby is not present")
+    void leave_mainLobbyNotPresent() {
+        Location worldSpawnLocation = new Location(null, 0, 0, 0);
+
+        World world = mock(World.class);
+        when(world.getSpawnLocation()).thenReturn(worldSpawnLocation);
+
+        when(player.getUniqueId()).thenReturn(PLAYER_ID);
+        when(player.getWorld()).thenReturn(world);
+        when(mainLobbyService.getMainLobbyLocation()).thenReturn(Optional.empty());
+
+        arenaMembershipService.leave(player);
+
+        verify(playerRegistry).deregister(PLAYER_ID);
+        verify(player).teleport(worldSpawnLocation);
     }
 }

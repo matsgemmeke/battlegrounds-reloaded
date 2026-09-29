@@ -8,6 +8,7 @@ import com.google.inject.name.Names;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.location.command.LocationCommandExtension;
+import nl.matsgemmeke.battlegrounds.location.configuration.LocationConfiguration;
 import nl.matsgemmeke.battlegrounds.location.configuration.LocationConfigurationFileProvider;
 
 public class LocationModule implements Module {
@@ -15,6 +16,8 @@ public class LocationModule implements Module {
     @Override
     public void configure(Binder binder) {
         binder.bind(ConfigurationFile.class).annotatedWith(Names.named("data")).toProvider(LocationConfigurationFileProvider.class).in(Singleton.class);
+        binder.bind(LocationConfiguration.class).in(Singleton.class);
+        binder.bind(MainLobbyService.class).in(Singleton.class);
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(LocationCommandExtension.class).in(Singleton.class);

@@ -21,8 +21,8 @@ public class LocationDataSerializer implements DataSerializer<LocationData> {
         section.set(X_KEY, data.x());
         section.set(Y_KEY, data.y());
         section.set(Z_KEY, data.z());
-        section.set(YAW_KEY, data.yaw());
-        section.set(PITCH_KEY, data.pitch());
+        section.set(YAW_KEY, (double) data.yaw());
+        section.set(PITCH_KEY, (double) data.pitch());
     }
 
     @Override
@@ -38,6 +38,6 @@ public class LocationDataSerializer implements DataSerializer<LocationData> {
     }
 
     private <T> T require(Section section, String key, Function<String, Optional<T>> getter) {
-        return getter.apply(key).orElseThrow(() -> new SerializationException("Missing value '%s' at %s".formatted(key, section.getAbsolutePath())));
+        return getter.apply(key).orElseThrow(() -> new SerializationException("Missing value '%s' at path '%s'".formatted(key, section.getAbsolutePath())));
     }
 }

@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.membership.JoinResult;
 import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
+import nl.matsgemmeke.battlegrounds.location.MainLobbyService;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -12,11 +14,13 @@ import java.util.UUID;
 public class ArenaMembershipService implements MembershipService {
 
     private final Arena arena;
+    private final MainLobbyService mainLobbyService;
     private final PlayerRegistry playerRegistry;
 
     @Inject
-    public ArenaMembershipService(Arena arena, PlayerRegistry playerRegistry) {
+    public ArenaMembershipService(Arena arena, MainLobbyService mainLobbyService, PlayerRegistry playerRegistry) {
         this.arena = arena;
+        this.mainLobbyService = mainLobbyService;
         this.playerRegistry = playerRegistry;
     }
 
@@ -37,6 +41,12 @@ public class ArenaMembershipService implements MembershipService {
 
     @Override
     public void leave(Player player) {
+        UUID playerId = player.getUniqueId();
 
+        playerRegistry.deregister(playerId);
+
+        Location teleportLocation = mainLobbyService.getMainLobbyLocation().orElseGet(() -> player.getWorld().getSpawnLocation());
+
+        player.teleport(teleportLocation);
     }
 }
