@@ -33,14 +33,10 @@ public class CreateArenaCommandExecutor {
         Arena arena = arenaFactory.create(id, settings, uniqueId);
         GameKey gameKey = GameKey.ofArena(id);
 
-        Map<String, Object> values = Map.of("bg_arena", id);
-        String message;
+        arenaRegistry.addArena(gameKey, arena);
 
-        if (!arenaRegistry.addArena(gameKey, arena)) {
-            message = translator.translate(TranslationKey.ARENA_CREATION_FAILED.getPath()).replace(values);
-        } else {
-            message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
-        }
+        Map<String, Object> values = Map.of("bg_arena", id);
+        String message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
 
         player.sendMessage(message);
     }

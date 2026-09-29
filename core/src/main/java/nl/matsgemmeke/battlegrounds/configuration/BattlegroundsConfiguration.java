@@ -17,10 +17,6 @@ public class BattlegroundsConfiguration extends BasePluginConfiguration {
         return this.getOptionalLong("item-camera-movement-recoil-duration-millis").orElse(20L);
     }
 
-    public double getGunDamageAmplifier() {
-        return this.checkConfigurationValue("item-gun-damage-amplifier", 1.0);
-    }
-
     public String getLanguage() {
         return this.checkConfigurationValue("language", "en");
     }

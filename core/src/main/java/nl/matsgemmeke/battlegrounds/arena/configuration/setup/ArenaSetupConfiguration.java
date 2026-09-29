@@ -10,6 +10,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.map.ArenaMapData;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.spawn.CreateSpawnPointData;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.configuration.serialization.LocationDataSerializer;
 import nl.matsgemmeke.battlegrounds.util.TextUtil;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
@@ -27,13 +28,15 @@ public class ArenaSetupConfiguration {
 
     private static final String CREATED_AT_PATH = "created-at";
     private static final String CREATED_BY_PATH = "created-by";
+    private static final String LOBBY_PATH = "lobby";
     private static final String MAPS_PATH = "maps";
     private static final String MAP_NAME_PATH = "name";
     private static final String MAP_CREATED_AT_PATH = "created-at";
     private static final String MAP_CREATED_BY_PATH = "created-by";
 
     private static final String ELEMENTS_PATH = "elements";
-    private static final String ELEMENT_TYPE_PATH = "type";
+    private static final String ELEMENT_ID_PATH = "element-id";
+    private static final String ELEMENT_TYPE_PATH = "element-type";
     private static final String SPAWN_POINT_LOCATION_PATH = "location";
     private static final String SPAWN_POINT_TEAM_ID_PATH = "team-id";
 
@@ -73,6 +76,23 @@ public class ArenaSetupConfiguration {
 
     public void setCreatedBy(UUID uuid) {
         configurationFile.getRootSection().set(CREATED_BY_PATH, uuid.toString());
+        configurationFile.save();
+    }
+
+    public Optional<LocationData> getLobby() {
+        return configurationFile.getRootSection().getSection(LOBBY_PATH).map(locationDataSerializer::deserialize);
+    }
+
+    public void removeLobby() {
+        configurationFile.getRootSection().removeSection(LOBBY_PATH);
+        configurationFile.save();
+    }
+
+    public void setLobby(LocationData locationData) {
+        Section rootSection = configurationFile.getRootSection();
+        Section lobbySection = rootSection.getSection(LOBBY_PATH).orElseGet(() -> rootSection.createSection(LOBBY_PATH));
+
+        locationDataSerializer.serialize(locationData, lobbySection);
         configurationFile.save();
     }
 
@@ -208,9 +228,17 @@ public class ArenaSetupConfiguration {
         String spawnPointLocationPath = spawnPointPath + "." + SPAWN_POINT_LOCATION_PATH;
         Section locationSection = configurationFile.getRootSection().createSection(spawnPointLocationPath);
 
-        locationDataSerializer.serialize(data.locationData(), locationSection);
+        configurationFile.getRootSection().set(spawnPointPath + "." + ELEMENT_ID_PATH, data.elementId());
         configurationFile.getRootSection().set(spawnPointPath + "." + ELEMENT_TYPE_PATH, ElementType.SPAWN_POINT.toString());
+        locationDataSerializer.serialize(data.locationData(), locationSection);
         configurationFile.getRootSection().set(spawnPointPath + "." + SPAWN_POINT_TEAM_ID_PATH, data.teamId());
+        configurationFile.save();
+    }
+
+    public void removeElement(String mapName, int elementId) {
+        String mapPathName = TextUtil.toKebabCase(mapName);
+
+        configurationFile.getRootSection().removeSection(MAPS_PATH + "." + mapPathName + "." + ELEMENTS_PATH + "." + elementId);
         configurationFile.save();
     }
 }

@@ -12,8 +12,8 @@ import java.util.Map;
 public class MobRegistryProvider extends ComponentRouterProvider<MobRegistry> {
 
     @Inject
-    public MobRegistryProvider(GameScope gameScope, Map<GameContextType, Provider<MobRegistry>> implementations, TypeLiteral<MobRegistry> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public MobRegistryProvider(GameScope gameScope, Map<GameContextType, Provider<MobRegistry>> providers, TypeLiteral<MobRegistry> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }
 

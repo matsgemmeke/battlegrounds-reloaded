@@ -129,6 +129,8 @@ class DefaultPlayerRegistryTest {
         playerRegistry.deregister(PLAYER_UNIQUE_ID);
 
         assertThat(playerRegistry.findByUniqueId(PLAYER_UNIQUE_ID)).isEmpty();
+
+        verify(gameContextProvider).unregisterEntity(PLAYER_UNIQUE_ID);
     }
 
     @Test

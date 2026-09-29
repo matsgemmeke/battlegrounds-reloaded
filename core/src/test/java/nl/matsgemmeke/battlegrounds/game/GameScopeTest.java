@@ -3,100 +3,94 @@ package nl.matsgemmeke.battlegrounds.game;
 import com.google.inject.Key;
 import com.google.inject.OutOfScopeException;
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.function.Supplier;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
 
 public class GameScopeTest {
 
     private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final GameContextType TYPE = GameContextType.FREEPLAY_MODE;
+    private static final Key<String> KEY = Key.get(String.class);
+
+    private GameScope scope;
+
+    @BeforeEach
+    void setUp() {
+        scope = new GameScope();
+    }
 
     @Test
-    public void scopeThrowsOutOfScopeExceptionWhenNoGameContextIsEntered() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        Key<PlayerRegistry> key = mock();
-        Provider<PlayerRegistry> provider = mock();
+    @DisplayName("scope throws OutOfScopeException when no game context is entered")
+    void scope_noContextEntered() {
+        Provider<String> unscoped = () -> "value";
+        Provider<String> scoped = scope.scope(KEY, unscoped);
 
-        GameScope scope = new GameScope();
-        scope.enter(gameContext);
-        scope.exit();
-        Provider<PlayerRegistry> scopeProvider = scope.scope(key, provider);
-
-        assertThatThrownBy(scopeProvider::get)
+        assertThatThrownBy(scoped::get)
                 .isInstanceOf(OutOfScopeException.class)
-                .hasMessageMatching("No GameContext in scope for key: Mock for Key, hashCode: [0-9]*");
+                .hasMessage("Cannot access java.lang.String because no GameContext is active in GameScope");
     }
 
     @Test
-    public void scopeReturnsProviderThatReturnsInstanceFromGameContext() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        PlayerRegistry playerRegistry = mock(PlayerRegistry.class);
-        Key<PlayerRegistry> key = mock();
+    @DisplayName("scope restores previous game context when performing a runnable while another is already actives")
+    void scope_nested() {
+        GameContext freeplay = this.createGameContext("freeplay");
+        GameContext arena = this.createGameContext("arena");
 
-        Provider<PlayerRegistry> provider = mock();
-        when(provider.get()).thenReturn(playerRegistry);
+        scope.runInScope(freeplay, () -> {
+            assertThat(scope.getCurrentGameContext()).contains(freeplay);
 
-        GameScope scope = new GameScope();
-        scope.enter(gameContext);
-        Provider<PlayerRegistry> scopeProvider = scope.scope(key, provider);
+            scope.runInScope(arena, () -> assertThat(scope.getCurrentGameContext()).contains(arena));
 
-        assertThat(scopeProvider.get()).isEqualTo(playerRegistry);
-    }
-
-    @Test
-    public void runInScopeEntersScopeAndExitsAfterRunningAction() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        Runnable action = mock(Runnable.class);
-
-        GameScope scope = new GameScope();
-        scope.runInScope(gameContext, action);
+            assertThat(scope.getCurrentGameContext()).contains(freeplay);
+        });
 
         assertThat(scope.getCurrentGameContext()).isEmpty();
-
-        verify(action).run();
     }
 
     @Test
-    public void runInScopeEntersScopeAndExitsAfterRunnableThrowsException() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        Runnable action = () -> {
-            throw new RuntimeException();
+    @DisplayName("runInScope performs runnable and cleans up top level scope")
+    void runInScope_successful() {
+        GameContext freeplay = this.createGameContext("freeplay");
+
+        scope.runInScope(freeplay, () -> {});
+
+        assertThat(scope.getCurrentGameContext()).isEmpty();
+    }
+
+    @Test
+    @DisplayName("runInScope restores previous context when an exception occurs in nested runnable")
+    void runInScope_restoresPreviousContext() {
+        GameContext freeplay = this.createGameContext("freeplay");
+        GameContext arena = this.createGameContext("arena");
+
+        scope.runInScope(freeplay, () -> {
+            assertThatThrownBy(() ->
+                    scope.runInScope(arena, () -> {
+                        throw new RuntimeException("boom");
+                    })
+            ).isInstanceOf(RuntimeException.class);
+
+            assertThat(scope.getCurrentGameContext()).contains(freeplay);
+        });
+    }
+
+    private GameContext createGameContext(String label) {
+        Map<Key<?>, Object> cache = new HashMap<>();
+
+        return new GameContext(GAME_KEY, TYPE) {
+            @SuppressWarnings("unchecked")
+            public <T> T getScopedObject(Key<T> k, Provider<T> unscoped) {
+                // Ignore the real `unscoped` provider entirely, and just
+                // return `label` itself as the "scoped object" for any key.
+                return (T) cache.computeIfAbsent(k, kk -> label);
+            }
         };
-
-        GameScope scope = new GameScope();
-
-        assertThatThrownBy(() -> scope.runInScope(gameContext, action)).isInstanceOf(RuntimeException.class);
-        assertThat(scope.getCurrentGameContext()).isEmpty();
-    }
-
-    @Test
-    public void supplyInScopeEntersScopeAndExitsAfterReturningValue() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        Supplier<String> supplier = () -> "test";
-
-        GameScope scope = new GameScope();
-        String result = scope.supplyInScope(gameContext, supplier);
-
-        assertThat(result).isEqualTo("test");
-        assertThat(scope.getCurrentGameContext()).isEmpty();
-    }
-
-    @Test
-    public void supplyInScopeEntersScopeAndExitsAfterSupplierThrowsException() {
-        GameContext gameContext = new GameContext(GAME_KEY, TYPE);
-        Supplier<String> supplier = () -> {
-            throw new RuntimeException();
-        };
-
-        GameScope scope = new GameScope();
-
-        assertThatThrownBy(() -> scope.supplyInScope(gameContext, supplier)).isInstanceOf(RuntimeException.class);
-        assertThat(scope.getCurrentGameContext()).isEmpty();
     }
 }

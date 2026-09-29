@@ -4,6 +4,7 @@ import co.aikar.commands.BaseCommand;
 import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.RemoveElementCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
@@ -20,13 +21,20 @@ import java.util.List;
 public class ElementCommand extends BaseCommand {
 
     private final AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
+    private final RemoveElementCommandExecutor removeElementCommandExecutor;
     private final HelpMenu helpMenu;
     private final List<CommandInfo> commandInfoList;
     private final Translator translator;
 
     @Inject
-    public ElementCommand(AddSpawnPointCommandExecutor addSpawnPointCommandExecutor, HelpMenu helpMenu, Translator translator) {
+    public ElementCommand(
+            AddSpawnPointCommandExecutor addSpawnPointCommandExecutor,
+            RemoveElementCommandExecutor removeElementCommandExecutor,
+            HelpMenu helpMenu,
+            Translator translator
+    ) {
         this.addSpawnPointCommandExecutor = addSpawnPointCommandExecutor;
+        this.removeElementCommandExecutor = removeElementCommandExecutor;
         this.helpMenu = helpMenu;
         this.translator = translator;
         this.commandInfoList = new ArrayList<>();
@@ -43,13 +51,15 @@ public class ElementCommand extends BaseCommand {
             return;
         }
 
-        String header = translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath()).getText();
+        sender.sendMessage(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath()).getText());
 
         if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, header, commandInfoList);
+            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
         } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, header, commandInfoList);
+            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
         }
+
+        sender.sendMessage(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath()).getText());
     }
 
     @Subcommand("add")
@@ -58,9 +68,19 @@ public class ElementCommand extends BaseCommand {
     }
 
     @Subcommand("add spawnpoint")
+    @Syntax("<team>")
     @Conditions("map-selected")
     @CommandPermission("battlegrounds.element.add")
     public void onAddSpawnPoint(Player player, @Default("1") Integer teamId) {
         addSpawnPointCommandExecutor.execute(player, teamId);
+    }
+
+    @Subcommand("remove")
+    @Syntax("<element>")
+    @Conditions("map-selected")
+    @CommandCompletion("@element-id")
+    @CommandPermission("battlegrounds.element.remove")
+    public void onRemove(Player player, @Conditions("existent-element-id") Integer elementId) {
+        removeElementCommandExecutor.execute(player, elementId);
     }
 }

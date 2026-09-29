@@ -15,9 +15,9 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 
+@Subcommand("arena")
 @CommandAlias("battlegrounds|bg|battle")
 @CommandPermission("battlegrounds.arena")
-@Subcommand("arena")
 public class ArenaCommand extends BaseCommand {
 
     private final CreateArenaCommandExecutor createArenaCommandExecutor;
@@ -51,24 +51,28 @@ public class ArenaCommand extends BaseCommand {
             return;
         }
 
-        String title = translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath()).getText();
+        sender.sendMessage(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath()).getText());
 
         if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, title, commandInfoList);
+            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
         } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, title, commandInfoList);
+            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
         }
+
+        sender.sendMessage(translator.translate(TranslationKey.ARENA_HELP_MENU_FOOTER.getPath()).getText());
     }
 
-    @CommandPermission("battlegrounds.arena.create")
     @Subcommand("create")
+    @Syntax("<arena>")
+    @CommandPermission("battlegrounds.arena.create")
     public void onCreate(Player player, @Conditions("nonexistent-arena-id") Integer id) {
         createArenaCommandExecutor.execute(player, id);
     }
 
+    @Subcommand("remove")
+    @Syntax("<arena>")
     @CommandCompletion("@arena-id")
     @CommandPermission("battlegrounds.arena.remove")
-    @Subcommand("remove")
     public void onRemove(CommandSender sender, @Conditions("existent-arena-id") Integer arenaId) {
         removeArenaCommandExecutor.execute(sender, arenaId);
     }

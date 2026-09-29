@@ -13,10 +13,10 @@ public class GameKeyProvider implements Provider<GameKey> {
         this.gameScope = gameScope;
     }
 
+    @Override
     public GameKey get() {
-        GameContext gameContext = gameScope.getCurrentGameContext()
-                .orElseThrow(() -> new OutOfScopeException("No game context active"));
-
-        return gameContext.getGameKey();
+        return gameScope.getCurrentGameContext()
+                .orElseThrow(() -> new OutOfScopeException("No game context active"))
+                .getGameKey();
     }
 }

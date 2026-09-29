@@ -16,44 +16,32 @@ public class GameScope implements Scope {
         return Optional.ofNullable(currentGameContext.get());
     }
 
-    public void enter(GameContext gameContext) {
-        currentGameContext.set(gameContext);
-    }
-
-    public void exit() {
-        currentGameContext.remove();
-    }
-
     @Override
     public <T> Provider<T> scope(Key<T> key, Provider<T> unscoped) {
-        return () -> {
-            GameContext context = currentGameContext.get();
-
-            if (context == null) {
-                throw new OutOfScopeException("No GameContext in scope for key: " + key);
-            }
-
-            return context.getScopedObject(key, unscoped);
-        };
+        return () -> this.getCurrentGameContext()
+                .orElseThrow(() -> new OutOfScopeException("Cannot access %s because no GameContext is active in GameScope".formatted(key.getTypeLiteral())))
+                .getScopedObject(key, unscoped);
     }
 
     public void runInScope(GameContext gameContext, Runnable action) {
-        this.enter(gameContext);
-
-        try {
+        this.supplyInScope(gameContext, () -> {
             action.run();
-        } finally {
-            this.exit();
-        }
+            return null;
+        });
     }
 
     public <T> T supplyInScope(GameContext gameContext, Supplier<T> action) {
-        this.enter(gameContext);
+        GameContext previous = currentGameContext.get();
+        currentGameContext.set(gameContext);
 
         try {
             return action.get();
         } finally {
-            this.exit();
+            if (previous == null) {
+                currentGameContext.remove();
+            } else {
+                currentGameContext.set(previous);
+            }
         }
     }
 }

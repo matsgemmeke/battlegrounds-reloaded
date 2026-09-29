@@ -3,10 +3,8 @@ package nl.matsgemmeke.battlegrounds.event.handler;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageAdapter;
 import nl.matsgemmeke.battlegrounds.game.component.damage.EventDamageResult;
@@ -44,14 +42,11 @@ public class EntityDamageByEntityEventHandler implements EventHandler<EntityDama
 
     public void handle(EntityDamageByEntityEvent event) {
         Entity damager = this.resolveEntityDamager(event.getDamager());
-        GameKey gameKey = gameContextProvider.getGameKeyByEntityId(damager.getUniqueId()).orElse(null);
+        GameContext gameContext = gameContextProvider.getGameContext(damager.getUniqueId()).orElse(null);
 
-        if (gameKey == null) {
+        if (gameContext == null) {
             return;
         }
-
-        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new EventHandlingException("Unable to process EntityDamageByEntityEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
         DamageCause cause = event.getCause();
 

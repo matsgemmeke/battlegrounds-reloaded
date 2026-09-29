@@ -1,50 +1,49 @@
 package nl.matsgemmeke.battlegrounds.event.handler;
 
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerQuitEvent;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
-public class PlayerQuitEventHandlerTest {
+@ExtendWith(MockitoExtension.class)
+class PlayerQuitEventHandlerTest {
 
-    private static final GameKey GAME_KEY = GameKey.ofFreeplay();
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
+    @Mock
     private GameContextProvider gameContextProvider;
+    @Mock
     private GameScope gameScope;
+    @Mock
     private Provider<PlayerLifecycleHandler> playerLifecycleHandlerProvider;
-
-    @BeforeEach
-    public void setUp() {
-        gameContextProvider = mock(GameContextProvider.class);
-        gameScope = mock(GameScope.class);
-        playerLifecycleHandlerProvider = mock();
-    }
+    @InjectMocks
+    private PlayerQuitEventHandler eventHandler;
 
     @Test
-    public void handleDoesNothingWhenPlayerIsNotInAnyGameContext() {
+    @DisplayName("handle does nothing when player is not in any game context")
+    void handle_notInGameContext() {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
         PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.empty());
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
-        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
         eventHandler.handle(event);
 
         verifyNoInteractions(gameScope);
@@ -52,24 +51,8 @@ public class PlayerQuitEventHandlerTest {
     }
 
     @Test
-    public void handleThrowsEventHandlingExceptionWhenNoGameContextExistsForGameKeyOfPlayer() {
-        Player player = mock(Player.class);
-        when(player.getUniqueId()).thenReturn(PLAYER_ID);
-
-        PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
-
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-
-        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
-
-        assertThatThrownBy(() -> eventHandler.handle(event))
-                .isInstanceOf(EventHandlingException.class)
-                .hasMessage("Unable to process PlayerQuitEvent for game key FREEPLAY, no corresponding game context was found");
-    }
-
-    @Test
-    public void handlePerformsDeregisterWhenPlayerIsInGame() {
+    @DisplayName("handle performs deregister when player is in a game context")
+    void handle_successful() {
         GameContext gameContext = mock(GameContext.class);
         PlayerLifecycleHandler playerLifecycleHandler = mock(PlayerLifecycleHandler.class);
 
@@ -78,17 +61,11 @@ public class PlayerQuitEventHandlerTest {
 
         PlayerQuitEvent event = new PlayerQuitEvent(player, "test");
 
-        when(gameContextProvider.getGameKeyByEntityId(PLAYER_ID)).thenReturn(Optional.of(GAME_KEY));
-        when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
+        when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(gameContext));
         when(playerLifecycleHandlerProvider.get()).thenReturn(playerLifecycleHandler);
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
-        PlayerQuitEventHandler eventHandler = new PlayerQuitEventHandler(gameContextProvider, gameScope, playerLifecycleHandlerProvider);
         eventHandler.handle(event);
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(gameContext), runnableCaptor.capture());
-
-        runnableCaptor.getValue().run();
 
         verify(playerLifecycleHandler).handlePlayerLeave(PLAYER_ID);
     }

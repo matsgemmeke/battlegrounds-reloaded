@@ -4,10 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventHandler;
-import nl.matsgemmeke.battlegrounds.event.EventHandlingException;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
-import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
@@ -42,14 +40,11 @@ public class PlayerDropItemEventHandler implements EventHandler<PlayerDropItemEv
     public void handle(PlayerDropItemEvent event) {
         Player player = event.getPlayer();
         UUID playerId = player.getUniqueId();
-        GameKey gameKey = gameContextProvider.getGameKeyByEntityId(playerId).orElse(null);
+        GameContext gameContext = gameContextProvider.getGameContext(playerId).orElse(null);
 
-        if (gameKey == null) {
+        if (gameContext == null) {
             return;
         }
-
-        GameContext gameContext = gameContextProvider.getGameContext(gameKey)
-                .orElseThrow(() -> new EventHandlingException("Unable to process PlayerDropItemEvent for game key %s, no corresponding game context was found".formatted(gameKey)));
 
         gameScope.runInScope(gameContext, () -> this.performAction(event, playerId));
     }

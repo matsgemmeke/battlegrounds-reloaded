@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.command;
 
 import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPointCommandExecutor;
+import nl.matsgemmeke.battlegrounds.arena.command.executor.element.RemoveElementCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
@@ -22,13 +23,17 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ElementCommandTest {
 
-    private static final int TEAM_ID = 1;
+    private static final int ELEMENT_ID = 1;
+    private static final int TEAM_ID = 2;
     private static final String UNKNOWN_COMMAND_TEXT = "unknown command";
     private static final String ELEMENT_HELP_MENU_HEADER_TEXT = "header";
+    private static final String ELEMENT_HELP_MENU_FOOTER_TEXT = "footer";
     private static final String SPECIFY_ELEMENT_TYPE_TEXT = "specify element type";
 
     @Mock
     private AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
+    @Mock
+    private RemoveElementCommandExecutor removeElementCommandExecutor;
     @Mock
     private HelpMenu helpMenu;
     @Mock
@@ -56,11 +61,14 @@ class ElementCommandTest {
         CommandInfo commandInfo = new CommandInfo(null, null, null, new String[0]);
 
         when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(player, null);
 
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, ELEMENT_HELP_MENU_HEADER_TEXT, List.of(commandInfo));
+        verify(player).sendMessage(ELEMENT_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(player).sendMessage(ELEMENT_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test
@@ -70,11 +78,14 @@ class ElementCommandTest {
         CommandSender sender = mock(CommandSender.class);
 
         when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(sender, null);
 
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, ELEMENT_HELP_MENU_HEADER_TEXT, List.of(commandInfo));
+        verify(sender).sendMessage(ELEMENT_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
+        verify(sender).sendMessage(ELEMENT_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test
@@ -93,5 +104,13 @@ class ElementCommandTest {
         command.onAddSpawnPoint(player, TEAM_ID);
 
         verify(addSpawnPointCommandExecutor).execute(player, TEAM_ID);
+    }
+
+    @Test
+    @DisplayName("onRemove delegates to RemoveElementCommandExecutor")
+    void onRemove() {
+        command.onRemove(player, ELEMENT_ID);
+
+        verify(removeElementCommandExecutor).execute(player, ELEMENT_ID);
     }
 }

@@ -5,6 +5,7 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
+import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.storage.StatePersistenceHandler;
@@ -48,7 +49,7 @@ public class FreeplayInitializer {
 
     public void initialize() {
         Freeplay freeplay = new Freeplay();
-        GameContext gameContext = new GameContext(GAME_KEY, GameContextType.FREEPLAY_MODE);
+        FreeplayGameContext gameContext = new FreeplayGameContext();
 
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
         gameContextProvider.assignFreeplay(freeplay);

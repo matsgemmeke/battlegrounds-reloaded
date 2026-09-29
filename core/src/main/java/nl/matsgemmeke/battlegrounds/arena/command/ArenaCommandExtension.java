@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.ElementIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
@@ -12,27 +13,39 @@ import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 public class ArenaCommandExtension implements CommandExtension {
 
-    private static final String CREATE_ARENA_COMMAND_USAGE = "/bg arena create <id>";
+    private static final String CREATE_ARENA_COMMAND_USAGE = "/bg arena create <arena>";
     private static final String CREATE_ARENA_COMMAND_SUGGESTION = "/bg arena create ";
     private static final String[] CREATE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.create" };
+
+    private static final String LOBBY_COMMAND_USAGE = "/bg arena lobby";
+    private static final String LOBBY_COMMAND_SUGGESTION = "/bg arena lobby";
+    private static final String[] LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby" };
 
     private static final String MAP_COMMAND_USAGE = "/bg arena map";
     private static final String MAP_COMMAND_SUGGESTION = "/bg arena map";
     private static final String[] MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map" };
 
-    private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <id>";
+    private static final String REMOVE_ARENA_COMMAND_USAGE = "/bg arena remove <arena>";
     private static final String REMOVE_ARENA_COMMAND_SUGGESTION = "/bg arena remove ";
     private static final String[] REMOVE_ARENA_COMMAND_PERMISSIONS = new String[] { "battlegrounds.arena.remove" };
 
-    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <id> <name>";
+    private static final String REMOVE_LOBBY_COMMAND_USAGE = "/bg arena lobby remove <arena>";
+    private static final String REMOVE_LOBBY_COMMAND_SUGGESTION = "/bg arena lobby remove ";
+    private static final String[] REMOVE_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby.remove" };
+
+    private static final String SET_LOBBY_COMMAND_USAGE = "/bg arena lobby set <arena>";
+    private static final String SET_LOBBY_COMMAND_SUGGESTION = "/bg arena lobby set ";
+    private static final String[] SET_LOBBY_COMMAND_PERMISSIONS = new String[] { "battlegrounds.lobby.set" };
+
+    private static final String CREATE_MAP_COMMAND_USAGE = "/bg arena map create <arena> <map>";
     private static final String CREATE_MAP_COMMAND_SUGGESTION = "/bg arena map create ";
     private static final String[] CREATE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.create" };
 
-    private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <id> <name>";
+    private static final String REMOVE_MAP_COMMAND_USAGE = "/bg arena map remove <arena> <map>";
     private static final String REMOVE_MAP_COMMAND_SUGGESTION = "/bg arena map remove ";
     private static final String[] REMOVE_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.remove" };
 
-    private static final String SELECT_MAP_COMMAND_USAGE = "/bg arena map select <id> <name>";
+    private static final String SELECT_MAP_COMMAND_USAGE = "/bg arena map select <arena> <map>";
     private static final String SELECT_MAP_COMMAND_SUGGESTION = "/bg arena map select ";
     private static final String[] SELECT_MAP_COMMAND_PERMISSIONS = new String[] { "battlegrounds.map.select" };
 
@@ -40,18 +53,30 @@ public class ArenaCommandExtension implements CommandExtension {
     private static final String ADD_ELEMENT_COMMAND_SUGGESTION = "/bg element add ";
     private static final String[] ADD_ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element.add" };
 
+    private static final String REMOVE_ELEMENT_COMMAND_USAGE = "/bg element remove <element>";
+    private static final String REMOVE_ELEMENT_COMMAND_SUGGESTION = "/bg element remove ";
+    private static final String[] REMOVE_ELEMENT_COMMAND_PERMISSIONS = new String[] { "battlegrounds.element.remove" };
+
     private final ArenaCommand arenaCommand;
     private final ElementCommand elementCommand;
+    private final JoinCommand joinCommand;
+    private final LeaveCommand leaveCommand;
+    private final LobbyCommand lobbyCommand;
     private final MapCommand mapCommand;
 
     private final ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     private final MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+    private final ElementIdCommandCompletionHandler elementIdCommandCompletionHandler;
 
+    private final ArenaModeAbsenceCondition arenaModeAbsenceCondition;
+    private final ArenaModePresenceCondition arenaModePresenceCondition;
     private final ExistentArenaIdCondition existentArenaIdCondition;
     private final NonexistentArenaIdCondition nonexistentArenaIdCondition;
+    private final ExistentLobbyCondition existentLobbyCondition;
     private final ExistentMapNameCondition existentMapNameCondition;
     private final NonexistentMapNameCondition nonexistentMapNameCondition;
     private final MapSelectedCondition mapSelectedCondition;
+    private final ExistentElementIdCondition existentElementIdCondition;
 
     private final Translator translator;
 
@@ -59,26 +84,42 @@ public class ArenaCommandExtension implements CommandExtension {
     public ArenaCommandExtension(
             ArenaCommand arenaCommand,
             ElementCommand elementCommand,
+            JoinCommand joinCommand,
+            LeaveCommand leaveCommand,
+            LobbyCommand lobbyCommand,
             MapCommand mapCommand,
             ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler,
             MapNameCommandCompletionHandler mapNameCommandCompletionHandler,
+            ElementIdCommandCompletionHandler elementIdCommandCompletionHandler,
+            ArenaModeAbsenceCondition arenaModeAbsenceCondition,
+            ArenaModePresenceCondition arenaModePresenceCondition,
             ExistentArenaIdCondition existentArenaIdCondition,
             NonexistentArenaIdCondition nonexistentArenaIdCondition,
+            ExistentLobbyCondition existentLobbyCondition,
             ExistentMapNameCondition existentMapNameCondition,
             NonexistentMapNameCondition nonexistentMapNameCondition,
             MapSelectedCondition mapSelectedCondition,
+            ExistentElementIdCondition existentElementIdCondition,
             Translator translator
     ) {
         this.arenaCommand = arenaCommand;
         this.elementCommand = elementCommand;
+        this.joinCommand = joinCommand;
+        this.leaveCommand = leaveCommand;
+        this.lobbyCommand = lobbyCommand;
         this.mapCommand = mapCommand;
         this.arenaIdCommandCompletionHandler = arenaIdCommandCompletionHandler;
         this.mapNameCommandCompletionHandler = mapNameCommandCompletionHandler;
+        this.elementIdCommandCompletionHandler = elementIdCommandCompletionHandler;
+        this.arenaModeAbsenceCondition = arenaModeAbsenceCondition;
+        this.arenaModePresenceCondition = arenaModePresenceCondition;
         this.existentArenaIdCondition = existentArenaIdCondition;
         this.nonexistentArenaIdCondition = nonexistentArenaIdCondition;
+        this.existentLobbyCondition = existentLobbyCondition;
         this.existentMapNameCondition = existentMapNameCondition;
         this.nonexistentMapNameCondition = nonexistentMapNameCondition;
         this.mapSelectedCondition = mapSelectedCondition;
+        this.existentElementIdCondition = existentElementIdCondition;
         this.translator = translator;
     }
 
@@ -86,12 +127,21 @@ public class ArenaCommandExtension implements CommandExtension {
     public void configure(PaperCommandManager commandManager) {
         // Arena commands
         String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
+        String lobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY.getPath()).getText();
         String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
         String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
 
         arenaCommand.addCommandInfo(new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS));
+        arenaCommand.addCommandInfo(new CommandInfo(lobbyCommandDescription, LOBBY_COMMAND_USAGE, LOBBY_COMMAND_SUGGESTION, LOBBY_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(mapCommandDescription, MAP_COMMAND_USAGE, MAP_COMMAND_SUGGESTION, MAP_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
+
+        // Lobby commands
+        String lobbyRemoveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_REMOVE.getPath()).getText();
+        String lobbySetCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_SET.getPath()).getText();
+
+        lobbyCommand.addCommandInfo(new CommandInfo(lobbyRemoveCommandDescription, REMOVE_LOBBY_COMMAND_USAGE, REMOVE_LOBBY_COMMAND_SUGGESTION, REMOVE_LOBBY_COMMAND_PERMISSIONS));
+        lobbyCommand.addCommandInfo(new CommandInfo(lobbySetCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
 
         // Map commands
         String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
@@ -104,22 +154,32 @@ public class ArenaCommandExtension implements CommandExtension {
 
         // Element commands
         String addElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_ADD.getPath()).getText();
+        String removeElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_REMOVE.getPath()).getText();
 
         elementCommand.addCommandInfo(new CommandInfo(addElementCommandDescription, ADD_ELEMENT_COMMAND_USAGE, ADD_ELEMENT_COMMAND_SUGGESTION, ADD_ELEMENT_COMMAND_PERMISSIONS));
+        elementCommand.addCommandInfo(new CommandInfo(removeElementCommandDescription, REMOVE_ELEMENT_COMMAND_USAGE, REMOVE_ELEMENT_COMMAND_SUGGESTION, REMOVE_ELEMENT_COMMAND_PERMISSIONS));
 
         commandManager.registerCommand(arenaCommand);
         commandManager.registerCommand(elementCommand);
+        commandManager.registerCommand(joinCommand);
+        commandManager.registerCommand(leaveCommand);
+        commandManager.registerCommand(lobbyCommand);
         commandManager.registerCommand(mapCommand);
 
         var commandCompletions = commandManager.getCommandCompletions();
         commandCompletions.registerCompletion("arena-id", arenaIdCommandCompletionHandler);
         commandCompletions.registerCompletion("map-name", mapNameCommandCompletionHandler);
+        commandCompletions.registerCompletion("element-id", elementIdCommandCompletionHandler);
 
         var commandConditions = commandManager.getCommandConditions();
         commandConditions.addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         commandConditions.addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        commandConditions.addCondition(Integer.class, "existent-lobby", existentLobbyCondition);
+        commandConditions.addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         commandConditions.addCondition(String.class, "existent-map-name", existentMapNameCondition);
         commandConditions.addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
+        commandConditions.addCondition("arena-mode-absence", arenaModeAbsenceCondition);
+        commandConditions.addCondition("arena-mode-presence", arenaModePresenceCondition);
         commandConditions.addCondition("map-selected", mapSelectedCondition);
     }
 }

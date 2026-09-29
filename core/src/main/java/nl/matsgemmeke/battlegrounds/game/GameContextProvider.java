@@ -12,12 +12,12 @@ public class GameContextProvider {
 
     private final Map<GameKey, Game> games;
     private final Map<GameKey, GameContext> gameContexts;
-    private final Map<UUID, GameKey> entityGameKeyMap;
+    private final Map<UUID, GameKey> entityGameRegistries;
 
     public GameContextProvider() {
         this.games = new HashMap<>();
         this.gameContexts = new HashMap<>();
-        this.entityGameKeyMap = new HashMap<>();
+        this.entityGameRegistries = new HashMap<>();
     }
 
     /**
@@ -63,19 +63,6 @@ public class GameContextProvider {
     }
 
     /**
-     * Returns a list of id's of all arenas that are currently registered.
-     *
-     * @return a list of all arena id's
-     */
-    public List<Integer> getArenaIds() {
-        return games.values().stream()
-                .filter(Arena.class::isInstance)
-                .map(Arena.class::cast)
-                .map(Arena::getId)
-                .toList();
-    }
-
-    /**
      * Gets the game context by their game key. The return optional is empty when none of the registered game context
      * has the given game key.
      *
@@ -92,20 +79,29 @@ public class GameContextProvider {
         return Optional.empty();
     }
 
-    public Optional<GameKey> getGameKeyByEntityId(UUID entityId) {
-        if (!entityGameKeyMap.containsKey(entityId)) {
+    /**
+     * Gets the game context under which a given entity is registered. Returns an empty optional when the given entity
+     * id is not registered for any game context.
+     *
+     * @param entityId the entity id
+     * @return         an optional with the game key
+     */
+    public Optional<GameContext> getGameContext(UUID entityId) {
+        GameKey gameKey = entityGameRegistries.get(entityId);
+
+        if (gameKey == null) {
             return Optional.empty();
         }
 
-        return Optional.of(entityGameKeyMap.get(entityId));
+        return Optional.ofNullable(gameContexts.get(gameKey));
     }
 
     public void registerEntity(UUID uniqueId, GameKey gameKey) {
-        entityGameKeyMap.put(uniqueId, gameKey);
+        entityGameRegistries.put(uniqueId, gameKey);
     }
 
     public void unregisterEntity(UUID uniqueId) {
-        entityGameKeyMap.remove(uniqueId);
+        entityGameRegistries.remove(uniqueId);
     }
 
     /**

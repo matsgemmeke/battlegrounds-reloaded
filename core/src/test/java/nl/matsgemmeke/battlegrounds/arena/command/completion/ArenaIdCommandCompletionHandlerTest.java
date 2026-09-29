@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.arena.command.completion;
 
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,14 +20,14 @@ class ArenaIdCommandCompletionHandlerTest {
     private static final List<Integer> ARENA_IDS = List.of(1, 2, 345);
 
     @Mock
-    private GameContextProvider gameContextProvider;
+    private ArenaRegistry arenaRegistry;
     @InjectMocks
     private ArenaIdCommandCompletionHandler commandCompletionHandler;
 
     @Test
     @DisplayName("getCompletions returns arena id's from game context provider as strings")
     void getCompletions() {
-        when(gameContextProvider.getArenaIds()).thenReturn(ARENA_IDS);
+        when(arenaRegistry.getArenaIds()).thenReturn(ARENA_IDS);
 
         Collection<String> result = commandCompletionHandler.getCompletions(null);
 

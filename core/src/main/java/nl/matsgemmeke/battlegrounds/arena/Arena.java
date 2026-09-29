@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.BaseGame;
+import org.bukkit.Location;
 
 import java.util.*;
 
@@ -14,6 +15,7 @@ public class Arena extends BaseGame {
     private final ArenaSettings settings;
     private final int id;
     private final Set<ArenaMap> maps;
+    private Location lobbyLocation;
 
     public Arena(int id, ArenaSettings settings) {
         this.id = id;
@@ -27,6 +29,14 @@ public class Arena extends BaseGame {
 
     public ArenaSettings getSettings() {
         return settings;
+    }
+
+    public Optional<Location> getLobbyLocation() {
+        return Optional.ofNullable(lobbyLocation);
+    }
+
+    public void setLobbyLocation(Location lobbyLocation) {
+        this.lobbyLocation = lobbyLocation;
     }
 
     public void addMap(ArenaMap map) {

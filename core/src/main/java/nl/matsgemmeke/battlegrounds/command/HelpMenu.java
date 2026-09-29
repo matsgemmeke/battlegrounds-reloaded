@@ -16,8 +16,6 @@ import java.util.Map;
 
 public class HelpMenu {
 
-    private static final String EMPTY_LINE = " ";
-
     private final Translator translator;
 
     @Inject
@@ -25,11 +23,7 @@ public class HelpMenu {
         this.translator = translator;
     }
 
-    public void sendHelpMenuAsNormalMessages(CommandSender sender, String title, List<CommandInfo> commandInfoList) {
-        sender.sendMessage(EMPTY_LINE);
-        sender.sendMessage(title);
-        sender.sendMessage(EMPTY_LINE);
-
+    public void sendHelpMenuAsNormalMessages(CommandSender sender, List<CommandInfo> commandInfoList) {
         for (CommandInfo commandInfo : commandInfoList) {
             boolean permitted = Arrays.stream(commandInfo.permissions()).anyMatch(sender::hasPermission);
 
@@ -39,15 +33,9 @@ public class HelpMenu {
                 sender.sendMessage(subcommandText);
             }
         }
-
-        sender.sendMessage(EMPTY_LINE);
     }
 
-    public void sendHelpMenuAsJsonMessages(Player player, String title, List<CommandInfo> commandInfoList) {
-        player.sendMessage(EMPTY_LINE);
-        player.sendMessage(title);
-        player.sendMessage(EMPTY_LINE);
-
+    public void sendHelpMenuAsJsonMessages(Player player, List<CommandInfo> commandInfoList) {
         for (CommandInfo commandInfo : commandInfoList) {
             boolean permitted = Arrays.stream(commandInfo.permissions()).anyMatch(player::hasPermission);
 
@@ -61,8 +49,6 @@ public class HelpMenu {
                 player.spigot().sendMessage(message);
             }
         }
-
-        player.sendMessage(EMPTY_LINE);
     }
 
     private String getCommandInfoText(CommandInfo commandInfo) {

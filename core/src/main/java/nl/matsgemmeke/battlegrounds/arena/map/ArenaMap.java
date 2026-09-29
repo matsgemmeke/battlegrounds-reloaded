@@ -19,10 +19,6 @@ public class ArenaMap {
         this.elementsByType = new HashMap<>();
     }
 
-    public List<Element> getElements() {
-        return elements;
-    }
-
     public ArenaMapMetadata getMetadata() {
         return metadata;
     }
@@ -34,6 +30,29 @@ public class ArenaMap {
     public void addElement(Element element) {
         elements.add(element);
         elementsByType.computeIfAbsent(element.getClass(), elements -> new ArrayList<>()).add(element);
+    }
+
+    public void removeElement(Element element) {
+        elements.remove(element);
+
+        List<Element> typeList = elementsByType.get(element.getClass());
+
+        if (typeList != null) {
+            typeList.remove(element);
+            elementsByType.remove(element.getClass());
+        }
+    }
+
+    public boolean elementExists(int elementId) {
+        return elements.stream().anyMatch(element -> element.getId() == elementId);
+    }
+
+    public Optional<Element> getElement(int elementId) {
+        return elements.stream().filter(element -> element.getId() == elementId).findFirst();
+    }
+
+    public List<Integer> getElementIds() {
+        return elements.stream().map(Element::getId).toList();
     }
 
     public int generateNextElementId() {

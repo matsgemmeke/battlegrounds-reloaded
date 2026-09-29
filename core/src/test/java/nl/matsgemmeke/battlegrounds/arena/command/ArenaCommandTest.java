@@ -25,7 +25,8 @@ import static org.mockito.Mockito.when;
 class ArenaCommandTest {
 
     private static final int ARENA_ID = 1;
-    private static final String ARENA_HELP_MENU_TITLE = "arena help menu";
+    private static final String ARENA_HELP_MENU_HEADER_TEXT = "arena help menu header";
+    private static final String ARENA_HELP_MENU_FOOTER_TEXT = "arena help menu footer";
     private static final String SUBCOMMAND_DESCRIPTION = "just an arena command";
     private static final String SUBCOMMAND_USAGE = "/bg arena test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena test ";
@@ -61,12 +62,15 @@ class ArenaCommandTest {
     void onDefault_playerSender() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
-        when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.ARENA_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(player, null);
 
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, ARENA_HELP_MENU_TITLE, List.of(commandInfo));
+        verify(player).sendMessage(ARENA_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(player).sendMessage(ARENA_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test
@@ -75,12 +79,15 @@ class ArenaCommandTest {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
         CommandSender sender = mock(CommandSender.class);
 
-        when(translator.translate(TranslationKey.ARENA_HELP_MENU_TITLE.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_TITLE));
+        when(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_HEADER_TEXT));
+        when(translator.translate(TranslationKey.ARENA_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_FOOTER_TEXT));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(sender, null);
 
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, ARENA_HELP_MENU_TITLE, List.of(commandInfo));
+        verify(sender).sendMessage(ARENA_HELP_MENU_HEADER_TEXT);
+        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
+        verify(sender).sendMessage(ARENA_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test

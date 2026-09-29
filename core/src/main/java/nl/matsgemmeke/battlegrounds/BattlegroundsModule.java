@@ -17,11 +17,10 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactory;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDataFactoryProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
+import nl.matsgemmeke.battlegrounds.command.BattlegroundsCommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
-import nl.matsgemmeke.battlegrounds.configuration.data.DataConfiguration;
-import nl.matsgemmeke.battlegrounds.configuration.data.DataConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.entity.DefaultGamePlayer;
@@ -47,6 +46,8 @@ import nl.matsgemmeke.battlegrounds.game.component.entity.freeplay.FreeplayGameE
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.DefaultGunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.*;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipProvider;
+import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.component.player.PlayerLifecycleHandlerProvider;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
@@ -198,12 +199,12 @@ public class BattlegroundsModule implements Module {
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
+        commandExtensionBinder.addBinding().to(BattlegroundsCommandExtension.class).in(Singleton.class);
         commandExtensionBinder.addBinding().to(ToolsCommandExtension.class).in(Singleton.class);
 
         // Provider bindings
         binder.bind(BattlegroundsConfiguration.class).toProvider(BattlegroundsConfigurationProvider.class);
         binder.bind(DamageEventRepository.class).toProvider(SqliteDamageEventRepositoryProvider.class).in(Singleton.class);
-        binder.bind(DataConfiguration.class).toProvider(DataConfigurationProvider.class);
         binder.bind(ElementDataFactory.class).toProvider(ElementDataFactoryProvider.class).in(Singleton.class);
         binder.bind(EquipmentStateRepository.class).toProvider(SqliteEquipmentStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(GunStateRepository.class).toProvider(SqliteGunStateRepositoryProvider.class).in(Singleton.class);
@@ -260,6 +261,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(ItemInteractionDispatcher.class).toProvider(ItemInteractionDispatcherProvider.class).in(GameScoped.class);
         binder.bind(ItemLifecycleHandler.class).to(DefaultItemLifecycleHandler.class).in(GameScoped.class);
         binder.bind(MeleeWeaponRegistry.class).to(DefaultMeleeWeaponRegistry.class).in(GameScoped.class);
+        binder.bind(MembershipService.class).toProvider(MembershipProvider.class).in(GameScoped.class);
         binder.bind(MobRegistry.class).toProvider(MobRegistryProvider.class).in(GameScoped.class);
         binder.bind(PlayerLifecycleHandler.class).toProvider(PlayerLifecycleHandlerProvider.class).in(GameScoped.class);
         binder.bind(PlayerRegistry.class).to(DefaultPlayerRegistry.class).in(GameScoped.class);
@@ -333,7 +335,7 @@ public class BattlegroundsModule implements Module {
 
         // File bindings
         binder.bind(File.class).annotatedWith(Names.named("ArenasFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "arenas"));
-        binder.bind(File.class).annotatedWith(Names.named("DataFolder")).toInstance(dataFolder);
+        binder.bind(File.class).annotatedWith(Names.named("dataFolder")).toInstance(dataFolder);
         binder.bind(File.class).annotatedWith(Names.named("ItemsFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "items"));
         binder.bind(File.class).annotatedWith(Names.named("LangFolder")).toInstance(new File(dataFolder.getAbsoluteFile(), "lang"));
     }

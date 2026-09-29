@@ -2,8 +2,8 @@ package nl.matsgemmeke.battlegrounds.arena.command.condition;
 
 import co.aikar.commands.*;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
@@ -11,18 +11,18 @@ import java.util.Map;
 
 public class ExistentArenaIdCondition implements ParameterCondition<Integer> {
 
-    private final GameContextProvider gameContextProvider;
+    private final ArenaRegistry arenaRegistry;
     private final Translator translator;
 
     @Inject
-    public ExistentArenaIdCondition(GameContextProvider gameContextProvider, Translator translator) {
-        this.gameContextProvider = gameContextProvider;
+    public ExistentArenaIdCondition(ArenaRegistry arenaRegistry, Translator translator) {
+        this.arenaRegistry = arenaRegistry;
         this.translator = translator;
     }
 
     @Override
     public void validateCondition(ConditionContext<BukkitCommandIssuer> context, BukkitCommandExecutionContext execContext, Integer arenaId) {
-        if (gameContextProvider.arenaExists(arenaId)) {
+        if (arenaRegistry.exists(arenaId)) {
             return;
         }
 

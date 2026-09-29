@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.ArenaIdCommandCompletionHandler;
+import nl.matsgemmeke.battlegrounds.arena.command.completion.ElementIdCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
@@ -27,12 +28,16 @@ class ArenaCommandExtensionTest {
     @Mock
     private ElementCommand elementCommand;
     @Mock
+    private LobbyCommand lobbyCommand;
+    @Mock
     private MapCommand mapCommand;
 
     @Mock
     private ArenaIdCommandCompletionHandler arenaIdCommandCompletionHandler;
     @Mock
     private MapNameCommandCompletionHandler mapNameCommandCompletionHandler;
+    @Mock
+    private ElementIdCommandCompletionHandler elementIdCommandCompletionHandler;
 
     @Mock
     private ExistentArenaIdCondition existentArenaIdCondition;
@@ -44,6 +49,8 @@ class ArenaCommandExtensionTest {
     private NonexistentMapNameCondition nonexistentMapNameCondition;
     @Mock
     private MapSelectedCondition mapSelectedCondition;
+    @Mock
+    private ExistentElementIdCondition existentElementIdCondition;
 
     @Mock
     private CommandCompletions<BukkitCommandCompletionContext> commandCompletions;
@@ -66,19 +73,23 @@ class ArenaCommandExtensionTest {
 
         commandExtension.configure(commandManager);
 
-        verify(arenaCommand, times(3)).addCommandInfo(any(CommandInfo.class));
+        verify(arenaCommand, times(4)).addCommandInfo(any(CommandInfo.class));
+        verify(lobbyCommand, times(2)).addCommandInfo(any(CommandInfo.class));
         verify(mapCommand, times(3)).addCommandInfo(any(CommandInfo.class));
-        verify(elementCommand, times(1)).addCommandInfo(any(CommandInfo.class));
+        verify(elementCommand, times(2)).addCommandInfo(any(CommandInfo.class));
 
         verify(commandManager).registerCommand(arenaCommand);
         verify(commandManager).registerCommand(elementCommand);
+        verify(commandManager).registerCommand(lobbyCommand);
         verify(commandManager).registerCommand(mapCommand);
 
         verify(commandCompletions).registerCompletion("arena-id", arenaIdCommandCompletionHandler);
         verify(commandCompletions).registerCompletion("map-name", mapNameCommandCompletionHandler);
+        verify(commandCompletions).registerCompletion("element-id", elementIdCommandCompletionHandler);
 
         verify(commandConditions).addCondition(Integer.class, "existent-arena-id", existentArenaIdCondition);
         verify(commandConditions).addCondition(Integer.class, "nonexistent-arena-id", nonexistentArenaIdCondition);
+        verify(commandConditions).addCondition(Integer.class, "existent-element-id", existentElementIdCondition);
         verify(commandConditions).addCondition(String.class, "existent-map-name", existentMapNameCondition);
         verify(commandConditions).addCondition(String.class, "nonexistent-map-name", nonexistentMapNameCondition);
         verify(commandConditions).addCondition("map-selected", mapSelectedCondition);

@@ -12,7 +12,7 @@ import java.util.Map;
 public class EventDamageAdapterProvider extends ComponentRouterProvider<EventDamageAdapter> {
 
     @Inject
-    public EventDamageAdapterProvider(GameScope gameScope, Map<GameContextType, Provider<EventDamageAdapter>> implementations, TypeLiteral<EventDamageAdapter> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public EventDamageAdapterProvider(GameScope gameScope, Map<GameContextType, Provider<EventDamageAdapter>> providers, TypeLiteral<EventDamageAdapter> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }

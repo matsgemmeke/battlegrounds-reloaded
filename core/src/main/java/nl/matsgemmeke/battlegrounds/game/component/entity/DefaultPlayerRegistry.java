@@ -50,6 +50,7 @@ public class DefaultPlayerRegistry implements PlayerRegistry {
     @Override
     public void deregister(UUID uniqueId) {
         playerContainer.removeEntity(uniqueId);
+        gameContextProvider.unregisterEntity(uniqueId);
     }
 
     @Override

@@ -16,7 +16,7 @@ public class HitboxConfigurationProvider implements Provider<HitboxConfiguration
     private final Plugin plugin;
 
     @Inject
-    public HitboxConfigurationProvider(Plugin plugin, ObjectValidator objectValidator, @Named("DataFolder") File dataFolder) {
+    public HitboxConfigurationProvider(Plugin plugin, ObjectValidator objectValidator, @Named("dataFolder") File dataFolder) {
         this.plugin = plugin;
         this.objectValidator = objectValidator;
         this.dataFolder = dataFolder;

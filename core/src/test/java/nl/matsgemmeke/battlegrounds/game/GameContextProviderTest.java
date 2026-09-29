@@ -6,7 +6,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -59,25 +58,12 @@ class GameContextProviderTest {
     }
 
     @Test
-    @DisplayName("getArenaIds returns all id's from registered arenas")
-    void getArenaIds() {
-        Freeplay freeplay = mock(Freeplay.class);
-
-        Arena arena = mock(Arena.class);
-        when(arena.getId()).thenReturn(ARENA_ID);
-
-        gameContextProvider.addArena(GameKey.ofArena(ARENA_ID), arena);
-        gameContextProvider.assignFreeplay(freeplay);
-        List<Integer> arenaIds = gameContextProvider.getArenaIds();
-
-        assertThat(arenaIds).containsExactly(ARENA_ID);
-    }
-
-    @Test
     @DisplayName("getGameContext returns optional with game context corresponding to given game key")
     void getGameContext_matchingGameKey() {
         GameKey gameKey = GameKey.ofFreeplay();
-        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
+
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getGameKey()).thenReturn(gameKey);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
         Optional<GameContext> result = gameContextProvider.getGameContext(gameKey);
@@ -90,7 +76,9 @@ class GameContextProviderTest {
     void getGameContext_noMatches() {
         GameKey gameKey = GameKey.ofFreeplay();
         GameKey otherKey = GameKey.ofArena(1);
-        GameContext gameContext = new GameContext(gameKey, GameContextType.ARENA_MODE);
+
+        GameContext gameContext = mock(GameContext.class);
+        when(gameContext.getGameKey()).thenReturn(gameKey);
 
         gameContextProvider.addGameContext(gameKey, gameContext);
         Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(otherKey);
@@ -99,22 +87,24 @@ class GameContextProviderTest {
     }
 
     @Test
-    @DisplayName("getGameKeyByEntityId returns empty optional when no link of given entity id exists")
-    void getGameKeyByEntityId_notFound() {
-        Optional<GameKey> gameKeyOptional = gameContextProvider.getGameKeyByEntityId(ENTITY_ID);
+    @DisplayName("getGameContext returns empty optional when no link of given entity id exists")
+    void getGameContext_notFound() {
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(ENTITY_ID);
 
-        assertThat(gameKeyOptional).isEmpty();
+        assertThat(gameContextOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("getGameKeyByEntityId returns optional with game key linked to given entity id")
-    void getGameKeyByEntityId_success() {
+    @DisplayName("getGameContext returns optional with game context registered to given entity id")
+    void getGameContext_registeredEntityId() {
         GameKey gameKey = GameKey.ofFreeplay();
+        GameContext gameContext = mock(GameContext.class);
 
+        gameContextProvider.addGameContext(gameKey, gameContext);
         gameContextProvider.registerEntity(ENTITY_ID, gameKey);
-        Optional<GameKey> gameKeyOptional = gameContextProvider.getGameKeyByEntityId(ENTITY_ID);
+        Optional<GameContext> gameContextOptional = gameContextProvider.getGameContext(ENTITY_ID);
 
-        assertThat(gameKeyOptional).hasValue(gameKey);
+        assertThat(gameContextOptional).hasValue(gameContext);
     }
 
     @Test

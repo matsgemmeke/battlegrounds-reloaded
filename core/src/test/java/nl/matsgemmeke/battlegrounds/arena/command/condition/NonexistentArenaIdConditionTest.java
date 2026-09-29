@@ -4,7 +4,7 @@ import co.aikar.commands.BukkitCommandExecutionContext;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
-import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
@@ -26,11 +26,11 @@ class NonexistentArenaIdConditionTest {
     private static final String ARENA_EXISTS_MESSAGE = "arena exists";
 
     @Mock
+    private ArenaRegistry arenaRegistry;
+    @Mock
     private BukkitCommandExecutionContext execContext;
     @Mock
     private ConditionContext<BukkitCommandIssuer> conditionContext;
-    @Mock
-    private GameContextProvider gameContextProvider;
     @Mock
     private Translator translator;
     @InjectMocks
@@ -39,7 +39,7 @@ class NonexistentArenaIdConditionTest {
     @Test
     @DisplayName("validateCondition passes when arena does not exist")
     void validateCondition_arenaNotExists() {
-        when(gameContextProvider.arenaExists(ARENA_ID)).thenReturn(false);
+        when(arenaRegistry.exists(ARENA_ID)).thenReturn(false);
 
         assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
@@ -47,7 +47,7 @@ class NonexistentArenaIdConditionTest {
     @Test
     @DisplayName("validateCondition throws ConditionFailedException when arena exists")
     void validateCondition_arenaExists() {
-        when(gameContextProvider.arenaExists(ARENA_ID)).thenReturn(true);
+        when(arenaRegistry.exists(ARENA_ID)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath())).thenReturn(new TextTemplate(ARENA_EXISTS_MESSAGE));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))

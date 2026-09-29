@@ -12,7 +12,7 @@ import java.util.Map;
 public class RespawnHandlerProvider extends ComponentRouterProvider<RespawnHandler> {
 
     @Inject
-    public RespawnHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<RespawnHandler>> implementations, TypeLiteral<RespawnHandler> typeLiteral) {
-        super(gameScope, implementations, typeLiteral);
+    public RespawnHandlerProvider(GameScope gameScope, Map<GameContextType, Provider<RespawnHandler>> providers, TypeLiteral<RespawnHandler> typeLiteral) {
+        super(gameScope, providers, typeLiteral);
     }
 }

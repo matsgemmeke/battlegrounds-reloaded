@@ -39,6 +39,8 @@ class ArenaSetupConfigurationTest {
     private static final String CREATED_BY_TEXT = "2c11afe2-48f0-4399-9a04-195bb8ac640e";
     private static final UUID CREATED_BY = UUID.fromString(CREATED_BY_TEXT);
 
+    private static final LocationData LOBBY_LOCATION_DATA = new LocationData("world", 1.1, 2.2, 3.3, 90.0f, 0.0f);
+
     private static final String MAP_KEY = "level-1";
     private static final String MAP_NAME = "Level 1";
     private static final String MAP_CREATED_AT_TEXT_FUTURE = "2126-06-30T18:00:00Z";
@@ -66,14 +68,14 @@ class ArenaSetupConfigurationTest {
     @Mock
     private Section rootSection;
     @InjectMocks
-    private ArenaSetupConfiguration setupConfiguration;
+    private ArenaSetupConfiguration arenaSetupConfiguration;
 
     @Test
     @DisplayName("getCreatedAt returns empty optional when configuration file does not have a value")
     void getCreatedAt_valueNotFound() {
         when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.empty());
 
-        Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
+        Optional<Instant> createdAtOptional = arenaSetupConfiguration.getCreatedAt();
 
         assertThat(createdAtOptional).isEmpty();
     }
@@ -83,7 +85,7 @@ class ArenaSetupConfigurationTest {
     void getCreatedAt_successful() {
         when(configurationFile.getRootSection().getString("created-at")).thenReturn(Optional.of(CREATED_AT_TEXT));
 
-        Optional<Instant> createdAtOptional = setupConfiguration.getCreatedAt();
+        Optional<Instant> createdAtOptional = arenaSetupConfiguration.getCreatedAt();
 
         assertThat(createdAtOptional).hasValue(CREATED_AT);
     }
@@ -93,7 +95,7 @@ class ArenaSetupConfigurationTest {
     void setCreatedAt() {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
 
-        setupConfiguration.setCreatedAt(CREATED_AT);
+        arenaSetupConfiguration.setCreatedAt(CREATED_AT);
 
         verify(rootSection).set("created-at", CREATED_AT_TEXT);
         verify(configurationFile).save();
@@ -104,7 +106,7 @@ class ArenaSetupConfigurationTest {
     void getCreatedBy_valueNotFound() {
         when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.empty());
 
-        Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
+        Optional<UUID> createdByOptional = arenaSetupConfiguration.getCreatedBy();
 
         assertThat(createdByOptional).isEmpty();
     }
@@ -114,7 +116,7 @@ class ArenaSetupConfigurationTest {
     void getCreatedBy_successful() {
         when(configurationFile.getRootSection().getString("created-by")).thenReturn(Optional.of(CREATED_BY_TEXT));
 
-        Optional<UUID> createdByOptional = setupConfiguration.getCreatedBy();
+        Optional<UUID> createdByOptional = arenaSetupConfiguration.getCreatedBy();
 
         assertThat(createdByOptional).hasValue(CREATED_BY);
     }
@@ -124,9 +126,72 @@ class ArenaSetupConfigurationTest {
     void setCreatedBy() {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
 
-        setupConfiguration.setCreatedBy(CREATED_BY);
+        arenaSetupConfiguration.setCreatedBy(CREATED_BY);
 
         verify(rootSection).set("created-by", CREATED_BY_TEXT);
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("getLobby returns empty optional when lobby section doesn't exist")
+    void getLobby_sectionNotExists() {
+        when(configurationFile.getRootSection().getSection("lobby")).thenReturn(Optional.empty());
+
+        Optional<LocationData> locationDataOptional = arenaSetupConfiguration.getLobby();
+
+        assertThat(locationDataOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getLobby returns empty optional when lobby section doesn't exist")
+    void getLobby_successful() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection().getSection("lobby")).thenReturn(Optional.of(lobbySection));
+        when(locationDataSerializer.deserialize(lobbySection)).thenReturn(LOBBY_LOCATION_DATA);
+
+        Optional<LocationData> locationDataOptional = arenaSetupConfiguration.getLobby();
+
+        assertThat(locationDataOptional).hasValue(LOBBY_LOCATION_DATA);
+    }
+
+    @Test
+    @DisplayName("removeLobby removes the lobby section")
+    void removeLobby() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
+        arenaSetupConfiguration.removeLobby();
+
+        verify(rootSection).removeSection("lobby");
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("setLobby sets given location in a newly created section when the lobby section does not exist")
+    void setLobby_withoutPreviousLobby() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("lobby")).thenReturn(Optional.empty());
+        when(rootSection.createSection("lobby")).thenReturn(lobbySection);
+
+        arenaSetupConfiguration.setLobby(LOBBY_LOCATION_DATA);
+
+        verify(locationDataSerializer).serialize(LOBBY_LOCATION_DATA, lobbySection);
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("setLobby sets given location in an existing lobby section")
+    void setLobby_withPreviousLobby() {
+        Section lobbySection = mock(Section.class);
+
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+        when(rootSection.getSection("lobby")).thenReturn(Optional.of(lobbySection));
+
+        arenaSetupConfiguration.setLobby(LOBBY_LOCATION_DATA);
+
+        verify(locationDataSerializer).serialize(LOBBY_LOCATION_DATA, lobbySection);
         verify(configurationFile).save();
     }
 
@@ -137,7 +202,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection()).thenReturn(rootSection);
 
-        setupConfiguration.createMap(mapCreationInfo);
+        arenaSetupConfiguration.createMap(mapCreationInfo);
 
         verify(rootSection).set("maps.level-1.name", MAP_NAME);
         verify(rootSection).set("maps.level-1.created-at", CREATED_AT_TEXT);
@@ -148,7 +213,7 @@ class ArenaSetupConfigurationTest {
     @Test
     @DisplayName("removeMap removes map section from configuration file")
     void removeMap() {
-        setupConfiguration.removeMap(MAP_NAME);
+        arenaSetupConfiguration.removeMap(MAP_NAME);
 
         verify(configurationFile.getRootSection()).removeSection("maps.level-1");
         verify(configurationFile).save();
@@ -159,7 +224,7 @@ class ArenaSetupConfigurationTest {
     void getMaps_mapsSectionNotExists() {
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.empty());
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
     }
@@ -172,7 +237,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
     }
@@ -186,7 +251,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
 
@@ -205,7 +270,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).isEmpty();
 
@@ -226,7 +291,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).satisfiesExactly(mapData -> {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
@@ -252,7 +317,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).satisfiesExactly(mapData -> {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
@@ -281,7 +346,7 @@ class ArenaSetupConfigurationTest {
 
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).satisfiesExactly(mapData -> {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
@@ -315,7 +380,7 @@ class ArenaSetupConfigurationTest {
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
         when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).satisfiesExactly(mapData -> {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
@@ -358,7 +423,7 @@ class ArenaSetupConfigurationTest {
         when(configurationFile.getRootSection().getSection("maps")).thenReturn(Optional.of(mapsSection));
         when(elementDataFactory.create(ElementType.SPAWN_POINT, elementSection)).thenReturn(spawnPointData);
 
-        Collection<ArenaMapData> maps = setupConfiguration.getMaps();
+        Collection<ArenaMapData> maps = arenaSetupConfiguration.getMaps();
 
         assertThat(maps).satisfiesExactly(mapData -> {
             assertThat(mapData.name()).isEqualTo(MAP_NAME);
@@ -373,7 +438,7 @@ class ArenaSetupConfigurationTest {
     void createSpawnPoint_invalid() {
         CreateSpawnPointData data = new CreateSpawnPointData(MAP_NAME, -1, null, -1);
 
-        assertThatThrownBy(() -> setupConfiguration.createSpawnPoint(data))
+        assertThatThrownBy(() -> arenaSetupConfiguration.createSpawnPoint(data))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Cannot create spawn point for invalid data")
                 .cause()
@@ -391,11 +456,23 @@ class ArenaSetupConfigurationTest {
         when(configurationFile.getRootSection()).thenReturn(rootSection);
         when(configurationFile.getRootSection().createSection("maps.level-1.elements.1.location")).thenReturn(locationSection);
 
-        setupConfiguration.createSpawnPoint(data);
+        arenaSetupConfiguration.createSpawnPoint(data);
 
+        verify(rootSection).set("maps.level-1.elements.1.element-id", SPAWN_POINT_ELEMENT_ID);
+        verify(rootSection).set("maps.level-1.elements.1.element-type", "SPAWN_POINT");
         verify(locationDataSerializer).serialize(locationData, locationSection);
-        verify(rootSection).set("maps.level-1.elements.1.type", "SPAWN_POINT");
         verify(rootSection).set("maps.level-1.elements.1.team-id", SPAWN_POINT_TEAM_ID);
+        verify(configurationFile).save();
+    }
+
+    @Test
+    @DisplayName("removeElement removes the element's section")
+    void removeElement() {
+        when(configurationFile.getRootSection()).thenReturn(rootSection);
+
+        arenaSetupConfiguration.removeElement(MAP_NAME, SPAWN_POINT_ELEMENT_ID);
+
+        verify(rootSection).removeSection("maps.level-1.elements.1");
         verify(configurationFile).save();
     }
 }

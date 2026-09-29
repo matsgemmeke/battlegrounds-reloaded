@@ -14,18 +14,15 @@ import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
+import nl.matsgemmeke.battlegrounds.util.world.LocationUtils;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
-import org.joml.Math;
 
 import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 public class AddSpawnPointCommandExecutor {
-
-    private static final double BLOCK_CENTER_OFFSET = 0.5;
 
     private final ArenaMapSelector mapSelector;
     private final ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
@@ -66,7 +63,7 @@ public class AddSpawnPointCommandExecutor {
         String mapName = map.getName();
 
         int elementId = map.generateNextElementId();
-        Location location = this.getCenterLocation(player.getLocation());
+        Location location = LocationUtils.getCenterLocation(player.getLocation());
         LocationData locationData = locationMapper.toLocationData(location);
         SpawnPoint spawnPoint = new SpawnPoint(elementId, teamId, location);
 
@@ -83,15 +80,5 @@ public class AddSpawnPointCommandExecutor {
         );
 
         player.sendMessage(translator.translate(TranslationKey.SPAWN_POINT_ADDED.getPath()).replace(values));
-    }
-
-    private Location getCenterLocation(Location original) {
-        World world = original.getWorld();
-        double x = Math.floor(original.getX()) + BLOCK_CENTER_OFFSET;
-        double y = original.getY();
-        double z = Math.floor(original.getZ()) + BLOCK_CENTER_OFFSET;
-        float yaw = original.getYaw();
-        float pitch = original.getPitch();
-        return new Location(world, x, y, z, yaw, pitch);
     }
 }

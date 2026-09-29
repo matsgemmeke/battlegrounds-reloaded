@@ -11,22 +11,23 @@ import java.util.Map;
 public abstract class ComponentRouterProvider<T> implements Provider<T> {
 
     private final GameScope gameScope;
-    private final Map<GameContextType, Provider<T>> implementations;
+    private final Map<GameContextType, Provider<T>> providers;
     private final TypeLiteral<T> typeLiteral;
 
-    public ComponentRouterProvider(GameScope gameScope, Map<GameContextType, Provider<T>> implementations, TypeLiteral<T> typeLiteral) {
+    public ComponentRouterProvider(GameScope gameScope, Map<GameContextType, Provider<T>> providers, TypeLiteral<T> typeLiteral) {
         this.gameScope = gameScope;
-        this.implementations = implementations;
+        this.providers = providers;
         this.typeLiteral = typeLiteral;
     }
 
+    @Override
     public T get() {
         GameContext gameContext = gameScope.getCurrentGameContext().orElseThrow(() -> {
             String message = String.format("Cannot provide instance of %s: the game scope is empty", this.getTypeName());
             return new ComponentProvisionException(message);
         });
 
-        Provider<T> provider = implementations.get(gameContext.getType());
+        Provider<T> provider = providers.get(gameContext.getType());
 
         if (provider == null) {
             String message = String.format("Cannot provide instance of %s: no implementation bound for %s", this.getTypeName(), gameContext.getType());
