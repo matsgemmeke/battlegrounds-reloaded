@@ -48,7 +48,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'world' at example.path");
+                .hasMessage("Missing value 'world' at path 'example.path'");
     }
 
     @Test
@@ -61,7 +61,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'x' at example.path");
+                .hasMessage("Missing value 'x' at path 'example.path'");
     }
 
     @Test
@@ -75,7 +75,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'y' at example.path");
+                .hasMessage("Missing value 'y' at path 'example.path'");
     }
 
     @Test
@@ -90,7 +90,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'z' at example.path");
+                .hasMessage("Missing value 'z' at path 'example.path'");
     }
 
     @Test
@@ -106,7 +106,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'yaw' at example.path");
+                .hasMessage("Missing value 'yaw' at path 'example.path'");
     }
 
     @Test
@@ -123,7 +123,7 @@ class LocationDataSerializerTest {
 
         assertThatThrownBy(() -> locationDataSerializer.deserialize(section))
                 .isInstanceOf(SerializationException.class)
-                .hasMessage("Missing value 'pitch' at example.path");
+                .hasMessage("Missing value 'pitch' at path 'example.path'");
     }
 
     @Test

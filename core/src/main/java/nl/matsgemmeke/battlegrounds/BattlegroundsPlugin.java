@@ -34,7 +34,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private GameContextShutdownManager gameContextShutdownManager;
     private Injector injector;
-    private InternalsProvider internals;
     private Logger logger;
     private PluginManager pluginManager;
 
@@ -56,18 +55,20 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        gameContextShutdownManager.shutdown();
+        if (gameContextShutdownManager != null) {
+            gameContextShutdownManager.shutdown();
+        }
     }
 
     private void startPlugin() throws StartupFailedException {
-        this.setUpInternalsProvider();
         this.setUpLogging();
 
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
+        InternalsProvider internalsProvider = InternalsProviderFactory.create();
         PaperCommandManager commandManager = new PaperCommandManager(this);
 
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internalsProvider, logger, commandManager, this, pluginManager);
         ArenaModule arenaModule = new ArenaModule();
         LocationModule locationModule = new LocationModule();
 
@@ -101,18 +102,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
         eventDispatcher.registerEventHandler(ProjectileHitEvent.class, injector.getInstance(ProjectileHitEventHandler.class));
-    }
-
-    private void setUpInternalsProvider() throws StartupFailedException {
-        try {
-            String packageName = BattlegroundsPlugin.class.getPackage().getName();
-            String internalsName = this.getServer().getClass().getPackage().getName().split("\\.")[3];
-            String className = packageName + ".nms." + internalsName + "." + internalsName.toUpperCase();
-
-            internals = (InternalsProvider) Class.forName(className).getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new StartupFailedException("Failed to find a valid implementation for this server version");
-        }
     }
 
     private void setUpJobs() {

@@ -274,7 +274,7 @@ public class DefaultGamePlayer implements GamePlayer {
 
     @Override
     public void modifyCameraRotation(float yaw, float pitch) {
-        internals.setPlayerRotation(player, yaw, pitch);
+        player.setRotation(yaw, pitch);
     }
 
     @Override
