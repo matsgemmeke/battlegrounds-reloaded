@@ -145,28 +145,28 @@ public class BattlegroundsModule implements Module {
 
     private final BukkitScheduler bukkitScheduler;
     private final File dataFolder;
-    private final InternalsProvider internals;
     private final Logger logger;
     private final PaperCommandManager commandManager;
     private final Plugin plugin;
     private final PluginManager pluginManager;
+    private final VersionAdapter versionAdapter;
 
     public BattlegroundsModule(
             BukkitScheduler bukkitScheduler,
             File dataFolder,
-            InternalsProvider internals,
             Logger logger,
             PaperCommandManager commandManager,
             Plugin plugin,
-            PluginManager pluginManager
+            PluginManager pluginManager,
+            VersionAdapter versionAdapter
     ) {
         this.bukkitScheduler = bukkitScheduler;
         this.dataFolder = dataFolder;
-        this.internals = internals;
         this.logger = logger;
         this.commandManager = commandManager;
         this.plugin = plugin;
         this.pluginManager = pluginManager;
+        this.versionAdapter = versionAdapter;
     }
 
     @Override
@@ -174,12 +174,12 @@ public class BattlegroundsModule implements Module {
         // Instance bindings
         binder.bind(BukkitScheduler.class).toInstance(bukkitScheduler);
         binder.bind(Clock.class).toInstance(Clock.systemUTC());
-        binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(PaperCommandManager.class).toInstance(commandManager);
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
         binder.bind(ResourceProvider.class).toInstance(plugin::getResource);
+        binder.bind(VersionAdapter.class).toInstance(versionAdapter);
         binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);

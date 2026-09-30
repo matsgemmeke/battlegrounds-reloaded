@@ -3,11 +3,11 @@ package nl.matsgemmeke.battlegrounds.nms.v26;
 import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Abilities;
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.VersionAdapter;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
-public class V26InternalsProvider implements InternalsProvider {
+public class V26VersionAdapter implements VersionAdapter {
 
     public void setPlayerRotation(Player player, float yaw, float pitch) {
     }

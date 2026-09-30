@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.VersionAdapter;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
@@ -47,11 +47,11 @@ class DefaultGamePlayerTest {
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
 
     @Mock
-    private InternalsProvider internals;
-    @Mock
     private HitboxProvider<Player> hitboxProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Player player;
+    @Mock
+    private VersionAdapter versionAdapter;
     @InjectMocks
     private DefaultGamePlayer gamePlayer;
 
@@ -397,12 +397,13 @@ class DefaultGamePlayerTest {
     }
 
     @Test
-    void applyViewMagnificationCallsInternalSetWalkSpeedFunction() {
+    @DisplayName("applyViewMagnification calls version adapter walk speed function")
+    void applyViewMagnification() {
         float magnification = -0.1f;
 
         gamePlayer.applyViewMagnification(magnification);
 
-        verify(internals).setWalkSpeed(player, magnification);
+        verify(versionAdapter).setWalkSpeed(player, magnification);
     }
 
     @Test
@@ -416,10 +417,11 @@ class DefaultGamePlayerTest {
     }
 
     @Test
-    void modifyCameraRotationCallsInternalPlayerRotationFunction() {
+    @DisplayName("modifyCameraRotation calls version adapter rotation function")
+    void modifyCameraRotation() {
         gamePlayer.modifyCameraRotation(1.0f, 1.0f);
 
-        verify(internals).setPlayerRotation(player, 1.0f, 1.0f);
+        verify(versionAdapter).setPlayerRotation(player, 1.0f, 1.0f);
     }
 
     @Test

@@ -35,8 +35,8 @@ class LocationDataSerializerTest {
         verify(section).set("x", X);
         verify(section).set("y", Y);
         verify(section).set("z", Z);
-        verify(section).set("yaw", YAW);
-        verify(section).set("pitch", PITCH);
+        verify(section).set("yaw", (double) YAW);
+        verify(section).set("pitch", (double) PITCH);
     }
 
     @Test

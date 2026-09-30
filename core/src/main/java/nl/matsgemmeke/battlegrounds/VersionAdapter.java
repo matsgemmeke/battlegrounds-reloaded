@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds;
 
 import org.bukkit.entity.Player;
 
-public interface InternalsProvider {
+public interface VersionAdapter {
 
     void setPlayerRotation(Player player, float yaw, float pitch);
 

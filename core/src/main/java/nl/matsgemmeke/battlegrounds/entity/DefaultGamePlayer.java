@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.entity;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.VersionAdapter;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
@@ -33,16 +33,16 @@ public class DefaultGamePlayer implements GamePlayer {
 
     private final EntityKey entityKey;
     private final HitboxProvider<Player> hitboxProvider;
-    private final InternalsProvider internals;
     private final Player player;
     private final Set<ItemEffect> effects;
+    private final VersionAdapter versionAdapter;
     private boolean canDeploy;
     private boolean passive;
     private int previousFoodLevel;
 
     @Inject
     public DefaultGamePlayer(
-            InternalsProvider internals,
+            VersionAdapter versionAdapter,
             @Assisted Player player,
             @Assisted EntityKey entityKey,
             @Assisted HitboxProvider<Player> hitboxProvider
@@ -50,7 +50,7 @@ public class DefaultGamePlayer implements GamePlayer {
         this.player = player;
         this.entityKey = entityKey;
         this.hitboxProvider = hitboxProvider;
-        this.internals = internals;
+        this.versionAdapter = versionAdapter;
         this.effects = new HashSet<>();
         this.canDeploy = true;
         this.passive = false;
@@ -159,7 +159,7 @@ public class DefaultGamePlayer implements GamePlayer {
 
     @Override
     public void applyViewMagnification(float magnification) {
-        internals.setWalkSpeed(player, magnification);
+        versionAdapter.setWalkSpeed(player, magnification);
     }
 
     @Override

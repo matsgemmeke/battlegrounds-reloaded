@@ -9,7 +9,7 @@ public class InternalsProviderFactory {
     private InternalsProviderFactory() {
     }
 
-    public static InternalsProvider create() {
+    public static VersionAdapter create() {
         String version = Bukkit.getBukkitVersion();
         int[] v = parse(version);
 
@@ -31,12 +31,12 @@ public class InternalsProviderFactory {
         return out;
     }
 
-    private static InternalsProvider instantiateInternalsProvider(String version) {
+    private static VersionAdapter instantiateInternalsProvider(String version) {
         try {
             String packageName = BattlegroundsPlugin.class.getPackage().getName();
             String className = packageName + ".nms." + version + "." + version.toUpperCase() + "InternalsProvider";
 
-            return (InternalsProvider) Class.forName(className).getDeclaredConstructor().newInstance();
+            return (VersionAdapter) Class.forName(className).getDeclaredConstructor().newInstance();
         } catch (ClassNotFoundException | NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
             throw new StartupFailedException("Failed to instantiate internals provider for Minecraft version " + version, ex);
         }

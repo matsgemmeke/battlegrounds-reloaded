@@ -65,10 +65,10 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
-        InternalsProvider internalsProvider = InternalsProviderFactory.create();
         PaperCommandManager commandManager = new PaperCommandManager(this);
+        VersionAdapter versionAdapter = InternalsProviderFactory.create();
 
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internalsProvider, logger, commandManager, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, logger, commandManager, this, pluginManager, versionAdapter);
         ArenaModule arenaModule = new ArenaModule();
         LocationModule locationModule = new LocationModule();
 
