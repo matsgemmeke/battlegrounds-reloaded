@@ -19,6 +19,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDat
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.BattlegroundsCommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
+import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapterProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
@@ -149,7 +150,6 @@ public class BattlegroundsModule implements Module {
     private final PaperCommandManager commandManager;
     private final Plugin plugin;
     private final PluginManager pluginManager;
-    private final VersionAdapter versionAdapter;
 
     public BattlegroundsModule(
             BukkitScheduler bukkitScheduler,
@@ -157,8 +157,7 @@ public class BattlegroundsModule implements Module {
             Logger logger,
             PaperCommandManager commandManager,
             Plugin plugin,
-            PluginManager pluginManager,
-            VersionAdapter versionAdapter
+            PluginManager pluginManager
     ) {
         this.bukkitScheduler = bukkitScheduler;
         this.dataFolder = dataFolder;
@@ -166,7 +165,6 @@ public class BattlegroundsModule implements Module {
         this.commandManager = commandManager;
         this.plugin = plugin;
         this.pluginManager = pluginManager;
-        this.versionAdapter = versionAdapter;
     }
 
     @Override
@@ -179,7 +177,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(Plugin.class).toInstance(plugin);
         binder.bind(PluginManager.class).toInstance(pluginManager);
         binder.bind(ResourceProvider.class).toInstance(plugin::getResource);
-        binder.bind(VersionAdapter.class).toInstance(versionAdapter);
         binder.bind(new TypeLiteral<Supplier<ItemController<EquipmentUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<GunUser>>>() {}).toInstance(ItemController::new);
         binder.bind(new TypeLiteral<Supplier<ItemController<MeleeWeaponUser>>>() {}).toInstance(ItemController::new);
@@ -214,6 +211,7 @@ public class BattlegroundsModule implements Module {
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(ScheduledExecutorService.class).toProvider(Executors::newSingleThreadScheduledExecutor);
+        binder.bind(VersionAdapter.class).toProvider(VersionAdapterProvider.class).in(Singleton.class);
 
         // Game scope bindings
         GameScope gameScope = new GameScope();

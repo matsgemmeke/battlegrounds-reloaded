@@ -6,6 +6,7 @@ import com.google.inject.Injector;
 import nl.matsgemmeke.battlegrounds.arena.ArenaModule;
 import nl.matsgemmeke.battlegrounds.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
+import nl.matsgemmeke.battlegrounds.compatibility.CompatibilityModule;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
@@ -66,13 +67,13 @@ public class BattlegroundsPlugin extends JavaPlugin {
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
         PaperCommandManager commandManager = new PaperCommandManager(this);
-        VersionAdapter versionAdapter = InternalsProviderFactory.create();
 
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, logger, commandManager, this, pluginManager, versionAdapter);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, logger, commandManager, this, pluginManager);
         ArenaModule arenaModule = new ArenaModule();
+        CompatibilityModule compatibilityModule = new CompatibilityModule();
         LocationModule locationModule = new LocationModule();
 
-        injector = Guice.createInjector(module, arenaModule, locationModule);
+        injector = Guice.createInjector(module, arenaModule, compatibilityModule, locationModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
