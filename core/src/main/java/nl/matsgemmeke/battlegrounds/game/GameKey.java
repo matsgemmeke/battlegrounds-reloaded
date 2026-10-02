@@ -16,24 +16,6 @@ public class GameKey {
         return new GameKey("FREEPLAY");
     }
 
-    public static GameKey parse(String value) {
-        if (value.equals("FREEPLAY")) {
-            return ofFreeplay();
-        }
-
-        if (value.startsWith("ARENA-")) {
-            String id = value.substring("ARENA-".length());
-
-            try {
-                return ofArena(Integer.parseInt(id));
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Invalid ARENA id: " + id);
-            }
-        }
-
-        throw new IllegalArgumentException("Unknown GameKey format: " + value);
-    }
-
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -46,6 +28,11 @@ public class GameKey {
 
         GameKey gameKey = (GameKey) obj;
         return value.equals(gameKey.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return value.hashCode();
     }
 
     @Override

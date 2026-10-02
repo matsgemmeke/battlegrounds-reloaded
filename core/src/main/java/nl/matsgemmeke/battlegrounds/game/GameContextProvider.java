@@ -1,8 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.freeplay.Freeplay;
-
 import java.util.*;
 
 /**
@@ -10,12 +7,10 @@ import java.util.*;
  */
 public class GameContextProvider {
 
-    private final Map<GameKey, Game> games;
     private final Map<GameKey, GameContext> gameContexts;
     private final Map<UUID, GameKey> entityGameRegistries;
 
     public GameContextProvider() {
-        this.games = new HashMap<>();
         this.gameContexts = new HashMap<>();
         this.entityGameRegistries = new HashMap<>();
     }
@@ -28,38 +23,6 @@ public class GameContextProvider {
      */
     public void addGameContext(GameKey gameKey, GameContext gameContext) {
         gameContexts.put(gameKey, gameContext);
-    }
-
-    /**
-     * Adds an arena instance to the provider.
-     *
-     * @param gameKey the game key
-     * @param arena   the arena
-     * @return        whether the arena was added
-     */
-    public boolean addArena(GameKey gameKey, Arena arena) {
-        games.put(gameKey, arena);
-        return true;
-    }
-
-    /**
-     * Assigns the freeplay mode instance to the provider. This will only assign the freeplay mode once, as there
-     * should only be one instance. Returns {@code true} if the instance was assigned, and {@code false} if there
-     * already is an assigned instance.
-     *
-     * @param freeplay the freeplay mode instance
-     * @return         whether the instance was assigned
-     */
-    public boolean assignFreeplay(Freeplay freeplay) {
-        GameKey gameKey = GameKey.ofFreeplay();
-        boolean containsFreeplay = games.keySet().stream().anyMatch(k -> k.equals(gameKey));
-
-        if (containsFreeplay) {
-            return false;
-        }
-
-        games.put(gameKey, freeplay);
-        return true;
     }
 
     /**
@@ -107,26 +70,10 @@ public class GameContextProvider {
     /**
      * Removes an arena instance from the provider.
      *
-     * @param id the arena id
-     * @return   whether the arena was removed
+     * @param gameKey the game key of the context to remove
+     * @return        whether the context was removed
      */
-    public boolean removeArena(int id) {
-        GameKey gameKey = GameKey.ofArena(id);
-        Optional<GameKey> arenaGameKey = games.keySet().stream().filter(k -> k.equals(gameKey)).findFirst();
-
-        return arenaGameKey.filter(key -> games.remove(key) != null).isPresent();
-    }
-
-    /**
-     * Gets whether an arena instance exists by matching an id. Returns {@code true} if an arena by the given id exists,
-     * and {@code false} if not.
-     *
-     * @param id the arena id
-     * @return   whether an arena by the given id exists
-     */
-    public boolean arenaExists(int id) {
-        GameKey arenaGameKey = GameKey.ofArena(id);
-
-        return games.keySet().stream().anyMatch(gameKey -> gameKey.equals(arenaGameKey));
+    public boolean removeGameContext(GameKey gameKey) {
+        return gameContexts.remove(gameKey) != null;
     }
 }

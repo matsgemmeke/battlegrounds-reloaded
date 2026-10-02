@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
 class RemoveArenaCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
+    private static final GameKey GAME_KEY = GameKey.ofArena(ARENA_ID);
     private static final String MESSAGE = "hello";
 
     @TempDir
@@ -66,7 +68,7 @@ class RemoveArenaCommandExecutorTest {
     @Test
     @DisplayName("execute notifies command sender when failing to remove arena")
     void execute_arenaRemovalFailed() {
-        when(gameContextProvider.removeArena(ARENA_ID)).thenReturn(false);
+        when(gameContextProvider.removeGameContext(GAME_KEY)).thenReturn(false);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 
@@ -82,7 +84,7 @@ class RemoveArenaCommandExecutorTest {
         File arenaFolder = new File(arenasFolder, "arena-" + ARENA_ID);
         arenaFolder.mkdirs();
 
-        when(gameContextProvider.removeArena(ARENA_ID)).thenReturn(true);
+        when(gameContextProvider.removeGameContext(GAME_KEY)).thenReturn(true);
         when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
         when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
 

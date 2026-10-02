@@ -48,11 +48,9 @@ public class FreeplayInitializer {
     }
 
     public void initialize() {
-        Freeplay freeplay = new Freeplay();
         FreeplayGameContext gameContext = new FreeplayGameContext();
 
         gameContextProvider.addGameContext(GAME_KEY, gameContext);
-        gameContextProvider.assignFreeplay(freeplay);
 
         gameScope.runInScope(gameContext, this::registerComponents);
     }
