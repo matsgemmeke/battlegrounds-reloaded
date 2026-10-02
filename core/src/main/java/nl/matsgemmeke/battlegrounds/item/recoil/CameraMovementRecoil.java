@@ -1,25 +1,22 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 import java.util.Timer;
 
 public class CameraMovementRecoil implements Recoil {
 
+    private final Random random;
+    private final Timer timer;
     private Float[] horizontalRecoilValues;
     private Float[] verticalRecoilValues;
     private float recoveryRate;
     private long kickbackDuration;
     private long recoveryDuration;
     private long rotationDuration;
-    @NotNull
-    private Random random;
-    @NotNull
-    private Timer timer;
 
-    public CameraMovementRecoil(@NotNull Timer timer) {
+    public CameraMovementRecoil(Timer timer) {
         this.timer = timer;
         this.random = new Random();
     }
@@ -72,8 +69,7 @@ public class CameraMovementRecoil implements Recoil {
         this.verticalRecoilValues = verticalRecoilValues;
     }
 
-    @NotNull
-    public Location produceRecoil(@NotNull RecoilReceiver receiver, @NotNull Location direction) {
+    public Location produceRecoil(RecoilReceiver receiver, Location direction) {
         // Select random values from the given recoil value arrays
         float horizontalRecoil = horizontalRecoilValues[random.nextInt(horizontalRecoilValues.length)];
         float verticalRecoil = verticalRecoilValues[random.nextInt(verticalRecoilValues.length)];

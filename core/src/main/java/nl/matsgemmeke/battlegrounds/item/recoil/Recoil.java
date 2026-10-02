@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import org.bukkit.Location;
-import org.jetbrains.annotations.NotNull;
 
 /**
  * Represents the recoil behavior of shootable item in the plugin.
@@ -18,6 +17,5 @@ public interface Recoil {
      * @param direction the direction of the shot
      * @return the new direction of the shot after the recoil effect
      */
-    @NotNull
-    Location produceRecoil(@NotNull RecoilReceiver receiver, @NotNull Location direction);
+    Location produceRecoil(RecoilReceiver receiver, Location direction);
 }
