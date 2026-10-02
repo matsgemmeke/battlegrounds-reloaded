@@ -74,7 +74,7 @@ class SpecDeserializerTest {
 
         assertThat(gunSpec.shooting.projectile.effect.type).isEqualTo("DAMAGE");
 
-        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("REDSTONE");
+        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("DUST");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.count).isEqualTo(1);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.offsetX).isEqualTo(0.0);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.offsetY).isEqualTo(0.0);

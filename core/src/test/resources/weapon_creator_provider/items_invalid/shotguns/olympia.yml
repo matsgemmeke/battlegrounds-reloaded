@@ -62,7 +62,7 @@ shooting:
         torso: 1
         limbs: 0.5
     trajectory-particle-effect:
-      particle: REDSTONE
+      particle: DUST
       count: 1
       offset-x: 0.0
       offset-y: 0.0

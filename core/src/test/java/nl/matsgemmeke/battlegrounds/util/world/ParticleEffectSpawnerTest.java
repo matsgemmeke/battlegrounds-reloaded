@@ -22,7 +22,7 @@ public class ParticleEffectSpawnerTest {
     @Test
     public void spawnParticleThrowsIllegalArgumentExceptionWhenGivenLocationHasNoWorld() {
         Location location = new Location(null, 1, 1, 1);
-        Particle particle = Particle.BLOCK_CRACK;
+        Particle particle = Particle.BLOCK;
         ParticleEffect particleEffect = new ParticleEffect(particle, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, null, null);
 
         ParticleEffectSpawner particleEffectSpawner = new ParticleEffectSpawner();
@@ -41,7 +41,7 @@ public class ParticleEffectSpawnerTest {
         MockedStatic<Bukkit> bukkit = mockStatic(Bukkit.class);
         bukkit.when(() -> Bukkit.createBlockData(Material.STONE)).thenReturn(blockData);
 
-        Particle particle = Particle.BLOCK_CRACK;
+        Particle particle = Particle.BLOCK;
         Material blockDataMaterial = Material.STONE;
         ParticleEffect particleEffect = new ParticleEffect(particle, COUNT, OFFSET_X, OFFSET_Y, OFFSET_Z, EXTRA, blockDataMaterial, null);
 
