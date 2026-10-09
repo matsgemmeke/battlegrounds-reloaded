@@ -1,0 +1,7 @@
+assault-rifle-reload-1:
+  - "block.wooden_door.open 1 2 0"
+  - "block.wooden_door.close 1 2 5"
+  - "block.wooden_door.open 1 2 46"
+  - "block.piston.extend 1 2 46"
+  - "block.wooden_door.open 1 2 50"
+  - "block.piston.contract 1 2 50"

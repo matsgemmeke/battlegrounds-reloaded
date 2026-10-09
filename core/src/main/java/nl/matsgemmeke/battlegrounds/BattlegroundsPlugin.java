@@ -16,6 +16,7 @@ import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import nl.matsgemmeke.battlegrounds.location.LocationModule;
+import nl.matsgemmeke.battlegrounds.sound.SoundModule;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -72,8 +73,9 @@ public class BattlegroundsPlugin extends JavaPlugin {
         ArenaModule arenaModule = new ArenaModule();
         CompatibilityModule compatibilityModule = new CompatibilityModule();
         LocationModule locationModule = new LocationModule();
+        SoundModule soundModule = new SoundModule();
 
-        injector = Guice.createInjector(module, arenaModule, compatibilityModule, locationModule);
+        injector = Guice.createInjector(module, arenaModule, compatibilityModule, locationModule, soundModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
