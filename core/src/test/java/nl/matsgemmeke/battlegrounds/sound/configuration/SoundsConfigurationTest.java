@@ -120,8 +120,6 @@ class SoundsConfigurationTest {
     @CsvSource(value = {
             "  1 2 0                 | - sound must not be blank",
             "ui.button.click -1 2 0  | - volume must be 0 or higher (was -1.0)",
-            "ui.button.click 1 0.4 0 | - pitch must be at least 0.5 (was 0.4)",
-            "ui.button.click 1 2.1 0 | - pitch must be at most 2.0 (was 2.1)",
             "ui.button.click 1 2 -1  | - delay must be 0 or higher (was -1)"
     }, delimiter = '|', ignoreLeadingAndTrailingWhitespace = false)
     void getSoundTemplate_cueValidationError(String cueValue, String expectedErrorMessage) {

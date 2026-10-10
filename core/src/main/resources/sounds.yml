@@ -13,7 +13,7 @@ assault-rifle-shoot-1:
 
 assault-rifle-shoot-2:
   - "block.piston.extend 4 2 0"
-  - "entity.firework_rocket.blast 4 0.5 0"
+  - "entity.firework_rocket.blast 4 0 0"
   - "entity.zombie.attack_iron_door 4 2 0"
 
 assault-rifle-shoot-suppressed-1:
@@ -51,7 +51,7 @@ equipment-stick-1:
   - "item.flintandsteel.use 0.5 2 0"
 
 equipment-throw-1:
-  - "entity.arrow.shoot 1 0.5 0"
+  - "entity.arrow.shoot 1 0 0"
 
 grenade-launcher-reload-1:
   - "block.wooden_door.open 1 2 16"
@@ -133,7 +133,7 @@ sniper-rifle-scope-use-1:
 
 sniper-rifle-shoot-1:
   - "entity.blaze.hurt 8 1 0"
-  - "entity.generic.explode 0.5 0.5 0"
+  - "entity.generic.explode 0.5 0 0"
   - "entity.generic.explode 8 1.5 0"
   - "block.stone_button.click_on 1 1 14"
   - "block.wooden_door.close 1 2 14"
