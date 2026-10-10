@@ -43,8 +43,8 @@ shooting:
     cycle-cooldown: 6
   projectile:
     type: HITSCAN
-    launch-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
-    suppressed-sounds: ENTITY_BLAZE_HURT-4-2-0, ENTITY_GENERIC_EXPLODE-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+    launch-sound-template: shotgun-shoot-1
+    launch-sound-suppressed-template: shotgun-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
+import nl.matsgemmeke.battlegrounds.item.validation.constraint.ValidSoundTemplate;
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
@@ -24,6 +25,9 @@ public abstract class ProjectileSpec {
     public ParticleEffectSpec trajectoryParticleEffect;
 
     public String launchSounds;
+
+    @ValidSoundTemplate
+    public String launchSoundTemplate;
 
     public Map<String, @Valid TriggerSpec> triggers = new HashMap<>();
 

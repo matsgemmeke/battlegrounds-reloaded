@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -137,8 +138,9 @@ class GunFireSimulationEffectPerformanceTest {
     void performStopsSimulatesGunFireOnceActorNoLongerExists() {
         Schedule repeatingSchedule = mock(Schedule.class);
         List<GameSound> shotSounds = Collections.emptyList();
+        SoundTemplate soundTemplate = new SoundTemplate(null, null);
         int rateOfFire = 120;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, soundTemplate, rateOfFire);
         ItemEffectContext context = this.createItemEffectContext();
 
         when(actor.exists()).thenReturn(false);
@@ -160,8 +162,9 @@ class GunFireSimulationEffectPerformanceTest {
         ItemEffectContext context = this.createItemEffectContext();
 
         List<GameSound> shotSounds = Collections.emptyList();
+        SoundTemplate soundTemplate = new SoundTemplate(null, null);
         int rateOfFire = 1200;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, soundTemplate, rateOfFire);
 
         when(actor.exists()).thenReturn(true);
         when(actor.getLocation()).thenReturn(ACTOR_LOCATION);

@@ -21,9 +21,12 @@ import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public class GunFactory {
@@ -35,6 +38,7 @@ public class GunFactory {
     private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
+    private final SoundService soundService;
 
     @Inject
     public GunFactory(
@@ -44,7 +48,8 @@ public class GunFactory {
             ItemTemplateFactory itemTemplateFactory,
             Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
-            ShootHandlerFactory shootHandlerFactory
+            ShootHandlerFactory shootHandlerFactory,
+            SoundService soundService
     ) {
         this.controllerFactory = controllerFactory;
         this.gunInfoProvider = gunInfoProvider;
@@ -53,14 +58,15 @@ public class GunFactory {
         this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
+        this.soundService = soundService;
     }
 
     public Gun create(GunSpec spec) {
         Gun gun = this.createInstance(spec);
 
-        gunRegistry.register(gun);
-
         this.registerGunFireSimulationInfo(gun, spec);
+
+        gunRegistry.register(gun);
 
         return gun;
     }
@@ -69,9 +75,9 @@ public class GunFactory {
         Gun gun = this.createInstance(spec);
         gun.setUser(gamePlayer);
 
-        gunRegistry.register(gun, gamePlayer);
-
         this.registerGunFireSimulationInfo(gun, spec);
+
+        gunRegistry.register(gun, gamePlayer);
 
         return gun;
     }
@@ -129,10 +135,15 @@ public class GunFactory {
 
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {
         UUID gunId = gun.getId();
+        String launchSoundTemplateId = spec.shooting.projectile.launchSoundTemplate;
 
-        List<GameSound> shotSounds = DefaultGameSound.parseSounds(spec.shooting.projectile.launchSounds);
+        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId)
+                .map(templateId -> soundService.getSoundTemplate(templateId)
+                        .orElseThrow(() -> new GunCreationException("Launch sound template '%s' does not exist".formatted(launchSoundTemplateId))))
+                .orElse(null);
+
         int rateOfFire = gun.getRateOfFire();
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(List.of(), launchSoundTemplate, rateOfFire);
 
         gunInfoProvider.registerGunFireSimulationInfo(gunId, gunFireSimulationInfo);
     }

@@ -1,0 +1,78 @@
+name: MP5
+gun-type: SUBMACHINE_GUN
+description: Fully automatic with good accuracy. Effective at close to medium range.
+level-unlocked: 1
+price: 1200
+controls:
+  shoot:
+    action: RIGHT_CLICK
+    blocking: true
+    cancels-event: true
+  reload:
+    action: LEFT_CLICK
+    blocking: true
+    cancels-event: true
+ammo:
+  magazine-size: 30
+  default-magazine-amount: 3
+  max-magazine-amount: 8
+item:
+  material: IRON_HOE
+  display-name: '&f%name% %magazine_ammo%/%reserve_ammo%'
+  damage: 8
+  item-flags:
+    - HIDE_ATTRIBUTES
+    - HIDE_UNBREAKABLE
+  data:
+    weapon-type:
+      key: weapon-type
+      type: STRING
+      value: GUN
+    weapon-name:
+      key: weapon-name
+      type: STRING
+      value: MP5
+  unbreakable: true
+reloading:
+  type: MAGAZINE
+  duration: 48
+shooting:
+  fire-mode:
+    type: FULLY_AUTOMATIC
+    rate-of-fire: 600
+  projectile:
+    type: HITSCAN
+    effect:
+      type: DAMAGE
+      damage-type: BULLET_DAMAGE
+      range:
+        short-range:
+          damage: 35.0
+          distance: 20.0
+        medium-range:
+          damage: 28.0
+          distance: 45.0
+        long-range:
+          damage: 20.0
+          distance: 70.0
+      hitbox-damage-profile:
+        head: 1.4
+        torso: 1
+        limbs: 0.7
+    trajectory-particle-effect:
+      particle: DUST
+      count: 1
+      offset-x: 0.0
+      offset-y: 0.0
+      offset-z: 0.0
+      extra: 0
+      dust-options:
+        color: '#ffffff'
+        size: 1
+  recoil:
+    type: CAMERA_MOVEMENT
+    horizontal: [-1.0, 0.0, 1.0]
+    vertical: [-1.5, -2.0, -2.5]
+    kickback-duration: 200
+  spread-pattern:
+    type: SINGLE_PROJECTILE
