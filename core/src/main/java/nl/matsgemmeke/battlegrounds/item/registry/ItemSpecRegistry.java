@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.registry;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 
 import java.util.*;
 import java.util.stream.Stream;

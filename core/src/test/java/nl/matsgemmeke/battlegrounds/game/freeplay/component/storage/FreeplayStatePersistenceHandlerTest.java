@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.game.freeplay.component.storage;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
@@ -9,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;

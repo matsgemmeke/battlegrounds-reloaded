@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

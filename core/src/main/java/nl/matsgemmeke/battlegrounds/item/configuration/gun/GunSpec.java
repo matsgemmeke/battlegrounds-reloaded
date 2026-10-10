@@ -1,7 +1,8 @@
-package nl.matsgemmeke.battlegrounds.configuration.item.gun;
+package nl.matsgemmeke.battlegrounds.item.configuration.gun;
 
 import jakarta.validation.Valid;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
+import nl.matsgemmeke.battlegrounds.configuration.item.gun.*;
 import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class GunSpec {

@@ -2,7 +2,7 @@ package nl.matsgemmeke.battlegrounds.configuration.spec;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.DamageEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

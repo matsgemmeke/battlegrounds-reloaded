@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Provider;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
@@ -9,6 +8,7 @@ import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInf
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.gun.controls.GunControllerFactory;
 import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
