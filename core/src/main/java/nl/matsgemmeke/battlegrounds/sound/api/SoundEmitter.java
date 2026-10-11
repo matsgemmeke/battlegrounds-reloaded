@@ -18,22 +18,25 @@ public class SoundEmitter {
         this.scheduler = scheduler;
     }
 
-    public void playSoundTemplate(SoundTemplate template, Location location) {
-        this.playSoundTemplate(template, () -> location);
+    public SoundPlayback playSoundTemplate(SoundTemplate template, Location location) {
+        return this.playSoundTemplate(template, () -> location);
     }
 
-    public void playSoundTemplate(SoundTemplate template, Supplier<Location> locationSupplier) {
+    public SoundPlayback playSoundTemplate(SoundTemplate template, Supplier<Location> locationSupplier) {
+        SoundPlayback playback = new SoundPlayback();
         Location location = locationSupplier.get();
         World world = location.getWorld();
 
         if (world == null) {
-            return;
+            return playback;
         }
 
-        template.cues().forEach(cue -> this.playCue(cue, world, location));
+        template.cues().forEach(cue -> this.playCue(cue, world, location, playback));
+
+        return playback;
     }
 
-    private void playCue(SoundCue cue, World world, Location location) {
+    private void playCue(SoundCue cue, World world, Location location, SoundPlayback playback) {
         Sound sound = cue.sound();
         float volume = cue.volume();
         float pitch = cue.pitch();
@@ -48,5 +51,7 @@ public class SoundEmitter {
         Schedule schedule = scheduler.createSingleRunSchedule(cue.delay());
         schedule.addTask(() -> world.playSound(location, sound, volume, pitch));
         schedule.start();
+
+        playback.add(schedule);
     }
 }
