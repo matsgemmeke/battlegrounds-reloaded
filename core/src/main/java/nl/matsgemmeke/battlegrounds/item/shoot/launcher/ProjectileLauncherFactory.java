@@ -24,8 +24,11 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectileLauncherFactory {
 
@@ -36,6 +39,7 @@ public class ProjectileLauncherFactory {
     private final ItemLauncherFactory itemLauncherFactory;
     private final ItemTemplateFactory itemTemplateFactory;
     private final ParticleEffectMapper particleEffectMapper;
+    private final SoundService soundService;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
@@ -47,6 +51,7 @@ public class ProjectileLauncherFactory {
             ItemLauncherFactory itemLauncherFactory,
             ItemTemplateFactory itemTemplateFactory,
             ParticleEffectMapper particleEffectMapper,
+            SoundService soundService,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.arrowLauncherFactory = arrowLauncherFactory;
@@ -56,6 +61,7 @@ public class ProjectileLauncherFactory {
         this.itemLauncherFactory = itemLauncherFactory;
         this.itemTemplateFactory = itemTemplateFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.soundService = soundService;
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
@@ -109,7 +115,9 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createHitscanLauncher(HitscanProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        String launchSoundTemplateId = spec.launchSoundTemplate;
+        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
+
         ParticleEffect trajectoryParticleEffect = null;
         ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
 
@@ -117,7 +125,7 @@ public class ProjectileLauncherFactory {
             trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
         }
 
-        HitscanProperties properties = new HitscanProperties(launchSounds, trajectoryParticleEffect);
+        HitscanProperties properties = new HitscanProperties(launchSoundTemplate, trajectoryParticleEffect);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return hitscanLauncherFactory.create(properties, itemEffect);

@@ -25,6 +25,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -47,6 +50,7 @@ class ProjectileLauncherFactoryTest {
 
     private static final double VELOCITY = 2.0;
     private static final int PICKUP_DELAY = 100;
+    private static final String LAUNCH_SOUND_TEMPLATE_ID = "assault-rifle-shoot-1";
 
     @Mock
     private ArrowLauncherFactory arrowLauncherFactory;
@@ -62,6 +66,8 @@ class ProjectileLauncherFactoryTest {
     private ItemTemplateFactory itemTemplateFactory;
     @Spy
     private ParticleEffectMapper particleEffectMapper;
+    @Mock
+    private SoundService soundService;
     @Mock
     private TriggerExecutorFactory triggerExecutorFactory;
     @InjectMocks
@@ -137,13 +143,16 @@ class ProjectileLauncherFactoryTest {
         HitscanLauncher hitscanLauncher = mock(HitscanLauncher.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
+        SoundTemplate launchSoundTemplate = mock(SoundTemplate.class);
         ParticleEffectSpec trajectoryParticleEffectSpec = this.createTrajectoryParticleEffectSpec();
 
         HitscanProjectileSpec projectileSpec = new HitscanProjectileSpec();
+        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
         projectileSpec.type = "HITSCAN";
         projectileSpec.effect = itemEffectSpec;
         projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
 
+        when(soundService.getSoundTemplate(LAUNCH_SOUND_TEMPLATE_ID)).thenReturn(Optional.of(launchSoundTemplate));
         when(hitscanLauncherFactory.create(any(HitscanProperties.class), eq(itemEffect))).thenReturn(hitscanLauncher);
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
 
@@ -153,7 +162,7 @@ class ProjectileLauncherFactoryTest {
         verify(hitscanLauncherFactory).create(hitscanPropertiesCaptor.capture(), eq(itemEffect));
         
         HitscanProperties hitscanProperties = hitscanPropertiesCaptor.getValue();
-        assertThat(hitscanProperties.launchSounds()).isEmpty();
+        assertThat(hitscanProperties.launchSoundTemplate()).isEqualTo(launchSoundTemplate);
         assertThat(hitscanProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
             assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
             assertThat(particleEffect.count()).isEqualTo(1);
