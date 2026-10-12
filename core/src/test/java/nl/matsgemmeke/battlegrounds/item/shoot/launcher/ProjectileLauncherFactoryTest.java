@@ -79,12 +79,15 @@ class ProjectileLauncherFactoryTest {
         ArrowLauncher arrowLauncher = mock(ArrowLauncher.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
+        SoundTemplate launchSoundTemplate = mock(SoundTemplate.class);
 
         ArrowProjectileSpec projectileSpec = new ArrowProjectileSpec();
         projectileSpec.type = "ARROW";
+        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
         projectileSpec.effect = itemEffectSpec;
         projectileSpec.velocity = VELOCITY;
 
+        when(soundService.getSoundTemplate(LAUNCH_SOUND_TEMPLATE_ID)).thenReturn(Optional.of(launchSoundTemplate));
         when(arrowLauncherFactory.create(any(ArrowProperties.class), eq(itemEffect))).thenReturn(arrowLauncher);
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
 
@@ -95,9 +98,10 @@ class ProjectileLauncherFactoryTest {
         ArgumentCaptor<ArrowProperties> arrowPropertiesCaptor = ArgumentCaptor.forClass(ArrowProperties.class);
         verify(arrowLauncherFactory).create(arrowPropertiesCaptor.capture(), eq(itemEffect));
 
-        ArrowProperties arrowProperties = arrowPropertiesCaptor.getValue();
-//        assertThat(arrowProperties.launchSounds()).isEmpty();
-        assertThat(arrowProperties.velocity()).isEqualTo(VELOCITY);
+        assertThat(arrowPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.launchSoundTemplate()).isEqualTo(launchSoundTemplate);
+            assertThat(properties.velocity()).isEqualTo(VELOCITY);
+        });
     }
 
     @Test
@@ -186,12 +190,14 @@ class ProjectileLauncherFactoryTest {
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
         ItemLauncher itemLauncher = mock(ItemLauncher.class);
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        SoundTemplate launchSoundTemplate = mock(SoundTemplate.class);
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         TriggerSpec triggerSpec = this.createTriggerSpec();
         ItemSpec itemSpec = this.createItemSpec();
 
         ItemProjectileSpec projectileSpec = new ItemProjectileSpec();
         projectileSpec.type = "ITEM";
+        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
         projectileSpec.effect = itemEffectSpec;
         projectileSpec.triggers = Map.of("impact", triggerSpec);
         projectileSpec.item = itemSpec;
@@ -201,6 +207,7 @@ class ProjectileLauncherFactoryTest {
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
         when(itemLauncherFactory.create(any(ItemLaunchProperties.class), eq(itemEffect))).thenReturn(itemLauncher);
         when(itemTemplateFactory.create(itemSpec)).thenReturn(itemTemplate);
+        when(soundService.getSoundTemplate(LAUNCH_SOUND_TEMPLATE_ID)).thenReturn(Optional.of(launchSoundTemplate));
         when(triggerExecutorFactory.create(projectileSpec.triggers.get("impact"))).thenReturn(triggerExecutor);
 
         ProjectileLauncher createdProjectileLauncher = projectileLauncherFactory.create(projectileSpec);
@@ -210,7 +217,7 @@ class ProjectileLauncherFactoryTest {
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
             assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
-            assertThat(properties.launchSounds()).isEmpty();
+            assertThat(properties.launchSoundTemplate()).isEqualTo(launchSoundTemplate);
             assertThat(properties.velocity()).isEqualTo(VELOCITY);
         });
 

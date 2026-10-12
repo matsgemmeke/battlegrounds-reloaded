@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -28,7 +26,6 @@ import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.jspecify.annotations.Nullable;
 
-import java.util.List;
 import java.util.Optional;
 
 public class ProjectileLauncherFactory {
@@ -134,10 +131,10 @@ public class ProjectileLauncherFactory {
     private ProjectileLauncher createItemLauncher(ItemProjectileSpec spec) {
         double velocity = spec.velocity;
         int pickupDelay = spec.pickupDelay;
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
         ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
+        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity, pickupDelay);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSoundTemplate, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);

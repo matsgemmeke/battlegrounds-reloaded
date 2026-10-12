@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -16,8 +14,9 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
-import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -25,7 +24,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -35,22 +33,20 @@ import java.util.function.Supplier;
  */
 public class ItemLauncher implements ProjectileLauncher {
 
-    private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
     private final ItemLaunchProperties properties;
-    private final Scheduler scheduler;
-    private final Set<Schedule> soundPlaySchedules;
+    private final Set<SoundPlayback> soundPlaybacks;
     private final Set<TriggerExecutor> triggerExecutors;
+    private final SoundEmitter soundEmitter;
 
     @Inject
-    public ItemLauncher(AudioEmitter audioEmitter, CollisionResultAdapter collisionResultAdapter, Scheduler scheduler, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
-        this.audioEmitter = audioEmitter;
+    public ItemLauncher(CollisionResultAdapter collisionResultAdapter, SoundEmitter soundEmitter, @Assisted ItemEffect itemEffect, @Assisted ItemLaunchProperties properties) {
         this.collisionResultAdapter = collisionResultAdapter;
-        this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.itemEffect = itemEffect;
         this.properties = properties;
-        this.soundPlaySchedules = new HashSet<>();
+        this.soundPlaybacks = new HashSet<>();
         this.triggerExecutors = new HashSet<>();
     }
 
@@ -60,7 +56,8 @@ public class ItemLauncher implements ProjectileLauncher {
 
     @Override
     public void cancel() {
-        soundPlaySchedules.forEach(Schedule::stop);
+        soundPlaybacks.forEach(SoundPlayback::cancel);
+        soundPlaybacks.clear();
     }
 
     @Override
@@ -89,7 +86,13 @@ public class ItemLauncher implements ProjectileLauncher {
             triggerRun.start();
         }
 
-        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
+        SoundTemplate launchSoundTemplate = properties.launchSoundTemplate();
+
+        if (launchSoundTemplate != null) {
+            SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(launchSoundTemplate, soundLocationSupplier);
+
+            soundPlaybacks.add(soundPlayback);
+        }
     }
 
     private void processTriggerResult(TriggerResult triggerResult, String itemName, DamageSource damageSource, ItemActor actor, Location dropLocation) {
@@ -97,15 +100,5 @@ public class ItemLauncher implements ProjectileLauncher {
 
         ItemEffectContext effectContext = new ItemEffectContext(itemName, collisionResult, damageSource, dropLocation, actor);
         itemEffect.startPerformance(effectContext);
-    }
-
-    private void scheduleSoundPlayTasks(List<GameSound> sounds, Supplier<Location> locationSupplier) {
-        for (GameSound sound : sounds) {
-            Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            schedule.addTask(() -> audioEmitter.playSound(sound, locationSupplier.get()));
-            schedule.start();
-
-            soundPlaySchedules.add(schedule);
-        }
     }
 }
