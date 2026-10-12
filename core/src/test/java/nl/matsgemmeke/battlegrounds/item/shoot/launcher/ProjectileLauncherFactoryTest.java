@@ -106,14 +106,17 @@ class ProjectileLauncherFactoryTest {
         FireballLauncher fireballLauncher = mock(FireballLauncher.class);
         ItemEffect itemEffect = mock(ItemEffect.class);
         ItemEffectSpec itemEffectSpec = mock(ItemEffectSpec.class);
+        SoundTemplate launchSoundTemplate = mock(SoundTemplate.class);
         ParticleEffectSpec trajectoryParticleEffectSpec = this.createTrajectoryParticleEffectSpec();
 
         FireballProjectileSpec projectileSpec = new FireballProjectileSpec();
         projectileSpec.type = "FIREBALL";
+        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
+        projectileSpec.velocity = VELOCITY;
         projectileSpec.effect = itemEffectSpec;
         projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
-        projectileSpec.velocity = VELOCITY;
 
+        when(soundService.getSoundTemplate(LAUNCH_SOUND_TEMPLATE_ID)).thenReturn(Optional.of(launchSoundTemplate));
         when(fireballLauncherFactory.create(any(FireballProperties.class), eq(itemEffect))).thenReturn(fireballLauncher);
         when(itemEffectFactory.create(itemEffectSpec)).thenReturn(itemEffect);
 
@@ -122,17 +125,18 @@ class ProjectileLauncherFactoryTest {
         ArgumentCaptor<FireballProperties> fireballPropertiesCaptor = ArgumentCaptor.forClass(FireballProperties.class);
         verify(fireballLauncherFactory).create(fireballPropertiesCaptor.capture(), eq(itemEffect));
 
-        FireballProperties fireballProperties = fireballPropertiesCaptor.getValue();
-        assertThat(fireballProperties.launchSounds()).isEmpty();
-        assertThat(fireballProperties.trajectoryParticleEffect()).satisfies(particleEffect -> {
-            assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
-            assertThat(particleEffect.count()).isEqualTo(1);
-            assertThat(particleEffect.offsetX()).isEqualTo(0.1);
-            assertThat(particleEffect.offsetY()).isEqualTo(0.2);
-            assertThat(particleEffect.offsetZ()).isEqualTo(0.3);
-            assertThat(particleEffect.extra()).isEqualTo(0.0);
+        assertThat(fireballPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.launchSoundTemplate()).isEqualTo(launchSoundTemplate);
+            assertThat(properties.trajectoryParticleEffect()).satisfies(particleEffect -> {
+                assertThat(particleEffect.particle()).isEqualTo(Particle.FLAME);
+                assertThat(particleEffect.count()).isEqualTo(1);
+                assertThat(particleEffect.offsetX()).isEqualTo(0.1);
+                assertThat(particleEffect.offsetY()).isEqualTo(0.2);
+                assertThat(particleEffect.offsetZ()).isEqualTo(0.3);
+                assertThat(particleEffect.extra()).isEqualTo(0.0);
+            });
+            assertThat(properties.velocity()).isEqualTo(VELOCITY);
         });
-        assertThat(fireballProperties.velocity()).isEqualTo(VELOCITY);
 
         assertThat(createdProjectileLauncher).isEqualTo(fireballLauncher);
     }
@@ -147,8 +151,8 @@ class ProjectileLauncherFactoryTest {
         ParticleEffectSpec trajectoryParticleEffectSpec = this.createTrajectoryParticleEffectSpec();
 
         HitscanProjectileSpec projectileSpec = new HitscanProjectileSpec();
-        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
         projectileSpec.type = "HITSCAN";
+        projectileSpec.launchSoundTemplate = LAUNCH_SOUND_TEMPLATE_ID;
         projectileSpec.effect = itemEffectSpec;
         projectileSpec.trajectoryParticleEffect = trajectoryParticleEffectSpec;
 

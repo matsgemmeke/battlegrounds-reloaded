@@ -104,11 +104,13 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createFireballLauncher(FireballProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        String launchSoundTemplateId = spec.launchSoundTemplate;
+        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
+
         ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
         double velocity = spec.velocity;
 
-        FireballProperties properties = new FireballProperties(launchSounds, trajectoryParticleEffect, velocity);
+        FireballProperties properties = new FireballProperties(launchSoundTemplate, trajectoryParticleEffect, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return fireballLauncherFactory.create(properties, itemEffect);
