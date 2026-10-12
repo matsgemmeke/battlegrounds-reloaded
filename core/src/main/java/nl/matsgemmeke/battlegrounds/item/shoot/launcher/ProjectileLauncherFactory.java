@@ -26,6 +26,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Optional;
@@ -86,10 +87,10 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createArrowLauncher(ArrowProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
         double velocity = spec.velocity;
 
-        ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
+        ArrowProperties properties = new ArrowProperties(launchSoundTemplate, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
@@ -104,9 +105,7 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createFireballLauncher(FireballProjectileSpec spec) {
-        String launchSoundTemplateId = spec.launchSoundTemplate;
-        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
-
+        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
         ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
         double velocity = spec.velocity;
 
@@ -117,8 +116,7 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createHitscanLauncher(HitscanProjectileSpec spec) {
-        String launchSoundTemplateId = spec.launchSoundTemplate;
-        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
+        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
 
         ParticleEffect trajectoryParticleEffect = null;
         ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
@@ -151,6 +149,13 @@ public class ProjectileLauncherFactory {
         }
 
         return itemLauncher;
+    }
+
+    @Nullable
+    private SoundTemplate createLaunchSoundTemplate(ProjectileSpec spec) {
+        String launchSoundTemplateId = spec.launchSoundTemplate;
+
+        return Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
     }
 
     private ParticleEffect createParticleEffect(ParticleEffectSpec spec) {

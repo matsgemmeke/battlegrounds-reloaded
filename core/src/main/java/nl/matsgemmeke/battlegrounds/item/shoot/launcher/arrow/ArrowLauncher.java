@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileRegistry;
@@ -21,15 +19,15 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerContext;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
-import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
-import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.*;
 import org.bukkit.entity.AbstractArrow.PickupStatus;
 import org.bukkit.entity.Arrow;
 import org.bukkit.util.Vector;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -37,33 +35,30 @@ import java.util.function.Supplier;
 public class ArrowLauncher implements ProjectileLauncher {
 
     private final ArrowProperties properties;
-    private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
     private final ItemEffect itemEffect;
     private final ProjectileHitActionRegistry projectileHitActionRegistry;
     private final ProjectileRegistry projectileRegistry;
-    private final Scheduler scheduler;
-    private final Set<Schedule> soundPlaySchedules;
+    private final Set<SoundPlayback> soundPlaybacks;
     private final Set<TriggerExecutor> triggerExecutors;
+    private final SoundEmitter soundEmitter;
 
     @Inject
     public ArrowLauncher(
-            AudioEmitter audioEmitter,
             CollisionResultAdapter collisionResultAdapter,
             ProjectileHitActionRegistry projectileHitActionRegistry,
             ProjectileRegistry projectileRegistry,
-            Scheduler scheduler,
+            SoundEmitter soundEmitter,
             @Assisted ArrowProperties properties,
             @Assisted ItemEffect itemEffect
     ) {
-        this.audioEmitter = audioEmitter;
         this.collisionResultAdapter = collisionResultAdapter;
         this.projectileHitActionRegistry = projectileHitActionRegistry;
         this.projectileRegistry = projectileRegistry;
-        this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.properties = properties;
         this.itemEffect = itemEffect;
-        this.soundPlaySchedules = new HashSet<>();
+        this.soundPlaybacks = new HashSet<>();
         this.triggerExecutors = new HashSet<>();
     }
 
@@ -73,7 +68,8 @@ public class ArrowLauncher implements ProjectileLauncher {
 
     @Override
     public void cancel() {
-        soundPlaySchedules.forEach(Schedule::stop);
+        soundPlaybacks.forEach(SoundPlayback::cancel);
+        soundPlaybacks.clear();
     }
 
     @Override
@@ -84,6 +80,14 @@ public class ArrowLauncher implements ProjectileLauncher {
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
         ProjectileLaunchSource projectileSource = context.projectileSource();
         Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
+
+        SoundTemplate launchSoundTemplate = properties.launchSoundTemplate();
+
+        if (launchSoundTemplate != null) {
+            SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(launchSoundTemplate, soundLocationSupplier);
+
+            soundPlaybacks.add(soundPlayback);
+        }
 
         Arrow arrow = projectileSource.launchProjectile(Arrow.class, velocity);
         arrow.setDamage(0.0);
@@ -102,8 +106,6 @@ public class ArrowLauncher implements ProjectileLauncher {
 
         projectileRegistry.register(arrow.getUniqueId());
         projectileHitActionRegistry.registerProjectileHitAction(arrow, projectileHitResult -> this.processProjectileHit(projectileHitResult, arrow, itemName, actor, damageSource, startingLocation));
-
-        this.scheduleSoundPlayTasks(properties.launchSounds(), soundLocationSupplier);
     }
 
     private void processTriggerResult(TriggerResult triggerResult, Arrow arrow, String itemName, Actor actor, DamageSource damageSource, Location startingLocation) {
@@ -129,16 +131,6 @@ public class ArrowLauncher implements ProjectileLauncher {
 
         if (collisionResult.getHitTarget().isPresent()) {
             arrow.remove();
-        }
-    }
-
-    private void scheduleSoundPlayTasks(List<GameSound> sounds, Supplier<Location> locationSupplier) {
-        for (GameSound sound : sounds) {
-            Schedule schedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            schedule.addTask(() -> audioEmitter.playSound(sound, locationSupplier.get()));
-            schedule.start();
-
-            soundPlaySchedules.add(schedule);
         }
     }
 }
