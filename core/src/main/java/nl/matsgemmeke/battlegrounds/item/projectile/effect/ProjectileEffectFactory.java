@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
@@ -19,7 +17,6 @@ import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.Collection;
-import java.util.List;
 
 public class ProjectileEffectFactory {
 
@@ -62,20 +59,18 @@ public class ProjectileEffectFactory {
             }
             case SOUND -> {
                 SoundEffectSpec spec = (SoundEffectSpec) projectileEffectSpec;
-
-                SoundTemplate soundTemplate = soundService.getSoundTemplate(spec.soundTemplate)
-                        .orElseThrow(() -> new ProjectileEffectCreationException("Sound template '%s' does not exist".formatted(spec.soundTemplate)));
-
+                SoundTemplate soundTemplate = this.createSoundTemplate(spec.soundTemplate);
                 ProjectileEffect soundEffect = soundEffectFactory.create(soundTemplate);
+
                 this.addTriggers(soundEffect, spec.triggers.values());
 
                 yield soundEffect;
             }
             case STICK -> {
                 StickEffectSpec spec = (StickEffectSpec) projectileEffectSpec;
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds);
+                SoundTemplate soundTemplate = this.createSoundTemplate(spec.soundTemplate);
+                ProjectileEffect stickEffect = stickEffectFactory.create(soundTemplate);
 
-                ProjectileEffect stickEffect = stickEffectFactory.create(stickSounds);
                 this.addTriggers(stickEffect, spec.triggers.values());
 
                 yield stickEffect;
@@ -91,6 +86,11 @@ public class ProjectileEffectFactory {
                 yield trailEffect;
             }
         };
+    }
+
+    private SoundTemplate createSoundTemplate(String soundTemplateId) {
+        return soundService.getSoundTemplate(soundTemplateId)
+                .orElseThrow(() -> new ProjectileEffectCreationException("Sound template '%s' does not exist".formatted(soundTemplateId)));
     }
 
     private void addTriggers(ProjectileEffect projectileEffect, Collection<TriggerSpec> triggerSpecs) {

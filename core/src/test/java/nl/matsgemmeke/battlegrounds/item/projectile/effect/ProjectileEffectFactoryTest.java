@@ -91,8 +91,8 @@ class ProjectileEffectFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws ProjectileEffectCreationException when sound template id is invalid")
-    void create_invalidSoundTemplateId() {
+    @DisplayName("create throws ProjectileEffectCreationException when creating sound effect whose sound template id is invalid")
+    void create_soundEffectWithInvalidSoundTemplateId() {
         SoundEffectSpec spec = new SoundEffectSpec();
         spec.type = "SOUND";
         spec.soundTemplate = SOUND_TEMPLATE_ID;
@@ -127,6 +127,23 @@ class ProjectileEffectFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws ProjectileEffectCreationException when creating stick effect whose sound template id is invalid")
+    void create_stickEffectWithInvalidSoundTemplateId() {
+        TriggerSpec triggerSpec = this.createTriggerSpec();
+
+        StickEffectSpec spec = new StickEffectSpec();
+        spec.type = "STICK";
+        spec.triggers = Map.of("floor-hit", triggerSpec);
+        spec.soundTemplate = SOUND_TEMPLATE_ID;
+
+        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> projectileEffectFactory.create(spec))
+                .isInstanceOf(ProjectileEffectCreationException.class)
+                .hasMessage("Sound template 'equipment-activation-2' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns StickEffect instance")
     void create_stickEffect() {
         StickEffect stickEffect = mock(StickEffect.class);
@@ -135,12 +152,13 @@ class ProjectileEffectFactoryTest {
         StickEffectSpec spec = new StickEffectSpec();
         spec.type = "STICK";
         spec.triggers = Map.of("floor-hit", triggerSpec);
-        spec.sounds = "AMBIENT_CAVE-1-1-0";
+        spec.soundTemplate = SOUND_TEMPLATE_ID;
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutorFactory.create(triggerSpec)).thenReturn(triggerExecutor);
 
-        when(stickEffectFactory.create(anyList())).thenReturn(stickEffect);
+        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.of(SOUND_TEMPLATE));
+        when(stickEffectFactory.create(SOUND_TEMPLATE)).thenReturn(stickEffect);
 
         ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 

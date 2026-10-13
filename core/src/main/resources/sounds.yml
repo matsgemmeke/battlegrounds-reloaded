@@ -44,9 +44,6 @@ equipment-manual-activation-1:
 equipment-place-1:
   - "block.cherry_wood_button.click_on 1 1 0"
 
-equipment-stick-1:
-  - "item.flintandsteel.use 0.5 2 0"
-
 equipment-throw-1:
   - "entity.arrow.shoot 1 0 0"
 
@@ -99,6 +96,9 @@ rocket-launcher-shoot-1:
 
 semtex-beep:
   - "entity.experience_orb.pickup 1 2 0"
+
+semtex-stick:
+  - "item.flintandsteel.use 0.5 2 0"
 
 shotgun-reload-1:
   - "block.wooden_door.open 1 2 12"

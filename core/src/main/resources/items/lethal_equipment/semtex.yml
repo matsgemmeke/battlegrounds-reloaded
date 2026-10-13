@@ -74,7 +74,7 @@ projectile-effects:
         repeating: true
   stick:
     type: STICK
-    stick-sounds: ITEM_FLINTANDSTEEL_USE-0.5-2-0
+    sound-template: semtex-stick
     triggers:
       impact:
         type: BLOCK_IMPACT
