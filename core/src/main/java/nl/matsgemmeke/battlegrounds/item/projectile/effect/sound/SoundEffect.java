@@ -2,25 +2,24 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.BaseProjectileEffect;
-
-import java.util.List;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 public class SoundEffect extends BaseProjectileEffect {
 
-    private final AudioEmitter audioEmitter;
-    private final List<GameSound> sounds;
+    private final SoundEmitter soundEmitter;
+    private final SoundTemplate soundTemplate;
 
     @Inject
-    public SoundEffect(AudioEmitter audioEmitter, @Assisted List<GameSound> sounds) {
-        this.audioEmitter = audioEmitter;
-        this.sounds = sounds;
+    public SoundEffect(SoundEmitter soundEmitter, @Assisted SoundTemplate soundTemplate) {
+        this.soundEmitter = soundEmitter;
+        this.soundTemplate = soundTemplate;
     }
 
+    @Override
     public void performEffect(Projectile projectile) {
-        audioEmitter.playSounds(sounds, projectile.getLocation());
+        soundEmitter.playSoundTemplate(soundTemplate, projectile::getLocation);
     }
 }

@@ -24,9 +24,6 @@ assault-rifle-shoot-suppressed-1:
 equipment-activation-1:
   - "block.glass.break 1 1 0"
 
-equipment-activation-2:
-  - "entity.experience_orb.pickup 1 2 0"
-
 equipment-activation-3:
   - "block.piston.extend 4 2 0"
   - "entity.blaze.hurt 4 2 0"
@@ -99,6 +96,9 @@ rocket-launcher-reload-1:
 rocket-launcher-shoot-1:
   - "block.fire.extinguish 2 1 0"
   - "entity.zombie.attack_wooden_door 2 0 0"
+
+semtex-beep:
+  - "entity.experience_orb.pickup 1 2 0"
 
 shotgun-reload-1:
   - "block.wooden_door.open 1 2 12"

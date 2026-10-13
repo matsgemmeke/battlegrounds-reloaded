@@ -15,6 +15,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.Collection;
 import java.util.List;
@@ -23,6 +25,7 @@ public class ProjectileEffectFactory {
 
     private final ParticleEffectMapper particleEffectMapper;
     private final SoundEffectFactory soundEffectFactory;
+    private final SoundService soundService;
     private final StickEffectFactory stickEffectFactory;
     private final TrailEffectFactory trailEffectFactory;
     private final TriggerExecutorFactory triggerExecutorFactory;
@@ -31,12 +34,14 @@ public class ProjectileEffectFactory {
     public ProjectileEffectFactory(
             ParticleEffectMapper particleEffectMapper,
             SoundEffectFactory soundEffectFactory,
+            SoundService soundService,
             StickEffectFactory stickEffectFactory,
             TrailEffectFactory trailEffectFactory,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
+        this.soundService = soundService;
         this.stickEffectFactory = stickEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
         this.triggerExecutorFactory = triggerExecutorFactory;
@@ -57,9 +62,11 @@ public class ProjectileEffectFactory {
             }
             case SOUND -> {
                 SoundEffectSpec spec = (SoundEffectSpec) projectileEffectSpec;
-                List<GameSound> sounds = DefaultGameSound.parseSounds(spec.sounds);
 
-                ProjectileEffect soundEffect = soundEffectFactory.create(sounds);
+                SoundTemplate soundTemplate = soundService.getSoundTemplate(spec.soundTemplate)
+                        .orElseThrow(() -> new ProjectileEffectCreationException("Sound template '%s' does not exist".formatted(spec.soundTemplate)));
+
+                ProjectileEffect soundEffect = soundEffectFactory.create(soundTemplate);
                 this.addTriggers(soundEffect, spec.triggers.values());
 
                 yield soundEffect;
