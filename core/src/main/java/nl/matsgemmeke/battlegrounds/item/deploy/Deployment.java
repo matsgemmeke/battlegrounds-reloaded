@@ -5,7 +5,6 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
@@ -21,6 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;
@@ -34,7 +34,6 @@ import java.util.UUID;
  */
 public class Deployment {
 
-    private final AudioEmitter audioEmitter;
     private final CollisionResultAdapter collisionResultAdapter;
     private final DeploymentProperties properties;
     private final ItemEffect itemEffect;
@@ -43,6 +42,7 @@ public class Deployment {
     private final Set<TriggerExecutor> triggerExecutors;
     private final Set<TriggerRun> triggerRuns;
     private final String itemName;
+    private final SoundEmitter soundEmitter;
     @Nullable
     private Activator activator;
     @Nullable
@@ -55,19 +55,19 @@ public class Deployment {
 
     @Inject
     public Deployment(
-            AudioEmitter audioEmitter,
             CollisionResultAdapter collisionResultAdapter,
             ParticleEffectSpawner particleEffectSpawner,
             Scheduler scheduler,
+            SoundEmitter soundEmitter,
             @Assisted String itemName,
             @Assisted DeploymentProperties properties,
             @Assisted DeploymentState state,
             @Assisted ItemEffect itemEffect
     ) {
-        this.audioEmitter = audioEmitter;
         this.collisionResultAdapter = collisionResultAdapter;
         this.particleEffectSpawner = particleEffectSpawner;
         this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.itemName = itemName;
         this.properties = properties;
         this.state = state;
@@ -95,7 +95,7 @@ public class Deployment {
     }
 
     public void activate(Deployer deployer) {
-        audioEmitter.playSounds(properties.manualActivationSounds(), deployer.getDeployLocation());
+        soundEmitter.playSoundTemplate(properties.manualActivationSoundTemplate(), deployer::getDeployLocation);
 
         deployer.setHeldItem(null);
 

@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotNull;
+import nl.matsgemmeke.battlegrounds.item.validation.constraint.ValidSoundTemplate;
 
 public class ManualActivationPropertiesSpec {
 
-    @Required
+    @NotNull
     public Long delay;
 
-    public String activationSounds;
+    @ValidSoundTemplate
+    public String activationSoundTemplate;
 }
