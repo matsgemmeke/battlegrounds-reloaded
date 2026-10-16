@@ -5,11 +5,11 @@ import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
@@ -27,15 +27,15 @@ public class ThrowDeploymentAction implements DeploymentAction {
     // Take a high number to make sure the item cannot be picked up before the deployment is complete
     private static final int DEFAULT_PICKUP_DELAY = 100000;
 
-    private final AudioEmitter audioEmitter;
     private final HitboxResolver hitboxResolver;
+    private final SoundEmitter soundEmitter;
     @Nullable
     private ThrowDeploymentProperties properties;
 
     @Inject
-    public ThrowDeploymentAction(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
-        this.audioEmitter = audioEmitter;
+    public ThrowDeploymentAction(HitboxResolver hitboxResolver, SoundEmitter soundEmitter) {
         this.hitboxResolver = hitboxResolver;
+        this.soundEmitter = soundEmitter;
     }
 
     public void configureProperties(ThrowDeploymentProperties properties) {
@@ -72,7 +72,7 @@ public class ThrowDeploymentAction implements DeploymentAction {
 
         properties.projectileEffects().forEach(effect -> effect.onLaunch(deployer, deploymentObject));
 
-        audioEmitter.playSounds(properties.throwSounds(), deployLocation);
+        soundEmitter.playSoundTemplate(properties.soundTemplate(), deployer::getDeployLocation);
 
         deployer.setHeldItem(null);
 

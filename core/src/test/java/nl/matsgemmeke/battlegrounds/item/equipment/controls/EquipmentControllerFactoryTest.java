@@ -18,6 +18,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +31,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -61,6 +64,8 @@ class EquipmentControllerFactoryTest {
     @Mock
     private Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     @Mock
+    private SoundService soundService;
+    @Mock
     private Supplier<ItemController<EquipmentUser>> controllerSupplier;
     @Captor
     private ArgumentCaptor<ActionBinding<EquipmentUser>> bindingCaptor;
@@ -71,7 +76,7 @@ class EquipmentControllerFactoryTest {
     void setUp() {
         when(controllerSupplier.get()).thenReturn(controller);
 
-        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemControllerRegistry, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controllerSupplier);
+        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemControllerRegistry, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, soundService, controllerSupplier);
     }
 
     @Test
@@ -86,13 +91,27 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when throwing sound template is invalid")
+    void create_invalidThrowingSoundTemplate() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
+
+        when(soundService.getSoundTemplate("equipment-throw-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Throw sound template 'equipment-throw-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with throw function")
     void create_withThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         ThrowDeploymentAction deploymentAction = mock(ThrowDeploymentAction.class);
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        SoundTemplate soundTemplate = mock(SoundTemplate.class);
 
         when(itemTemplateFactory.create(equipmentSpec.items.throwItem)).thenReturn(itemTemplate);
+        when(soundService.getSoundTemplate("equipment-throw-1")).thenReturn(Optional.of(soundTemplate));
         when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
@@ -103,7 +122,7 @@ class EquipmentControllerFactoryTest {
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
             assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
-            assertThat(properties.throwSounds()).isNotEmpty();
+            assertThat(properties.soundTemplate()).isEqualTo(soundTemplate);
             assertThat(properties.resistances()).containsOnly(
                     entry(DamageType.BULLET_DAMAGE, 0.0),
                     entry(DamageType.EXPLOSIVE_DAMAGE, 0.0),

@@ -28,6 +28,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFuncti
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -46,6 +48,7 @@ public class EquipmentControllerFactory {
     private final Provider<PlaceDeploymentAction> placeDeploymentActionProvider;
     private final Provider<PrimeDeploymentAction> primeDeploymentActionProvider;
     private final Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
+    private final SoundService soundService;
     private final Supplier<ItemController<EquipmentUser>> controllerSupplier;
 
     @Inject
@@ -58,6 +61,7 @@ public class EquipmentControllerFactory {
             Provider<PlaceDeploymentAction> placeDeploymentActionProvider,
             Provider<PrimeDeploymentAction> primeDeploymentActionProvider,
             Provider<ThrowDeploymentAction> throwDeploymentActionProvider,
+            SoundService soundService,
             Supplier<ItemController<EquipmentUser>> controllerSupplier
     ) {
         this.actionBindingMapper = actionBindingMapper;
@@ -68,6 +72,7 @@ public class EquipmentControllerFactory {
         this.placeDeploymentActionProvider = placeDeploymentActionProvider;
         this.primeDeploymentActionProvider = primeDeploymentActionProvider;
         this.throwDeploymentActionProvider = throwDeploymentActionProvider;
+        this.soundService = soundService;
         this.controllerSupplier = controllerSupplier;
     }
 
@@ -90,7 +95,10 @@ public class EquipmentControllerFactory {
             Action throwAction = Action.valueOf(throwSpec.action);
             ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.throwItem);
 
-            List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds);
+            String soundTemplateId = spec.deploy.throwing.soundTemplate;
+            SoundTemplate soundTemplate = soundService.getSoundTemplate(soundTemplateId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Throw sound template '%s' does not exist".formatted(soundTemplateId)));
+
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
             double health = spec.deploy.health;
             double velocity = throwProperties.velocity;
@@ -102,7 +110,7 @@ public class EquipmentControllerFactory {
                 projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec));
             }
 
-            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
+            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, soundTemplate, projectileEffects, resistances, health, velocity, cooldown);
 
             ThrowDeploymentAction deploymentAction = throwDeploymentActionProvider.get();
             deploymentAction.configureProperties(properties);
