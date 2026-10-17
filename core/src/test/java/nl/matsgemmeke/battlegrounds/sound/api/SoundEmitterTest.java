@@ -1,6 +1,7 @@
 package nl.matsgemmeke.battlegrounds.sound.api;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
+import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -33,10 +34,58 @@ class SoundEmitterTest {
     private SoundEmitter soundEmitter;
 
     @Test
+    @DisplayName("playSoundTemplate plays given sound template without delay and returns empty sound playback")
+    void playSoundTemplate_forGamePlayerNoDelay() {
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, 0);
+        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+
+        Location playerLocation = new Location(null, 1, 2, 3);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getLocation()).thenReturn(playerLocation);
+
+        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, gamePlayer);
+
+        assertThat(soundPlayback).isNotNull();
+
+        verify(gamePlayer).playSound(playerLocation, soundCue);
+        verifyNoInteractions(scheduler);
+    }
+
+    @Test
+    @DisplayName("playSoundTemplate plays given sound template with delay")
+    void playSoundTemplate_forGamePlayerDelay() {
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
+        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+
+        Location playerLocation = new Location(null, 1, 2, 3);
+
+        GamePlayer gamePlayer = mock(GamePlayer.class);
+        when(gamePlayer.getLocation()).thenReturn(playerLocation);
+
+        Schedule schedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
+
+        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
+
+        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, gamePlayer);
+        soundPlayback.cancel();
+
+        assertThat(soundPlayback).isNotNull();
+
+        verify(gamePlayer).playSound(playerLocation, soundCue);
+        verify(schedule).stop();
+    }
+
+    @Test
     @DisplayName("playSoundTemplate returns empty sound playback when given location has no world")
     void playSoundTemplate_locationWithoutWorld() {
-        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH, DELAY);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(soundCue));
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
+        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+
         Location location = new Location(null, 1, 2, 3);
 
         SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, location);
@@ -49,8 +98,10 @@ class SoundEmitterTest {
     @Test
     @DisplayName("playSoundTemplate plays given sound template without delay and returns empty sound playback")
     void playSoundTemplate_noDelay() {
-        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH, 0);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(soundCue));
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, 0);
+        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+
         World world = mock(World.class);
         Location location = new Location(world, 1, 2, 3);
 
@@ -65,8 +116,10 @@ class SoundEmitterTest {
     @Test
     @DisplayName("playSoundTemplate plays given sound template with delay")
     void playSoundTemplate_delay() {
-        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH, DELAY);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(soundCue));
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
+        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+
         World world = mock(World.class);
         Location location = new Location(world, 1, 2, 3);
 

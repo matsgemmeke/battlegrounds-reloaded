@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotNull;
 
 public class SoundNotificationEffectSpec extends ItemEffectSpec {
 
-    @Required
-    public String notificationSounds;
+    @NotNull
+    public String soundTemplate;
 }

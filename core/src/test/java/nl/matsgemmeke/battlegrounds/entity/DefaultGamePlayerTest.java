@@ -7,8 +7,10 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -45,6 +47,9 @@ class DefaultGamePlayerTest {
 
     private static final int ITEM_SLOT = 5;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
+
+    private static final float SOUND_VOLUME = 1.0f;
+    private static final float SOUND_PITCH = 2.0f;
 
     @Mock
     private HitboxProvider<Player> hitboxProvider;
@@ -422,6 +427,17 @@ class DefaultGamePlayerTest {
         gamePlayer.modifyCameraRotation(1.0f, 1.0f);
 
         verify(versionAdapter).setPlayerRotation(player, 1.0f, 1.0f);
+    }
+
+    @Test
+    @DisplayName("playSound plays given sound cue to player at given location")
+    void playSound() {
+        Location location = new Location(null, 1, 2, 3);
+        SoundCue soundCue = new SoundCue(null, SOUND_VOLUME, SOUND_PITCH);
+
+        gamePlayer.playSound(location, soundCue);
+
+        verify(player).playSound(location, (Sound) null, SOUND_VOLUME, SOUND_PITCH);
     }
 
     @Test

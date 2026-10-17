@@ -30,7 +30,7 @@ import static org.mockito.Mockito.*;
 class SoundsConfigurationTest {
 
     private static final String TEMPLATE_ID = "assault-rifle-reload-1";
-    private static final String VALID_CUE = "ui.button.click 1 2 3";
+    private static final String VALID_ENTRY = "ui.button.click 1 2 3";
 
     @Mock
     private BukkitSoundRegistry bukkitSoundRegistry;
@@ -67,14 +67,14 @@ class SoundsConfigurationTest {
     @ParameterizedTest
     @DisplayName("getSoundTemplate returns empty optional when template has parsing errors")
     @CsvSource(value = {
-            "ui.button.click 1 2 | - entry 1: has 3 parts, expected 4 parts (sound volume pitch delay)",
+            "ui.button.click 1 2      | - entry 1: has 3 parts, expected 4 parts (sound volume pitch delay)",
             "ui.button.click fail 2 0 | - entry 1: volume 'fail' is not a decimal number",
             "ui.button.click 1 fail 0 | - entry 1: pitch 'fail' is not a decimal number",
             "ui.button.click 1 2 fail | - entry 1: delay 'fail' is not a whole number"
     }, delimiter = '|', ignoreLeadingAndTrailingWhitespace = false)
-    void getSoundTemplate_cueParsingError(String cueValue, String expectedErrorMessage) {
+    void getSoundTemplate_entryParsingError(String entryValue, String expectedErrorMessage) {
         when(rootSection.isList(TEMPLATE_ID)).thenReturn(true);
-        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(cueValue));
+        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(entryValue));
 
         Optional<SoundTemplateSpec> soundTemplateSpecOptional = soundsConfiguration.getSoundTemplate(TEMPLATE_ID);
 
@@ -90,7 +90,7 @@ class SoundsConfigurationTest {
     @ValueSource(strings = { " ", "\t" })
     void getSoundTemplate_invalidTemplateId(String templateId) {
         when(rootSection.isList(templateId)).thenReturn(true);
-        when(rootSection.getStringList(templateId)).thenReturn(List.of(VALID_CUE));
+        when(rootSection.getStringList(templateId)).thenReturn(List.of(VALID_ENTRY));
         when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundTemplateSpec> soundTemplateSpecOptional = soundsConfiguration.getSoundTemplate(templateId);
@@ -102,8 +102,8 @@ class SoundsConfigurationTest {
     }
 
     @Test
-    @DisplayName("getSoundTemplate returns empty optional when template has no cues")
-    void getSoundTemplate_withoutCues() {
+    @DisplayName("getSoundTemplate returns empty optional when template has no entries")
+    void getSoundTemplate_withoutEntries() {
         when(rootSection.isList(TEMPLATE_ID)).thenReturn(true);
         when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of());
 
@@ -112,19 +112,19 @@ class SoundsConfigurationTest {
         assertThat(soundTemplateSpecOptional).isEmpty();
 
         verify(logger).warning("Sound template 'assault-rifle-reload-1' is invalid and will be ignored");
-        verify(logger).warning(" - template must have at least one cue");
+        verify(logger).warning(" - template must have at least one entry");
     }
 
     @ParameterizedTest
-    @DisplayName("getSoundTemplate returns empty optional when template has cues with validation errors")
+    @DisplayName("getSoundTemplate returns empty optional when template has entries with validation errors")
     @CsvSource(value = {
             "  1 2 0                 | - sound must not be blank",
             "ui.button.click -1 2 0  | - volume must be 0 or higher (was -1.0)",
             "ui.button.click 1 2 -1  | - delay must be 0 or higher (was -1)"
     }, delimiter = '|', ignoreLeadingAndTrailingWhitespace = false)
-    void getSoundTemplate_cueValidationError(String cueValue, String expectedErrorMessage) {
+    void getSoundTemplate_entryValidationError(String entryValue, String expectedErrorMessage) {
         when(rootSection.isList(TEMPLATE_ID)).thenReturn(true);
-        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(cueValue));
+        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(entryValue));
         lenient().when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundTemplateSpec> soundTemplateSpecOptional = soundsConfiguration.getSoundTemplate(TEMPLATE_ID);
@@ -139,18 +139,18 @@ class SoundsConfigurationTest {
     @DisplayName("getSoundTemplate returns optional with validated sound template specification")
     void getSoundTemplate_successful() {
         when(rootSection.isList(TEMPLATE_ID)).thenReturn(true);
-        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(VALID_CUE));
+        when(rootSection.getStringList(TEMPLATE_ID)).thenReturn(List.of(VALID_ENTRY));
         when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundTemplateSpec> soundTemplateSpecOptional = soundsConfiguration.getSoundTemplate(TEMPLATE_ID);
 
         assertThat(soundTemplateSpecOptional).hasValueSatisfying(spec -> {
             assertThat(spec.id()).isEqualTo(TEMPLATE_ID);
-            assertThat(spec.cues()).satisfiesExactly(cue -> {
-                assertThat(cue.sound()).isEqualTo("ui.button.click");
-                assertThat(cue.volume()).isEqualTo(1);
-                assertThat(cue.pitch()).isEqualTo(2);
-                assertThat(cue.delay()).isEqualTo(3);
+            assertThat(spec.entries()).satisfiesExactly(entry -> {
+                assertThat(entry.sound()).isEqualTo("ui.button.click");
+                assertThat(entry.volume()).isEqualTo(1);
+                assertThat(entry.pitch()).isEqualTo(2);
+                assertThat(entry.delay()).isEqualTo(3);
             });
         });
     }

@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
-import java.util.List;
-
-public record SoundNotificationProperties(List<GameSound> notificationSounds) {
+public record SoundNotificationProperties(SoundTemplate soundTemplate) {
 }

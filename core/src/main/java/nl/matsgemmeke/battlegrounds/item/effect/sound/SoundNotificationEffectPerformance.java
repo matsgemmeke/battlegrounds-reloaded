@@ -5,18 +5,20 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 
 import java.util.UUID;
 
 public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
     private final PlayerRegistry playerRegistry;
+    private final SoundEmitter soundEmitter;
     private final SoundNotificationProperties properties;
 
     @Inject
-    public SoundNotificationEffectPerformance(PlayerRegistry playerRegistry, @Assisted SoundNotificationProperties properties) {
+    public SoundNotificationEffectPerformance(PlayerRegistry playerRegistry, SoundEmitter soundEmitter, @Assisted SoundNotificationProperties properties) {
         this.playerRegistry = playerRegistry;
+        this.soundEmitter = soundEmitter;
         this.properties = properties;
     }
 
@@ -35,6 +37,6 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
             return;
         }
 
-        properties.notificationSounds().forEach(sound -> gamePlayer.playSound(gamePlayer.getLocation(), sound));
+        soundEmitter.playSoundTemplate(properties.soundTemplate(), gamePlayer);
     }
 }

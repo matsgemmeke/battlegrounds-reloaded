@@ -5,6 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
 import org.bukkit.Location;
 
 /**
@@ -33,4 +34,12 @@ public interface GamePlayer extends GameEntity, EquipmentUser, GunUser, MeleeWea
      * @param sound    the sound to play
      */
     void playSound(Location location, GameSound sound);
+
+    /**
+     * Plays a given sound cue to the player at a given location.
+     *
+     * @param location the location to play the sound
+     * @param soundCue the sound cue to play
+     */
+    void playSound(Location location, SoundCue soundCue);
 }

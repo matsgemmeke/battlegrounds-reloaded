@@ -43,14 +43,14 @@ public class SoundsConfiguration {
     }
 
     private SoundTemplateSpec loadTemplate(String templateId) throws InvalidSoundTemplateException {
-        List<String> cueValues = configurationFile.getRootSection().getStringList(templateId);
-        List<SoundCueSpec> cues = new ArrayList<>();
+        List<String> entryValues = configurationFile.getRootSection().getStringList(templateId);
+        List<SoundTemplateEntrySpec> entries = new ArrayList<>();
         List<String> errors = new ArrayList<>();
 
-        for (int i = 0; i < cueValues.size(); i++) {
+        for (int i = 0; i < entryValues.size(); i++) {
             try {
-                cues.add(this.parseCue(cueValues.get(i)));
-            } catch (InvalidSoundCueException ex) {
+                entries.add(this.parseSoundTemplateEntry(entryValues.get(i)));
+            } catch (InvalidSoundTemplateEntryException ex) {
                 errors.add("entry %s: %s".formatted(i + 1, ex.getMessage()));
             }
         }
@@ -59,7 +59,7 @@ public class SoundsConfiguration {
             throw new InvalidSoundTemplateException("Sound template has parsing errors", errors);
         }
 
-        SoundTemplateSpec template = new SoundTemplateSpec(templateId, cues);
+        SoundTemplateSpec template = new SoundTemplateSpec(templateId, entries);
 
         try {
             objectValidator.validate(template);
@@ -71,11 +71,11 @@ public class SoundsConfiguration {
         return template;
     }
 
-    private SoundCueSpec parseCue(String cueValue) throws InvalidSoundCueException {
-        String[] parts = cueValue.split("\\s+");
+    private SoundTemplateEntrySpec parseSoundTemplateEntry(String entryValue) throws InvalidSoundTemplateEntryException {
+        String[] parts = entryValue.split("\\s+");
 
         if (parts.length != 4) {
-            throw new InvalidSoundCueException("has %s parts, expected 4 parts (sound volume pitch delay)".formatted(parts.length));
+            throw new InvalidSoundTemplateEntryException("has %s parts, expected 4 parts (sound volume pitch delay)".formatted(parts.length));
         }
 
         String sound = parts[0];
@@ -83,22 +83,22 @@ public class SoundsConfiguration {
         float pitch = this.parseFloat("pitch", parts[2]);
         int delay = this.parseInt("delay", parts[3]);
 
-        return new SoundCueSpec(sound, volume, pitch, delay);
+        return new SoundTemplateEntrySpec(sound, volume, pitch, delay);
     }
 
-    private float parseFloat(String field, String floatValue) throws InvalidSoundCueException {
+    private float parseFloat(String field, String floatValue) throws InvalidSoundTemplateEntryException {
         try {
             return Float.parseFloat(floatValue);
         } catch (NumberFormatException ex) {
-            throw new InvalidSoundCueException("%s '%s' is not a decimal number".formatted(field, floatValue));
+            throw new InvalidSoundTemplateEntryException("%s '%s' is not a decimal number".formatted(field, floatValue));
         }
     }
 
-    private int parseInt(String field, String intValue) throws InvalidSoundCueException {
+    private int parseInt(String field, String intValue) throws InvalidSoundTemplateEntryException {
         try {
             return Integer.parseInt(intValue);
         } catch (NumberFormatException ex) {
-            throw new InvalidSoundCueException("%s '%s' is not a whole number".formatted(field, intValue));
+            throw new InvalidSoundTemplateEntryException("%s '%s' is not a whole number".formatted(field, intValue));
         }
     }
 }

@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.sound.mapper;
 import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
 import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
-import nl.matsgemmeke.battlegrounds.sound.configuration.SoundCueSpec;
+import nl.matsgemmeke.battlegrounds.sound.configuration.SoundTemplateEntrySpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundTemplateSpec;
 import org.bukkit.Sound;
 import org.junit.jupiter.api.DisplayName;
@@ -39,9 +39,9 @@ class SoundTemplateMapperTest {
     @DisplayName("toSoundTemplate returns SoundTemplate with values from given specification")
     void toSoundTemplate() {
         Sound sound = mock(Sound.class);
-        SoundCueSpec validSoundCue = new SoundCueSpec(SOUND, VOLUME, PITCH, DELAY);
-        SoundCueSpec invalidSoundCue = new SoundCueSpec(INVALID_SOUND, VOLUME, PITCH, DELAY);
-        SoundTemplateSpec soundTemplateSpec = new SoundTemplateSpec(ID, List.of(validSoundCue, invalidSoundCue));
+        SoundTemplateEntrySpec validEntry = new SoundTemplateEntrySpec(SOUND, VOLUME, PITCH, DELAY);
+        SoundTemplateEntrySpec invalidEntry = new SoundTemplateEntrySpec(INVALID_SOUND, VOLUME, PITCH, DELAY);
+        SoundTemplateSpec soundTemplateSpec = new SoundTemplateSpec(ID, List.of(validEntry, invalidEntry));
 
         when(bukkitSoundRegistry.getSound(SOUND)).thenReturn(Optional.of(sound));
         when(bukkitSoundRegistry.getSound(INVALID_SOUND)).thenReturn(Optional.empty());
@@ -49,11 +49,13 @@ class SoundTemplateMapperTest {
         SoundTemplate soundTemplate = soundTemplateMapper.toSoundTemplate(soundTemplateSpec);
 
         assertThat(soundTemplate.id()).isEqualTo(ID);
-        assertThat(soundTemplate.cues()).satisfiesExactly(cue -> {
-            assertThat(cue.sound()).isEqualTo(sound);
-            assertThat(cue.volume()).isEqualTo(VOLUME);
-            assertThat(cue.pitch()).isEqualTo(PITCH);
-            assertThat(cue.delay()).isEqualTo(DELAY);
+        assertThat(soundTemplate.entries()).satisfiesExactly(entry -> {
+            assertThat(entry.soundCue()).satisfies(soundCue -> {
+                assertThat(soundCue.sound()).isEqualTo(sound);
+                assertThat(soundCue.volume()).isEqualTo(VOLUME);
+                assertThat(soundCue.pitch()).isEqualTo(PITCH);
+            });
+            assertThat(entry.delay()).isEqualTo(DELAY);
         });
     }
 }

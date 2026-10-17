@@ -21,8 +21,11 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -30,12 +33,17 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ItemEffectFactoryTest {
+
+    private static final String SOUND_TEMPLATE_ID = "equipment-activation-1";
+    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
 
     @Spy
     private HitboxDamageProfileMapper hitboxDamageProfileMapper;
@@ -59,12 +67,14 @@ class ItemEffectFactoryTest {
     private Provider<SoundNotificationEffect> soundNotificationEffectProvider;
     @Spy
     private RangeProfileMapper rangeProfileMapper;
+    @Mock
+    private SoundService soundService;
 
     private ItemEffectFactory itemEffectFactory;
 
     @BeforeEach
     void setUp() {
-        itemEffectFactory = new ItemEffectFactory(hitboxDamageProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, soundNotificationEffectProvider, rangeProfileMapper);
+        itemEffectFactory = new ItemEffectFactory(hitboxDamageProfileMapper, particleEffectMapper, combustionEffectProvider, damageEffectProvider, explosionEffectProvider, flashEffectProvider, gunFireSimulationEffectProvider, markSpawnPointEffectProvider, smokeScreenEffectProvider, soundNotificationEffectProvider, rangeProfileMapper, soundService);
     }
 
     @Test
@@ -279,13 +289,29 @@ class ItemEffectFactoryTest {
     }
 
     @Test
-    void makeCreatesInstanceOfSoundNotificationEffect() {
+    @DisplayName("make throws ItemEffectCreationException when given specification has an invalid template id")
+    void make_soundNotificationEffectInvalidSpec() {
+        SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
+        spec.type = "SOUND_NOTIFICATION";
+        spec.soundTemplate = SOUND_TEMPLATE_ID;
+
+        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemEffectFactory.create(spec))
+                .isInstanceOf(ItemEffectCreationException.class)
+                .hasMessage("Sound template 'equipment-activation-1' does not exist");
+    }
+
+    @Test
+    @DisplayName("make creates instance of SoundNotificationEffect")
+    void make_soundNotificationEffectSuccessful() {
         SoundNotificationEffect soundNotificationEffect = mock(SoundNotificationEffect.class);
 
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.type = "SOUND_NOTIFICATION";
-        spec.notificationSounds = "AMBIENT_CAVE-1-1-0";
+        spec.soundTemplate = SOUND_TEMPLATE_ID;
 
+        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.of(SOUND_TEMPLATE));
         when(soundNotificationEffectProvider.get()).thenReturn(soundNotificationEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -294,7 +320,7 @@ class ItemEffectFactoryTest {
         verify(soundNotificationEffect).setProperties(propertiesCaptor.capture());
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
-           assertThat(properties.notificationSounds()).hasSize(1);
+            assertThat(properties.soundTemplate()).isEqualTo(SOUND_TEMPLATE);
         });
 
         assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);

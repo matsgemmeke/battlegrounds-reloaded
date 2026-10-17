@@ -9,6 +9,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -280,6 +281,11 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public void playSound(Location location, GameSound sound) {
         player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
+    }
+
+    @Override
+    public void playSound(Location location, SoundCue soundCue) {
+        player.playSound(location, soundCue.sound(), soundCue.volume(), soundCue.pitch());
     }
 
     @Override

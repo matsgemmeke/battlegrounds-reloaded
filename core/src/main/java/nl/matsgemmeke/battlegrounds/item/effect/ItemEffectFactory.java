@@ -30,6 +30,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -47,6 +49,7 @@ public class ItemEffectFactory {
     private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
     private final Provider<SoundNotificationEffect> soundNotificationEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
+    private final SoundService soundService;
 
     @Inject
     public ItemEffectFactory(
@@ -60,7 +63,8 @@ public class ItemEffectFactory {
             Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             Provider<SmokeScreenEffect> smokeScreenEffectProvider,
             Provider<SoundNotificationEffect> soundNotificationEffectProvider,
-            RangeProfileMapper rangeProfileMapper
+            RangeProfileMapper rangeProfileMapper,
+            SoundService soundService
     ) {
         this.hitboxDamageProfileMapper = hitboxDamageProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
@@ -73,6 +77,7 @@ public class ItemEffectFactory {
         this.smokeScreenEffectProvider = smokeScreenEffectProvider;
         this.soundNotificationEffectProvider = soundNotificationEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
+        this.soundService = soundService;
     }
 
     public ItemEffect create(ItemEffectSpec itemEffectSpec) {
@@ -188,8 +193,11 @@ public class ItemEffectFactory {
             case SOUND_NOTIFICATION -> {
                 SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
 
-                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.notificationSounds);
-                SoundNotificationProperties properties = new SoundNotificationProperties(notificationSounds);
+                String soundTemplateId = spec.soundTemplate;
+                SoundTemplate soundTemplate = soundService.getSoundTemplate(soundTemplateId)
+                        .orElseThrow(() -> new ItemEffectCreationException("Sound template '%s' does not exist".formatted(soundTemplateId)));
+
+                SoundNotificationProperties properties = new SoundNotificationProperties(soundTemplate);
 
                 SoundNotificationEffect soundNotificationEffect = soundNotificationEffectProvider.get();
                 soundNotificationEffect.setProperties(properties);

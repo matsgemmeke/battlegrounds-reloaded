@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.sound.configuration;
 import jakarta.validation.constraints.*;
 import nl.matsgemmeke.battlegrounds.sound.validation.constraint.ValidSound;
 
-public record SoundCueSpec(
+public record SoundTemplateEntrySpec(
         @NotBlank(message = "sound must not be blank")
         @ValidSound
         String sound,
