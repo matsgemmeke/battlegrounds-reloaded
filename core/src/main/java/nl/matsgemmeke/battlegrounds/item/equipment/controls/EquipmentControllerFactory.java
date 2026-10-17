@@ -157,10 +157,13 @@ public class EquipmentControllerFactory {
             }
 
             Action cookAction = Action.valueOf(cookSpec.action);
-            List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds);
+
+            String soundTemplateId = cookProperties.soundTemplate;
+            SoundTemplate soundTemplate = soundService.getSoundTemplate(soundTemplateId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Cook sound template '%s' does not exist".formatted(soundTemplateId)));
 
             PrimeDeploymentAction deployment = primeDeploymentActionProvider.get();
-            deployment.configurePrimeSounds(cookSounds);
+            deployment.configureSoundTemplate(soundTemplate);
 
             CookFunction cookFunction = new CookFunction(equipment, deployment);
             ActionBinding<EquipmentUser> cookBinding = actionBindingMapper.toBinding(cookSpec, cookFunction);

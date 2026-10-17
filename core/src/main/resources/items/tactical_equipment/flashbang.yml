@@ -35,7 +35,7 @@ deploy:
     sound-template: equipment-throw-1
     velocity: 1.2
   cooking:
-    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    sound-template: equipment-prime-1
   dropping:
     velocity: 1.0
     cooldown: 30

@@ -227,14 +227,29 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when cook sound template is invalid")
+    void create_invalidCookingSoundTemplate() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+
+        when(soundService.getSoundTemplate("equipment-prime-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cook sound template 'equipment-prime-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with cook function")
     void create_withCookFunction() {
+        SoundTemplate soundTemplate = mock(SoundTemplate.class);
+        PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
+
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
         equipmentSpec.controls.drop = null;
 
-        PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
-
+        when(soundService.getSoundTemplate("equipment-prime-1")).thenReturn(Optional.of(soundTemplate));
         when(primeDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
@@ -249,6 +264,7 @@ class EquipmentControllerFactoryTest {
         });
 
         verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
+        verify(deploymentAction).configureSoundTemplate(soundTemplate);
     }
 
     @Test

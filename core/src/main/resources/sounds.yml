@@ -35,14 +35,14 @@ equipment-activation-4:
 equipment-activation-5:
   - "block.fire.extinguish 1 0 0"
 
-equipment-cook-1:
-  - "entity.tnt.primed 1 2 0"
-
 equipment-manual-activation-1:
   - "ui.button.click 1 1.5 0"
 
 equipment-place-1:
   - "block.cherry_wood_button.click_on 1 1 0"
+
+equipment-prime-1:
+  - "entity.tnt.primed 1 2 0"
 
 equipment-throw-1:
   - "entity.arrow.shoot 1 0 0"

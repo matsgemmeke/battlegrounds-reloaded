@@ -2,17 +2,16 @@ package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.inventory.ItemStack;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -22,19 +21,19 @@ import java.util.UUID;
  */
 public class PrimeDeploymentAction implements DeploymentAction {
 
-    private final AudioEmitter audioEmitter;
     private final GameEntityFinder gameEntityFinder;
-    private List<GameSound> primeSounds;
+    private final SoundEmitter soundEmitter;
+    @Nullable
+    private SoundTemplate soundTemplate;
 
     @Inject
-    public PrimeDeploymentAction(AudioEmitter audioEmitter, GameEntityFinder gameEntityFinder) {
-        this.audioEmitter = audioEmitter;
+    public PrimeDeploymentAction(GameEntityFinder gameEntityFinder, SoundEmitter soundEmitter) {
         this.gameEntityFinder = gameEntityFinder;
-        this.primeSounds = Collections.emptyList();
+        this.soundEmitter = soundEmitter;
     }
 
-    public void configurePrimeSounds(List<GameSound> primeSounds) {
-        this.primeSounds = primeSounds;
+    public void configureSoundTemplate(SoundTemplate soundTemplate) {
+        this.soundTemplate = soundTemplate;
     }
 
     @Override
@@ -47,8 +46,8 @@ public class PrimeDeploymentAction implements DeploymentAction {
             return Optional.empty();
         }
 
-        if (!primeSounds.isEmpty()) {
-            audioEmitter.playSounds(primeSounds, deployer.getDeployLocation());
+        if (soundTemplate != null) {
+            soundEmitter.playSoundTemplate(soundTemplate, deployer::getDeployLocation);
         }
 
         ItemStack heldItemStack = deployer.getHeldItem();

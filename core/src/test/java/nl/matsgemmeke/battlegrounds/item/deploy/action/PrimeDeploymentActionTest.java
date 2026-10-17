@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.entity.GameEntityFinder;
 import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
@@ -10,6 +8,8 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -18,11 +18,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -33,11 +34,12 @@ class PrimeDeploymentActionTest {
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DEPLOYER_UNIQUE_ID = UUID.randomUUID();
     private static final DestructionListener LISTENER = damage -> {};
+    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
 
     @Mock
-    private AudioEmitter audioEmitter;
-    @Mock
     private GameEntityFinder gameEntityFinder;
+    @Mock
+    private SoundEmitter soundEmitter;
     @InjectMocks
     private PrimeDeploymentAction deploymentAction;
 
@@ -77,14 +79,13 @@ class PrimeDeploymentActionTest {
             assertThat(deploymentResult.deploymentObject()).isInstanceOf(HeldDeploymentObject.class);
         });
 
-        verifyNoInteractions(audioEmitter);
+        verifyNoInteractions(soundEmitter);
     }
 
     @Test
     @DisplayName("perform returns optional with DeploymentResult with playing sounds")
     void perform_withPlayingSounds() {
         ItemStack itemStack = new ItemStack(Material.STICK);
-        List<GameSound> primeSounds = List.of(mock(GameSound.class));
         Location deployerLocation = new Location(null, 1, 1, 1);
         GameEntity gameEntity = mock(GameEntity.class);
 
@@ -97,7 +98,7 @@ class PrimeDeploymentActionTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        deploymentAction.configurePrimeSounds(primeSounds);
+        deploymentAction.configureSoundTemplate(SOUND_TEMPLATE);
         Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
@@ -106,6 +107,6 @@ class PrimeDeploymentActionTest {
             assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 
-        verify(audioEmitter).playSounds(primeSounds, deployerLocation);
+        verify(soundEmitter).playSoundTemplate(eq(SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployerLocation));
     }
 }
