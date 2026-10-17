@@ -20,6 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFacto
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -158,18 +159,49 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when placing sound template is invalid")
+    void create_invalidPlacingSoundTemplate() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
+        equipmentSpec.controls.activate = null;
+        equipmentSpec.controls.throwing = null;
+
+        when(soundService.getSoundTemplate("equipment-place-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Place sound template 'equipment-place-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with place function")
     void create_withPlaceFunction() {
         PlaceDeploymentAction deploymentAction = mock(PlaceDeploymentAction.class);
+        SoundTemplate soundTemplate = mock(SoundTemplate.class);
 
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.activate = null;
         equipmentSpec.controls.throwing = null;
 
+        when(soundService.getSoundTemplate("equipment-place-1")).thenReturn(Optional.of(soundTemplate));
         when(placeDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
+
+        ArgumentCaptor<PlaceDeploymentProperties> placeDeploymentPropertiesCaptor = ArgumentCaptor.forClass(PlaceDeploymentProperties.class);
+        verify(deploymentAction).configureProperties(placeDeploymentPropertiesCaptor.capture());
+
+        assertThat(placeDeploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.resistances()).containsOnly(
+                    entry(DamageType.BULLET_DAMAGE, 0.0),
+                    entry(DamageType.EXPLOSIVE_DAMAGE, 0.0),
+                    entry(DamageType.FIRE_DAMAGE, 0.0)
+            );
+            assertThat(properties.material()).isEqualTo(Material.WARPED_BUTTON);
+            assertThat(properties.soundTemplate()).isEqualTo(soundTemplate);
+            assertThat(properties.health()).isEqualTo(50.0);
+            assertThat(properties.cooldown()).isEqualTo(10L);
+        });
 
         verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 

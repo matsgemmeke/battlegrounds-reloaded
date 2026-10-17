@@ -5,10 +5,10 @@ import nl.matsgemmeke.battlegrounds.entity.EntityKey;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -24,15 +24,15 @@ public class PlaceDeploymentAction implements DeploymentAction {
 
     private static final int TARGET_BLOCK_SCAN_DISTANCE = 4;
 
-    private final AudioEmitter audioEmitter;
     private final HitboxResolver hitboxResolver;
+    private final SoundEmitter soundEmitter;
     @Nullable
     private PlaceDeploymentProperties properties;
 
     @Inject
-    public PlaceDeploymentAction(AudioEmitter audioEmitter, HitboxResolver hitboxResolver) {
-        this.audioEmitter = audioEmitter;
+    public PlaceDeploymentAction(HitboxResolver hitboxResolver, SoundEmitter soundEmitter) {
         this.hitboxResolver = hitboxResolver;
+        this.soundEmitter = soundEmitter;
     }
 
     public void configureProperties(PlaceDeploymentProperties properties) {
@@ -74,7 +74,7 @@ public class PlaceDeploymentAction implements DeploymentAction {
         BlockActor actor = new BlockActor(adjacentBlock, properties.material());
         long cooldown = properties.cooldown();
 
-        audioEmitter.playSounds(properties.placeSounds(), adjacentBlock.getLocation());
+        soundEmitter.playSoundTemplate(properties.soundTemplate(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 

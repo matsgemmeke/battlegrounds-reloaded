@@ -129,13 +129,16 @@ public class EquipmentControllerFactory {
                 throw new EquipmentControllerCreationException("Cannot create controller for 'place', the equipment specification does not contain the required place properties");
             }
 
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(placeProperties.placeSounds);
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
             Material material = Material.valueOf(placeProperties.material);
             double health = spec.deploy.health;
             long cooldown = placeProperties.cooldown;
 
-            PlaceDeploymentProperties properties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
+            String soundTemplateId = placeProperties.soundTemplate;
+            SoundTemplate soundTemplate = soundService.getSoundTemplate(soundTemplateId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Place sound template '%s' does not exist".formatted(soundTemplateId)));
+
+            PlaceDeploymentProperties properties = new PlaceDeploymentProperties(resistances, material, soundTemplate, health, cooldown);
 
             PlaceDeploymentAction deploymentAction = placeDeploymentActionProvider.get();
             deploymentAction.configureProperties(properties);

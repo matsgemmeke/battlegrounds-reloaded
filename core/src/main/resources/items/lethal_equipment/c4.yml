@@ -35,7 +35,7 @@ deploy:
   placing:
     cooldown: 10
     material: WARPED_BUTTON
-    place-sounds: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
+    sound-template: equipment-place-1
   resistances:
     bullet-damage: 0
     explosive-damage: 0

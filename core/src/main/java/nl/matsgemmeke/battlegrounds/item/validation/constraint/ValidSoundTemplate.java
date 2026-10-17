@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 @Target({ ElementType.FIELD, ElementType.RECORD_COMPONENT })
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = ValidSoundTemplateValidator.class)
+@Deprecated
 public @interface ValidSoundTemplate {
 
     String message() default "unknown sound template: ${validatedValue}";
