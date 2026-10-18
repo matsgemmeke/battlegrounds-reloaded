@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.sound;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.Location;
@@ -16,16 +15,6 @@ public class SoundEmitter {
     @Inject
     public SoundEmitter(Scheduler scheduler) {
         this.scheduler = scheduler;
-    }
-
-    public SoundPlayback playSoundSequence(SoundSequence soundSequence, GamePlayer gamePlayer) {
-        SoundPlayback playback = new SoundPlayback();
-        SoundPlayFunction function = gamePlayer::playSound;
-        Supplier<Location> locationSupplier = gamePlayer::getLocation;
-
-        soundSequence.entries().forEach(entry -> this.playEntry(entry, playback, function, locationSupplier));
-
-        return playback;
     }
 
     public SoundPlayback playSoundSequence(SoundSequence soundSequence, Location location) {
@@ -44,6 +33,15 @@ public class SoundEmitter {
         SoundPlayFunction soundPlayFunction = (loc, soundCue) -> world.playSound(loc, soundCue.sound(), soundCue.volume(), soundCue.pitch());
 
         soundSequence.entries().forEach(entry -> this.playEntry(entry, playback, soundPlayFunction, locationSupplier));
+
+        return playback;
+    }
+
+    public SoundPlayback playSoundSequence(SoundSequence soundSequence, SoundReceiver soundReceiver, Supplier<Location> locationSupplier) {
+        SoundPlayback playback = new SoundPlayback();
+        SoundPlayFunction function = soundReceiver::playSound;
+
+        soundSequence.entries().forEach(entry -> this.playEntry(entry, playback, function, locationSupplier));
 
         return playback;
     }

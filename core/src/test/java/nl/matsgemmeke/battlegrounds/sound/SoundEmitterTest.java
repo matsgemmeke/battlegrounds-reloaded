@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.sound;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
-import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -32,52 +31,6 @@ class SoundEmitterTest {
     private Scheduler scheduler;
     @InjectMocks
     private SoundEmitter soundEmitter;
-
-    @Test
-    @DisplayName("playSoundSequence plays given sound sequnce without delay and returns empty sound playback")
-    void playSoundSequence_forGamePlayerNoDelay() {
-        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, 0);
-        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
-
-        Location playerLocation = new Location(null, 1, 2, 3);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getLocation()).thenReturn(playerLocation);
-
-        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, gamePlayer);
-
-        assertThat(soundPlayback).isNotNull();
-
-        verify(gamePlayer).playSound(playerLocation, soundCue);
-        verifyNoInteractions(scheduler);
-    }
-
-    @Test
-    @DisplayName("playSoundSequence plays given sound sequence with delay")
-    void playSoundSequence_forGamePlayerDelay() {
-        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, DELAY);
-        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
-
-        Location playerLocation = new Location(null, 1, 2, 3);
-
-        GamePlayer gamePlayer = mock(GamePlayer.class);
-        when(gamePlayer.getLocation()).thenReturn(playerLocation);
-
-        Schedule schedule = mock(Schedule.class);
-        doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
-
-        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
-
-        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, gamePlayer);
-        soundPlayback.cancel();
-
-        assertThat(soundPlayback).isNotNull();
-
-        verify(gamePlayer).playSound(playerLocation, soundCue);
-        verify(schedule).stop();
-    }
 
     @Test
     @DisplayName("playSoundSequence returns empty sound playback when given location has no world")
@@ -134,6 +87,46 @@ class SoundEmitterTest {
         assertThat(soundPlayback).isNotNull();
 
         verify(world).playSound(location, (Sound) null, VOLUME, PITCH);
+        verify(schedule).stop();
+    }
+
+    @Test
+    @DisplayName("playSoundSequence plays given sound sequnce without delay and returns empty sound playback")
+    void playSoundSequence_singleReceiverNoDelay() {
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, 0);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
+        SoundReceiver soundReceiver = mock(SoundReceiver.class);
+        Location location = new Location(null, 1, 2, 3);
+
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, soundReceiver, () -> location);
+
+        assertThat(soundPlayback).isNotNull();
+
+        verify(soundReceiver).playSound(location, soundCue);
+        verifyNoInteractions(scheduler);
+    }
+
+    @Test
+    @DisplayName("playSoundSequence plays given sound sequence with delay")
+    void playSoundSequence_singleReceiverDelay() {
+        SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, DELAY);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
+        SoundReceiver soundReceiver = mock(SoundReceiver.class);
+        Location location = new Location(null, 1, 2, 3);
+
+        Schedule schedule = mock(Schedule.class);
+        doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
+
+        when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
+
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, soundReceiver, () -> location);
+        soundPlayback.cancel();
+
+        assertThat(soundPlayback).isNotNull();
+
+        verify(soundReceiver).playSound(location, soundCue);
         verify(schedule).stop();
     }
 }

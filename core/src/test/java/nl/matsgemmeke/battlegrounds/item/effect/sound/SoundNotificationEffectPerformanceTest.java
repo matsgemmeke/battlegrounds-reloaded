@@ -83,7 +83,7 @@ class SoundNotificationEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, gamePlayer);
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), eq(gamePlayer), argThat(supplier -> supplier.get() == playerLocation));
     }
 
     private ItemEffectContext createItemEffectContext() {

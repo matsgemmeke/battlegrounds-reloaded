@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.VersionAdapter;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
 import nl.matsgemmeke.battlegrounds.sound.SoundCue;
@@ -276,11 +275,6 @@ public class DefaultGamePlayer implements GamePlayer {
     @Override
     public void modifyCameraRotation(float yaw, float pitch) {
         versionAdapter.setPlayerRotation(player, yaw, pitch);
-    }
-
-    @Override
-    public void playSound(Location location, GameSound sound) {
-        player.playSound(location, sound.getSound(), sound.getVolume(), sound.getPitch());
     }
 
     @Override

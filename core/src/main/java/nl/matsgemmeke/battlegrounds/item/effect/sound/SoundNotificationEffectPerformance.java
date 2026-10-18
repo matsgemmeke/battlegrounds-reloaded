@@ -6,8 +6,11 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import org.bukkit.Location;
 
 import java.util.UUID;
+import java.util.function.Supplier;
 
 public class SoundNotificationEffectPerformance extends BaseItemEffectPerformance {
 
@@ -37,6 +40,9 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
             return;
         }
 
-        soundEmitter.playSoundSequence(properties.soundSequence(), gamePlayer);
+        SoundSequence soundSequence = properties.soundSequence();
+        Supplier<Location> locationSupplier = gamePlayer::getLocation;
+
+        soundEmitter.playSoundSequence(soundSequence, gamePlayer, locationSupplier);
     }
 }
