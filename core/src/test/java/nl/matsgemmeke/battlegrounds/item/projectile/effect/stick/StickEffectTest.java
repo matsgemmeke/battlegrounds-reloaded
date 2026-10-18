@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class StickEffectTest {
 
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private DamageSource damageSource;
@@ -45,7 +45,7 @@ class StickEffectTest {
     void setUp() {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        effect = new StickEffect(soundEmitter, SOUND_TEMPLATE);
+        effect = new StickEffect(soundEmitter, SOUND_SEQUENCE);
     }
 
     @Test
@@ -82,7 +82,7 @@ class StickEffectTest {
 
         triggerObserverCaptor.getValue().onActivate(triggerResult);
 
-        verify(soundEmitter).playSoundTemplate(eq(SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == projectileLocation));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == projectileLocation));
         verify(projectile).setGravity(false);
         verify(projectile).setVelocity(new Vector(0, 0, 0));
     }

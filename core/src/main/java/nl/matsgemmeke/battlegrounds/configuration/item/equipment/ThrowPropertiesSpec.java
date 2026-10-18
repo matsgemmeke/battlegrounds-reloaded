@@ -10,5 +10,5 @@ public class ThrowPropertiesSpec {
     @NotNull
     public Long cooldown;
 
-    public String soundTemplate;
+    public String soundSequence;
 }

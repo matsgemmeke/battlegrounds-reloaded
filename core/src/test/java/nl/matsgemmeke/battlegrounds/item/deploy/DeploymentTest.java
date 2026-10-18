@@ -23,7 +23,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -53,10 +53,10 @@ class DeploymentTest {
     private static final Location ACTOR_LOCATION = new Location(null, 1, 1, 1);
     private static final long COOLDOWN = 10L;
 
-    private static final SoundTemplate MANUAL_ACTIVATION_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence MANUAL_ACTIVATION_SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 0, 0, 0, 0, 0, null, null);
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
-    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_TEMPLATE, DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, MANUAL_ACTIVATION_DELAY);
+    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_SEQUENCE, DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, MANUAL_ACTIVATION_DELAY);
 
     private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
     private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE, HitboxComponentType.TORSO);
@@ -97,7 +97,7 @@ class DeploymentTest {
         deployment.startTriggerExecutors(deployer, actor);
         deployment.activate(deployer);
 
-        verify(soundEmitter).playSoundTemplate(eq(MANUAL_ACTIVATION_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployLocation));
+        verify(soundEmitter).playSoundSequence(eq(MANUAL_ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployLocation));
         verify(delaySchedule).start();
         verify(triggerRun).notifyObservers();
     }
@@ -138,7 +138,7 @@ class DeploymentTest {
         Actor actor = mock(Actor.class);
         DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
 
-        DeploymentProperties properties = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_TEMPLATE, null, false, false, false, false, 0L);
+        DeploymentProperties properties = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_SEQUENCE, null, false, false, false, false, 0L);
 
         Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, properties, state, itemEffect);
         deployment.processDeploymentResult(result);

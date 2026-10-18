@@ -22,8 +22,8 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.jspecify.annotations.Nullable;
 
 import java.util.Optional;
@@ -84,10 +84,10 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createArrowLauncher(ArrowProjectileSpec spec) {
-        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
         double velocity = spec.velocity;
 
-        ArrowProperties properties = new ArrowProperties(launchSoundTemplate, velocity);
+        ArrowProperties properties = new ArrowProperties(soundSequence, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
@@ -102,18 +102,18 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createFireballLauncher(FireballProjectileSpec spec) {
-        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
         ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
         double velocity = spec.velocity;
 
-        FireballProperties properties = new FireballProperties(launchSoundTemplate, trajectoryParticleEffect, velocity);
+        FireballProperties properties = new FireballProperties(soundSequence, trajectoryParticleEffect, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return fireballLauncherFactory.create(properties, itemEffect);
     }
 
     private ProjectileLauncher createHitscanLauncher(HitscanProjectileSpec spec) {
-        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
 
         ParticleEffect trajectoryParticleEffect = null;
         ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
@@ -122,7 +122,7 @@ public class ProjectileLauncherFactory {
             trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
         }
 
-        HitscanProperties properties = new HitscanProperties(launchSoundTemplate, trajectoryParticleEffect);
+        HitscanProperties properties = new HitscanProperties(soundSequence, trajectoryParticleEffect);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return hitscanLauncherFactory.create(properties, itemEffect);
@@ -132,9 +132,9 @@ public class ProjectileLauncherFactory {
         double velocity = spec.velocity;
         int pickupDelay = spec.pickupDelay;
         ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
-        SoundTemplate launchSoundTemplate = this.createLaunchSoundTemplate(spec);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSoundTemplate, velocity, pickupDelay);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, soundSequence, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);
@@ -149,10 +149,10 @@ public class ProjectileLauncherFactory {
     }
 
     @Nullable
-    private SoundTemplate createLaunchSoundTemplate(ProjectileSpec spec) {
-        String launchSoundTemplateId = spec.launchSoundTemplate;
+    private SoundSequence createSoundSequence(ProjectileSpec spec) {
+        String soundSequenceId = spec.soundSequence;
 
-        return Optional.ofNullable(launchSoundTemplateId).flatMap(soundService::getSoundTemplate).orElse(null);
+        return Optional.ofNullable(soundSequenceId).flatMap(soundService::getSoundSequence).orElse(null);
     }
 
     private ParticleEffect createParticleEffect(ParticleEffectSpec spec) {

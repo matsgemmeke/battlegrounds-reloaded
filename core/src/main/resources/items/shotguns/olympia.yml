@@ -43,8 +43,8 @@ shooting:
     cycle-cooldown: 6
   projectile:
     type: HITSCAN
-    launch-sound-template: shotgun-shoot-1
-    launch-sound-suppressed-template: shotgun-shoot-suppressed-1
+    sound-sequence: shotgun-shoot-1
+    sound-suppressed-sequence: shotgun-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

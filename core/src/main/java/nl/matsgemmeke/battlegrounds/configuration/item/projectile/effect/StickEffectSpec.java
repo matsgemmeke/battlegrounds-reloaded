@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.item.validation.constraint.ValidSoundTemplat
 
 public class StickEffectSpec extends ProjectileEffectSpec {
 
-    @NotBlank(message = "sound template id is required")
+    @NotBlank(message = "sound sequence id is required")
     @ValidSoundTemplate
-    public String soundTemplate;
+    public String soundSequence;
 }

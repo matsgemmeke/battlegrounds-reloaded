@@ -11,7 +11,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -42,7 +42,7 @@ class ThrowDeploymentActionTest {
     private static final double HEALTH = 20.0;
     private static final double VELOCITY = 1.5;
     private static final long COOLDOWN = 10L;
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private DestructionListener destructionListener;
@@ -85,7 +85,7 @@ class ThrowDeploymentActionTest {
         Item item = mock(Item.class);
         when(world.dropItem(deployLocation, itemStack)).thenReturn(item);
 
-        ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, SOUND_TEMPLATE, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
+        ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, SOUND_SEQUENCE, projectileEffects, resistances, HEALTH, VELOCITY, COOLDOWN);
         DeploymentContext context = new DeploymentContext(ITEM_NAME, deployer, destructionListener);
 
         deploymentAction.configureProperties(properties);
@@ -100,7 +100,7 @@ class ThrowDeploymentActionTest {
             assertThat(deploymentResult.cooldown()).isEqualTo(COOLDOWN);
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployLocation));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployLocation));
         verify(deployer).setHeldItem(null);
         verify(item).setPickupDelay(100000);
         verify(item).setVelocity(new Vector(-1.477211629518312,-0.0,-0.26047226650039546));

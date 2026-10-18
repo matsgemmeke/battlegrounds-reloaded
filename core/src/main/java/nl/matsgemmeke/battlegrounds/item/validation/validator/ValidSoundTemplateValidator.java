@@ -21,6 +21,6 @@ public class ValidSoundTemplateValidator implements ConstraintValidator<ValidSou
             return true;
         }
 
-        return soundService.getSoundTemplate(value).isPresent();
+        return soundService.getSoundSequence(value).isPresent();
     }
 }

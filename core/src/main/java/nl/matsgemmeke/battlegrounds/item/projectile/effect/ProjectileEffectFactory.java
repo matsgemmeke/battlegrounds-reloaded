@@ -13,8 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.Collection;
 
@@ -59,8 +59,8 @@ public class ProjectileEffectFactory {
             }
             case SOUND -> {
                 SoundEffectSpec spec = (SoundEffectSpec) projectileEffectSpec;
-                SoundTemplate soundTemplate = this.createSoundTemplate(spec.soundTemplate);
-                ProjectileEffect soundEffect = soundEffectFactory.create(soundTemplate);
+                SoundSequence soundSequence = this.createSoundSequence(spec.soundSequence);
+                ProjectileEffect soundEffect = soundEffectFactory.create(soundSequence);
 
                 this.addTriggers(soundEffect, spec.triggers.values());
 
@@ -68,8 +68,8 @@ public class ProjectileEffectFactory {
             }
             case STICK -> {
                 StickEffectSpec spec = (StickEffectSpec) projectileEffectSpec;
-                SoundTemplate soundTemplate = this.createSoundTemplate(spec.soundTemplate);
-                ProjectileEffect stickEffect = stickEffectFactory.create(soundTemplate);
+                SoundSequence soundSequence = this.createSoundSequence(spec.soundSequence);
+                ProjectileEffect stickEffect = stickEffectFactory.create(soundSequence);
 
                 this.addTriggers(stickEffect, spec.triggers.values());
 
@@ -88,9 +88,9 @@ public class ProjectileEffectFactory {
         };
     }
 
-    private SoundTemplate createSoundTemplate(String soundTemplateId) {
-        return soundService.getSoundTemplate(soundTemplateId)
-                .orElseThrow(() -> new ProjectileEffectCreationException("Sound template '%s' does not exist".formatted(soundTemplateId)));
+    private SoundSequence createSoundSequence(String soundSequenceId) {
+        return soundService.getSoundSequence(soundSequenceId)
+                .orElseThrow(() -> new ProjectileEffectCreationException("Sound sequence '%s' does not exist".formatted(soundSequenceId)));
     }
 
     private void addTriggers(ProjectileEffect projectileEffect, Collection<TriggerSpec> triggerSpecs) {

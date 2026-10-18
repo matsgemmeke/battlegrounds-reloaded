@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.sound.api;
 
-import nl.matsgemmeke.battlegrounds.sound.configuration.SoundTemplateSpec;
+import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundsConfiguration;
-import nl.matsgemmeke.battlegrounds.sound.mapper.SoundTemplateMapper;
+import nl.matsgemmeke.battlegrounds.sound.mapper.SoundSequenceMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,36 +19,36 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class SoundServiceTest {
 
-    private static final String TEMPLATE_ID = "assault-rifle-reload-1";
+    private static final String SEQUENCE_ID = "assault-rifle-reload-1";
 
     @Mock
     private SoundsConfiguration soundsConfiguration;
     @Mock
-    private SoundTemplateMapper soundTemplateMapper;
+    private SoundSequenceMapper soundSequenceMapper;
     @InjectMocks
     private SoundService soundService;
 
     @Test
-    @DisplayName("getSoundTemplate returns empty optional when given template does not exist in configuration")
-    void getSoundTemplate_templateIdNotExists() {
-        when(soundsConfiguration.getSoundTemplate(TEMPLATE_ID)).thenReturn(Optional.empty());
+    @DisplayName("getSoundSequence returns empty optional when given sequence id does not exist in configuration")
+    void getSoundSequence_sequenceIdNotExists() {
+        when(soundsConfiguration.getSoundSequence(SEQUENCE_ID)).thenReturn(Optional.empty());
 
-        Optional<SoundTemplate> soundTemplateOptional = soundService.getSoundTemplate(TEMPLATE_ID);
+        Optional<SoundSequence> soundSequenceOptional = soundService.getSoundSequence(SEQUENCE_ID);
 
-        assertThat(soundTemplateOptional).isEmpty();
+        assertThat(soundSequenceOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("getSoundTemplate returns optional with converted sound template")
-    void getSoundTemplate_successful() {
-        SoundTemplateSpec soundTemplateSpec = mock(SoundTemplateSpec.class);
-        SoundTemplate soundTemplate = mock(SoundTemplate.class);
+    @DisplayName("getSoundSequence returns optional with converted sound sequence")
+    void getSoundSequence_successful() {
+        SoundSequenceSpec soundSequenceSpec = mock(SoundSequenceSpec.class);
+        SoundSequence soundSequence = mock(SoundSequence.class);
 
-        when(soundsConfiguration.getSoundTemplate(TEMPLATE_ID)).thenReturn(Optional.of(soundTemplateSpec));
-        when(soundTemplateMapper.toSoundTemplate(soundTemplateSpec)).thenReturn(soundTemplate);
+        when(soundsConfiguration.getSoundSequence(SEQUENCE_ID)).thenReturn(Optional.of(soundSequenceSpec));
+        when(soundSequenceMapper.toSoundSequence(soundSequenceSpec)).thenReturn(soundSequence);
 
-        Optional<SoundTemplate> soundTemplateOptional = soundService.getSoundTemplate(TEMPLATE_ID);
+        Optional<SoundSequence> soundSequenceOptional = soundService.getSoundSequence(SEQUENCE_ID);
 
-        assertThat(soundTemplateOptional).hasValue(soundTemplate);
+        assertThat(soundSequenceOptional).hasValue(soundSequence);
     }
 }

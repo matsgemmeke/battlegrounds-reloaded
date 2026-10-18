@@ -13,5 +13,5 @@ public class PlacePropertiesSpec {
     @NotNull
     public Long cooldown;
 
-    public String soundTemplate;
+    public String soundSequence;
 }

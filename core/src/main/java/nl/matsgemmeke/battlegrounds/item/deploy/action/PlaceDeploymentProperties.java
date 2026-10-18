@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Material;
 import org.jspecify.annotations.Nullable;
 
@@ -11,7 +11,7 @@ public record PlaceDeploymentProperties(
         Map<DamageType, Double> resistances,
         Material material,
         @Nullable
-        SoundTemplate soundTemplate,
+        SoundSequence soundSequence,
         double health,
         long cooldown
 ) { }

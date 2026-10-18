@@ -21,8 +21,8 @@ import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 import java.util.Arrays;
 import java.util.List;
@@ -135,15 +135,15 @@ public class GunFactory {
 
     private void registerGunFireSimulationInfo(Gun gun, GunSpec spec) {
         UUID gunId = gun.getId();
-        String launchSoundTemplateId = spec.shooting.projectile.launchSoundTemplate;
+        String soundSequenceId = spec.shooting.projectile.soundSequence;
 
-        SoundTemplate launchSoundTemplate = Optional.ofNullable(launchSoundTemplateId)
-                .map(templateId -> soundService.getSoundTemplate(templateId)
-                        .orElseThrow(() -> new GunCreationException("Launch sound template '%s' does not exist".formatted(launchSoundTemplateId))))
+        SoundSequence soundSequence = Optional.ofNullable(soundSequenceId)
+                .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                        .orElseThrow(() -> new GunCreationException("Launch sound sequence '%s' does not exist".formatted(soundSequenceId))))
                 .orElse(null);
 
         int rateOfFire = gun.getRateOfFire();
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(List.of(), launchSoundTemplate, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(List.of(), soundSequence, rateOfFire);
 
         gunInfoProvider.registerGunFireSimulationInfo(gunId, gunFireSimulationInfo);
     }

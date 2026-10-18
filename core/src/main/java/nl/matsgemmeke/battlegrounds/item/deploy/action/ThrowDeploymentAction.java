@@ -72,7 +72,7 @@ public class ThrowDeploymentAction implements DeploymentAction {
 
         properties.projectileEffects().forEach(effect -> effect.onLaunch(deployer, deploymentObject));
 
-        soundEmitter.playSoundTemplate(properties.soundTemplate(), deployer::getDeployLocation);
+        soundEmitter.playSoundSequence(properties.soundSequence(), deployer::getDeployLocation);
 
         deployer.setHeldItem(null);
 

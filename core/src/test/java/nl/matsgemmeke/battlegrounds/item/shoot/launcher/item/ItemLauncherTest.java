@@ -16,7 +16,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemLauncherTest {
 
-    private static final SoundTemplate LAUNCH_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final double VELOCITY = 2.0;
     private static final int PICKUP_DELAY = 100;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STICK);
@@ -71,10 +71,10 @@ class ItemLauncherTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, LAUNCH_SOUND_TEMPLATE, VELOCITY, PICKUP_DELAY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, SOUND_SEQUENCE, VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        when(soundEmitter.playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
 
         ItemLauncher itemLauncher = new ItemLauncher(collisionResultAdapter, soundEmitter, itemEffect, properties);
         itemLauncher.launch(launchContext);
@@ -102,7 +102,7 @@ class ItemLauncherTest {
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, LAUNCH_SOUND_TEMPLATE, VELOCITY, PICKUP_DELAY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, SOUND_SEQUENCE, VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         ItemLauncher itemLauncher = new ItemLauncher(collisionResultAdapter, soundEmitter, itemEffect, properties);
@@ -119,7 +119,7 @@ class ItemLauncherTest {
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(item).setPickupDelay(PICKUP_DELAY);
         verify(item).setVelocity(new Vector(-1.969615506024416,-0.0,-0.3472963553338606));
     }

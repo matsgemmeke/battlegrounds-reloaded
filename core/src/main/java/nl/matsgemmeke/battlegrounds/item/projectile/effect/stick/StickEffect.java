@@ -5,7 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.BaseProjectileEffect;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.util.Vector;
 
 public class StickEffect extends BaseProjectileEffect {
@@ -13,16 +13,16 @@ public class StickEffect extends BaseProjectileEffect {
     private static final Vector ZERO = new Vector(0, 0, 0);
 
     private final SoundEmitter soundEmitter;
-    private final SoundTemplate soundTemplate;
+    private final SoundSequence soundSequence;
 
     @Inject
-    public StickEffect(SoundEmitter soundEmitter, @Assisted SoundTemplate soundTemplate) {
+    public StickEffect(SoundEmitter soundEmitter, @Assisted SoundSequence soundSequence) {
         this.soundEmitter = soundEmitter;
-        this.soundTemplate = soundTemplate;
+        this.soundSequence = soundSequence;
     }
 
     public void performEffect(Projectile projectile) {
-        soundEmitter.playSoundTemplate(soundTemplate, projectile::getLocation);
+        soundEmitter.playSoundSequence(soundSequence, projectile::getLocation);
 
         projectile.setGravity(false);
         projectile.setVelocity(ZERO);

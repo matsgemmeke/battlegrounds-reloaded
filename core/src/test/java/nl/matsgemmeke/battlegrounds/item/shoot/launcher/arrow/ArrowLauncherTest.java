@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.AbstractArrow.PickupStatus;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ArrowLauncherTest {
 
-    private static final SoundTemplate LAUNCH_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final double VELOCITY = 3.0;
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
     private static final String ITEM_NAME = "Test Item";
@@ -75,10 +75,10 @@ class ArrowLauncherTest {
         Arrow arrow = mock(Arrow.class);
         SoundPlayback soundPlayback = mock(SoundPlayback.class);
 
-        when(soundEmitter.playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
         when(projectileSource.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
 
-        ArrowProperties properties = new ArrowProperties(LAUNCH_SOUND_TEMPLATE, VELOCITY);
+        ArrowProperties properties = new ArrowProperties(SOUND_SEQUENCE, VELOCITY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
         ArrowLauncher launcher = new ArrowLauncher(collisionResultAdapter, projectileHitActionRegistry, projectileRegistry, soundEmitter, properties, itemEffect);
@@ -110,7 +110,7 @@ class ArrowLauncherTest {
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        ArrowProperties properties = new ArrowProperties(LAUNCH_SOUND_TEMPLATE, VELOCITY);
+        ArrowProperties properties = new ArrowProperties(SOUND_SEQUENCE, VELOCITY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(triggerResult)).thenReturn(collisionResult);
@@ -136,7 +136,7 @@ class ArrowLauncherTest {
         verify(arrow).remove();
         verify(arrow).setPickupStatus(PickupStatus.DISALLOWED);
         verify(arrow).setVelocity(new Vector(0, 0, 3.0));
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(projectileRegistry).register(ARROW_UNIQUE_ID);
         verify(projectileRegistry).unregister(ARROW_UNIQUE_ID);
     }
@@ -157,7 +157,7 @@ class ArrowLauncherTest {
         ProjectileLaunchSource projectileLaunchSource = mock(ProjectileLaunchSource.class);
         when(projectileLaunchSource.launchProjectile(eq(Arrow.class), any(Vector.class))).thenReturn(arrow);
 
-        ArrowProperties properties = new ArrowProperties(LAUNCH_SOUND_TEMPLATE, VELOCITY);
+        ArrowProperties properties = new ArrowProperties(SOUND_SEQUENCE, VELOCITY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileLaunchSource, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(projectileHitResult, arrow)).thenReturn(collisionResult);
@@ -183,7 +183,7 @@ class ArrowLauncherTest {
         verify(arrow).remove();
         verify(arrow).setPickupStatus(PickupStatus.DISALLOWED);
         verify(arrow).setVelocity(new Vector(0, 0, 3.0));
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(projectileRegistry).register(ARROW_UNIQUE_ID);
         verify(projectileRegistry).unregister(ARROW_UNIQUE_ID);
     }

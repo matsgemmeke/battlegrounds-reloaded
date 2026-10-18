@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.LaunchContext;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -39,7 +39,7 @@ import static org.mockito.Mockito.*;
 class HitscanLauncherTest {
 
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
-    private static final SoundTemplate LAUNCH_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
 
@@ -65,10 +65,10 @@ class HitscanLauncherTest {
         Location launchLocation = new Location(world, 1, 1, 1);
         SoundPlayback playback = mock(SoundPlayback.class);
 
-        HitscanProperties properties = new HitscanProperties(LAUNCH_SOUND_TEMPLATE, TRAJECTORY_PARTICLE_EFFECT);
+        HitscanProperties properties = new HitscanProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, launchLocation, () -> launchLocation, world);
 
-        when(soundEmitter.playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>any())).thenReturn(playback);
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>any())).thenReturn(playback);
 
         HitscanLauncher hitscanLauncher = new HitscanLauncher(collisionDetector, particleEffectSpawner, soundEmitter, targetFinder, properties, itemEffect);
         hitscanLauncher.launch(launchContext);
@@ -89,7 +89,7 @@ class HitscanLauncherTest {
         when(hitBlock.getType()).thenReturn(hitBlockMaterial);
         when(hitBlock.getWorld()).thenReturn(world);
 
-        HitscanProperties properties = new HitscanProperties(LAUNCH_SOUND_TEMPLATE, TRAJECTORY_PARTICLE_EFFECT);
+        HitscanProperties properties = new HitscanProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, launchLocation, () -> launchLocation, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
@@ -118,7 +118,7 @@ class HitscanLauncherTest {
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(launchLocation);
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>any());
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>any());
         verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
         verify(world).playEffect(hitLocation, org.bukkit.Effect.STEP_SOUND, hitBlockMaterial);
     }
@@ -131,7 +131,7 @@ class HitscanLauncherTest {
         Location hitLocation = new Location(world, 1.0, 1.0, 1.6, 0.0f, 0.0f);
         DamageTarget hitTarget = mock(DamageTarget.class);
 
-        HitscanProperties properties = new HitscanProperties(LAUNCH_SOUND_TEMPLATE, TRAJECTORY_PARTICLE_EFFECT);
+        HitscanProperties properties = new HitscanProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, launchLocation, () -> launchLocation, world);
 
         when(collisionDetector.producesBlockCollisionAt(any(Location.class))).thenReturn(false);
@@ -170,7 +170,7 @@ class HitscanLauncherTest {
             });
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>any());
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>any());
         verify(particleEffectSpawner, times(1)).spawnParticleEffect(eq(TRAJECTORY_PARTICLE_EFFECT), any(Location.class));
     }
 }

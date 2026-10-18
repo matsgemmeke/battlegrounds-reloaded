@@ -44,7 +44,7 @@ shooting:
   projectile:
     type: FIREBALL
     velocity: 2.0
-    launch-sound-template: rocket-launcher-shoot-1
+    sound-sequence: rocket-launcher-shoot-1
     effect:
       type: EXPLOSION
       power: 2.0

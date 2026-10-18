@@ -37,6 +37,6 @@ public class SoundNotificationEffectPerformance extends BaseItemEffectPerformanc
             return;
         }
 
-        soundEmitter.playSoundTemplate(properties.soundTemplate(), gamePlayer);
+        soundEmitter.playSoundSequence(properties.soundSequence(), gamePlayer);
     }
 }

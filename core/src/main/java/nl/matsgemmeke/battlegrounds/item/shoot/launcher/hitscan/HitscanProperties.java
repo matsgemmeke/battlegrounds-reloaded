@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.hitscan;
 
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.jetbrains.annotations.Nullable;
 
 public record HitscanProperties(
         @Nullable
-        SoundTemplate launchSoundTemplate,
+        SoundSequence soundSequence,
         @Nullable
         ParticleEffect trajectoryParticleEffect
 ) { }

@@ -66,8 +66,8 @@ shooting:
     cycle-cooldown: 20
   projectile:
     type: HITSCAN
-    launch-sound-template: sniper-rifle-shoot-1
-    launch-sound-suppressed-template: sniper-rifle-shoot-suppressed-1
+    sound-sequence: sniper-rifle-shoot-1
+    sound-suppressed-sequence: sniper-rifle-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

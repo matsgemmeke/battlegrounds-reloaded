@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.validation.validator;
 
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +19,7 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class ValidSoundTemplateValidatorTest {
 
-    private static final String TEMPLATE_ID = "equipment-reload-1";
+    private static final String SEQUENCE_ID = "equipment-reload-1";
 
     @Mock
     private SoundService soundService;
@@ -36,23 +36,23 @@ class ValidSoundTemplateValidatorTest {
     }
 
     @Test
-    @DisplayName("isValid returns true when given value is an existing template id")
-    void isValid_existingTemplateId() {
-        SoundTemplate soundTemplate = new SoundTemplate(null, null);
+    @DisplayName("isValid returns true when given value is an existing sequence id")
+    void isValid_existingSequenceId() {
+        SoundSequence soundSequence = new SoundSequence(null, null);
 
-        when(soundService.getSoundTemplate(TEMPLATE_ID)).thenReturn(Optional.of(soundTemplate));
+        when(soundService.getSoundSequence(SEQUENCE_ID)).thenReturn(Optional.of(soundSequence));
 
-        boolean valid = validator.isValid(TEMPLATE_ID, null);
+        boolean valid = validator.isValid(SEQUENCE_ID, null);
 
         assertThat(valid).isTrue();
     }
 
     @Test
-    @DisplayName("isValid returns true when given value does not exist as template id")
-    void isValid_nonexistingTemplateId() {
-        when(soundService.getSoundTemplate(TEMPLATE_ID)).thenReturn(Optional.empty());
+    @DisplayName("isValid returns true when given value does not exist as sequence id")
+    void isValid_nonexistingSequenceId() {
+        when(soundService.getSoundSequence(SEQUENCE_ID)).thenReturn(Optional.empty());
 
-        boolean valid = validator.isValid(TEMPLATE_ID, null);
+        boolean valid = validator.isValid(SEQUENCE_ID, null);
 
         assertThat(valid).isFalse();
     }

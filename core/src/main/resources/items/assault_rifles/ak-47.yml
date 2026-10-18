@@ -43,8 +43,8 @@ shooting:
     rate-of-fire: 600
   projectile:
     type: HITSCAN
-    launch-sound-template: assault-rifle-shoot-1
-    launch-sound-suppressed-template: assault-rifle-shoot-suppressed-1
+    sound-sequence: assault-rifle-shoot-1
+    sound-suppressed-sequence: assault-rifle-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,9 +46,9 @@ class PlaceDeploymentActionTest {
     private static final long COOLDOWN = 10L;
     private static final Map<DamageType, Double> RESISTANCES = Collections.emptyMap();
     private static final Material MATERIAL = Material.WARPED_BUTTON;
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
-    private static final PlaceDeploymentProperties PROPERTIES = new PlaceDeploymentProperties(RESISTANCES, MATERIAL, SOUND_TEMPLATE, HEALTH, COOLDOWN);
+    private static final PlaceDeploymentProperties PROPERTIES = new PlaceDeploymentProperties(RESISTANCES, MATERIAL, SOUND_SEQUENCE, HEALTH, COOLDOWN);
 
     @Mock
     private Deployer deployer;
@@ -164,7 +164,7 @@ class PlaceDeploymentActionTest {
         });
 
         verify(adjacentBlockState).setBlockData(switchBlockData);
-        verify(soundEmitter).playSoundTemplate(SOUND_TEMPLATE, adjacentBlockLocation);
+        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
         verify(switchBlockData).setAttachedFace(expectedAttachedFace);
     }
@@ -203,7 +203,7 @@ class PlaceDeploymentActionTest {
         });
 
         verify(adjacentBlockState, times(2)).setBlockData(switchBlockData);
-        verify(soundEmitter).playSoundTemplate(SOUND_TEMPLATE, adjacentBlockLocation);
+        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
         verify(switchBlockData).setFacing(targetBlockFace);
         verify(switchBlockData).setAttachedFace(AttachedFace.WALL);

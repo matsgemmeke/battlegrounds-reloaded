@@ -1,13 +1,13 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.jspecify.annotations.Nullable;
 
 public record ItemLaunchProperties(
         ItemTemplate itemTemplate,
         @Nullable
-        SoundTemplate launchSoundTemplate,
+        SoundSequence soundSequence,
         double velocity,
         int pickupDelay
 ) {

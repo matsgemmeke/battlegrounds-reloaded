@@ -44,7 +44,7 @@ shooting:
   projectile:
     type: ARROW
     velocity: 3.0
-    launch-sound-template: special-shoot-1
+    sound-sequence: special-shoot-1
     effect:
       type: DAMAGE
       damage-type: PROJECTILE_DAMAGE

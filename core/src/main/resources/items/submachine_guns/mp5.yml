@@ -43,8 +43,8 @@ shooting:
     rate-of-fire: 600
   projectile:
     type: HITSCAN
-    launch-sound-template: submachine-gun-shoot-1
-    launch-sound-suppressed-template: submachine-gun-shoot-suppressed-1
+    sound-sequence: submachine-gun-shoot-1
+    sound-suppressed-sequence: submachine-gun-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

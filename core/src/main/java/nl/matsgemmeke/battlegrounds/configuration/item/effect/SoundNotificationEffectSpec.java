@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotNull;
 public class SoundNotificationEffectSpec extends ItemEffectSpec {
 
     @NotNull
-    public String soundTemplate;
+    public String soundSequence;
 }

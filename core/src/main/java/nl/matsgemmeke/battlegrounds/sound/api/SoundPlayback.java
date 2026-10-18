@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A handle to a sound template playback started by {@link SoundEmitter}.
+ * A handle to a sound sequence playback started by {@link SoundEmitter}.
  *
  * <p>Cues without a delay are played immediately when the playback is started and can therefore not be cancelled. Cues
  * with a delay are scheduled, and this handle allows the caller to cancel those that have not played yet.

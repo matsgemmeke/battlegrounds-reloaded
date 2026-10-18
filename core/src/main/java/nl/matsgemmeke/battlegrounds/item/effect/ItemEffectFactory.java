@@ -30,8 +30,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -193,11 +193,11 @@ public class ItemEffectFactory {
             case SOUND_NOTIFICATION -> {
                 SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
 
-                String soundTemplateId = spec.soundTemplate;
-                SoundTemplate soundTemplate = soundService.getSoundTemplate(soundTemplateId)
-                        .orElseThrow(() -> new ItemEffectCreationException("Sound template '%s' does not exist".formatted(soundTemplateId)));
+                String soundSequenceId = spec.soundSequence;
+                SoundSequence soundSequence = soundService.getSoundSequence(soundSequenceId)
+                        .orElseThrow(() -> new ItemEffectCreationException("Sound sequence '%s' does not exist".formatted(soundSequenceId)));
 
-                SoundNotificationProperties properties = new SoundNotificationProperties(soundTemplate);
+                SoundNotificationProperties properties = new SoundNotificationProperties(soundSequence);
 
                 SoundNotificationEffect soundNotificationEffect = soundNotificationEffectProvider.get();
                 soundNotificationEffect.setProperties(properties);

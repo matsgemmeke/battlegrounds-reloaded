@@ -18,21 +18,21 @@ public class SoundEmitter {
         this.scheduler = scheduler;
     }
 
-    public SoundPlayback playSoundTemplate(SoundTemplate soundTemplate, GamePlayer gamePlayer) {
+    public SoundPlayback playSoundSequence(SoundSequence soundSequence, GamePlayer gamePlayer) {
         SoundPlayback playback = new SoundPlayback();
         SoundPlayFunction function = gamePlayer::playSound;
         Supplier<Location> locationSupplier = gamePlayer::getLocation;
 
-        soundTemplate.entries().forEach(entry -> this.playEntry(entry, playback, function, locationSupplier));
+        soundSequence.entries().forEach(entry -> this.playEntry(entry, playback, function, locationSupplier));
 
         return playback;
     }
 
-    public SoundPlayback playSoundTemplate(SoundTemplate soundTemplate, Location location) {
-        return this.playSoundTemplate(soundTemplate, () -> location);
+    public SoundPlayback playSoundSequence(SoundSequence soundSequence, Location location) {
+        return this.playSoundSequence(soundSequence, () -> location);
     }
 
-    public SoundPlayback playSoundTemplate(SoundTemplate soundTemplate, Supplier<Location> locationSupplier) {
+    public SoundPlayback playSoundSequence(SoundSequence soundSequence, Supplier<Location> locationSupplier) {
         SoundPlayback playback = new SoundPlayback();
         Location location = locationSupplier.get();
         World world = location.getWorld();
@@ -43,12 +43,12 @@ public class SoundEmitter {
 
         SoundPlayFunction soundPlayFunction = (loc, soundCue) -> world.playSound(loc, soundCue.sound(), soundCue.volume(), soundCue.pitch());
 
-        soundTemplate.entries().forEach(entry -> this.playEntry(entry, playback, soundPlayFunction, locationSupplier));
+        soundSequence.entries().forEach(entry -> this.playEntry(entry, playback, soundPlayFunction, locationSupplier));
 
         return playback;
     }
 
-    private void playEntry(SoundTemplateEntry entry, SoundPlayback playback, SoundPlayFunction function, Supplier<Location> locationSupplier) {
+    private void playEntry(SoundSequenceEntry entry, SoundPlayback playback, SoundPlayFunction function, Supplier<Location> locationSupplier) {
         SoundCue soundCue = entry.soundCue();
         int delay = entry.delay();
 

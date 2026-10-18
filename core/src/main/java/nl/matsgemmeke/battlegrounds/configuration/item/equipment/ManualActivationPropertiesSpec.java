@@ -7,5 +7,5 @@ public class ManualActivationPropertiesSpec {
     @NotNull
     public Long delay;
 
-    public String activationSoundTemplate;
+    public String activationSoundSequence;
 }

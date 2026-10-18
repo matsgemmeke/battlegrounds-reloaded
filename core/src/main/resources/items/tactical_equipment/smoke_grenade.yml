@@ -28,10 +28,10 @@ deploy:
     remove-deployment: false
   throwing:
     cooldown: 30
-    sound-template: equipment-throw-1
+    sound-sequence: equipment-throw-1
     velocity: 1.2
   cooking:
-    sound-template: equipment-prime-1
+    sound-sequence: equipment-prime-1
   dropping:
     velocity: 1.0
     cooldown: 30

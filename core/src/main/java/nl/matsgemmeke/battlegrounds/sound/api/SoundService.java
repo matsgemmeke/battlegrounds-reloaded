@@ -2,22 +2,22 @@ package nl.matsgemmeke.battlegrounds.sound.api;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundsConfiguration;
-import nl.matsgemmeke.battlegrounds.sound.mapper.SoundTemplateMapper;
+import nl.matsgemmeke.battlegrounds.sound.mapper.SoundSequenceMapper;
 
 import java.util.Optional;
 
 public class SoundService {
 
     private final SoundsConfiguration soundsConfiguration;
-    private final SoundTemplateMapper soundTemplateMapper;
+    private final SoundSequenceMapper soundSequenceMapper;
 
     @Inject
-    public SoundService(SoundsConfiguration soundsConfiguration, SoundTemplateMapper soundTemplateMapper) {
+    public SoundService(SoundsConfiguration soundsConfiguration, SoundSequenceMapper soundSequenceMapper) {
         this.soundsConfiguration = soundsConfiguration;
-        this.soundTemplateMapper = soundTemplateMapper;
+        this.soundSequenceMapper = soundSequenceMapper;
     }
 
-    public Optional<SoundTemplate> getSoundTemplate(String templateId) {
-        return soundsConfiguration.getSoundTemplate(templateId).map(soundTemplateMapper::toSoundTemplate);
+    public Optional<SoundSequence> getSoundSequence(String sequenceId) {
+        return soundsConfiguration.getSoundSequence(sequenceId).map(soundSequenceMapper::toSoundSequence);
     }
 }

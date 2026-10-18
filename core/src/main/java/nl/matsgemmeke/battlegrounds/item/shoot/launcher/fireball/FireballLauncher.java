@@ -19,7 +19,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -81,10 +81,10 @@ public class FireballLauncher implements ProjectileLauncher {
         Vector velocity = context.direction().getDirection().multiply(properties.velocity());
         ProjectileLaunchSource projectileSource = context.projectileSource();
 
-        SoundTemplate launchSoundTemplate = properties.launchSoundTemplate();
+        SoundSequence soundSequence = properties.soundSequence();
 
-        if (launchSoundTemplate != null) {
-            SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(launchSoundTemplate, context.soundLocationSupplier());
+        if (soundSequence != null) {
+            SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, context.soundLocationSupplier());
 
             soundPlaybacks.add(soundPlayback);
         }

@@ -95,7 +95,7 @@ public class Deployment {
     }
 
     public void activate(Deployer deployer) {
-        soundEmitter.playSoundTemplate(properties.manualActivationSoundTemplate(), deployer::getDeployLocation);
+        soundEmitter.playSoundSequence(properties.manualActivationSoundSequence(), deployer::getDeployLocation);
 
         deployer.setHeldItem(null);
 

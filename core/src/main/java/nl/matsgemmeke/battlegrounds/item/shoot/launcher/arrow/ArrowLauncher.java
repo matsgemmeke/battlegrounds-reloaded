@@ -21,7 +21,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.*;
 import org.bukkit.entity.AbstractArrow.PickupStatus;
 import org.bukkit.entity.Arrow;
@@ -81,10 +81,10 @@ public class ArrowLauncher implements ProjectileLauncher {
         ProjectileLaunchSource projectileSource = context.projectileSource();
         Supplier<Location> soundLocationSupplier = context.soundLocationSupplier();
 
-        SoundTemplate launchSoundTemplate = properties.launchSoundTemplate();
+        SoundSequence soundSequence = properties.soundSequence();
 
-        if (launchSoundTemplate != null) {
-            SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(launchSoundTemplate, soundLocationSupplier);
+        if (soundSequence != null) {
+            SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, soundLocationSupplier);
 
             soundPlaybacks.add(soundPlayback);
         }

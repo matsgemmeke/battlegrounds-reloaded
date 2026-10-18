@@ -21,8 +21,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -42,8 +42,8 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemEffectFactoryTest {
 
-    private static final String SOUND_TEMPLATE_ID = "equipment-activation-1";
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final String SOUND_SEQUNCE_ID = "equipment-activation-1";
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Spy
     private HitboxDamageProfileMapper hitboxDamageProfileMapper;
@@ -289,17 +289,17 @@ class ItemEffectFactoryTest {
     }
 
     @Test
-    @DisplayName("make throws ItemEffectCreationException when given specification has an invalid template id")
+    @DisplayName("make throws ItemEffectCreationException when given specification has an invalid sequence id")
     void make_soundNotificationEffectInvalidSpec() {
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.type = "SOUND_NOTIFICATION";
-        spec.soundTemplate = SOUND_TEMPLATE_ID;
+        spec.soundSequence = SOUND_SEQUNCE_ID;
 
-        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.empty());
+        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> itemEffectFactory.create(spec))
                 .isInstanceOf(ItemEffectCreationException.class)
-                .hasMessage("Sound template 'equipment-activation-1' does not exist");
+                .hasMessage("Sound sequence 'equipment-activation-1' does not exist");
     }
 
     @Test
@@ -309,9 +309,9 @@ class ItemEffectFactoryTest {
 
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.type = "SOUND_NOTIFICATION";
-        spec.soundTemplate = SOUND_TEMPLATE_ID;
+        spec.soundSequence = SOUND_SEQUNCE_ID;
 
-        when(soundService.getSoundTemplate(SOUND_TEMPLATE_ID)).thenReturn(Optional.of(SOUND_TEMPLATE));
+        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(soundNotificationEffectProvider.get()).thenReturn(soundNotificationEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -320,7 +320,7 @@ class ItemEffectFactoryTest {
         verify(soundNotificationEffect).setProperties(propertiesCaptor.capture());
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
-            assertThat(properties.soundTemplate()).isEqualTo(SOUND_TEMPLATE);
+            assertThat(properties.soundSequence()).isEqualTo(SOUND_SEQUENCE);
         });
 
         assertThat(itemEffect).isInstanceOf(SoundNotificationEffect.class);

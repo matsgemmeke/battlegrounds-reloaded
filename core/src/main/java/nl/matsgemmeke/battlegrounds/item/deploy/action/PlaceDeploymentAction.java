@@ -74,7 +74,7 @@ public class PlaceDeploymentAction implements DeploymentAction {
         BlockActor actor = new BlockActor(adjacentBlock, properties.material());
         long cooldown = properties.cooldown();
 
-        soundEmitter.playSoundTemplate(properties.soundTemplate(), adjacentBlock.getLocation());
+        soundEmitter.playSoundSequence(properties.soundSequence(), adjacentBlock.getLocation());
 
         deployer.setHeldItem(null);
 

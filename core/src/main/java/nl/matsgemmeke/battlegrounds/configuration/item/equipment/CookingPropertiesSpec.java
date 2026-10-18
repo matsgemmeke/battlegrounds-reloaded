@@ -2,5 +2,5 @@ package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
 public class CookingPropertiesSpec {
 
-    public String soundTemplate;
+    public String soundSequence;
 }

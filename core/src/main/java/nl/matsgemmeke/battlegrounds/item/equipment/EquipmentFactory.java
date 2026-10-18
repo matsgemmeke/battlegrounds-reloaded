@@ -24,8 +24,8 @@ import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 
 public class EquipmentFactory {
 
@@ -114,14 +114,14 @@ public class EquipmentFactory {
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
         boolean removeDeploymentOnReset = deploymentSpec.onReset.removeDeployment;
 
-        SoundTemplate manualActivationSoundTemplate = null;
+        SoundSequence manualActivationSoundSequence = null;
         long manualActivationDelay = 0L;
 
         if (deploymentSpec.manualActivation != null) {
-            String manualActivationSoundTemplateId = deploymentSpec.manualActivation.activationSoundTemplate;
+            String manualActivationSoundSequenceId = deploymentSpec.manualActivation.activationSoundSequence;
 
-            manualActivationSoundTemplate = soundService.getSoundTemplate(manualActivationSoundTemplateId)
-                    .orElseThrow(() -> new EquipmentCreationException("Manual activation sound template '%s' does not exist".formatted(manualActivationSoundTemplateId)));
+            manualActivationSoundSequence = soundService.getSoundSequence(manualActivationSoundSequenceId)
+                    .orElseThrow(() -> new EquipmentCreationException("Manual activation sound sequence '%s' does not exist".formatted(manualActivationSoundSequenceId)));
             manualActivationDelay = deploymentSpec.manualActivation.delay;
         }
 
@@ -132,7 +132,7 @@ public class EquipmentFactory {
             destructionParticleEffect = particleEffectMapper.map(destructionParticleEffectSpec);
         }
 
-        DeploymentProperties properties = new DeploymentProperties(manualActivationSoundTemplate, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnReset, manualActivationDelay);
+        DeploymentProperties properties = new DeploymentProperties(manualActivationSoundSequence, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnReset, manualActivationDelay);
         DeploymentState state = new IdleState();
         ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 

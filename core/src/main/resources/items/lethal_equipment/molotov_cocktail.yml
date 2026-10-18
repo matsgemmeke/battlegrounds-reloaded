@@ -28,7 +28,7 @@ deploy:
     remove-deployment: false
   throwing:
     cooldown: 30
-    sound-template: equipment-throw-1
+    sound-sequence: equipment-throw-1
     velocity: 1.2
 effect:
   type: COMBUSTION

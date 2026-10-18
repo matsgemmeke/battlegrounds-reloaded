@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 
@@ -24,7 +24,7 @@ public class PrimeDeploymentAction implements DeploymentAction {
     private final GameEntityFinder gameEntityFinder;
     private final SoundEmitter soundEmitter;
     @Nullable
-    private SoundTemplate soundTemplate;
+    private SoundSequence soundSequence;
 
     @Inject
     public PrimeDeploymentAction(GameEntityFinder gameEntityFinder, SoundEmitter soundEmitter) {
@@ -32,8 +32,8 @@ public class PrimeDeploymentAction implements DeploymentAction {
         this.soundEmitter = soundEmitter;
     }
 
-    public void configureSoundTemplate(SoundTemplate soundTemplate) {
-        this.soundTemplate = soundTemplate;
+    public void configureSoundSequence(SoundSequence soundSequence) {
+        this.soundSequence = soundSequence;
     }
 
     @Override
@@ -46,8 +46,8 @@ public class PrimeDeploymentAction implements DeploymentAction {
             return Optional.empty();
         }
 
-        if (soundTemplate != null) {
-            soundEmitter.playSoundTemplate(soundTemplate, deployer::getDeployLocation);
+        if (soundSequence != null) {
+            soundEmitter.playSoundSequence(soundSequence, deployer::getDeployLocation);
         }
 
         ItemStack heldItemStack = deployer.getHeldItem();

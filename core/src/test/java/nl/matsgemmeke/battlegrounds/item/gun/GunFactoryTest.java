@@ -16,8 +16,8 @@ import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 class GunFactoryTest {
 
     private static final int RATE_OF_FIRE = 600;
-    private static final SoundTemplate SHOOT_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SHOOT_SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private GunControllerFactory controllerFactory;
@@ -80,7 +80,7 @@ class GunFactoryTest {
 
         when(itemTemplateFactory.create(spec.item)).thenReturn(itemTemplate);
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
-        when(soundService.getSoundTemplate("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_TEMPLATE));
+        when(soundService.getSoundSequence("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_SEQUENCE));
 
         Gun gun = gunFactory.create(spec);
 
@@ -88,7 +88,7 @@ class GunFactoryTest {
         verify(gunInfoProvider).registerGunFireSimulationInfo(any(UUID.class), gunFireSimulationInfoCaptor.capture());
 
         assertThat(gunFireSimulationInfoCaptor.getValue()).satisfies(gunFireSimulationInfo -> {
-            assertThat(gunFireSimulationInfo.shotSoundTemplate()).isEqualTo(SHOOT_SOUND_TEMPLATE);
+            assertThat(gunFireSimulationInfo.shotSoundSequence()).isEqualTo(SHOOT_SOUND_SEQUENCE);
             assertThat(gunFireSimulationInfo.rateOfFire()).isEqualTo(RATE_OF_FIRE);
         });
 
@@ -123,7 +123,7 @@ class GunFactoryTest {
 
         when(scopeAttachmentProvider.get()).thenReturn(scopeAttachment);
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
-        when(soundService.getSoundTemplate("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_TEMPLATE));
+        when(soundService.getSoundSequence("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_SEQUENCE));
 
         Gun gun = gunFactory.create(spec);
 
@@ -135,9 +135,11 @@ class GunFactoryTest {
     }
 
     @Test
-    @DisplayName("create returns Gun without sound templates")
-    void create_withoutSoundTemplates() {
-        GunSpec spec = this.createGunSpec("src/test/resources/items/submachine_guns/mp5-without-sound-templates.yml");
+    @DisplayName("create returns Gun without sound sequence")
+    void create_withoutSoundSequence() {
+        GunSpec spec = this.createGunSpec("src/main/resources/items/submachine_guns/mp5.yml");
+        spec.shooting.projectile.soundSequence = null;
+
         ReloadSystem reloadSystem = mock(ReloadSystem.class);
 
         ShootHandler shootHandler = mock(ShootHandler.class);
@@ -152,7 +154,7 @@ class GunFactoryTest {
         verify(gunInfoProvider).registerGunFireSimulationInfo(any(UUID.class), gunFireSimulationInfoCaptor.capture());
 
         assertThat(gunFireSimulationInfoCaptor.getValue()).satisfies(gunFireSimulationInfo -> {
-            assertThat(gunFireSimulationInfo.shotSoundTemplate()).isNull();
+            assertThat(gunFireSimulationInfo.shotSoundSequence()).isNull();
             assertThat(gunFireSimulationInfo.rateOfFire()).isEqualTo(RATE_OF_FIRE);
         });
 
@@ -163,15 +165,15 @@ class GunFactoryTest {
     }
 
     @Test
-    @DisplayName("create throws GunCreationException when launch sound template does not exist even after validation")
-    void create_launchSoundTemplateInvalid() {
+    @DisplayName("create throws GunCreationException when launch sound sequence does not exist even after validation")
+    void create_launchSoundSequenceInvalid() {
         GunSpec spec = this.createGunSpec();
 
-        when(soundService.getSoundTemplate("submachine-gun-shoot-1")).thenReturn(Optional.empty());
+        when(soundService.getSoundSequence("submachine-gun-shoot-1")).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> gunFactory.create(spec))
                 .isInstanceOf(GunCreationException.class)
-                .hasMessage("Launch sound template 'submachine-gun-shoot-1' does not exist");
+                .hasMessage("Launch sound sequence 'submachine-gun-shoot-1' does not exist");
 
         verifyNoInteractions(gunRegistry);
     }
@@ -189,7 +191,7 @@ class GunFactoryTest {
         when(shootHandler.getRateOfFire()).thenReturn(RATE_OF_FIRE);
 
         when(shootHandlerFactory.create(eq(spec.shooting), any(ResourceContainer.class), any(ItemRepresentation.class), eq("MP5"))).thenReturn(shootHandler);
-        when(soundService.getSoundTemplate("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_TEMPLATE));
+        when(soundService.getSoundSequence("submachine-gun-shoot-1")).thenReturn(Optional.of(SHOOT_SOUND_SEQUENCE));
 
         Gun gun = gunFactory.create(spec, gamePlayer);
 
@@ -197,7 +199,7 @@ class GunFactoryTest {
         verify(gunInfoProvider).registerGunFireSimulationInfo(any(UUID.class), gunFireSimulationInfoCaptor.capture());
 
         assertThat(gunFireSimulationInfoCaptor.getValue()).satisfies(gunFireSimulationInfo -> {
-            assertThat(gunFireSimulationInfo.shotSoundTemplate()).isEqualTo(SHOOT_SOUND_TEMPLATE);
+            assertThat(gunFireSimulationInfo.shotSoundSequence()).isEqualTo(SHOOT_SOUND_SEQUENCE);
             assertThat(gunFireSimulationInfo.rateOfFire()).isEqualTo(RATE_OF_FIRE);
         });
 

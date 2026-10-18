@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -34,7 +34,7 @@ class PrimeDeploymentActionTest {
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DEPLOYER_UNIQUE_ID = UUID.randomUUID();
     private static final DestructionListener LISTENER = damage -> {};
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private GameEntityFinder gameEntityFinder;
@@ -98,7 +98,7 @@ class PrimeDeploymentActionTest {
 
         when(gameEntityFinder.findGameEntityByUniqueId(DEPLOYER_UNIQUE_ID)).thenReturn(Optional.of(gameEntity));
 
-        deploymentAction.configureSoundTemplate(SOUND_TEMPLATE);
+        deploymentAction.configureSoundSequence(SOUND_SEQUENCE);
         Optional<DeploymentResult> deploymentResultOptional = deploymentAction.perform(context);
 
         assertThat(deploymentResultOptional).hasValueSatisfying(deploymentResult -> {
@@ -107,6 +107,6 @@ class PrimeDeploymentActionTest {
             assertThat(deploymentResult.actor()).isInstanceOf(HeldItemActor.class);
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployerLocation));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployerLocation));
     }
 }

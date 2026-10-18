@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class SoundEmitterTest {
 
-    private static final String TEMPLATE_ID = "equipment-reload-1";
+    private static final String SEQUENCE_ID = "equipment-reload-1";
     private static final float VOLUME = 1.0f;
     private static final float PITCH = 1.5f;
     private static final int DELAY = 5;
@@ -34,18 +34,18 @@ class SoundEmitterTest {
     private SoundEmitter soundEmitter;
 
     @Test
-    @DisplayName("playSoundTemplate plays given sound template without delay and returns empty sound playback")
-    void playSoundTemplate_forGamePlayerNoDelay() {
+    @DisplayName("playSoundSequence plays given sound sequnce without delay and returns empty sound playback")
+    void playSoundSequence_forGamePlayerNoDelay() {
         SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, 0);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, 0);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
 
         Location playerLocation = new Location(null, 1, 2, 3);
 
         GamePlayer gamePlayer = mock(GamePlayer.class);
         when(gamePlayer.getLocation()).thenReturn(playerLocation);
 
-        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, gamePlayer);
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, gamePlayer);
 
         assertThat(soundPlayback).isNotNull();
 
@@ -54,11 +54,11 @@ class SoundEmitterTest {
     }
 
     @Test
-    @DisplayName("playSoundTemplate plays given sound template with delay")
-    void playSoundTemplate_forGamePlayerDelay() {
+    @DisplayName("playSoundSequence plays given sound sequence with delay")
+    void playSoundSequence_forGamePlayerDelay() {
         SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, DELAY);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
 
         Location playerLocation = new Location(null, 1, 2, 3);
 
@@ -70,7 +70,7 @@ class SoundEmitterTest {
 
         when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
 
-        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, gamePlayer);
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, gamePlayer);
         soundPlayback.cancel();
 
         assertThat(soundPlayback).isNotNull();
@@ -80,15 +80,15 @@ class SoundEmitterTest {
     }
 
     @Test
-    @DisplayName("playSoundTemplate returns empty sound playback when given location has no world")
-    void playSoundTemplate_locationWithoutWorld() {
+    @DisplayName("playSoundSequence returns empty sound playback when given location has no world")
+    void playSoundSequence_locationWithoutWorld() {
         SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, DELAY);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
 
         Location location = new Location(null, 1, 2, 3);
 
-        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, location);
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, location);
 
         assertThat(soundPlayback).isNotNull();
 
@@ -96,16 +96,16 @@ class SoundEmitterTest {
     }
 
     @Test
-    @DisplayName("playSoundTemplate plays given sound template without delay and returns empty sound playback")
-    void playSoundTemplate_noDelay() {
+    @DisplayName("playSoundSequence plays given sound sequence without delay and returns empty sound playback")
+    void playSoundSequence_noDelay() {
         SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, 0);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, 0);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
 
         World world = mock(World.class);
         Location location = new Location(world, 1, 2, 3);
 
-        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, location);
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, location);
 
         assertThat(soundPlayback).isNotNull();
 
@@ -114,11 +114,11 @@ class SoundEmitterTest {
     }
 
     @Test
-    @DisplayName("playSoundTemplate plays given sound template with delay")
-    void playSoundTemplate_delay() {
+    @DisplayName("playSoundSequence plays given sound sequence with delay")
+    void playSoundSequence_delay() {
         SoundCue soundCue = new SoundCue(null, VOLUME, PITCH);
-        SoundTemplateEntry entry = new SoundTemplateEntry(soundCue, DELAY);
-        SoundTemplate soundTemplate = new SoundTemplate(TEMPLATE_ID, List.of(entry));
+        SoundSequenceEntry entry = new SoundSequenceEntry(soundCue, DELAY);
+        SoundSequence soundSequence = new SoundSequence(SEQUENCE_ID, List.of(entry));
 
         World world = mock(World.class);
         Location location = new Location(world, 1, 2, 3);
@@ -128,7 +128,7 @@ class SoundEmitterTest {
 
         when(scheduler.createSingleRunSchedule(DELAY)).thenReturn(schedule);
 
-        SoundPlayback soundPlayback = soundEmitter.playSoundTemplate(soundTemplate, location);
+        SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, location);
         soundPlayback.cancel();
 
         assertThat(soundPlayback).isNotNull();

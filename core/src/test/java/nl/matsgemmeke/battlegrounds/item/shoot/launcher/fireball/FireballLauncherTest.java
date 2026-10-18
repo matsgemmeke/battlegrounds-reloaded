@@ -18,7 +18,7 @@ import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundPlayback;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FireballLauncherTest {
 
-    private static final SoundTemplate LAUNCH_SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final double VELOCITY = 2.0;
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
     private static final UUID FIREBALL_UNIQUE_ID = UUID.randomUUID();
@@ -80,10 +80,10 @@ class FireballLauncherTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        FireballProperties properties = new FireballProperties(LAUNCH_SOUND_TEMPLATE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
+        FireballProperties properties = new FireballProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
         LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        when(soundEmitter.playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
         when(projectileSource.launchProjectile(eq(SmallFireball.class), any(Vector.class))).thenReturn(fireball);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
 
@@ -114,7 +114,7 @@ class FireballLauncherTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        FireballProperties properties = new FireballProperties(LAUNCH_SOUND_TEMPLATE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
+        FireballProperties properties = new FireballProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
         LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(projectileHitResult, fireball)).thenReturn(collisionResult);
@@ -138,7 +138,7 @@ class FireballLauncherTest {
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
-        verify(soundEmitter).playSoundTemplate(eq(LAUNCH_SOUND_TEMPLATE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);
         verify(projectileHitActionRegistry).removeProjectileHitAction(fireball);
         verify(projectileRegistry).register(FIREBALL_UNIQUE_ID);

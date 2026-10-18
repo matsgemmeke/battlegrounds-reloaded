@@ -43,8 +43,8 @@ shooting:
     cycle-cooldown: 4
   projectile:
     type: HITSCAN
-    launch-sound-template: handgun-shoot-1
-    launch-sound-suppressed-template: handgun-shoot-suppressed-1
+    sound-sequence: handgun-shoot-1
+    sound-suppressed-sequence: handgun-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE

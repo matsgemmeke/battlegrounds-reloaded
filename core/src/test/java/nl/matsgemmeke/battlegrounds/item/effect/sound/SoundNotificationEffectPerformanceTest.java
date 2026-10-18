@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.bukkit.Location;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -30,7 +30,7 @@ class SoundNotificationEffectPerformanceTest {
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
-    private static final SoundTemplate SOUND_TEMPLATE = new SoundTemplate(null, null);
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private Actor actor;
@@ -41,7 +41,7 @@ class SoundNotificationEffectPerformanceTest {
     @Mock
     private SoundEmitter soundEmitter;
     @Spy
-    private SoundNotificationProperties properties = new SoundNotificationProperties(SOUND_TEMPLATE);
+    private SoundNotificationProperties properties = new SoundNotificationProperties(SOUND_SEQUENCE);
     @InjectMocks
     private SoundNotificationEffectPerformance performance;
 
@@ -83,7 +83,7 @@ class SoundNotificationEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(soundEmitter).playSoundTemplate(SOUND_TEMPLATE, gamePlayer);
+        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, gamePlayer);
     }
 
     private ItemEffectContext createItemEffectContext() {

@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.deploy;
 
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
 import org.jetbrains.annotations.Nullable;
 
 public record DeploymentProperties(
         @Nullable
-        SoundTemplate manualActivationSoundTemplate,
+        SoundSequence manualActivationSoundSequence,
         @Nullable
         ParticleEffect destructionParticleEffect,
         boolean activateEffectOnDestruction,

@@ -31,7 +31,7 @@ deploy:
     remove-deployment: false
   throwing:
     cooldown: 30
-    sound-template: equipment-throw-1
+    sound-sequence: equipment-throw-1
     velocity: 0.5
 effect:
   type: SOUND_NOTIFICATION

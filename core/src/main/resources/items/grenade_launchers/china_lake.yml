@@ -48,7 +48,7 @@ shooting:
       damage: 1
     velocity: 2.5
     pickup-delay: 10000
-    launch-sound-template: grenade-launcher-shoot-1
+    sound-sequence: grenade-launcher-shoot-1
     effect:
       type: EXPLOSION
       power: 2.0

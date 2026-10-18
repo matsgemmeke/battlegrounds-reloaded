@@ -2,9 +2,9 @@ package nl.matsgemmeke.battlegrounds.sound.mapper;
 
 import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
 import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundTemplate;
-import nl.matsgemmeke.battlegrounds.sound.configuration.SoundTemplateEntrySpec;
-import nl.matsgemmeke.battlegrounds.sound.configuration.SoundTemplateSpec;
+import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
+import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import org.bukkit.Sound;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,7 +21,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith({ MockitoExtension.class, BukkitSoundRegistryExtension.class })
-class SoundTemplateMapperTest {
+class SoundSequenceMapperTest {
 
     private static final String ID = "assault-rifle-reload-1";
     private static final String SOUND = "ui.button.click";
@@ -33,23 +33,23 @@ class SoundTemplateMapperTest {
     @Mock
     private BukkitSoundRegistry bukkitSoundRegistry;
     @InjectMocks
-    private SoundTemplateMapper soundTemplateMapper;
+    private SoundSequenceMapper soundSequenceMapper;
 
     @Test
-    @DisplayName("toSoundTemplate returns SoundTemplate with values from given specification")
-    void toSoundTemplate() {
+    @DisplayName("toSoundSequence returns SoundSequence with values from given specification")
+    void toSoundSequence() {
         Sound sound = mock(Sound.class);
-        SoundTemplateEntrySpec validEntry = new SoundTemplateEntrySpec(SOUND, VOLUME, PITCH, DELAY);
-        SoundTemplateEntrySpec invalidEntry = new SoundTemplateEntrySpec(INVALID_SOUND, VOLUME, PITCH, DELAY);
-        SoundTemplateSpec soundTemplateSpec = new SoundTemplateSpec(ID, List.of(validEntry, invalidEntry));
+        SoundSequenceEntrySpec validEntry = new SoundSequenceEntrySpec(SOUND, VOLUME, PITCH, DELAY);
+        SoundSequenceEntrySpec invalidEntry = new SoundSequenceEntrySpec(INVALID_SOUND, VOLUME, PITCH, DELAY);
+        SoundSequenceSpec soundSequenceSpec = new SoundSequenceSpec(ID, List.of(validEntry, invalidEntry));
 
         when(bukkitSoundRegistry.getSound(SOUND)).thenReturn(Optional.of(sound));
         when(bukkitSoundRegistry.getSound(INVALID_SOUND)).thenReturn(Optional.empty());
 
-        SoundTemplate soundTemplate = soundTemplateMapper.toSoundTemplate(soundTemplateSpec);
+        SoundSequence soundSequence = soundSequenceMapper.toSoundSequence(soundSequenceSpec);
 
-        assertThat(soundTemplate.id()).isEqualTo(ID);
-        assertThat(soundTemplate.entries()).satisfiesExactly(entry -> {
+        assertThat(soundSequence.id()).isEqualTo(ID);
+        assertThat(soundSequence.entries()).satisfiesExactly(entry -> {
             assertThat(entry.soundCue()).satisfies(soundCue -> {
                 assertThat(soundCue.sound()).isEqualTo(sound);
                 assertThat(soundCue.volume()).isEqualTo(VOLUME);
