@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Material;
 import org.jspecify.annotations.Nullable;
 

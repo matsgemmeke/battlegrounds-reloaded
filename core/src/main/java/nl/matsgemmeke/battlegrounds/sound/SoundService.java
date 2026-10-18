@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.sound.api;
+package nl.matsgemmeke.battlegrounds.sound;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundsConfiguration;

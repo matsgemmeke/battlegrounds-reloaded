@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.sound.api;
+package nl.matsgemmeke.battlegrounds.sound;
 
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import org.junit.jupiter.api.DisplayName;

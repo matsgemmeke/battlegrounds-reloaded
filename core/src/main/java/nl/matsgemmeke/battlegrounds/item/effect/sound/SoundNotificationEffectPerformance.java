@@ -5,7 +5,7 @@ import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
 
 import java.util.UUID;
 

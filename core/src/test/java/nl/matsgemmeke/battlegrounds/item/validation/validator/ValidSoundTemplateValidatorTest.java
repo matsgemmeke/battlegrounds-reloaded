@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.validation.validator;
 
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

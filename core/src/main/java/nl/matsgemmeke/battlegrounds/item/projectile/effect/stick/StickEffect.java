@@ -4,8 +4,8 @@ import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.BaseProjectileEffect;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.util.Vector;
 
 public class StickEffect extends BaseProjectileEffect {

@@ -20,7 +20,7 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.jetbrains.annotations.Nullable;

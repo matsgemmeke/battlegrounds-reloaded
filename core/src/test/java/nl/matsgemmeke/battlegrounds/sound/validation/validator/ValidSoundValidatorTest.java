@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.sound.validation.validator;
 
-import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;

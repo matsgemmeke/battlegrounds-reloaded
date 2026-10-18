@@ -26,8 +26,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFuncti
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.bukkit.Material;
 
 import java.util.*;

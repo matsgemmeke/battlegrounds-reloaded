@@ -7,7 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
+import nl.matsgemmeke.battlegrounds.sound.SoundCue;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Sound;

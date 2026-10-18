@@ -30,8 +30,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemEffect;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
+import nl.matsgemmeke.battlegrounds.sound.SoundCue;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;

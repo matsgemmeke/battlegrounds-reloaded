@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.game.component.info.gun;
 
 import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;

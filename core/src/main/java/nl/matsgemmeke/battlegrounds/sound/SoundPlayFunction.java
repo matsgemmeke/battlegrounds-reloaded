@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.sound.api;
+package nl.matsgemmeke.battlegrounds.sound;
 
 import org.bukkit.Location;
 

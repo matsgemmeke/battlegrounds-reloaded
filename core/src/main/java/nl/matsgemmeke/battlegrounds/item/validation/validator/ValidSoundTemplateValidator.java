@@ -3,8 +3,8 @@ package nl.matsgemmeke.battlegrounds.item.validation.validator;
 import com.google.inject.Inject;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
 import nl.matsgemmeke.battlegrounds.item.validation.constraint.ValidSoundTemplate;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 
 public class ValidSoundTemplateValidator implements ConstraintValidator<ValidSoundTemplate, String> {
 

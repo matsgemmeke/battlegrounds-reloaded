@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.sound.configuration;
 import com.google.inject.Binder;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
-import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;

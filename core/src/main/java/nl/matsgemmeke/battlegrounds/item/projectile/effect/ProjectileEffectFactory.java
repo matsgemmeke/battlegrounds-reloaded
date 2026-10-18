@@ -13,8 +13,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 
 import java.util.Collection;
 

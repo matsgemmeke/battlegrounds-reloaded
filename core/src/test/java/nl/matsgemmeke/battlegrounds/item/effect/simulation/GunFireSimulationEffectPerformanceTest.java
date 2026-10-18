@@ -13,7 +13,7 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

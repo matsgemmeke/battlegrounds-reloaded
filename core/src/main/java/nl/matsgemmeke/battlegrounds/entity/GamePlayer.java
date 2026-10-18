@@ -5,7 +5,7 @@ import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
+import nl.matsgemmeke.battlegrounds.sound.SoundCue;
 import org.bukkit.Location;
 
 /**

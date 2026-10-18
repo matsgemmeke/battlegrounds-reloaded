@@ -8,7 +8,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.StaticBoundingBox;
 import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;

@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.sound;
+package nl.matsgemmeke.battlegrounds.sound.bukkit;
 
 import org.bukkit.NamespacedKey;
 import org.bukkit.Registry;

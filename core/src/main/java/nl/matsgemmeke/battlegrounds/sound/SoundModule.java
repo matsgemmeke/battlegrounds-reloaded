@@ -5,7 +5,7 @@ import com.google.inject.Module;
 import com.google.inject.Singleton;
 import com.google.inject.name.Names;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundService;
+import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundsConfiguration;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundsConfigurationFileProvider;
 import nl.matsgemmeke.battlegrounds.sound.mapper.SoundSequenceMapper;

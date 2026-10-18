@@ -7,8 +7,8 @@ import nl.matsgemmeke.battlegrounds.item.actor.HeldItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.HeldDeploymentObject;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.inventory.ItemStack;
 import org.jspecify.annotations.Nullable;
 

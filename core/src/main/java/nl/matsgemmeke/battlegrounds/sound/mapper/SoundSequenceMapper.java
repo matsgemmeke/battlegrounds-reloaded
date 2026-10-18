@@ -1,10 +1,10 @@
 package nl.matsgemmeke.battlegrounds.sound.mapper;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundCue;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequenceEntry;
+import nl.matsgemmeke.battlegrounds.sound.SoundCue;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequenceEntry;
+import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import org.bukkit.Sound;

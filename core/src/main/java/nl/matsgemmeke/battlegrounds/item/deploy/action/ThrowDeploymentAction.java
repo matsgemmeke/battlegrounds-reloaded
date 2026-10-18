@@ -9,7 +9,7 @@ import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.*;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.DeploymentObject;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.ItemDeploymentObject;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Item;

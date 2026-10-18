@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.jspecify.annotations.Nullable;
 
 public record ItemLaunchProperties(

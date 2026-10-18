@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.sound.mapper;
 
 import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
-import nl.matsgemmeke.battlegrounds.sound.BukkitSoundRegistry;
-import nl.matsgemmeke.battlegrounds.sound.api.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import org.bukkit.Sound;
