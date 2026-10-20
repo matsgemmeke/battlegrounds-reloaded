@@ -1,9 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.reload;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
-
-public record ReloadProperties(@NotNull List<GameSound> reloadSounds, long duration) {
+public record ReloadProperties(@Nullable SoundSequence soundSequence, long duration) {
 }

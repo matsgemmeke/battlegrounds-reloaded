@@ -36,7 +36,7 @@ item:
 reloading:
   type: MAGAZINE
   duration: 48
-  reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+  sound-sequence: submachine-gun-reload-1
 shooting:
   fire-mode:
     type: FULLY_AUTOMATIC

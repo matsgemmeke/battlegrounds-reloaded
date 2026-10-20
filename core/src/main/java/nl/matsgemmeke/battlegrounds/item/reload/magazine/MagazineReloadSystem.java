@@ -2,68 +2,76 @@ package nl.matsgemmeke.battlegrounds.item.reload.magazine;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.reload.*;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundPlayback;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.Procedure;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MagazineReloadSystem implements ReloadSystem {
 
-    private final AudioEmitter audioEmitter;
-    private final List<Schedule> schedules;
     private final ReloadProperties properties;
     private final ResourceContainer resourceContainer;
     private final Scheduler scheduler;
+    private final Set<Schedule> schedules;
+    private final Set<SoundPlayback> soundPlaybacks;
+    private final SoundEmitter soundEmitter;
     @Nullable
     private ReloadPerformer currentPerformer;
 
     @Inject
-    public MagazineReloadSystem(AudioEmitter audioEmitter, Scheduler scheduler, @Assisted ReloadProperties properties, @Assisted ResourceContainer resourceContainer) {
-        this.audioEmitter = audioEmitter;
+    public MagazineReloadSystem(Scheduler scheduler, SoundEmitter soundEmitter, @Assisted ReloadProperties properties, @Assisted ResourceContainer resourceContainer) {
         this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.resourceContainer = resourceContainer;
         this.properties = properties;
-        this.schedules = new ArrayList<>();
+        this.schedules = new HashSet<>();
+        this.soundPlaybacks = new HashSet<>();
     }
 
+    @Override
     public boolean isPerforming() {
         return currentPerformer != null;
     }
 
+    @Override
     public boolean performReload(ReloadPerformer performer, Procedure callback) {
         currentPerformer = performer;
         performer.applyReloadingState();
 
-        for (GameSound sound : properties.reloadSounds()) {
-            Schedule soundPlaySchedule = scheduler.createSingleRunSchedule(sound.getDelay());
-            soundPlaySchedule.addTask(() -> audioEmitter.playSound(sound, performer.getLocation()));
-            soundPlaySchedule.start();
+        SoundSequence soundSequence = properties.soundSequence();
 
-            schedules.add(soundPlaySchedule);
+        if (soundSequence != null) {
+            SoundPlayback soundPlayback = soundEmitter.playSoundSequence(soundSequence, performer::getLocation);
+
+            soundPlaybacks.add(soundPlayback);
         }
 
-        Schedule reloadFinishSchedule = scheduler.createSingleRunSchedule(properties.duration());
-        reloadFinishSchedule.addTask(() -> {
+        Schedule schedule = scheduler.createSingleRunSchedule(properties.duration());
+        schedule.addTask(() -> {
             this.finalizeReload(performer);
             callback.apply();
         });
-        reloadFinishSchedule.start();
+        schedule.start();
 
-        schedules.add(reloadFinishSchedule);
+        schedules.add(schedule);
         return true;
     }
 
+    @Override
     public boolean cancelReload() {
         if (currentPerformer == null) {
             return false;
         }
 
+        soundPlaybacks.forEach(SoundPlayback::cancel);
+        soundPlaybacks.clear();
         schedules.forEach(Schedule::stop);
         schedules.clear();
         currentPerformer.resetReloadingState();

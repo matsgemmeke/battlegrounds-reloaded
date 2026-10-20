@@ -63,7 +63,7 @@ class SpecDeserializerTest {
 
         assertThat(gunSpec.reloading.type).isEqualTo("MAGAZINE");
         assertThat(gunSpec.reloading.duration).isEqualTo(48);
-        assertThat(gunSpec.reloading.reloadSounds).isEqualTo("BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44");
+        assertThat(gunSpec.reloading.soundSequence).isEqualTo("submachine-gun-reload-1");
 
         assertThat(gunSpec.shooting.fireMode).isInstanceOfSatisfying(FullyAutomaticModeSpec.class, fireMode -> {
             assertThat(fireMode.type).isEqualTo("FULLY_AUTOMATIC");
