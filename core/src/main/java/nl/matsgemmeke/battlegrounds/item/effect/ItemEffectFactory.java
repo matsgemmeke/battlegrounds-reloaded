@@ -35,6 +35,7 @@ import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ItemEffectFactory {
 
@@ -83,7 +84,7 @@ public class ItemEffectFactory {
     public ItemEffect create(ItemEffectSpec itemEffectSpec) {
         ItemEffectType itemEffectType = ItemEffectType.valueOf(itemEffectSpec.type);
 
-        ItemEffect itemEffect = switch (itemEffectType) {
+        return switch (itemEffectType) {
             case COMBUSTION -> {
                 CombustionEffectSpec spec = (CombustionEffectSpec) itemEffectSpec;
 
@@ -95,12 +96,16 @@ public class ItemEffectFactory {
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+
+                SoundSequence soundSequence = Optional.ofNullable(spec.activationSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
 
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
 
-                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(soundSequence, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
 
                 CombustionEffect combustionEffect = combustionEffectProvider.get();
                 combustionEffect.setProperties(properties);
@@ -204,8 +209,6 @@ public class ItemEffectFactory {
                 yield soundNotificationEffect;
             }
         };
-
-        return itemEffect;
     }
 
     /**

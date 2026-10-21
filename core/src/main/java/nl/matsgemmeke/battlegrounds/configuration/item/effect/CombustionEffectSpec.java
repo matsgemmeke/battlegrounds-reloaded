@@ -1,38 +1,38 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import nl.matsgemmeke.battlegrounds.configuration.item.RangeProfileSpec;
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class CombustionEffectSpec extends ItemEffectSpec {
 
-    @Required
+    @NotNull
     public Double growth;
 
-    public String activationSounds;
+    public String activationSoundSequence;
 
-    @Required
+    @NotNull
     @Valid
     public RangeProfileSpec range;
 
-    @Required
+    @NotNull
     public Double minSize;
 
-    @Required
+    @NotNull
     public Double maxSize;
 
-    @Required
+    @NotNull
     public Long growthInterval;
 
-    @Required
+    @NotNull
     public Long minDuration;
 
-    @Required
+    @NotNull
     public Long maxDuration;
 
-    @Required
+    @NotNull
     public Boolean damageBlocks;
 
-    @Required
+    @NotNull
     public Boolean spreadFire;
 }

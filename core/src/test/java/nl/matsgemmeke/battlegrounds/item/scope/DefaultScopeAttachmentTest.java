@@ -21,9 +21,9 @@ import static org.mockito.Mockito.*;
 class DefaultScopeAttachmentTest {
 
     private static final List<Float> MAGNIFICATIONS = List.of(-0.1f, -0.15f, -0.2f);
-    private static final SoundSequence USE_SOUND_SEQUENCE = new SoundSequence(null, null);
-    private static final SoundSequence STOP_SOUND_SEQUENCE = new SoundSequence(null, null);
-    private static final SoundSequence CHANGE_MAGNIFICATION_SOUND_SEQUENCE = new SoundSequence(null, null);
+    private static final SoundSequence USE_SOUND_SEQUENCE = new SoundSequence("use", null);
+    private static final SoundSequence STOP_SOUND_SEQUENCE = new SoundSequence("stop", null);
+    private static final SoundSequence CHANGE_MAGNIFICATION_SOUND_SEQUENCE = new SoundSequence("change", null);
 
     private static final ScopeProperties SCOPE_PROPERTIES_DEFAULT = new ScopeProperties(MAGNIFICATIONS, USE_SOUND_SEQUENCE, STOP_SOUND_SEQUENCE, CHANGE_MAGNIFICATION_SOUND_SEQUENCE);
     private static final ScopeProperties SCOPE_PROPERTIES_NO_MAGNIFICATIONS = new ScopeProperties(List.of(), USE_SOUND_SEQUENCE, STOP_SOUND_SEQUENCE, CHANGE_MAGNIFICATION_SOUND_SEQUENCE);

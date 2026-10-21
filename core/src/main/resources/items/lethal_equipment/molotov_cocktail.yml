@@ -32,7 +32,7 @@ deploy:
     velocity: 1.2
 effect:
   type: COMBUSTION
-  activation-sounds: BLOCK_GLASS_BREAK-1-1-0
+  activation-sound-sequence: equipment-activation-1
   min-size: 0.5
   max-size: 3.0
   growth: 0.5

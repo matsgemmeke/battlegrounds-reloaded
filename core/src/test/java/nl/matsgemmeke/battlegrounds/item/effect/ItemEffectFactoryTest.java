@@ -4,7 +4,6 @@ import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.combustion.CombustionProperties;
 import nl.matsgemmeke.battlegrounds.item.effect.damage.DamageEffect;
@@ -78,12 +77,36 @@ class ItemEffectFactoryTest {
     }
 
     @Test
-    void createInstanceForCombustionEffectType() {
+    @DisplayName("create throws ItemEffectCreationException when sound sequence id for combustion effect is invalid")
+    void create_invalidCombustionSoundSequence() {
+        CombustionEffectSpec spec = new CombustionEffectSpec();
+        spec.type = "COMBUSTION";
+        spec.activationSoundSequence = SOUND_SEQUNCE_ID;
+        spec.minSize = 2.5;
+        spec.maxSize = 5.0;
+        spec.growth = 0.5;
+        spec.growthInterval = 5L;
+        spec.minDuration = 350L;
+        spec.maxDuration = 450L;
+        spec.damageBlocks = true;
+        spec.spreadFire = false;
+
+        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemEffectFactory.create(spec))
+                .isInstanceOf(ItemEffectCreationException.class)
+                .hasMessage("Sound sequence 'equipment-activation-1' does not exist");
+    }
+
+    @Test
+    @DisplayName("create returns instance for CombustionEffect")
+    void create_combustionEffect() {
         CombustionEffect combustionEffect = mock(CombustionEffect.class);
         RangeProfileSpec rangeProfileSpec = this.createRangeProfileSpec();
 
         CombustionEffectSpec spec = new CombustionEffectSpec();
         spec.type = "COMBUSTION";
+        spec.activationSoundSequence = SOUND_SEQUNCE_ID;
         spec.range = rangeProfileSpec;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
@@ -94,6 +117,7 @@ class ItemEffectFactoryTest {
         spec.damageBlocks = true;
         spec.spreadFire = false;
 
+        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(combustionEffectProvider.get()).thenReturn(combustionEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -101,23 +125,25 @@ class ItemEffectFactoryTest {
         ArgumentCaptor<CombustionProperties> propertiesCaptor = ArgumentCaptor.forClass(CombustionProperties.class);
         verify(combustionEffect).setProperties(propertiesCaptor.capture());
 
-        CombustionProperties properties = propertiesCaptor.getValue();
-        assertThat(properties.minSize()).isEqualTo(spec.minSize);
-        assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
-        assertThat(properties.growth()).isEqualTo(spec.growth);
-        assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
-        assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
-        assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
-        assertThat(properties.burnBlocks()).isEqualTo(spec.damageBlocks);
-        assertThat(properties.spreadFire()).isEqualTo(spec.spreadFire);
-
-        RangeProfile rangeProfile = properties.rangeProfile();
-        assertThat(rangeProfile.shortRangeDamage()).isEqualTo(rangeProfileSpec.shortRange.damage);
-        assertThat(rangeProfile.shortRangeDistance()).isEqualTo(rangeProfileSpec.shortRange.distance);
-        assertThat(rangeProfile.mediumRangeDamage()).isEqualTo(rangeProfileSpec.mediumRange.damage);
-        assertThat(rangeProfile.mediumRangeDistance()).isEqualTo(rangeProfileSpec.mediumRange.distance);
-        assertThat(rangeProfile.longRangeDamage()).isEqualTo(rangeProfileSpec.longRange.damage);
-        assertThat(rangeProfile.longRangeDistance()).isEqualTo(rangeProfileSpec.longRange.distance);
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.soundSequence()).isEqualTo(SOUND_SEQUENCE);
+            assertThat(properties.rangeProfile()).satisfies(rangeProfile -> {
+                assertThat(rangeProfile.shortRangeDamage()).isEqualTo(rangeProfileSpec.shortRange.damage);
+                assertThat(rangeProfile.shortRangeDistance()).isEqualTo(rangeProfileSpec.shortRange.distance);
+                assertThat(rangeProfile.mediumRangeDamage()).isEqualTo(rangeProfileSpec.mediumRange.damage);
+                assertThat(rangeProfile.mediumRangeDistance()).isEqualTo(rangeProfileSpec.mediumRange.distance);
+                assertThat(rangeProfile.longRangeDamage()).isEqualTo(rangeProfileSpec.longRange.damage);
+                assertThat(rangeProfile.longRangeDistance()).isEqualTo(rangeProfileSpec.longRange.distance);
+            });
+            assertThat(properties.minSize()).isEqualTo(spec.minSize);
+            assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
+            assertThat(properties.growth()).isEqualTo(spec.growth);
+            assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
+            assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
+            assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
+            assertThat(properties.burnBlocks()).isEqualTo(spec.damageBlocks);
+            assertThat(properties.spreadFire()).isEqualTo(spec.spreadFire);
+        });
 
         assertThat(itemEffect).isEqualTo(combustionEffect);
     }
