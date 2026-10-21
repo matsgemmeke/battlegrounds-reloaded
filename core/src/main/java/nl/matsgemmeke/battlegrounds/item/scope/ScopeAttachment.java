@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import org.jetbrains.annotations.NotNull;
-
 /**
  * Represents the attachment that is present on top of a gun that allows its user to zoom in while shooting.
  */
@@ -13,7 +11,7 @@ public interface ScopeAttachment {
      * @param scopeUser the entity
      * @return whether the effect was applied
      */
-    boolean applyEffect(@NotNull ScopeUser scopeUser);
+    boolean applyEffect(ScopeUser scopeUser);
 
     /**
      * Gets whether the scope attachment is being used by a player.

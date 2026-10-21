@@ -1,11 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.gun;
 
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.configuration.item.gun.ScopeSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.game.component.item.GunRegistry;
@@ -18,7 +15,9 @@ import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemRepresentation;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.Placeholder;
-import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.DefaultScopeAttachmentFactory;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeAttachment;
+import nl.matsgemmeke.battlegrounds.item.scope.ScopeProperties;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
@@ -31,31 +30,31 @@ import java.util.UUID;
 
 public class GunFactory {
 
+    private final DefaultScopeAttachmentFactory scopeAttachmentFactory;
     private final GunControllerFactory controllerFactory;
     private final GunInfoProvider gunInfoProvider;
     private final GunRegistry gunRegistry;
     private final ItemTemplateFactory itemTemplateFactory;
-    private final Provider<DefaultScopeAttachment> scopeAttachmentProvider;
     private final ReloadSystemFactory reloadSystemFactory;
     private final ShootHandlerFactory shootHandlerFactory;
     private final SoundService soundService;
 
     @Inject
     public GunFactory(
+            DefaultScopeAttachmentFactory scopeAttachmentFactory,
             GunControllerFactory controllerFactory,
             GunInfoProvider gunInfoProvider,
             GunRegistry gunRegistry,
             ItemTemplateFactory itemTemplateFactory,
-            Provider<DefaultScopeAttachment> scopeAttachmentProvider,
             ReloadSystemFactory reloadSystemFactory,
             ShootHandlerFactory shootHandlerFactory,
             SoundService soundService
     ) {
+        this.scopeAttachmentFactory = scopeAttachmentFactory;
         this.controllerFactory = controllerFactory;
         this.gunInfoProvider = gunInfoProvider;
         this.gunRegistry = gunRegistry;
         this.itemTemplateFactory = itemTemplateFactory;
-        this.scopeAttachmentProvider = scopeAttachmentProvider;
         this.reloadSystemFactory = reloadSystemFactory;
         this.shootHandlerFactory = shootHandlerFactory;
         this.soundService = soundService;
@@ -113,15 +112,22 @@ public class GunFactory {
 
         if (scopeSpec != null) {
             List<Float> magnifications = Arrays.asList(scopeSpec.magnifications);
-            List<GameSound> useSounds = DefaultGameSound.parseSounds(scopeSpec.useSounds);
-            List<GameSound> stopSounds = DefaultGameSound.parseSounds(scopeSpec.stopSounds);
-            List<GameSound> changeMagnificationSounds = DefaultGameSound.parseSounds(scopeSpec.changeMagnificationSounds);
 
-            DefaultScopeAttachment scopeAttachment = scopeAttachmentProvider.get();
-            scopeAttachment.configureMagnifications(magnifications);
-            scopeAttachment.configureUseSounds(useSounds);
-            scopeAttachment.configureStopSounds(stopSounds);
-            scopeAttachment.configureChangeMagnificationSounds(changeMagnificationSounds);
+            SoundSequence useSoundSequence = Optional.ofNullable(scopeSpec.useSoundSequence)
+                    .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                            .orElseThrow(() -> new GunCreationException("Scope use sound sequence '%s' does not exist".formatted(sequenceId))))
+                    .orElse(null);
+            SoundSequence stopSoundSequence = Optional.ofNullable(scopeSpec.stopSoundSequence)
+                    .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                            .orElseThrow(() -> new GunCreationException("Scope stop sound sequence '%s' does not exist".formatted(sequenceId))))
+                    .orElse(null);
+            SoundSequence changeMagnificationSoundSequence = Optional.ofNullable(scopeSpec.changeMagnificationSoundSequence)
+                    .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                            .orElseThrow(() -> new GunCreationException("Scope change magnification sound sequence '%s' does not exist".formatted(sequenceId))))
+                    .orElse(null);
+
+            ScopeProperties scopeProperties = new ScopeProperties(magnifications, useSoundSequence, stopSoundSequence, changeMagnificationSoundSequence);
+            ScopeAttachment scopeAttachment = scopeAttachmentFactory.create(scopeProperties);
 
             gun.setScopeAttachment(scopeAttachment);
         }

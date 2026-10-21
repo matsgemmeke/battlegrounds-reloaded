@@ -1,13 +1,16 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import org.jetbrains.annotations.NotNull;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 
 public record ScopeProperties(
-        @NotNull List<Float> magnifications,
-        @NotNull List<GameSound> useSounds,
-        @NotNull List<GameSound> stopSounds,
-        @NotNull List<GameSound> changeMagnificationSounds
+        List<Float> magnifications,
+        @Nullable
+        SoundSequence useSoundSequence,
+        @Nullable
+        SoundSequence stopSoundSequence,
+        @Nullable
+        SoundSequence changeMagnificationSoundSequence
 ) { }

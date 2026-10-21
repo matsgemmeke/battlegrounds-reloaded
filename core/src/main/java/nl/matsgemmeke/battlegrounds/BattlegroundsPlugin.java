@@ -13,6 +13,7 @@ import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
+import nl.matsgemmeke.battlegrounds.item.ItemModule;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import nl.matsgemmeke.battlegrounds.location.LocationModule;
@@ -72,10 +73,11 @@ public class BattlegroundsPlugin extends JavaPlugin {
         BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, logger, commandManager, this, pluginManager);
         ArenaModule arenaModule = new ArenaModule();
         CompatibilityModule compatibilityModule = new CompatibilityModule();
+        ItemModule itemModule = new ItemModule();
         LocationModule locationModule = new LocationModule();
         SoundModule soundModule = new SoundModule();
 
-        injector = Guice.createInjector(module, arenaModule, compatibilityModule, locationModule, soundModule);
+        injector = Guice.createInjector(module, arenaModule, compatibilityModule, itemModule, locationModule, soundModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
