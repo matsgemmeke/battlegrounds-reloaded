@@ -1,8 +1,6 @@
 package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
@@ -12,18 +10,21 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
+import java.util.function.Supplier;
 
 import static nl.matsgemmeke.battlegrounds.ArgumentMatcherUtils.isBetween;
 import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_SCHEDULE_TASK;
@@ -42,14 +43,14 @@ class SmokeScreenEffectPerformanceTest {
     private static final Particle PARTICLE_TYPE = Particle.CAMPFIRE_SIGNAL_SMOKE;
     private static final ParticleEffect PARTICLE_EFFECT = new ParticleEffect(PARTICLE_TYPE, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA, PARTICLE_BLOCK_DATA, null);
 
-    private static final List<GameSound> ACTIVATION_SOUNDS = Collections.emptyList();
+    private static final SoundSequence ACTIVATION_SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final long MIN_DURATION = 10L;
     private static final long MAX_DURATION = 20L;
     private static final long GROWTH_INTERVAL = 1L;
     private static final double MIN_SIZE = 3.0;
     private static final double MAX_SIZE = 5.0;
-    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(PARTICLE_EFFECT, ACTIVATION_SOUNDS, MIN_DURATION, MAX_DURATION, 1.0, MIN_SIZE, MAX_SIZE, 0.0, GROWTH_INTERVAL);
+    private static final SmokeScreenProperties PROPERTIES = new SmokeScreenProperties(PARTICLE_EFFECT, ACTIVATION_SOUND_SEQUENCE, MIN_DURATION, MAX_DURATION, 1.0, MIN_SIZE, MAX_SIZE, 0.0, GROWTH_INTERVAL);
 
     private static final String ITEM_NAME = "Test Item";
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
@@ -57,30 +58,32 @@ class SmokeScreenEffectPerformanceTest {
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
     @Mock
-    private AudioEmitter audioEmitter;
-    @Mock
     private CollisionDetector collisionDetector;
     @Mock
     private DamageSource damageSource;
     @Mock
     private Scheduler scheduler;
+    @Mock
+    private SoundEmitter soundEmitter;
 
     private SmokeScreenEffectPerformance performance;
 
     @BeforeEach
     void setUp() {
-        performance = new SmokeScreenEffectPerformance(audioEmitter, collisionDetector, scheduler, PROPERTIES);
+        performance = new SmokeScreenEffectPerformance(collisionDetector, scheduler, soundEmitter, PROPERTIES);
     }
 
     @Test
-    void isPerformingReturnsFalseWhenNotPerforming() {
+    @DisplayName("isPerforming returns false when not performing")
+    void isPerforming_notPerforming() {
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
     }
 
     @Test
-    void isPerformingReturnsTrueWhenPerforming() {
+    @DisplayName("isPerforming returns true when performing")
+    void isPerforming_performing() {
         Schedule cancelSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
@@ -98,7 +101,8 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     @Test
-    void performCancelsRepeatingScheduleOnceSourceNoLongerExists() {
+    @DisplayName("perform cancels repeating schedule once source no longer exists")
+    void perform_cancelWhenSourceNotExists() {
         Schedule cancelSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
@@ -116,7 +120,8 @@ class SmokeScreenEffectPerformanceTest {
     }
 
     @Test
-    void performDisplaysTraceParticleWhenSourceHasMoved() {
+    @DisplayName("perform displays trace particle when actor moves")
+    void perform_actorMoves() {
         Schedule cancelSchedule = mock(Schedule.class);
         World world = mock(World.class);
         Location actorOldLocation = new Location(world, 0, 0, 0);
@@ -135,12 +140,13 @@ class SmokeScreenEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorOldLocation);
+        verify(soundEmitter).playSoundSequence(eq(ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorNewLocation));
         verify(world).spawnParticle(PARTICLE_TYPE, actorNewLocation, PARTICLE_COUNT, PARTICLE_OFFSET_X, PARTICLE_OFFSET_Y, PARTICLE_OFFSET_Z, PARTICLE_EXTRA);
     }
 
     @Test
-    void performDisplaysSphereParticlesWhenSourceIsNotMoving() {
+    @DisplayName("perform displays sphere particles when actor is not moving")
+    void perform_actorNotMoving() {
         World world = mock(World.class);
         Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
@@ -160,12 +166,13 @@ class SmokeScreenEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
+        verify(soundEmitter).playSoundSequence(eq(ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorLocation));
         verify(world, times(3)).spawnParticle(eq(PARTICLE_TYPE), any(Location.class), eq(0), anyDouble(), anyDouble(), anyDouble(), eq(PARTICLE_EXTRA), eq(PARTICLE_BLOCK_DATA), eq(true));
     }
 
     @Test
-    void performDoesNotDisplaySphereParticleIfTheParticleLocationCausesCollision() {
+    @DisplayName("perform does not display sphere particles on locations that cause a collision")
+    void perform_locationThatCausesCollision() {
         World world = mock(World.class);
         Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
@@ -184,12 +191,13 @@ class SmokeScreenEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
+        verify(soundEmitter).playSoundSequence(eq(ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorLocation));
         verifyNoInteractions(world);
     }
 
     @Test
-    void performDoesNotDisplaySphereParticleIfTheParticleLocationHasNoLineOfSightToSource() {
+    @DisplayName("perform does not display sphere particles when the particle location has no line of sight to the actor")
+    void perform_locationHasNoLineOfSight() {
         World world = mock(World.class);
         Location actorLocation = new Location(world, 0, 0, 0);
         Schedule cancelSchedule = mock(Schedule.class);
@@ -209,12 +217,13 @@ class SmokeScreenEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
+        verify(soundEmitter).playSoundSequence(eq(ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorLocation));
         verifyNoInteractions(world);
     }
 
     @Test
-    void performRemovesSourceAndCancelsRepeatingScheduleOnceEffectIsOver() {
+    @DisplayName("performs removes source and cancels repeating schedule when effect is over")
+    void perform_successful() {
         Location actorLocation = new Location(null, 0, 0, 0);
         ItemEffectContext context = this.createItemEffectContext();
 
@@ -231,13 +240,14 @@ class SmokeScreenEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(ACTIVATION_SOUNDS, actorLocation);
+        verify(soundEmitter).playSoundSequence(eq(ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorLocation));
         verify(repeatingSchedule).stop();
         verify((Removable) actor).remove();
     }
 
     @Test
-    void rollbackCancelsRepeatingSchedule() {
+    @DisplayName("rollback cancels repeating schedule")
+    void rollback() {
         ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
 

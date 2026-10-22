@@ -177,7 +177,6 @@ public class ItemEffectFactory {
             case SMOKE_SCREEN -> {
                 SmokeScreenEffectSpec spec = (SmokeScreenEffectSpec) itemEffectSpec;
 
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 double density = this.validateSpecVar(spec.density, "density", itemEffectType);
@@ -185,11 +184,16 @@ public class ItemEffectFactory {
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
                 double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
                 long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
 
+                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
 
-                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
+                SoundSequence activationSoundSequence = Optional.ofNullable(spec.activationSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Activation sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
+
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSoundSequence, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
 
                 SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
                 smokeScreenEffect.setProperties(properties);

@@ -24,6 +24,9 @@ assault-rifle-shoot-suppressed-1:
 equipment-activation-1:
   - "block.glass.break 1 1 0"
 
+equipment-activation-2:
+  - "block.fire.extinguish 1 0 0"
+
 equipment-activation-3:
   - "block.piston.extend 4 2 0"
   - "entity.blaze.hurt 4 2 0"
@@ -31,9 +34,6 @@ equipment-activation-3:
 
 equipment-activation-4:
   - "block.note_block.bit 1 2 0"
-
-equipment-activation-5:
-  - "block.fire.extinguish 1 0 0"
 
 equipment-manual-activation-1:
   - "ui.button.click 1 1.5 0"

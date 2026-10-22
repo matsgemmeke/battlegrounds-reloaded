@@ -41,7 +41,7 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemEffectFactoryTest {
 
-    private static final String SOUND_SEQUNCE_ID = "equipment-activation-1";
+    private static final String SOUND_SEQUENCE_ID = "equipment-activation-1";
     private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Spy
@@ -81,7 +81,7 @@ class ItemEffectFactoryTest {
     void create_invalidCombustionSoundSequence() {
         CombustionEffectSpec spec = new CombustionEffectSpec();
         spec.type = "COMBUSTION";
-        spec.activationSoundSequence = SOUND_SEQUNCE_ID;
+        spec.activationSoundSequence = SOUND_SEQUENCE_ID;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
         spec.growth = 0.5;
@@ -91,7 +91,7 @@ class ItemEffectFactoryTest {
         spec.damageBlocks = true;
         spec.spreadFire = false;
 
-        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.empty());
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> itemEffectFactory.create(spec))
                 .isInstanceOf(ItemEffectCreationException.class)
@@ -106,7 +106,7 @@ class ItemEffectFactoryTest {
 
         CombustionEffectSpec spec = new CombustionEffectSpec();
         spec.type = "COMBUSTION";
-        spec.activationSoundSequence = SOUND_SEQUNCE_ID;
+        spec.activationSoundSequence = SOUND_SEQUENCE_ID;
         spec.range = rangeProfileSpec;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
@@ -117,7 +117,7 @@ class ItemEffectFactoryTest {
         spec.damageBlocks = true;
         spec.spreadFire = false;
 
-        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(combustionEffectProvider.get()).thenReturn(combustionEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -274,12 +274,13 @@ class ItemEffectFactoryTest {
     }
 
     @Test
-    void createInstanceForSmokeScreenEffectType() {
-        SmokeScreenEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
+    @DisplayName("create throws ItemEffectCreationException when sound sequence id for sound screen effect is invalid")
+    void create_invalidSmokeScreenSoundSequence() {
         ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
 
         SmokeScreenEffectSpec spec = new SmokeScreenEffectSpec();
         spec.type = "SMOKE_SCREEN";
+        spec.activationSoundSequence = SOUND_SEQUENCE_ID;
         spec.minSize = 2.5;
         spec.maxSize = 5.0;
         spec.density = 5.0;
@@ -289,6 +290,32 @@ class ItemEffectFactoryTest {
         spec.maxDuration = 200L;
         spec.particleEffect = particleEffectSpec;
 
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemEffectFactory.create(spec))
+                .isInstanceOf(ItemEffectCreationException.class)
+                .hasMessage("Activation sound sequence 'equipment-activation-1' does not exist");
+    }
+
+    @Test
+    @DisplayName("create returns instance of SmokeScreenEffect")
+    void create_smokeScreenEffect() {
+        SmokeScreenEffect smokeScreenEffect = mock(SmokeScreenEffect.class);
+        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec();
+
+        SmokeScreenEffectSpec spec = new SmokeScreenEffectSpec();
+        spec.type = "SMOKE_SCREEN";
+        spec.activationSoundSequence = SOUND_SEQUENCE_ID;
+        spec.minSize = 2.5;
+        spec.maxSize = 5.0;
+        spec.density = 5.0;
+        spec.growth = 0.5;
+        spec.growthInterval = 5L;
+        spec.minDuration = 100L;
+        spec.maxDuration = 200L;
+        spec.particleEffect = particleEffectSpec;
+
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(smokeScreenEffectProvider.get()).thenReturn(smokeScreenEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -296,20 +323,24 @@ class ItemEffectFactoryTest {
         ArgumentCaptor<SmokeScreenProperties> propertiesCaptor = ArgumentCaptor.forClass(SmokeScreenProperties.class);
         verify(smokeScreenEffect).setProperties(propertiesCaptor.capture());
 
-        SmokeScreenProperties properties = propertiesCaptor.getValue();
-        assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
-        assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
-        assertThat(properties.density()).isEqualTo(spec.density);
-        assertThat(properties.minSize()).isEqualTo(spec.minSize);
-        assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
-        assertThat(properties.growth()).isEqualTo(spec.growth);
-        assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
-        assertThat(properties.particleEffect().particle()).isEqualTo(Particle.CAMPFIRE_COSY_SMOKE);
-        assertThat(properties.particleEffect().count()).isEqualTo(particleEffectSpec.count);
-        assertThat(properties.particleEffect().offsetX()).isEqualTo(particleEffectSpec.offsetX);
-        assertThat(properties.particleEffect().offsetY()).isEqualTo(particleEffectSpec.offsetY);
-        assertThat(properties.particleEffect().offsetZ()).isEqualTo(particleEffectSpec.offsetZ);
-        assertThat(properties.particleEffect().extra()).isEqualTo(particleEffectSpec.extra);
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.particleEffect()).satisfies(particleEffect -> {
+                assertThat(particleEffect.particle()).isEqualTo(Particle.CAMPFIRE_COSY_SMOKE);
+                assertThat(particleEffect.count()).isEqualTo(particleEffectSpec.count);
+                assertThat(particleEffect.offsetX()).isEqualTo(particleEffectSpec.offsetX);
+                assertThat(particleEffect.offsetY()).isEqualTo(particleEffectSpec.offsetY);
+                assertThat(particleEffect.offsetZ()).isEqualTo(particleEffectSpec.offsetZ);
+                assertThat(particleEffect.extra()).isEqualTo(particleEffectSpec.extra);
+            });
+            assertThat(properties.activationSoundSequence()).isEqualTo(SOUND_SEQUENCE);
+            assertThat(properties.minDuration()).isEqualTo(spec.minDuration);
+            assertThat(properties.maxDuration()).isEqualTo(spec.maxDuration);
+            assertThat(properties.density()).isEqualTo(spec.density);
+            assertThat(properties.minSize()).isEqualTo(spec.minSize);
+            assertThat(properties.maxSize()).isEqualTo(spec.maxSize);
+            assertThat(properties.growth()).isEqualTo(spec.growth);
+            assertThat(properties.growthInterval()).isEqualTo(spec.growthInterval);
+        });
 
         assertThat(itemEffect).isEqualTo(smokeScreenEffect);
     }
@@ -319,9 +350,9 @@ class ItemEffectFactoryTest {
     void make_soundNotificationEffectInvalidSpec() {
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.type = "SOUND_NOTIFICATION";
-        spec.soundSequence = SOUND_SEQUNCE_ID;
+        spec.soundSequence = SOUND_SEQUENCE_ID;
 
-        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.empty());
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> itemEffectFactory.create(spec))
                 .isInstanceOf(ItemEffectCreationException.class)
@@ -335,9 +366,9 @@ class ItemEffectFactoryTest {
 
         SoundNotificationEffectSpec spec = new SoundNotificationEffectSpec();
         spec.type = "SOUND_NOTIFICATION";
-        spec.soundSequence = SOUND_SEQUNCE_ID;
+        spec.soundSequence = SOUND_SEQUENCE_ID;
 
-        when(soundService.getSoundSequence(SOUND_SEQUNCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(soundNotificationEffectProvider.get()).thenReturn(soundNotificationEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);

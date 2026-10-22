@@ -37,7 +37,7 @@ deploy:
     cooldown: 30
 effect:
   type: SMOKE_SCREEN
-  activation-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
+  activation-sound-sequence: equipment-activation-2
   min-size: 0.2
   max-size: 3.0
   growth: 0.025
