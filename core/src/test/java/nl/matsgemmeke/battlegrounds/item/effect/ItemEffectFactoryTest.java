@@ -227,11 +227,11 @@ class ItemEffectFactoryTest {
     }
 
     @Test
-    void makeCreatesInstanceOfGunFireSimulationEffect() {
-        GunFireSimulationEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
-
+    @DisplayName("create throws ItemEffectCreationException when sound sequence id for gun fire simulation effect is invalid")
+    void create_invalidGunFireSimulationSoundSequence() {
         GunFireSimulationEffectSpec spec = new GunFireSimulationEffectSpec();
         spec.type = "GUN_FIRE_SIMULATION";
+        spec.defaultSoundSequence = SOUND_SEQUENCE_ID;
         spec.minDuration = 100L;
         spec.maxDuration = 200L;
         spec.burstInterval = 2L;
@@ -240,6 +240,30 @@ class ItemEffectFactoryTest {
         spec.minDelayDuration = 10L;
         spec.maxDelayDuration = 20L;
 
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> itemEffectFactory.create(spec))
+                .isInstanceOf(ItemEffectCreationException.class)
+                .hasMessage("Default sound sequence 'equipment-activation-1' does not exist");
+    }
+
+    @Test
+    @DisplayName("create return instance of GunFireSimulationEffect")
+    void create_gunFireSimulationEffect() {
+        GunFireSimulationEffect gunFireSimulationEffect = mock(GunFireSimulationEffect.class);
+
+        GunFireSimulationEffectSpec spec = new GunFireSimulationEffectSpec();
+        spec.type = "GUN_FIRE_SIMULATION";
+        spec.defaultSoundSequence = SOUND_SEQUENCE_ID;
+        spec.minDuration = 100L;
+        spec.maxDuration = 200L;
+        spec.burstInterval = 2L;
+        spec.minBurstDuration = 100L;
+        spec.maxBurstDuration = 200L;
+        spec.minDelayDuration = 10L;
+        spec.maxDelayDuration = 20L;
+
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
         when(gunFireSimulationEffectProvider.get()).thenReturn(gunFireSimulationEffect);
 
         ItemEffect itemEffect = itemEffectFactory.create(spec);
@@ -247,14 +271,16 @@ class ItemEffectFactoryTest {
         ArgumentCaptor<GunFireSimulationProperties> propertiesCaptor = ArgumentCaptor.forClass(GunFireSimulationProperties.class);
         verify(gunFireSimulationEffect).setProperties(propertiesCaptor.capture());
 
-        GunFireSimulationProperties properties = propertiesCaptor.getValue();
-        assertThat(properties.burstInterval()).isEqualTo(spec.burstInterval);
-        assertThat(properties.maxBurstDuration()).isEqualTo(spec.maxBurstDuration);
-        assertThat(properties.minBurstDuration()).isEqualTo(spec.minBurstDuration);
-        assertThat(properties.maxDelayDuration()).isEqualTo(spec.maxDelayDuration);
-        assertThat(properties.minDelayDuration()).isEqualTo(spec.minDelayDuration);
-        assertThat(properties.maxTotalDuration()).isEqualTo(spec.maxDuration);
-        assertThat(properties.minTotalDuration()).isEqualTo(spec.minDuration);
+        assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.defaultSoundSequence()).isEqualTo(SOUND_SEQUENCE);
+            assertThat(properties.burstInterval()).isEqualTo(spec.burstInterval);
+            assertThat(properties.maxBurstDuration()).isEqualTo(spec.maxBurstDuration);
+            assertThat(properties.minBurstDuration()).isEqualTo(spec.minBurstDuration);
+            assertThat(properties.maxDelayDuration()).isEqualTo(spec.maxDelayDuration);
+            assertThat(properties.minDelayDuration()).isEqualTo(spec.minDelayDuration);
+            assertThat(properties.maxTotalDuration()).isEqualTo(spec.maxDuration);
+            assertThat(properties.minTotalDuration()).isEqualTo(spec.minDuration);
+        });
 
         assertThat(itemEffect).isEqualTo(gunFireSimulationEffect);
     }

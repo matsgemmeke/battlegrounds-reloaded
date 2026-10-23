@@ -38,7 +38,7 @@ deploy:
     cooldown: 30
 effect:
   type: GUN_FIRE_SIMULATION
-  activation-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
+  default-sound-sequence: submachine-gun-shoot-1
   min-duration: 200
   max-duration: 300
   burst-interval: 2

@@ -149,7 +149,7 @@ public class GunFactory {
                 .orElse(null);
 
         int rateOfFire = gun.getRateOfFire();
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(List.of(), soundSequence, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(soundSequence, rateOfFire);
 
         gunInfoProvider.registerGunFireSimulationInfo(gunId, gunFireSimulationInfo);
     }

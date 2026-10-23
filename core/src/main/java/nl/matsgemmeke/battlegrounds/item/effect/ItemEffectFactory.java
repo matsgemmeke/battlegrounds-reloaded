@@ -6,8 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -158,7 +156,6 @@ public class ItemEffectFactory {
             case GUN_FIRE_SIMULATION -> {
                 GunFireSimulationEffectSpec spec = (GunFireSimulationEffectSpec) itemEffectSpec;
 
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 long burstInterval = this.validateSpecVar(spec.burstInterval, "burstInterval", itemEffectType);
@@ -167,7 +164,12 @@ public class ItemEffectFactory {
                 long minDelayDuration = this.validateSpecVar(spec.minDelayDuration, "minDelayDuration", itemEffectType);
                 long maxDelayDuration = this.validateSpecVar(spec.maxDelayDuration, "maxDelayDuration", itemEffectType);
 
-                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration, minDuration, maxDuration);
+                SoundSequence defaultSoundSequence = Optional.ofNullable(spec.defaultSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Default sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
+
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(defaultSoundSequence, burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration, minDuration, maxDuration);
 
                 GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
                 gunFireSimulationEffect.setProperties(properties);

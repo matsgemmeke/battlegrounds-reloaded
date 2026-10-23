@@ -75,7 +75,7 @@ class DefaultGunInfoProviderTest {
     @DisplayName("getGunFireSimulationInfo returns optional with GunFireSimulationInfo corresponding to gun id")
     void getGunFireSimulationInfo_gunRegistered() {
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(null, null, RATE_OF_FIRE);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(null, RATE_OF_FIRE);
 
         Gun gun = mock(Gun.class);
         when(gun.getId()).thenReturn(GUN_ID);

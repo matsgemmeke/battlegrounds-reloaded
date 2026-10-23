@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-
-import java.util.List;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import org.jspecify.annotations.Nullable;
 
 public record GunFireSimulationProperties(
-        List<GameSound> genericSounds,
+        @Nullable
+        SoundSequence defaultSoundSequence,
         long burstInterval,
         long minBurstDuration,
         long maxBurstDuration,
