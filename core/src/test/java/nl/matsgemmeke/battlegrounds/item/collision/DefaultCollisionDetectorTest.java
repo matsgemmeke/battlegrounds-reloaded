@@ -4,8 +4,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,21 +17,19 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class DefaultCollisionDetectorTest {
+@ExtendWith(MockitoExtension.class)
+class CollisionDetectorTest {
 
+    @Mock
     private BlockCollisionChecker blockCollisionChecker;
-
-    @BeforeEach
-    public void setUp() {
-        blockCollisionChecker = mock(BlockCollisionChecker.class);
-    }
+    @InjectMocks
+    private CollisionDetector collisionDetector;
 
     @Test
     public void hasLineOfSightReturnsFalseIfGivenEitherOfGivenTwoLocationsHasNoWorld() {
         Location from = new Location(null, 0, 0, 0);
         Location to = new Location(null, 2, 0, 0);
 
-        DefaultCollisionDetector collisionDetector = new DefaultCollisionDetector(blockCollisionChecker);
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
         assertFalse(hasLineOfSight);
@@ -39,7 +40,6 @@ public class DefaultCollisionDetectorTest {
         Location from = new Location(mock(World.class), 0, 0, 0);
         Location to = new Location(mock(World.class), 2, 0, 0);
 
-        DefaultCollisionDetector collisionDetector = new DefaultCollisionDetector(blockCollisionChecker);
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
         assertFalse(hasLineOfSight);
@@ -56,7 +56,6 @@ public class DefaultCollisionDetectorTest {
         this.createBlock(world, 1, 0, 0, Material.STONE);
         this.createBlock(world, 2, 0, 0, Material.AIR);
 
-        DefaultCollisionDetector collisionDetector = new DefaultCollisionDetector(blockCollisionChecker);
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
         assertFalse(hasLineOfSight);
@@ -73,7 +72,6 @@ public class DefaultCollisionDetectorTest {
         this.createBlock(world, 1, 0, 0, Material.AIR);
         this.createBlock(world, 2, 0, 0, Material.AIR);
 
-        DefaultCollisionDetector collisionDetector = new DefaultCollisionDetector(blockCollisionChecker);
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
         assertTrue(hasLineOfSight);
@@ -86,7 +84,6 @@ public class DefaultCollisionDetectorTest {
 
         when(blockCollisionChecker.isSolid(any(), eq(location))).thenReturn(true);
 
-        DefaultCollisionDetector collisionDetector = new DefaultCollisionDetector(blockCollisionChecker);
         boolean collision = collisionDetector.producesBlockCollisionAt(location);
 
         assertTrue(collision);
