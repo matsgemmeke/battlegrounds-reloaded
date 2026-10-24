@@ -7,7 +7,7 @@ import net.minecraft.world.entity.PositionMoveRotation;
 import net.minecraft.world.entity.Relative;
 import net.minecraft.world.entity.player.Abilities;
 import net.minecraft.world.phys.Vec3;
-import nl.matsgemmeke.battlegrounds.VersionAdapter;
+import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapter;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 

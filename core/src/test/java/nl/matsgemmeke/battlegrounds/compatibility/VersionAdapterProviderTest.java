@@ -1,7 +1,6 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.compatibility;
 
-import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapterInstantiator;
-import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapterProvider;
+import nl.matsgemmeke.battlegrounds.StartupFailedException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

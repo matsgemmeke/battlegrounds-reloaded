@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds;
+package nl.matsgemmeke.battlegrounds.compatibility;
 
 import org.bukkit.entity.Player;
 

@@ -5,7 +5,6 @@ import com.google.inject.Provider;
 import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.BattlegroundsPlugin;
 import nl.matsgemmeke.battlegrounds.StartupFailedException;
-import nl.matsgemmeke.battlegrounds.VersionAdapter;
 
 import java.util.function.Supplier;
 

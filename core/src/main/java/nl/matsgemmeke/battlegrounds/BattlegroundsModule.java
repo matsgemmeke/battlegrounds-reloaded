@@ -19,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.element.ElementDat
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.BattlegroundsCommandExtension;
 import nl.matsgemmeke.battlegrounds.command.CommandExtension;
-import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapterProvider;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.hitbox.HitboxConfiguration;
@@ -209,7 +208,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(ScheduledExecutorService.class).toProvider(Executors::newSingleThreadScheduledExecutor);
-        binder.bind(VersionAdapter.class).toProvider(VersionAdapterProvider.class).in(Singleton.class);
 
         // Game scope bindings
         GameScope gameScope = new GameScope();
