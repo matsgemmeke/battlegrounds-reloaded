@@ -9,7 +9,6 @@ import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Slab.Type;
 import org.bukkit.block.data.type.Stairs;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +43,7 @@ public class BlockCollisionChecker {
         }
     }
 
-    public double getHeight(@NotNull Block block) {
+    public double getHeight(Block block) {
         Material type = block.getType();
 
         Tag tag = Tag.SLABS;
@@ -61,7 +60,7 @@ public class BlockCollisionChecker {
         return type.isSolid() ? 1.0 : 0.0;
     }
 
-    public boolean isSolid(@NotNull Block block, @NotNull Location location) {
+    public boolean isSolid(Block block, Location location) {
         Material type = block.getType();
 
         if (Tag.SNOW.isTagged(type)) {

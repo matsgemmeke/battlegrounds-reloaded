@@ -1,23 +1,24 @@
 package nl.matsgemmeke.battlegrounds.item.collision;
 
+import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith(MockitoExtension.class)
+@ExtendWith({ MockitoExtension.class, BukkitSoundRegistryExtension.class })
 class CollisionDetectorTest {
 
     @Mock
@@ -32,7 +33,7 @@ class CollisionDetectorTest {
 
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
-        assertFalse(hasLineOfSight);
+        assertThat(hasLineOfSight).isFalse();
     }
 
     @Test
@@ -42,13 +43,13 @@ class CollisionDetectorTest {
 
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
-        assertFalse(hasLineOfSight);
+        assertThat(hasLineOfSight).isFalse();
     }
 
     @Test
-    public void hasLineOfSightReturnsFalseIfNonPassableBlocksExistBetweenGivenTwoLocations() {
+    @DisplayName("hasLineOfSight returns false when non passable blocks exist between given two locations")
+    void hasLineOfSight_nonPassableBlockInBetween() {
         World world = mock(World.class);
-
         Location from = new Location(world, 0, 0, 0);
         Location to = new Location(world, 2, 0, 0);
 
@@ -58,7 +59,7 @@ class CollisionDetectorTest {
 
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
-        assertFalse(hasLineOfSight);
+        assertThat(hasLineOfSight).isFalse();
     }
 
     @Test
@@ -74,7 +75,7 @@ class CollisionDetectorTest {
 
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
 
-        assertTrue(hasLineOfSight);
+        assertThat(hasLineOfSight).isTrue();
     }
 
     @Test
@@ -86,7 +87,7 @@ class CollisionDetectorTest {
 
         boolean collision = collisionDetector.producesBlockCollisionAt(location);
 
-        assertTrue(collision);
+        assertThat(collision).isTrue();
     }
 
     private void createBlock(World world, int x, int y, int z, Material material) {

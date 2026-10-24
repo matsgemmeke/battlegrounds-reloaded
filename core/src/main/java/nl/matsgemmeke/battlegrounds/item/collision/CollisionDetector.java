@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.item.collision;
 import com.google.inject.Inject;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.util.Vector;
 
 public class CollisionDetector {
@@ -26,12 +27,10 @@ public class CollisionDetector {
     public boolean hasLineOfSight(Location start, Location end) {
         World world = start.getWorld();
 
-        // Ensure both locations are in the same world
         if (world == null || world != end.getWorld()) {
             return false;
         }
 
-        // Calculate direction vector and distance
         Vector direction = end.toVector().subtract(start.toVector());
         double distance = direction.length();
 
@@ -44,16 +43,17 @@ public class CollisionDetector {
         Location current = start.clone();
 
         for (double traveled = 0; traveled < distance; traveled += STEP_SIZE) {
-            // Check if the block at this location is solid
-            if (world.getBlockAt(current.getBlockX(), current.getBlockY(), current.getBlockZ()).getType().isSolid()) {
-                return false; // Line of sight is blocked
+            Block block = world.getBlockAt(current.getBlockX(), current.getBlockY(), current.getBlockZ());
+
+            if (block.getType().isSolid()) {
+                // Line of sight is blocked
+                return false;
             }
 
             // Move to the next step along the line
             current.add(step);
         }
 
-        // If no solid blocks were found, line of sight is clear
         return true;
     }
 
