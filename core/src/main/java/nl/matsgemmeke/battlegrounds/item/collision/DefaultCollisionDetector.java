@@ -1,4 +1,4 @@
-package nl.matsgemmeke.battlegrounds.game.component.collision;
+package nl.matsgemmeke.battlegrounds.item.collision;
 
 import com.google.inject.Inject;
 import org.bukkit.Location;
