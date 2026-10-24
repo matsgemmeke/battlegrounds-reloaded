@@ -36,7 +36,7 @@ item:
 reloading:
   type: MANUAL_INSERTION
   duration: 16
-  reload-sounds: BLOCK_STONE_BUTTON_CLICK_OFF-1-2-12
+  sound-sequence: handgun-reload-2
 shooting:
   fire-mode:
     type: SEMI_AUTOMATIC

@@ -39,7 +39,7 @@ item:
 reloading:
   type: MAGAZINE
   duration: 20
-  reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-0, BLOCK_WOODEN_DOOR_CLOSE-1-2-5
+  sound-sequence: melee-weapon-reload-1
 throwing:
   projectile:
     type: ITEM
