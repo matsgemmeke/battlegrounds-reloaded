@@ -20,7 +20,6 @@ import nl.matsgemmeke.battlegrounds.storage.state.PlayerStateStorageException;
 import nl.matsgemmeke.battlegrounds.storage.state.equipment.EquipmentState;
 import nl.matsgemmeke.battlegrounds.storage.state.gun.GunState;
 import nl.matsgemmeke.battlegrounds.storage.state.melee.MeleeWeaponState;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -84,9 +83,9 @@ class FreeplayStatePersistenceHandlerTest {
         PlayerState gamePlayerState = new PlayerState(PLAYER_UUID, List.of(gunState), List.of(equipmentState), List.of(meleeWeaponState));
         ResourceContainer gunResourceContainer = new ResourceContainer(0, 0, 0, 0);
         ResourceContainer meleeWeaponResourceContainer = new ResourceContainer(0, 0, 0, 0);
-        ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
-        ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
-        ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
+        ItemStack gunItemStack = mock(ItemStack.class);
+        ItemStack equipmentItemStack = mock(ItemStack.class);
+        ItemStack meleeWeaponItemStack = mock(ItemStack.class);
 
         GamePlayer gamePlayer = mock(GamePlayer.class, RETURNS_DEEP_STUBS);
         when(gamePlayer.getUniqueId()).thenReturn(PLAYER_UUID);
@@ -181,9 +180,9 @@ class FreeplayStatePersistenceHandlerTest {
     void saveState_itemsWithItemStack() {
         ResourceContainer gunResourceContainer = new ResourceContainer(GUN_MAGAZINE_AMMO, GUN_MAGAZINE_AMMO, GUN_RESERVE_AMMO, Integer.MAX_VALUE);
         ResourceContainer meleeWeaponResourceContainer = new ResourceContainer(MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_LOADED_AMOUNT, MELEE_WEAPON_RESERVE_AMOUNT, Integer.MAX_VALUE);
-        ItemStack gunItemStack = new ItemStack(Material.IRON_HOE);
-        ItemStack equipmentItemStack = new ItemStack(Material.SHEARS);
-        ItemStack meleeWeaponItemStack = new ItemStack(Material.IRON_SWORD);
+        ItemStack gunItemStack = mock(ItemStack.class);
+        ItemStack equipmentItemStack = mock(ItemStack.class);
+        ItemStack meleeWeaponItemStack = mock(ItemStack.class);
 
         Gun gun = mock(Gun.class);
         when(gun.getName()).thenReturn(GUN_NAME);

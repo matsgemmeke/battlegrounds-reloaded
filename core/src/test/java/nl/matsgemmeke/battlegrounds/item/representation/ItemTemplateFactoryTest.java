@@ -4,14 +4,12 @@ import nl.matsgemmeke.battlegrounds.configuration.item.DataSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.ItemSpec;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.Plugin;
 import org.junit.jupiter.api.AfterEach;
@@ -19,9 +17,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
@@ -37,32 +35,28 @@ class ItemTemplateFactoryTest {
     private static final String DISPLAY_NAME = "My test item";
     private static final int DAMAGE = 3;
 
-    private MockedStatic<Bukkit> bukkit;
+    private Plugin plugin;
 
     @Mock
     private ItemFactory itemFactory;
     @Mock
     private NamespacedKeyCreator namespacedKeyCreator;
-    @Mock
-    private Plugin plugin;
     @InjectMocks
     private ItemTemplateFactory itemTemplateFactory;
 
     @BeforeEach
     void setUp() {
-        when(plugin.getName()).thenReturn("Battlegrounds");
+        MockBukkit.mock();
+        plugin = MockBukkit.createMockPlugin("Battlegrounds");
 
         NamespacedKey key = new NamespacedKey(plugin, "template-id");
 
         when(namespacedKeyCreator.create("template-id")).thenReturn(key);
-
-        bukkit = mockStatic(Bukkit.class);
-        bukkit.when(Bukkit::getItemFactory).thenReturn(itemFactory);
     }
 
     @AfterEach
     void tearDown() {
-        bukkit.close();
+        MockBukkit.unmock();
     }
 
     @Test
@@ -74,7 +68,7 @@ class ItemTemplateFactoryTest {
         integerDataSpec.value = "invalid";
 
         ItemSpec spec = new ItemSpec();
-        spec.material = "STICK";
+        spec.material = "IRON_HOE";
         spec.data = Map.of("integer-data", integerDataSpec);
         spec.unbreakable = true;
 
@@ -92,7 +86,7 @@ class ItemTemplateFactoryTest {
         invalidDataSpec.value = "invalid";
 
         ItemSpec spec = new ItemSpec();
-        spec.material = "STICK";
+        spec.material = "IRON_HOE";
         spec.data = Map.of("invalid-data", invalidDataSpec);
         spec.unbreakable = true;
 
@@ -104,12 +98,8 @@ class ItemTemplateFactoryTest {
     @Test
     @DisplayName("create returns ItemTemplate instance with ItemSpec properties")
     void create_returnsItemTemplate() {
-        PersistentDataContainer persistentDataContainer = mock(PersistentDataContainer.class);
         NamespacedKey stringDataKey = new NamespacedKey(plugin, "string-data");
         NamespacedKey integerDataKey = new NamespacedKey(plugin, "integer-data");
-
-        Damageable itemMeta = mock(Damageable.class);
-        when(itemMeta.getPersistentDataContainer()).thenReturn(persistentDataContainer);
 
         DataSpec stringDataSpec = new DataSpec();
         stringDataSpec.key = "string-data";
@@ -122,28 +112,29 @@ class ItemTemplateFactoryTest {
         integerDataSpec.value = "5";
 
         ItemSpec spec = new ItemSpec();
-        spec.material = "STICK";
+        spec.material = "IRON_HOE";
         spec.displayName = DISPLAY_NAME;
         spec.damage = DAMAGE;
         spec.itemFlags = List.of("HIDE_ATTRIBUTES");
         spec.data = Map.of("string-data", stringDataSpec, "integer-data", integerDataSpec);
         spec.unbreakable = true;
 
-        when(itemFactory.getItemMeta(Material.STICK)).thenReturn(itemMeta);
         when(namespacedKeyCreator.create("string-data")).thenReturn(stringDataKey);
         when(namespacedKeyCreator.create("integer-data")).thenReturn(integerDataKey);
 
         ItemTemplate itemTemplate = itemTemplateFactory.create(spec);
         ItemStack itemStack = itemTemplate.createItemStack();
 
-        assertThat(itemStack.getType()).isEqualTo(Material.STICK);
-        assertThat(itemStack.getItemMeta()).isEqualTo(itemMeta);
-
-        verify(itemMeta).setDamage(DAMAGE);
-        verify(itemMeta).setDisplayName(DISPLAY_NAME);
-        verify(itemMeta).addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        verify(itemMeta).setUnbreakable(true);
-        verify(persistentDataContainer).set(stringDataKey, PersistentDataType.STRING, "test");
-        verify(persistentDataContainer).set(integerDataKey, PersistentDataType.INTEGER, 5);
+        assertThat(itemStack.getType()).isEqualTo(Material.IRON_HOE);
+        assertThat(itemStack.getItemMeta()).isInstanceOfSatisfying(Damageable.class, itemMeta -> {
+            assertThat(itemMeta.getDamage()).isEqualTo(DAMAGE);
+            assertThat(itemMeta.getDisplayName()).isEqualTo(DISPLAY_NAME);
+            assertThat(itemMeta.getItemFlags()).containsExactly(ItemFlag.HIDE_ATTRIBUTES);
+            assertThat(itemMeta.isUnbreakable()).isTrue();
+            assertThat(itemMeta.getPersistentDataContainer()).satisfies(persistentDataContainer -> {
+                assertThat(persistentDataContainer.get(stringDataKey, PersistentDataType.STRING)).isEqualTo("test");
+                assertThat(persistentDataContainer.get(integerDataKey, PersistentDataType.INTEGER)).isEqualTo(5);
+            });
+        });
     }
 }

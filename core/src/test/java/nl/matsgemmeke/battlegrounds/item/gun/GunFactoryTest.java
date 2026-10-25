@@ -19,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandler;
 import nl.matsgemmeke.battlegrounds.item.shoot.ShootHandlerFactory;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.SoundService;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -76,7 +75,7 @@ class GunFactoryTest {
     @DisplayName("create returns simple Gun instance")
     void create_simpleGun() {
         GunSpec spec = this.createGunSpec();
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack(any())).thenReturn(itemStack);

@@ -13,7 +13,6 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
@@ -67,7 +66,7 @@ class ThrowDeploymentActionTest {
     @Test
     @DisplayName("perform returns optional with new instance of throw deployment object")
     void perform_successful() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        ItemStack itemStack = mock(ItemStack.class);
         ProjectileEffect projectileEffect = mock(ProjectileEffect.class);
         List<ProjectileEffect> projectileEffects = List.of(projectileEffect);
         Map<DamageType, Double> resistances = Map.of(DamageType.BULLET_DAMAGE, 0.0);

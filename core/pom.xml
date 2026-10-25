@@ -48,7 +48,7 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>[26.3.build,)</version>
+            <version>26.3.build.200-stable</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -117,6 +117,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
             <version>5.18.0</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockbukkit.mockbukkit</groupId>
+            <artifactId>mockbukkit-v26.3</artifactId>
+            <version>4.118.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
