@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.item.collision;
 
-import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -18,7 +17,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({ MockitoExtension.class, BukkitSoundRegistryExtension.class })
+@ExtendWith(MockitoExtension.class)
 class CollisionDetectorTest {
 
     @Mock

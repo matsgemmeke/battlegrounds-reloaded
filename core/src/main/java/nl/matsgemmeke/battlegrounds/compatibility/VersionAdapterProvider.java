@@ -21,25 +21,14 @@ public class VersionAdapterProvider implements Provider<VersionAdapter> {
 
     @Override
     public VersionAdapter get() {
-        String version = bukkitVersionSupplier.get();
-        int[] v = this.parse(version);
+        String versionString = bukkitVersionSupplier.get();
+        int version = Integer.parseInt(versionString.split("\\.")[0]);
 
-        if (v[0] >= 26) {
+        if (version >= 26) {
             return this.instantiateVersionAdapter("v26");
         }
 
-        throw new StartupFailedException("Unsupported Minecraft version: " + version);
-    }
-
-    private int[] parse(String version) {
-        String[] parts = version.split("\\.");
-        int[] out = new int[3];
-
-        for (int i = 0; i < Math.min(parts.length, 3); i++) {
-            out[i] = Integer.parseInt(parts[i].replaceAll("\\D.*", ""));
-        }
-
-        return out;
+        throw new StartupFailedException("Unsupported Minecraft version: " + versionString);
     }
 
     private VersionAdapter instantiateVersionAdapter(String version) {
