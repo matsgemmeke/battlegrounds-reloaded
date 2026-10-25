@@ -1,56 +1,54 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
 import org.bukkit.Location;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Timer;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
-public class CameraMovementRecoilTest {
+@ExtendWith(MockitoExtension.class)
+class CameraMovementRecoilTest {
 
+    @Mock
     private Timer timer;
-
-    @BeforeEach
-    public void setUp() {
-        this.timer = mock(Timer.class);
-    }
+    @InjectMocks
+    private CameraMovementRecoil recoil;
 
     @Test
-    public void setsCameraRotationOnceWhenThereIsNoKickbackDuration() {
+    @DisplayName("produceRecoil sets camera rotation once when there is no kickback duration")
+    void produceRecoil_withoutKickbackDuration() {
         RecoilReceiver receiver = mock(RecoilReceiver.class);
-        when(receiver.getRelativeAccuracy()).thenReturn(1.0f);
-
         Float[] horizontalRecoil = new Float[] { 1.0f };
         Float[] verticalRecoil = new Float[] { 1.0f };
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
-        CameraMovementRecoil recoil = new CameraMovementRecoil(timer);
         recoil.setHorizontalRecoilValues(horizontalRecoil);
         recoil.setVerticalRecoilValues(verticalRecoil);
         recoil.setRotationDuration(20);
-
         Location result = recoil.produceRecoil(receiver, direction);
 
         verify(receiver).modifyCameraRotation(1.0f, 1.0f);
 
-        assertEquals(direction, result);
+        assertThat(result).isEqualTo(direction);
     }
 
     @Test
-    public void setsCameraRotationOnceWhenThereIsNoRotationDuration() {
+    @DisplayName("produceRecoil sets camera rotation once when there is no rotation duration")
+    void produceRecoil_withoutRotationDuration() {
         RecoilReceiver receiver = mock(RecoilReceiver.class);
-        when(receiver.getRelativeAccuracy()).thenReturn(1.0f);
-
         Float[] horizontalRecoil = new Float[] { 1.0f };
         Float[] verticalRecoil = new Float[] { 1.0f };
 
         Location direction = new Location(null, 0, 0, 0, 90.0f, 90.0f);
 
-        CameraMovementRecoil recoil = new CameraMovementRecoil(timer);
         recoil.setHorizontalRecoilValues(horizontalRecoil);
         recoil.setVerticalRecoilValues(verticalRecoil);
         recoil.setKickbackDuration(200);
@@ -59,11 +57,12 @@ public class CameraMovementRecoilTest {
 
         verify(receiver).modifyCameraRotation(1.0f, 1.0f);
 
-        assertEquals(direction, result);
+        assertThat(result).isEqualTo(direction);
     }
 
     @Test
-    public void schedulesTaskForSmoothCameraRotation() {
+    @DisplayName("produceRecoil schedules task for camera rotation steps")
+    void produceRecoil_successful() {
         RecoilReceiver receiver = mock(RecoilReceiver.class);
         when(receiver.getRelativeAccuracy()).thenReturn(1.0f);
 
@@ -81,6 +80,6 @@ public class CameraMovementRecoilTest {
 
         verify(timer).scheduleAtFixedRate(any(), eq(0L), eq(20L));
 
-        assertEquals(direction, result);
+        assertThat(result).isEqualTo(direction);
     }
 }
