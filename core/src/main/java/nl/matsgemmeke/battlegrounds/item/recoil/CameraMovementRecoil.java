@@ -69,6 +69,7 @@ public class CameraMovementRecoil implements Recoil {
         this.verticalRecoilValues = verticalRecoilValues;
     }
 
+    @Override
     public Location produceRecoil(RecoilReceiver receiver, Location direction) {
         // Select random values from the given recoil value arrays
         float horizontalRecoil = horizontalRecoilValues[random.nextInt(horizontalRecoilValues.length)];
