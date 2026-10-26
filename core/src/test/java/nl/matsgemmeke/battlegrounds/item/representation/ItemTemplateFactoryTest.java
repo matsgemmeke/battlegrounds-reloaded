@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
@@ -37,8 +36,6 @@ class ItemTemplateFactoryTest {
 
     private Plugin plugin;
 
-    @Mock
-    private ItemFactory itemFactory;
     @Mock
     private NamespacedKeyCreator namespacedKeyCreator;
     @InjectMocks
