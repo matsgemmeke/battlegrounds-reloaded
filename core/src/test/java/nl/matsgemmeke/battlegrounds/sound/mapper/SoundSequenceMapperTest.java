@@ -1,6 +1,5 @@
 package nl.matsgemmeke.battlegrounds.sound.mapper;
 
-import nl.matsgemmeke.battlegrounds.extension.BukkitSoundRegistryExtension;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
@@ -20,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@ExtendWith({ MockitoExtension.class, BukkitSoundRegistryExtension.class })
+@ExtendWith(MockitoExtension.class)
 class SoundSequenceMapperTest {
 
     private static final String ID = "assault-rifle-reload-1";
