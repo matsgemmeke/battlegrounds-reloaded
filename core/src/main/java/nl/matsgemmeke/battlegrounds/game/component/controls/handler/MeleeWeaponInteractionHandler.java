@@ -14,23 +14,18 @@ import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
 import nl.matsgemmeke.battlegrounds.item.reload.ResourceContainer;
-import nl.matsgemmeke.battlegrounds.util.NamespacedKeyCreator;
-import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.function.BiConsumer;
 import java.util.logging.Logger;
 
 public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
 
-    private static final String WEAPON_NAME_KEY = "weapon-name";
-
     private final ItemControllerRegistry itemControllerRegistry;
     private final ItemCreator itemCreator;
     private final Logger logger;
     private final MeleeWeaponRegistry meleeWeaponRegistry;
-    private final NamespacedKeyCreator namespacedKeyCreator;
+    private final WeaponNameExtractor weaponNameExtractor;
 
     @Inject
     public MeleeWeaponInteractionHandler(
@@ -38,13 +33,13 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
             ItemCreator itemCreator,
             Logger logger,
             MeleeWeaponRegistry meleeWeaponRegistry,
-            NamespacedKeyCreator namespacedKeyCreator
+            WeaponNameExtractor weaponNameExtractor
     ) {
         this.itemControllerRegistry = itemControllerRegistry;
         this.itemCreator = itemCreator;
         this.logger = logger;
         this.meleeWeaponRegistry = meleeWeaponRegistry;
-        this.namespacedKeyCreator = namespacedKeyCreator;
+        this.weaponNameExtractor = weaponNameExtractor;
     }
 
     @Override
@@ -144,8 +139,12 @@ public class MeleeWeaponInteractionHandler implements ItemInteractionHandler {
     }
 
     private PickupDispatchResult handlePickupItemSingleProjectile(GamePlayer gamePlayer, ItemStack itemStack) {
-        NamespacedKey weaponNameKey = namespacedKeyCreator.create(WEAPON_NAME_KEY);
-        String weaponName = itemStack.getItemMeta().getPersistentDataContainer().get(weaponNameKey, PersistentDataType.STRING);
+        String weaponName = weaponNameExtractor.extractWeaponName(itemStack).orElse(null);
+
+        if (weaponName == null) {
+            return PickupDispatchResult.unhandled();
+        }
+
         MeleeWeapon meleeWeapon;
 
         try {
