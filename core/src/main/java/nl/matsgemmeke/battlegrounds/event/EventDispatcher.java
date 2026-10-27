@@ -4,7 +4,6 @@ import com.google.inject.Inject;
 import jakarta.inject.Named;
 import org.bukkit.event.Event;
 import org.bukkit.plugin.PluginManager;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -54,12 +53,12 @@ public class EventDispatcher {
                 for (EventHandlerMethod method : entry.getValue()) {
                     try {
                         method.invoke(event);
-                    } catch (IllegalAccessException e) {
-                        throw new EventHandlingException("Cannot invoke inaccessible handle method for event " + eventClass.getSimpleName());
-                    } catch (IllegalArgumentException e) {
-                        throw new EventHandlingException("Cannot invoke handle method for event " + eventClass.getSimpleName() + " with given arguments");
-                    } catch (InvocationTargetException e) {
-                        throw new EventHandlingException("Error occurred while invoking handle method for event " + eventClass.getSimpleName(), e);
+                    } catch (IllegalAccessException ex) {
+                        throw new EventHandlingException("Cannot invoke inaccessible handle method for event " + eventClass.getSimpleName(), ex);
+                    } catch (IllegalArgumentException ex) {
+                        throw new EventHandlingException("Cannot invoke handle method for event " + eventClass.getSimpleName() + " with given arguments", ex);
+                    } catch (InvocationTargetException ex) {
+                        throw new EventHandlingException("Error occurred while invoking handle method for event " + eventClass.getSimpleName(), ex);
                     }
                 }
             }
@@ -73,7 +72,7 @@ public class EventDispatcher {
      * @param eventHandler the event handler
      * @param <T> the event type
      */
-    public <T extends Event> void registerEventHandler(@NotNull Class<T> eventClass, @NotNull EventHandler<T> eventHandler) {
+    public <T extends Event> void registerEventHandler(Class<T> eventClass, EventHandler<T> eventHandler) {
         Method method;
 
         try {

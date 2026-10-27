@@ -14,8 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class CollisionDetectorTest {
@@ -26,8 +25,20 @@ class CollisionDetectorTest {
     private CollisionDetector collisionDetector;
 
     @Test
-    public void hasLineOfSightReturnsFalseIfGivenEitherOfGivenTwoLocationsHasNoWorld() {
+    @DisplayName("hasLineOfSight returns false when given from location has no world")
+    void hasLineOfSight_fromNoWorld() {
         Location from = new Location(null, 0, 0, 0);
+        Location to = new Location(mock(World.class), 2, 0, 0);
+
+        boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
+
+        assertThat(hasLineOfSight).isFalse();
+    }
+
+    @Test
+    @DisplayName("hasLineOfSight returns false when given to location has no world")
+    void hasLineOfSight_toNoWorld() {
+        Location from = new Location(mock(World.class), 0, 0, 0);
         Location to = new Location(null, 2, 0, 0);
 
         boolean hasLineOfSight = collisionDetector.hasLineOfSight(from, to);
@@ -36,7 +47,8 @@ class CollisionDetectorTest {
     }
 
     @Test
-    public void hasLineOfSightReturnsFalseIfGivenTwoLocationsAreNotInSameWorld() {
+    @DisplayName("hasLineOfSight returns false when given two locations are not in the same world")
+    void hasLineOfSight_differentWorlds() {
         Location from = new Location(mock(World.class), 0, 0, 0);
         Location to = new Location(mock(World.class), 2, 0, 0);
 
@@ -62,7 +74,8 @@ class CollisionDetectorTest {
     }
 
     @Test
-    public void hasLineOfSightReturnsTrueIfAllBlocksBetweenGivenTwoLocationsArePassable() {
+    @DisplayName("hasLineOfSight returns true when all blocks between given two locations are passable")
+    void hasLineOfSight_allPassibleBlocksInBetween() {
         World world = mock(World.class);
 
         Location from = new Location(world, 0, 0, 0);
@@ -78,7 +91,8 @@ class CollisionDetectorTest {
     }
 
     @Test
-    public void shouldReturnWhetherGivenLocationIsInOpenSegmentOfBlock() {
+    @DisplayName("producesBlockCollisionAt returns true when given location is in open segment of block")
+    void producesBlockCollisionAt_locationInOpenSegment() {
         World world = mock(World.class);
         Location location = new Location(world, 1, 1, 1);
 
@@ -91,7 +105,7 @@ class CollisionDetectorTest {
 
     private void createBlock(World world, int x, int y, int z, Material material) {
         Block block = mock(Block.class);
-        when(block.getType()).thenReturn(material);
-        when(world.getBlockAt(x, y, z)).thenReturn(block);
+        lenient().when(block.getType()).thenReturn(material);
+        lenient().when(world.getBlockAt(x, y, z)).thenReturn(block);
     }
 }
