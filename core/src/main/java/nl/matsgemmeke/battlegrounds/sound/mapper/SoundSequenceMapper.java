@@ -4,7 +4,7 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.sound.SoundCue;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.sound.SoundSequenceEntry;
-import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.adapter.SoundRegistryAdapter;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import org.bukkit.Sound;
@@ -15,11 +15,11 @@ import java.util.Objects;
 
 public class SoundSequenceMapper {
 
-    private final BukkitSoundRegistry bukkitSoundRegistry;
+    private final SoundRegistryAdapter soundRegistryAdapter;
 
     @Inject
-    public SoundSequenceMapper(BukkitSoundRegistry bukkitSoundRegistry) {
-        this.bukkitSoundRegistry = bukkitSoundRegistry;
+    public SoundSequenceMapper(SoundRegistryAdapter soundRegistryAdapter) {
+        this.soundRegistryAdapter = soundRegistryAdapter;
     }
 
     public SoundSequence toSoundSequence(SoundSequenceSpec spec) {
@@ -35,7 +35,7 @@ public class SoundSequenceMapper {
     @Nullable
     private SoundSequenceEntry toSoundSequenceEntry(SoundSequenceEntrySpec spec) {
         String soundValue = spec.sound();
-        Sound sound = bukkitSoundRegistry.getSound(soundValue).orElse(null);
+        Sound sound = soundRegistryAdapter.getSound(soundValue).orElse(null);
 
         if (sound == null) {
             return null;

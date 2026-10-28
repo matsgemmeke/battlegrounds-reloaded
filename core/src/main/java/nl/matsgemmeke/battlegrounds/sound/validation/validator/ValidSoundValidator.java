@@ -3,16 +3,16 @@ package nl.matsgemmeke.battlegrounds.sound.validation.validator;
 import com.google.inject.Inject;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.adapter.SoundRegistryAdapter;
 import nl.matsgemmeke.battlegrounds.sound.validation.constraint.ValidSound;
 
 public class ValidSoundValidator implements ConstraintValidator<ValidSound, String> {
 
-    private final BukkitSoundRegistry bukkitSoundRegistry;
+    private final SoundRegistryAdapter soundRegistryAdapter;
 
     @Inject
-    public ValidSoundValidator(BukkitSoundRegistry bukkitSoundRegistry) {
-        this.bukkitSoundRegistry = bukkitSoundRegistry;
+    public ValidSoundValidator(SoundRegistryAdapter soundRegistryAdapter) {
+        this.soundRegistryAdapter = soundRegistryAdapter;
     }
 
     @Override
@@ -21,6 +21,6 @@ public class ValidSoundValidator implements ConstraintValidator<ValidSound, Stri
             return true;
         }
 
-        return bukkitSoundRegistry.exists(value);
+        return soundRegistryAdapter.exists(value);
     }
 }

@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.sound.configuration;
 import com.google.inject.Binder;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.Section;
-import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.adapter.SoundRegistryAdapter;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 import nl.matsgemmeke.battlegrounds.validation.TestValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,8 +33,6 @@ class SoundsConfigurationTest {
     private static final String VALID_ENTRY = "ui.button.click 1 2 3";
 
     @Mock
-    private BukkitSoundRegistry bukkitSoundRegistry;
-    @Mock
     private ConfigurationFile configurationFile;
     @Mock
     private Logger logger;
@@ -42,6 +40,8 @@ class SoundsConfigurationTest {
     private ObjectValidator objectValidator = TestValidatorFactory.createObjectValidator(this::configure);
     @Mock
     private Section rootSection;
+    @Mock
+    private SoundRegistryAdapter soundRegistryAdapter;
     @InjectMocks
     private SoundsConfiguration soundsConfiguration;
 
@@ -51,7 +51,7 @@ class SoundsConfigurationTest {
     }
 
     private void configure(Binder binder) {
-        binder.bind(BukkitSoundRegistry.class).toProvider(() -> bukkitSoundRegistry);
+        binder.bind(SoundRegistryAdapter.class).toProvider(() -> soundRegistryAdapter);
     }
 
     @Test
@@ -91,7 +91,7 @@ class SoundsConfigurationTest {
     void getSoundSequence_invalidSequenceId(String sequenceId) {
         when(rootSection.isList(sequenceId)).thenReturn(true);
         when(rootSection.getStringList(sequenceId)).thenReturn(List.of(VALID_ENTRY));
-        when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
+        when(soundRegistryAdapter.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundSequenceSpec> soundSequenceSpecOptional = soundsConfiguration.getSoundSequence(sequenceId);
 
@@ -125,7 +125,7 @@ class SoundsConfigurationTest {
     void getSoundSequence_entryValidationError(String entryValue, String expectedErrorMessage) {
         when(rootSection.isList(SEQUENCE_ID)).thenReturn(true);
         when(rootSection.getStringList(SEQUENCE_ID)).thenReturn(List.of(entryValue));
-        lenient().when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
+        lenient().when(soundRegistryAdapter.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundSequenceSpec> soundSequenceSpecOptional = soundsConfiguration.getSoundSequence(SEQUENCE_ID);
 
@@ -140,7 +140,7 @@ class SoundsConfigurationTest {
     void getSoundSequence_successful() {
         when(rootSection.isList(SEQUENCE_ID)).thenReturn(true);
         when(rootSection.getStringList(SEQUENCE_ID)).thenReturn(List.of(VALID_ENTRY));
-        when(bukkitSoundRegistry.exists("ui.button.click")).thenReturn(true);
+        when(soundRegistryAdapter.exists("ui.button.click")).thenReturn(true);
 
         Optional<SoundSequenceSpec> soundSequenceSpecOptional = soundsConfiguration.getSoundSequence(SEQUENCE_ID);
 

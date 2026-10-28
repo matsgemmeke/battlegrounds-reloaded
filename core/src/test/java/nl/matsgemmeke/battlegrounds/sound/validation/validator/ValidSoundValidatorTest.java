@@ -1,6 +1,6 @@
 package nl.matsgemmeke.battlegrounds.sound.validation.validator;
 
-import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.adapter.SoundRegistryAdapter;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,7 +19,7 @@ class ValidSoundValidatorTest {
     private static final String SOUND = "ui.button.click";
 
     @Mock
-    private BukkitSoundRegistry bukkitSoundRegistry;
+    private SoundRegistryAdapter soundRegistryAdapter;
     @InjectMocks
     private ValidSoundValidator validator;
 
@@ -36,7 +36,7 @@ class ValidSoundValidatorTest {
     @DisplayName("isValid returns true when given value exists in the bukkit sound registry")
     @CsvSource({ "true,true", "false,false" })
     void isValid_existsInSoundRegistry(boolean soundExists, boolean expectedResult) {
-        when(bukkitSoundRegistry.exists(SOUND)).thenReturn(soundExists);
+        when(soundRegistryAdapter.exists(SOUND)).thenReturn(soundExists);
 
         boolean valid = validator.isValid(SOUND, null);
 

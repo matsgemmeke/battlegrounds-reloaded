@@ -1,7 +1,7 @@
 package nl.matsgemmeke.battlegrounds.sound.mapper;
 
 import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
-import nl.matsgemmeke.battlegrounds.sound.bukkit.BukkitSoundRegistry;
+import nl.matsgemmeke.battlegrounds.sound.adapter.SoundRegistryAdapter;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceEntrySpec;
 import nl.matsgemmeke.battlegrounds.sound.configuration.SoundSequenceSpec;
 import org.bukkit.Sound;
@@ -30,7 +30,7 @@ class SoundSequenceMapperTest {
     private static final int DELAY = 5;
 
     @Mock
-    private BukkitSoundRegistry bukkitSoundRegistry;
+    private SoundRegistryAdapter soundRegistryAdapter;
     @InjectMocks
     private SoundSequenceMapper soundSequenceMapper;
 
@@ -42,8 +42,8 @@ class SoundSequenceMapperTest {
         SoundSequenceEntrySpec invalidEntry = new SoundSequenceEntrySpec(INVALID_SOUND, VOLUME, PITCH, DELAY);
         SoundSequenceSpec soundSequenceSpec = new SoundSequenceSpec(ID, List.of(validEntry, invalidEntry));
 
-        when(bukkitSoundRegistry.getSound(SOUND)).thenReturn(Optional.of(sound));
-        when(bukkitSoundRegistry.getSound(INVALID_SOUND)).thenReturn(Optional.empty());
+        when(soundRegistryAdapter.getSound(SOUND)).thenReturn(Optional.of(sound));
+        when(soundRegistryAdapter.getSound(INVALID_SOUND)).thenReturn(Optional.empty());
 
         SoundSequence soundSequence = soundSequenceMapper.toSoundSequence(soundSequenceSpec);
 
