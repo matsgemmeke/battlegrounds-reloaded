@@ -17,7 +17,7 @@ deploy:
     remove-deployment: true
     undo-effect: false
     particle-effect:
-      particle: BLOCK_CRACK
+      particle: BLOCK
       count: 5
       offset-x: 0.25
       offset-y: 0.25

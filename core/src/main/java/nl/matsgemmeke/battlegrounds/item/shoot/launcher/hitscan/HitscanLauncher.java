@@ -122,7 +122,7 @@ public class HitscanLauncher implements ProjectileLauncher {
         List<DamageTarget> targets = targetFinder.findTargets(query);
 
         if (!targets.isEmpty()) {
-            DamageTarget hitTarget = targets.get(0);
+            DamageTarget hitTarget = targets.getFirst();
             Location hitLocation = projectileLocation.clone();
             CollisionResult collisionResult = new CollisionResult(null, hitTarget, hitLocation);
 
