@@ -6,8 +6,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.effect.ItemEffectSpec;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.PotionEffectProperties;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -30,9 +28,12 @@ import nl.matsgemmeke.battlegrounds.item.effect.spawn.MarkSpawnPointEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.HitboxDamageProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.RangeProfileMapper;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Optional;
 
 public class ItemEffectFactory {
 
@@ -47,6 +48,7 @@ public class ItemEffectFactory {
     private final Provider<SmokeScreenEffect> smokeScreenEffectProvider;
     private final Provider<SoundNotificationEffect> soundNotificationEffectProvider;
     private final RangeProfileMapper rangeProfileMapper;
+    private final SoundService soundService;
 
     @Inject
     public ItemEffectFactory(
@@ -60,7 +62,8 @@ public class ItemEffectFactory {
             Provider<MarkSpawnPointEffect> markSpawnPointEffectProvider,
             Provider<SmokeScreenEffect> smokeScreenEffectProvider,
             Provider<SoundNotificationEffect> soundNotificationEffectProvider,
-            RangeProfileMapper rangeProfileMapper
+            RangeProfileMapper rangeProfileMapper,
+            SoundService soundService
     ) {
         this.hitboxDamageProfileMapper = hitboxDamageProfileMapper;
         this.particleEffectMapper = particleEffectMapper;
@@ -73,12 +76,13 @@ public class ItemEffectFactory {
         this.smokeScreenEffectProvider = smokeScreenEffectProvider;
         this.soundNotificationEffectProvider = soundNotificationEffectProvider;
         this.rangeProfileMapper = rangeProfileMapper;
+        this.soundService = soundService;
     }
 
     public ItemEffect create(ItemEffectSpec itemEffectSpec) {
         ItemEffectType itemEffectType = ItemEffectType.valueOf(itemEffectSpec.type);
 
-        ItemEffect itemEffect = switch (itemEffectType) {
+        return switch (itemEffectType) {
             case COMBUSTION -> {
                 CombustionEffectSpec spec = (CombustionEffectSpec) itemEffectSpec;
 
@@ -90,12 +94,16 @@ public class ItemEffectFactory {
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 boolean damageBlocks = this.validateSpecVar(spec.damageBlocks, "damageBlocks", itemEffectType);
                 boolean spreadFire = this.validateSpecVar(spec.spreadFire, "spreadFire", itemEffectType);
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
+
+                SoundSequence soundSequence = Optional.ofNullable(spec.activationSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
 
                 RangeProfileSpec rangeProfileSpec = this.validateSpecVar(spec.range, "rangeProfile", itemEffectType);
                 RangeProfile rangeProfile = rangeProfileMapper.map(rangeProfileSpec);
 
-                CombustionProperties properties = new CombustionProperties(activationSounds, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
+                CombustionProperties properties = new CombustionProperties(soundSequence, rangeProfile, minSize, maxSize, growth, growthInterval, minDuration, maxDuration, damageBlocks, spreadFire);
 
                 CombustionEffect combustionEffect = combustionEffectProvider.get();
                 combustionEffect.setProperties(properties);
@@ -148,7 +156,6 @@ public class ItemEffectFactory {
             case GUN_FIRE_SIMULATION -> {
                 GunFireSimulationEffectSpec spec = (GunFireSimulationEffectSpec) itemEffectSpec;
 
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 long burstInterval = this.validateSpecVar(spec.burstInterval, "burstInterval", itemEffectType);
@@ -157,7 +164,12 @@ public class ItemEffectFactory {
                 long minDelayDuration = this.validateSpecVar(spec.minDelayDuration, "minDelayDuration", itemEffectType);
                 long maxDelayDuration = this.validateSpecVar(spec.maxDelayDuration, "maxDelayDuration", itemEffectType);
 
-                GunFireSimulationProperties properties = new GunFireSimulationProperties(activationSounds, burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration, minDuration, maxDuration);
+                SoundSequence defaultSoundSequence = Optional.ofNullable(spec.defaultSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Default sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
+
+                GunFireSimulationProperties properties = new GunFireSimulationProperties(defaultSoundSequence, burstInterval, minBurstDuration, maxBurstDuration, minDelayDuration, maxDelayDuration, minDuration, maxDuration);
 
                 GunFireSimulationEffect gunFireSimulationEffect = gunFireSimulationEffectProvider.get();
                 gunFireSimulationEffect.setProperties(properties);
@@ -167,7 +179,6 @@ public class ItemEffectFactory {
             case SMOKE_SCREEN -> {
                 SmokeScreenEffectSpec spec = (SmokeScreenEffectSpec) itemEffectSpec;
 
-                List<GameSound> activationSounds = DefaultGameSound.parseSounds(spec.activationSounds);
                 long minDuration = this.validateSpecVar(spec.minDuration, "minDuration", itemEffectType);
                 long maxDuration = this.validateSpecVar(spec.maxDuration, "maxDuration", itemEffectType);
                 double density = this.validateSpecVar(spec.density, "density", itemEffectType);
@@ -175,11 +186,16 @@ public class ItemEffectFactory {
                 double maxSize = this.validateSpecVar(spec.maxSize, "maxSize", itemEffectType);
                 double growth = this.validateSpecVar(spec.growth, "growth", itemEffectType);
                 long growthInterval = this.validateSpecVar(spec.growthInterval, "growthInterval", itemEffectType);
-                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
 
+                ParticleEffectSpec particleEffectSpec = this.validateSpecVar(spec.particleEffect, "particleEffect", itemEffectType);
                 ParticleEffect particleEffect = particleEffectMapper.map(particleEffectSpec);
 
-                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSounds, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
+                SoundSequence activationSoundSequence = Optional.ofNullable(spec.activationSoundSequence)
+                        .map(sequenceId -> soundService.getSoundSequence(sequenceId)
+                                .orElseThrow(() -> new ItemEffectCreationException("Activation sound sequence '%s' does not exist".formatted(sequenceId))))
+                        .orElse(null);
+
+                SmokeScreenProperties properties = new SmokeScreenProperties(particleEffect, activationSoundSequence, minDuration, maxDuration, density, minSize, maxSize, growth, growthInterval);
 
                 SmokeScreenEffect smokeScreenEffect = smokeScreenEffectProvider.get();
                 smokeScreenEffect.setProperties(properties);
@@ -188,16 +204,17 @@ public class ItemEffectFactory {
             case SOUND_NOTIFICATION -> {
                 SoundNotificationEffectSpec spec = (SoundNotificationEffectSpec) itemEffectSpec;
 
-                List<GameSound> notificationSounds = DefaultGameSound.parseSounds(spec.notificationSounds);
-                SoundNotificationProperties properties = new SoundNotificationProperties(notificationSounds);
+                String soundSequenceId = spec.soundSequence;
+                SoundSequence soundSequence = soundService.getSoundSequence(soundSequenceId)
+                        .orElseThrow(() -> new ItemEffectCreationException("Sound sequence '%s' does not exist".formatted(soundSequenceId)));
+
+                SoundNotificationProperties properties = new SoundNotificationProperties(soundSequence);
 
                 SoundNotificationEffect soundNotificationEffect = soundNotificationEffectProvider.get();
                 soundNotificationEffect.setProperties(properties);
                 yield soundNotificationEffect;
             }
         };
-
-        return itemEffect;
     }
 
     /**

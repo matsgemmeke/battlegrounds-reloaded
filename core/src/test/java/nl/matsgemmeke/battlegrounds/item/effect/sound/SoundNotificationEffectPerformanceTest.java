@@ -2,19 +2,20 @@ package nl.matsgemmeke.battlegrounds.item.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -29,24 +30,20 @@ class SoundNotificationEffectPerformanceTest {
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private Actor actor;
     @Mock
     private DamageSource damageSource;
     @Mock
-    private GameSound sound;
-    @Mock
     private PlayerRegistry playerRegistry;
-
+    @Mock
+    private SoundEmitter soundEmitter;
+    @Spy
+    private SoundNotificationProperties properties = new SoundNotificationProperties(SOUND_SEQUENCE);
+    @InjectMocks
     private SoundNotificationEffectPerformance performance;
-
-    @BeforeEach
-    void setUp() {
-        SoundNotificationProperties properties = new SoundNotificationProperties(List.of(sound));
-
-        performance = new SoundNotificationEffectPerformance(playerRegistry, properties);
-    }
 
     @Test
     void isPerformingReturnsFalseEvenAfterStartingPerformance() {
@@ -86,7 +83,7 @@ class SoundNotificationEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(gamePlayer).playSound(playerLocation, sound);
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), eq(gamePlayer), argThat(supplier -> supplier.get() == playerLocation));
     }
 
     private ItemEffectContext createItemEffectContext() {

@@ -1,29 +1,35 @@
 package nl.matsgemmeke.battlegrounds.item.recoil;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.*;
 
-public class CameraMovementTaskTest {
+@ExtendWith(MockitoExtension.class)
+class CameraMovementTaskTest {
 
+    @Mock
     private RecoilReceiver receiver;
-
-    @BeforeEach
-    public void setUp() {
-        this.receiver = mock(RecoilReceiver.class);
-    }
+    @InjectMocks
+    private CameraMovementTask task;
 
     @Test
-    public void shouldStopTaskWhenReceiverCanNotReceiveRecoil() {
-        CameraMovementTask task = new CameraMovementTask(receiver);
+    @DisplayName("run stops task when receiver cannot receive recoil")
+    void run_receiverCannotReceiveRecoil() {
+        when(receiver.canReceiveRecoil()).thenReturn(false);
+
         task.run();
 
         verify(receiver, never()).modifyCameraRotation(anyFloat(), anyFloat());
     }
 
     @Test
-    public void shouldOnlyRotateReceiverAsManyTimesAsGivenRotationAmount() {
+    @DisplayName("run rotates receiver as many times as given rotation amount")
+    void run_receiverRotationsEqualsRotationAmount() {
         when(receiver.canReceiveRecoil()).thenReturn(true);
 
         CameraMovementTask task = new CameraMovementTask(receiver);
@@ -38,7 +44,8 @@ public class CameraMovementTaskTest {
     }
 
     @Test
-    public void shouldApplyRecoveryAndKeepRotatingWhenRecoveryRateIsSet() {
+    @DisplayName("run rotates receiver including recovery")
+    void run_recovery() {
         when(receiver.canReceiveRecoil()).thenReturn(true);
 
         CameraMovementTask task = new CameraMovementTask(receiver);

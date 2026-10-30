@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.PickupDispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
@@ -34,7 +33,6 @@ import static org.mockito.Mockito.*;
 class EntityPickupItemEventHandlerTest {
 
     private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -91,10 +89,11 @@ class EntityPickupItemEventHandlerTest {
     @DisplayName("handle does nothing when event player is not registered")
     void handle_itemStackHasNoActionExecutor() {
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        ItemStack itemStack = mock(ItemStack.class);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(item.getItemStack()).thenReturn(itemStack);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.empty());
 
@@ -110,14 +109,15 @@ class EntityPickupItemEventHandlerTest {
     void handle_successfulWithoutItemRemove() {
         PickupDispatchResult result = PickupDispatchResult.cancelPickup();
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
+        ItemStack itemStack = mock(ItemStack.class);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(item.getItemStack()).thenReturn(itemStack);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, ITEM_STACK)).thenReturn(result);
+        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, itemStack)).thenReturn(result);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
@@ -139,17 +139,18 @@ class EntityPickupItemEventHandlerTest {
     @DisplayName("handle invokes item interaction dispatcher, removes item and cancels event based on event state and result")
     void handle_successfulWithItemRemove(boolean resultCancelEvent, boolean eventCancelled, boolean expectedCancelled) {
         PickupDispatchResult result = new PickupDispatchResult(true, resultCancelEvent, false);
+        ItemStack itemStack = mock(ItemStack.class);
 
         EntityPickupItemEvent event = new EntityPickupItemEvent(player, item, 0);
         event.setCancelled(eventCancelled);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
-        when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(item.getItemStack()).thenReturn(itemStack);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, ITEM_STACK)).thenReturn(result);
+        when(itemInteractionDispatcher.dispatchPickupItem(gamePlayer, itemStack)).thenReturn(result);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

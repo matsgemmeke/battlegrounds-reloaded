@@ -1,8 +1,7 @@
 package nl.matsgemmeke.battlegrounds.item.shoot.launcher.arrow;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
-
-public record ArrowProperties(List<GameSound> launchSounds, double velocity) {
+public record ArrowProperties(@Nullable SoundSequence soundSequence, double velocity) {
 }

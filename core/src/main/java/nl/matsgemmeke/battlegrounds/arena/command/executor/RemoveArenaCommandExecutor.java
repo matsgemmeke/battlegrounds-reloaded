@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 import com.google.inject.Inject;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
+import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -34,8 +35,8 @@ public class RemoveArenaCommandExecutor {
         this.confirmList = new ArrayList<>();
     }
 
-    public void execute(CommandSender sender, int id) {
-        Map<String, Object> values = Map.of("bg_arena", id);
+    public void execute(CommandSender sender, int arenaId) {
+        Map<String, Object> values = Map.of("bg_arena", arenaId);
 
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
@@ -49,7 +50,10 @@ public class RemoveArenaCommandExecutor {
             return;
         }
 
-        if (!gameContextProvider.removeArena(id)) {
+        GameKey gameKey = GameKey.ofArena(arenaId);
+        boolean removed = gameContextProvider.removeGameContext(gameKey);
+
+        if (!removed) {
             String removalFailedMessage = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
             sender.sendMessage(removalFailedMessage);
             return;
@@ -57,7 +61,7 @@ public class RemoveArenaCommandExecutor {
 
         confirmList.remove(sender);
 
-        File arenaFolder = new File(arenasFolder, "arena-" + id);
+        File arenaFolder = new File(arenasFolder, "arena-" + arenaId);
         FileUtil.deleteFolder(arenaFolder);
 
         String removedMessage = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);

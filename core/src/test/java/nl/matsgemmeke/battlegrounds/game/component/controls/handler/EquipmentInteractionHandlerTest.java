@@ -10,7 +10,6 @@ import nl.matsgemmeke.battlegrounds.item.controls.ActionResult;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentUser;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class EquipmentInteractionHandlerTest {
 
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID EQUIPMENT_ID = UUID.randomUUID();
 
     @Mock
@@ -41,15 +39,17 @@ class EquipmentInteractionHandlerTest {
     private ItemController<EquipmentUser> controller;
     @Mock
     private ItemControllerRegistry itemControllerRegistry;
+    @Mock
+    private ItemStack itemStack;
     @InjectMocks
     private EquipmentInteractionHandler interactionHandler;
 
     @Test
     @DisplayName("handleChangeFrom returns unhandled dispatch result when given combination of player and item stack is not registered")
     void handleChangeFrom_playerAndItemStackNotRegistered() {
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
@@ -58,11 +58,11 @@ class EquipmentInteractionHandlerTest {
     @Test
     @DisplayName("handleChangeFrom returns unhandled dispatch result when item controller cannot be found")
     void handleChangeFrom_itemControllerNotFound() {
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.empty());
 
-        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isFalse();
         assertThat(result.cancelEvent()).isFalse();
@@ -73,12 +73,12 @@ class EquipmentInteractionHandlerTest {
     void handleChangeFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.CHANGE_FROM, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleChangeFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -91,12 +91,12 @@ class EquipmentInteractionHandlerTest {
     void handleChangeTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.CHANGE_TO, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleChangeTo(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleChangeTo(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -107,12 +107,12 @@ class EquipmentInteractionHandlerTest {
     void handleDropItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.DROP_ITEM, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleDropItem(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleDropItem(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -126,12 +126,12 @@ class EquipmentInteractionHandlerTest {
     void handleLeftClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.LEFT_CLICK, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleLeftClick(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleLeftClick(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -142,12 +142,12 @@ class EquipmentInteractionHandlerTest {
     void handlePickupItem_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.PICKUP_ITEM, gamePlayer)).thenReturn(actionResult);
 
-        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, ITEM_STACK);
+        PickupDispatchResult result = interactionHandler.handlePickupItem(gamePlayer, itemStack);
 
         assertThat(result.dispatched()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -161,12 +161,12 @@ class EquipmentInteractionHandlerTest {
     void handleRightClick_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.RIGHT_CLICK, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleRightClick(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleRightClick(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -177,12 +177,12 @@ class EquipmentInteractionHandlerTest {
     void handleSwapFrom_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.SWAP_FROM, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleSwapFrom(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleSwapFrom(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();
@@ -193,12 +193,12 @@ class EquipmentInteractionHandlerTest {
     void handleSwapTo_successful() {
         ActionResult actionResult = new ActionResult(true, true);
 
-        when(equipmentRegistry.getAssignedEquipment(gamePlayer, ITEM_STACK)).thenReturn(Optional.of(equipment));
+        when(equipmentRegistry.getAssignedEquipment(gamePlayer, itemStack)).thenReturn(Optional.of(equipment));
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
         when(itemControllerRegistry.getEquipmentController(EQUIPMENT_ID)).thenReturn(Optional.of(controller));
         when(controller.performAction(Action.SWAP_TO, gamePlayer)).thenReturn(actionResult);
 
-        DispatchResult result = interactionHandler.handleSwapTo(gamePlayer, ITEM_STACK);
+        DispatchResult result = interactionHandler.handleSwapTo(gamePlayer, itemStack);
 
         assertThat(result.handled()).isTrue();
         assertThat(result.cancelEvent()).isTrue();

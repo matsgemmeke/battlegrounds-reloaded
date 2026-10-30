@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.game.component.item.MeleeWeaponRegistry;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
@@ -35,13 +34,14 @@ class FreeplayEventDamageAdapterTest {
 
     private static final UUID DAMAGER_UNIQUE_ID = UUID.randomUUID();
     private static final UUID VICTIM_UNIQUE_ID = UUID.randomUUID();
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_SWORD);
     private static final float DAMAGER_ATTACK_STRENGTH = 1.0F;
     private static final double EVENT_DAMAGE = 10.0;
     private static final double MELEE_WEAPON_DAMAGE = 50.0;
 
     @Mock
     private DamageProcessor damageProcessor;
+    @Mock
+    private ItemStack itemStack;
     @Mock
     private MeleeWeaponRegistry meleeWeaponRegistry;
     @Mock
@@ -99,7 +99,7 @@ class FreeplayEventDamageAdapterTest {
         GamePlayer victimGamePlayer = mock(GamePlayer.class);
 
         GamePlayer damagerGamePlayer = mock(GamePlayer.class);
-        when(damagerGamePlayer.getHeldItem()).thenReturn(ITEM_STACK);
+        when(damagerGamePlayer.getHeldItem()).thenReturn(itemStack);
 
         Entity victim = mock(Entity.class);
         when(victim.getUniqueId()).thenReturn(VICTIM_UNIQUE_ID);
@@ -109,7 +109,7 @@ class FreeplayEventDamageAdapterTest {
 
         when(playerRegistry.findByUniqueId(DAMAGER_UNIQUE_ID)).thenReturn(Optional.of(damagerGamePlayer));
         when(playerRegistry.findByUniqueId(VICTIM_UNIQUE_ID)).thenReturn(Optional.of(victimGamePlayer));
-        when(meleeWeaponRegistry.getAssignedMeleeWeapon(damagerGamePlayer, ITEM_STACK)).thenReturn(Optional.empty());
+        when(meleeWeaponRegistry.getAssignedMeleeWeapon(damagerGamePlayer, itemStack)).thenReturn(Optional.empty());
 
         EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(damager, victim, EVENT_DAMAGE);
 
@@ -127,7 +127,7 @@ class FreeplayEventDamageAdapterTest {
 
         GamePlayer damagerGamePlayer = mock(GamePlayer.class);
         when(damagerGamePlayer.getAttackStrength()).thenReturn(DAMAGER_ATTACK_STRENGTH);
-        when(damagerGamePlayer.getHeldItem()).thenReturn(ITEM_STACK);
+        when(damagerGamePlayer.getHeldItem()).thenReturn(itemStack);
         when(damagerGamePlayer.getLocation()).thenReturn(damagerLocation);
 
         GameMob victimGameMob = mock(GameMob.class);
@@ -145,7 +145,7 @@ class FreeplayEventDamageAdapterTest {
         when(playerRegistry.findByUniqueId(DAMAGER_UNIQUE_ID)).thenReturn(Optional.of(damagerGamePlayer));
         when(playerRegistry.findByUniqueId(VICTIM_UNIQUE_ID)).thenReturn(Optional.empty());
         when(mobRegistry.register(victim)).thenReturn(victimGameMob);
-        when(meleeWeaponRegistry.getAssignedMeleeWeapon(damagerGamePlayer, ITEM_STACK)).thenReturn(Optional.of(meleeWeapon));
+        when(meleeWeaponRegistry.getAssignedMeleeWeapon(damagerGamePlayer, itemStack)).thenReturn(Optional.of(meleeWeapon));
 
         EventDamageResult eventDamageResult = eventDamageAdapter.processMeleeDamage(damager, victim, EVENT_DAMAGE);
 

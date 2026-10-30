@@ -8,17 +8,18 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerItemHeldEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -57,9 +58,16 @@ class PlayerItemHeldEventHandlerTest {
 
     @BeforeEach
     void setUp() {
+        MockBukkit.mock();
+
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
         eventHandler = new PlayerItemHeldEventHandler(gameContextProvider, gameScope, itemInteractionDispatcherProvider, playerRegistryProvider);
+    }
+
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
     }
 
     @Test
@@ -101,8 +109,8 @@ class PlayerItemHeldEventHandlerTest {
             "false,false,false,false"
     })
     void handleCancelsEventBasedOnResultOfActionInvoker(boolean eventCancelled, boolean changeFromCancelEvent, boolean changeToCancelEvent, boolean expectedCancelled) {
-        ItemStack changeFrom = new ItemStack(Material.IRON_HOE);
-        ItemStack changeTo = new ItemStack(Material.IRON_HOE);
+        ItemStack changeFrom = mock(ItemStack.class);
+        ItemStack changeTo = mock(ItemStack.class);
         DispatchResult changeFromResult = new DispatchResult(true, changeFromCancelEvent);
         DispatchResult changeToResult = new DispatchResult(true, changeToCancelEvent);
 

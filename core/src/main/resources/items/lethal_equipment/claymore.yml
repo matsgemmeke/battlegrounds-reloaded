@@ -25,14 +25,14 @@ deploy:
       offset-x: 0.25
       offset-y: 0.25
       offset-z: 0.25
-      particle: BLOCK_CRACK
+      particle: BLOCK
   on-reset:
     remove-deployment: false
   resistances:
     fire-damage: 0
   throwing:
     cooldown: 30
-    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    sound-sequence: equipment-throw-1
     velocity: 0.0
 effect:
   type: EXPLOSION

@@ -11,7 +11,6 @@ import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.item.*;
 import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -109,7 +108,7 @@ class GiveWeaponCommandExecutorTest {
         String message = "weapon given: %bg_weapon%";
         GameContext gameContext = mock(GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);

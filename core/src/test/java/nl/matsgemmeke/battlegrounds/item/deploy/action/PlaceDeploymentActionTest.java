@@ -2,14 +2,14 @@ package nl.matsgemmeke.battlegrounds.item.deploy.action;
 
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.BlockActor;
 import nl.matsgemmeke.battlegrounds.item.deploy.Deployer;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.DestructionListener;
 import nl.matsgemmeke.battlegrounds.item.deploy.object.BlockDeploymentObject;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -43,21 +43,21 @@ class PlaceDeploymentActionTest {
 
     private static final String ITEM_NAME = "Test Item";
     private static final double HEALTH = 20.0;
-    private static final List<GameSound> PLACE_SOUNDS = Collections.emptyList();
     private static final long COOLDOWN = 10L;
     private static final Map<DamageType, Double> RESISTANCES = Collections.emptyMap();
     private static final Material MATERIAL = Material.WARPED_BUTTON;
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
-    private static final PlaceDeploymentProperties PROPERTIES = new PlaceDeploymentProperties(PLACE_SOUNDS, RESISTANCES, MATERIAL, HEALTH, COOLDOWN);
+    private static final PlaceDeploymentProperties PROPERTIES = new PlaceDeploymentProperties(RESISTANCES, MATERIAL, SOUND_SEQUENCE, HEALTH, COOLDOWN);
 
-    @Mock
-    private AudioEmitter audioEmitter;
     @Mock
     private Deployer deployer;
     @Mock
     private DestructionListener destructionListener;
     @Mock
     private HitboxResolver hitboxResolver;
+    @Mock
+    private SoundEmitter soundEmitter;
     @InjectMocks
     private PlaceDeploymentAction deploymentAction;
 
@@ -83,7 +83,7 @@ class PlaceDeploymentActionTest {
 
         assertThat(deploymentResultOptional).isEmpty();
 
-        verifyNoInteractions(audioEmitter);
+        verifyNoInteractions(soundEmitter);
     }
 
     @Test
@@ -101,7 +101,7 @@ class PlaceDeploymentActionTest {
 
         assertThat(deploymentResultOptional).isEmpty();
 
-        verifyNoInteractions(audioEmitter);
+        verifyNoInteractions(soundEmitter);
     }
 
     @Test
@@ -121,7 +121,7 @@ class PlaceDeploymentActionTest {
 
         assertThat(deploymentResultOptional).isEmpty();
 
-        verifyNoInteractions(audioEmitter);
+        verifyNoInteractions(soundEmitter);
     }
 
     static List<Arguments> placeBlockArguments() {
@@ -164,7 +164,7 @@ class PlaceDeploymentActionTest {
         });
 
         verify(adjacentBlockState).setBlockData(switchBlockData);
-        verify(audioEmitter).playSounds(PLACE_SOUNDS, adjacentBlockLocation);
+        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
         verify(switchBlockData).setAttachedFace(expectedAttachedFace);
     }
@@ -203,7 +203,7 @@ class PlaceDeploymentActionTest {
         });
 
         verify(adjacentBlockState, times(2)).setBlockData(switchBlockData);
-        verify(audioEmitter).playSounds(PLACE_SOUNDS, adjacentBlockLocation);
+        verify(soundEmitter).playSoundSequence(SOUND_SEQUENCE, adjacentBlockLocation);
         verify(deployer).setHeldItem(null);
         verify(switchBlockData).setFacing(targetBlockFace);
         verify(switchBlockData).setAttachedFace(AttachedFace.WALL);

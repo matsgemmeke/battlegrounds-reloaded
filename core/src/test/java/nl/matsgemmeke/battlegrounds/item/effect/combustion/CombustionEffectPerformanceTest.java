@@ -4,35 +4,37 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.GameEntity;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
+import nl.matsgemmeke.battlegrounds.item.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.CollisionResult;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static nl.matsgemmeke.battlegrounds.ArgumentMatcherUtils.isBetween;
 import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_SCHEDULE_TASK;
@@ -55,13 +57,13 @@ class CombustionEffectPerformanceTest {
     private static final double MEDIUM_RANGE_DISTANCE = 5.0;
     private static final double SHORT_RANGE_DAMAGE = 150.0;
     private static final double SHORT_RANGE_DISTANCE = 2.5;
-    private static final List<GameSound> COMBUSTION_SOUNDS = Collections.emptyList();
+    private static final SoundSequence COMBUSTION_SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final Location STARTING_LOCATION = new Location(null, 0, 0, 0);
     private static final long GROWTH_INTERVAL = 5L;
     private static final long MIN_DURATION = 500L;
     private static final long MAX_DURATION = 600L;
     private static final RangeProfile RANGE_PROFILE = new RangeProfile(SHORT_RANGE_DAMAGE, SHORT_RANGE_DISTANCE, MEDIUM_RANGE_DAMAGE, MEDIUM_RANGE_DISTANCE, LONG_RANGE_DAMAGE, LONG_RANGE_DISTANCE);
-    private static final CombustionProperties PROPERTIES = new CombustionProperties(COMBUSTION_SOUNDS, RANGE_PROFILE, MIN_SIZE, MAX_SIZE, GROWTH, GROWTH_INTERVAL, MIN_DURATION, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
+    private static final CombustionProperties PROPERTIES = new CombustionProperties(COMBUSTION_SOUND_SEQUENCE, RANGE_PROFILE, MIN_SIZE, MAX_SIZE, GROWTH, GROWTH_INTERVAL, MIN_DURATION, MAX_DURATION, BURN_BLOCKS, SPREAD_FIRE);
 
     private static final String ITEM_NAME = "Test Item";
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
@@ -69,8 +71,7 @@ class CombustionEffectPerformanceTest {
 
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
-    @Mock
-    private AudioEmitter audioEmitter;
+
     @Mock
     private CollisionDetector collisionDetector;
     @Mock
@@ -82,24 +83,28 @@ class CombustionEffectPerformanceTest {
     @Mock
     private Scheduler scheduler;
     @Mock
+    private SoundEmitter soundEmitter;
+    @Mock
     private TargetFinder targetFinder;
 
     private CombustionEffectPerformance performance;
 
     @BeforeEach
     void setUp() {
-        performance = new CombustionEffectPerformance(audioEmitter, collisionDetector, damageProcessor, metadataValueEditor, scheduler, targetFinder, PROPERTIES);
+        performance = new CombustionEffectPerformance(collisionDetector, damageProcessor, metadataValueEditor, scheduler, soundEmitter, targetFinder, PROPERTIES);
     }
 
     @Test
-    void isPerformingReturnsFalseWhenNotPerforming() {
+    @DisplayName("isPerforming returns false when not performing")
+    void isPerforming_notPerforming() {
         boolean performing = performance.isPerforming();
 
         assertThat(performing).isFalse();
     }
 
     @Test
-    void isPerformingReturnsTrueWhenPerforming() {
+    @DisplayName("isPerforming returns true when performing")
+    void isPerforming_performing() {
         ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
 
@@ -117,7 +122,8 @@ class CombustionEffectPerformanceTest {
     }
 
     @Test
-    void performCreatesFireCircleAtSourceLocationAndResetsEffectAfterMaxDuration() {
+    @DisplayName("perform creates fire circle at source location and resets effect after max duration")
+    void perform() {
         ItemEffectContext context = this.createItemEffectContext();
         Schedule cancelSchedule = mock(Schedule.class);
         Schedule repeatingSchedule = mock(Schedule.class);
@@ -216,13 +222,14 @@ class CombustionEffectPerformanceTest {
         verify(metadataValueEditor, never()).addFixedMetadataValue(eq(lowerBlock), anyString(), any());
         verify(metadataValueEditor, never()).removeMetadata(eq(lowerBlock), anyString());
 
-        verify(audioEmitter).playSounds(COMBUSTION_SOUNDS, actorLocation);
+        verify(soundEmitter).playSoundSequence(eq(COMBUSTION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == actorLocation));
         verify(repeatingSchedule, times(2)).stop();
         verify((Removable) actor).remove();
     }
 
     @Test
-    void rollbackResetsAffectedBlocksAndTriggerRuns() {
+    @DisplayName("rollback resets affected blocks and trigger runs")
+    void rollback() {
         ItemEffectContext context = this.createItemEffectContext();
         Location blockLocation = new Location(null, 0, 0, 0);
         Location actorLocation = new Location(null, 0, 0, 0);

@@ -30,10 +30,6 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolverProvider;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.DefaultAudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
-import nl.matsgemmeke.battlegrounds.game.component.collision.DefaultCollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.controls.*;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessorProvider;
@@ -145,7 +141,6 @@ public class BattlegroundsModule implements Module {
 
     private final BukkitScheduler bukkitScheduler;
     private final File dataFolder;
-    private final InternalsProvider internals;
     private final Logger logger;
     private final PaperCommandManager commandManager;
     private final Plugin plugin;
@@ -154,7 +149,6 @@ public class BattlegroundsModule implements Module {
     public BattlegroundsModule(
             BukkitScheduler bukkitScheduler,
             File dataFolder,
-            InternalsProvider internals,
             Logger logger,
             PaperCommandManager commandManager,
             Plugin plugin,
@@ -162,7 +156,6 @@ public class BattlegroundsModule implements Module {
     ) {
         this.bukkitScheduler = bukkitScheduler;
         this.dataFolder = dataFolder;
-        this.internals = internals;
         this.logger = logger;
         this.commandManager = commandManager;
         this.plugin = plugin;
@@ -174,7 +167,6 @@ public class BattlegroundsModule implements Module {
         // Instance bindings
         binder.bind(BukkitScheduler.class).toInstance(bukkitScheduler);
         binder.bind(Clock.class).toInstance(Clock.systemUTC());
-        binder.bind(InternalsProvider.class).toInstance(internals);
         binder.bind(Logger.class).annotatedWith(Names.named("Battlegrounds")).toInstance(logger);
         binder.bind(PaperCommandManager.class).toInstance(commandManager);
         binder.bind(Plugin.class).toInstance(plugin);
@@ -245,8 +237,6 @@ public class BattlegroundsModule implements Module {
         MapBinder<GameContextType, TargetFinder> targetFinderMapBinder = MapBinder.newMapBinder(binder, GameContextType.class, TargetFinder.class);
         targetFinderMapBinder.addBinding(GameContextType.FREEPLAY_MODE).to(FreeplayTargetFinder.class);
 
-        binder.bind(AudioEmitter.class).to(DefaultAudioEmitter.class).in(GameScoped.class);
-        binder.bind(CollisionDetector.class).to(DefaultCollisionDetector.class).in(GameScoped.class);
         binder.bind(DamageProcessor.class).toProvider(DamageProcessorProvider.class).in(GameScoped.class);
         binder.bind(DeploymentObjectRegistry.class).in(GameScoped.class);
         binder.bind(EquipmentRegistry.class).to(DefaultEquipmentRegistry.class).in(GameScoped.class);

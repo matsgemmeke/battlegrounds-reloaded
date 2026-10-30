@@ -2,10 +2,10 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.equipment.Equipment;
 import nl.matsgemmeke.battlegrounds.item.equipment.EquipmentFactory;
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;

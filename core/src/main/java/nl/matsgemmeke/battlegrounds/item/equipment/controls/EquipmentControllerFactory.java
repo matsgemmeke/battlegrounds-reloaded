@@ -10,8 +10,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.ThrowProperties
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.deploy.DropPropertiesSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.ProjectileEffectSpec;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
@@ -28,6 +26,8 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFuncti
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.bukkit.Material;
 
 import java.util.*;
@@ -46,6 +46,7 @@ public class EquipmentControllerFactory {
     private final Provider<PlaceDeploymentAction> placeDeploymentActionProvider;
     private final Provider<PrimeDeploymentAction> primeDeploymentActionProvider;
     private final Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
+    private final SoundService soundService;
     private final Supplier<ItemController<EquipmentUser>> controllerSupplier;
 
     @Inject
@@ -58,6 +59,7 @@ public class EquipmentControllerFactory {
             Provider<PlaceDeploymentAction> placeDeploymentActionProvider,
             Provider<PrimeDeploymentAction> primeDeploymentActionProvider,
             Provider<ThrowDeploymentAction> throwDeploymentActionProvider,
+            SoundService soundService,
             Supplier<ItemController<EquipmentUser>> controllerSupplier
     ) {
         this.actionBindingMapper = actionBindingMapper;
@@ -68,6 +70,7 @@ public class EquipmentControllerFactory {
         this.placeDeploymentActionProvider = placeDeploymentActionProvider;
         this.primeDeploymentActionProvider = primeDeploymentActionProvider;
         this.throwDeploymentActionProvider = throwDeploymentActionProvider;
+        this.soundService = soundService;
         this.controllerSupplier = controllerSupplier;
     }
 
@@ -90,7 +93,10 @@ public class EquipmentControllerFactory {
             Action throwAction = Action.valueOf(throwSpec.action);
             ItemTemplate itemTemplate = itemTemplateFactory.create(spec.items.throwItem);
 
-            List<GameSound> throwSounds = DefaultGameSound.parseSounds(throwProperties.throwSounds);
+            String soundSequenceId = spec.deploy.throwing.soundSequence;
+            SoundSequence soundSequence = soundService.getSoundSequence(soundSequenceId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Throw sound sequence '%s' does not exist".formatted(soundSequenceId)));
+
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
             double health = spec.deploy.health;
             double velocity = throwProperties.velocity;
@@ -102,7 +108,7 @@ public class EquipmentControllerFactory {
                 projectileEffects.add(projectileEffectFactory.create(projectileEffectSpec));
             }
 
-            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, throwSounds, projectileEffects, resistances, health, velocity, cooldown);
+            ThrowDeploymentProperties properties = new ThrowDeploymentProperties(itemTemplate, soundSequence, projectileEffects, resistances, health, velocity, cooldown);
 
             ThrowDeploymentAction deploymentAction = throwDeploymentActionProvider.get();
             deploymentAction.configureProperties(properties);
@@ -121,13 +127,16 @@ public class EquipmentControllerFactory {
                 throw new EquipmentControllerCreationException("Cannot create controller for 'place', the equipment specification does not contain the required place properties");
             }
 
-            List<GameSound> placeSounds = DefaultGameSound.parseSounds(placeProperties.placeSounds);
             Map<DamageType, Double> resistances = this.getResistances(spec.deploy.resistances);
             Material material = Material.valueOf(placeProperties.material);
             double health = spec.deploy.health;
             long cooldown = placeProperties.cooldown;
 
-            PlaceDeploymentProperties properties = new PlaceDeploymentProperties(placeSounds, resistances, material, health, cooldown);
+            String soundSequenceId = placeProperties.soundSequence;
+            SoundSequence soundSequence = soundService.getSoundSequence(soundSequenceId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Place sound sequence '%s' does not exist".formatted(soundSequenceId)));
+
+            PlaceDeploymentProperties properties = new PlaceDeploymentProperties(resistances, material, soundSequence, health, cooldown);
 
             PlaceDeploymentAction deploymentAction = placeDeploymentActionProvider.get();
             deploymentAction.configureProperties(properties);
@@ -146,10 +155,13 @@ public class EquipmentControllerFactory {
             }
 
             Action cookAction = Action.valueOf(cookSpec.action);
-            List<GameSound> cookSounds = DefaultGameSound.parseSounds(cookProperties.cookSounds);
+
+            String soundSequenceId = cookProperties.soundSequence;
+            SoundSequence soundSequence = soundService.getSoundSequence(soundSequenceId)
+                    .orElseThrow(() -> new EquipmentControllerCreationException("Cook sound sequence '%s' does not exist".formatted(soundSequenceId)));
 
             PrimeDeploymentAction deployment = primeDeploymentActionProvider.get();
-            deployment.configurePrimeSounds(cookSounds);
+            deployment.configureSoundSequence(soundSequence);
 
             CookFunction cookFunction = new CookFunction(equipment, deployment);
             ActionBinding<EquipmentUser> cookBinding = actionBindingMapper.toBinding(cookSpec, cookFunction);

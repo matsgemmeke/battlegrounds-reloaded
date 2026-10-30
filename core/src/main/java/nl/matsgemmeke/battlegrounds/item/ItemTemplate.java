@@ -82,7 +82,7 @@ public class ItemTemplate {
         }
 
         PersistentDataContainer persistentDataContainer = itemMeta.getPersistentDataContainer();
-        persistentDataContainer.set(templateKey, new UUIDDataType(), templateId);
+        persistentDataContainer.set(templateKey, UUIDDataType.getInstance(), templateId);
 
         dataEntries.forEach(dataEntry -> this.setDataEntry(persistentDataContainer, dataEntry));
 
@@ -109,7 +109,7 @@ public class ItemTemplate {
             return false;
         }
 
-        UUID uuid = itemMeta.getPersistentDataContainer().get(templateKey, new UUIDDataType());
+        UUID uuid = itemMeta.getPersistentDataContainer().get(templateKey, UUIDDataType.getInstance());
         return uuid != null && uuid.equals(templateId);
     }
 

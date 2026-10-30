@@ -6,15 +6,18 @@ import com.google.inject.Injector;
 import nl.matsgemmeke.battlegrounds.arena.ArenaModule;
 import nl.matsgemmeke.battlegrounds.arena.loading.ArenaSetupLoader;
 import nl.matsgemmeke.battlegrounds.command.CommandBootstrapper;
+import nl.matsgemmeke.battlegrounds.compatibility.CompatibilityModule;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.event.EventDispatcher;
 import nl.matsgemmeke.battlegrounds.event.handler.*;
 import nl.matsgemmeke.battlegrounds.event.listener.EventListener;
 import nl.matsgemmeke.battlegrounds.game.GameContextShutdownManager;
 import nl.matsgemmeke.battlegrounds.game.freeplay.FreeplayInitializer;
+import nl.matsgemmeke.battlegrounds.item.ItemModule;
 import nl.matsgemmeke.battlegrounds.job.JobService;
 import nl.matsgemmeke.battlegrounds.job.SaveDamageEventsJob;
 import nl.matsgemmeke.battlegrounds.location.LocationModule;
+import nl.matsgemmeke.battlegrounds.sound.SoundModule;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.bukkit.event.block.BlockBurnEvent;
@@ -34,7 +37,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     private GameContextShutdownManager gameContextShutdownManager;
     private Injector injector;
-    private InternalsProvider internals;
     private Logger logger;
     private PluginManager pluginManager;
 
@@ -56,22 +58,26 @@ public class BattlegroundsPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        gameContextShutdownManager.shutdown();
+        if (gameContextShutdownManager != null) {
+            gameContextShutdownManager.shutdown();
+        }
     }
 
     private void startPlugin() throws StartupFailedException {
-        this.setUpInternalsProvider();
         this.setUpLogging();
 
         BukkitScheduler bukkitScheduler = this.getServer().getScheduler();
         File dataFolder = this.getDataFolder();
         PaperCommandManager commandManager = new PaperCommandManager(this);
 
-        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, internals, logger, commandManager, this, pluginManager);
+        BattlegroundsModule module = new BattlegroundsModule(bukkitScheduler, dataFolder, logger, commandManager, this, pluginManager);
         ArenaModule arenaModule = new ArenaModule();
+        CompatibilityModule compatibilityModule = new CompatibilityModule();
+        ItemModule itemModule = new ItemModule();
         LocationModule locationModule = new LocationModule();
+        SoundModule soundModule = new SoundModule();
 
-        injector = Guice.createInjector(module, arenaModule, locationModule);
+        injector = Guice.createInjector(module, arenaModule, compatibilityModule, itemModule, locationModule, soundModule);
         gameContextShutdownManager = injector.getInstance(GameContextShutdownManager.class);
 
         FreeplayInitializer freeplayInitializer = injector.getInstance(FreeplayInitializer.class);
@@ -101,18 +107,6 @@ public class BattlegroundsPlugin extends JavaPlugin {
         eventDispatcher.registerEventHandler(PlayerRespawnEvent.class, injector.getInstance(PlayerRespawnEventHandler.class));
         eventDispatcher.registerEventHandler(PlayerSwapHandItemsEvent.class, injector.getInstance(PlayerSwapHandItemsEventHandler.class));
         eventDispatcher.registerEventHandler(ProjectileHitEvent.class, injector.getInstance(ProjectileHitEventHandler.class));
-    }
-
-    private void setUpInternalsProvider() throws StartupFailedException {
-        try {
-            String packageName = BattlegroundsPlugin.class.getPackage().getName();
-            String internalsName = this.getServer().getClass().getPackage().getName().split("\\.")[3];
-            String className = packageName + ".nms." + internalsName + "." + internalsName.toUpperCase();
-
-            internals = (InternalsProvider) Class.forName(className).getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            throw new StartupFailedException("Failed to find a valid implementation for this server version");
-        }
     }
 
     private void setUpJobs() {

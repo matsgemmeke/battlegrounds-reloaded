@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.gun.Gun;
 import nl.matsgemmeke.battlegrounds.item.gun.GunUser;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -92,7 +91,7 @@ class DefaultGunRegistryTest {
     @DisplayName("getAssignedGun returns empty optional when given user has no guns registered")
     void getAssignedGun_userWithoutRegisteredGuns() {
         GunUser user = mock(GunUser.class);
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Optional<Gun> gunOptional = gunRegistry.getAssignedGun(user, itemStack);
 
@@ -103,7 +102,7 @@ class DefaultGunRegistryTest {
     @DisplayName("getAssignedGun returns empty optional when no assigned guns of given user match")
     void getAssignedGun_noMatchingGuns() {
         GunUser user = mock(GunUser.class);
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(false);
@@ -118,7 +117,7 @@ class DefaultGunRegistryTest {
     @DisplayName("getAssignedGun returns optional with matching assigned to given user")
     void getAssignedGun_returnsMatchingGun() {
         GunUser user = mock(GunUser.class);
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);
@@ -144,7 +143,7 @@ class DefaultGunRegistryTest {
     @Test
     @DisplayName("getUnassignedGuns returns empty optional when none of the unassigned guns match")
     void getUnassignedGun_noMatches() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(false);
@@ -158,7 +157,7 @@ class DefaultGunRegistryTest {
     @Test
     @DisplayName("getUnassignedGuns returns optional with matching unassigned gun")
     void getUnassignedGun_returnsMatchingGun() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Gun gun = mock(Gun.class);
         when(gun.isMatching(itemStack)).thenReturn(true);

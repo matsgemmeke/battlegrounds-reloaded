@@ -1,15 +1,17 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 public class ScopeSpec {
 
-    @Required
+    @NotNull
+    @Size(min = 1)
     public Float[] magnifications;
 
-    public String useSounds;
+    public String useSoundSequence;
 
-    public String stopSounds;
+    public String stopSoundSequence;
 
-    public String changeMagnificationSounds;
+    public String changeMagnificationSoundSequence;
 }

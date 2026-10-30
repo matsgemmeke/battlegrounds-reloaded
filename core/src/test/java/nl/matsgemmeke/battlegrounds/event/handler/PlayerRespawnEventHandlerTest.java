@@ -44,7 +44,7 @@ class PlayerRespawnEventHandlerTest {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
-        PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, false, RespawnReason.DEATH);
 
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
@@ -67,7 +67,7 @@ class PlayerRespawnEventHandlerTest {
         RespawnHandler respawnHandler = mock(RespawnHandler.class);
         when(respawnHandler.consumeRespawnLocation(PLAYER_ID)).thenReturn(Optional.of(spawnPointLocation));
 
-        PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, RespawnReason.DEATH);
+        PlayerRespawnEvent event = new PlayerRespawnEvent(player, respawnLocation, false, false, false, RespawnReason.DEATH);
 
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(gameContext));
         when(respawnHandlerProvider.get()).thenReturn(respawnHandler);

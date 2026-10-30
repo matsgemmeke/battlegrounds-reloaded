@@ -2,33 +2,39 @@ package nl.matsgemmeke.battlegrounds.game;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class GameKeyTest {
 
-    @ParameterizedTest
-    @ValueSource(strings = { "FREEPLAY", "ARENA-1" })
-    @DisplayName("parse returns game key instances when value equals either FREEPLAY or ARENA-[id]")
-    void parse_successful(String value) {
-        GameKey gameKey = GameKey.parse(value);
+    @Test
+    @DisplayName("hashCode returns equal code for same game key")
+    void hashCode_sameKey() {
+        GameKey first = GameKey.ofFreeplay();
+        GameKey second = GameKey.ofFreeplay();
 
-        assertThat(gameKey).isNotNull();
+        assertThat(first.hashCode()).isEqualTo(second.hashCode());
     }
 
-    @ParameterizedTest
-    @CsvSource({
-            "invalid,Unknown GameKey format: invalid",
-            "ARENA-invalid,Invalid ARENA id: invalid"
-    })
-    void parse_invalidValue(String value, String expectedExceptionMessage) {
-        assertThatThrownBy(() -> GameKey.parse(value))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage(expectedExceptionMessage);
+    @Test
+    @DisplayName("hashCode returns different code for different game key")
+    void hashcode_differentKey() {
+        GameKey first = GameKey.ofFreeplay();
+        GameKey second = GameKey.ofArena(1);
+
+        assertThat(first.hashCode()).isNotEqualTo(second.hashCode());
+    }
+
+    @Test
+    @DisplayName("hashCode can be used as hash map key")
+    void hashCode_inHashMap() {
+        Map<GameKey, String> map = new HashMap<>();
+        map.put(GameKey.ofFreeplay(), "test");
+
+        assertThat(map.get(GameKey.ofFreeplay())).isEqualTo("test");
     }
 
     @Test

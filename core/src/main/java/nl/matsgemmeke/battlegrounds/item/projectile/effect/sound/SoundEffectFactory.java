@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-
-import java.util.List;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 
 public interface SoundEffectFactory {
 
-    ProjectileEffect create(List<GameSound> sounds);
+    ProjectileEffect create(SoundSequence soundSequence);
 }

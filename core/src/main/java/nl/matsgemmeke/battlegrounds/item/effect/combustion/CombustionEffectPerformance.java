@@ -7,17 +7,18 @@ import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.game.component.damage.DamageProcessor;
 import nl.matsgemmeke.battlegrounds.game.component.targeting.TargetFinder;
 import nl.matsgemmeke.battlegrounds.game.damage.DamageContext;
 import nl.matsgemmeke.battlegrounds.item.RangeProfile;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
+import nl.matsgemmeke.battlegrounds.item.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.MetadataValueEditor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -32,7 +33,6 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     private static final String BURN_BLOCKS_METADATA_KEY = "burn-blocks";
     private static final String SPREAD_FIRE_METADATA_KEY = "spread-fire";
 
-    private final AudioEmitter audioEmitter;
     private final CollisionDetector collisionDetector;
     private final CombustionProperties properties;
     private final DamageProcessor damageProcessor;
@@ -40,25 +40,26 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
     private final Random random;
     private final Scheduler scheduler;
     private final Set<Block> affectedBlocks;
+    private final SoundEmitter soundEmitter;
     private final TargetFinder targetFinder;
     private double currentRadius;
     private Schedule schedule;
 
     @Inject
     public CombustionEffectPerformance(
-            AudioEmitter audioEmitter,
             CollisionDetector collisionDetector,
             DamageProcessor damageProcessor,
             MetadataValueEditor metadataValueEditor,
             Scheduler scheduler,
+            SoundEmitter soundEmitter,
             TargetFinder targetFinder,
             @Assisted CombustionProperties properties
     ) {
-        this.audioEmitter = audioEmitter;
         this.collisionDetector = collisionDetector;
         this.damageProcessor = damageProcessor;
         this.metadataValueEditor = metadataValueEditor;
         this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.targetFinder = targetFinder;
         this.properties = properties;
         this.random = new Random();
@@ -79,7 +80,11 @@ public class CombustionEffectPerformance extends BaseItemEffectPerformance {
         Location actorLocation = actor.getLocation();
         World actorWorld = actor.getWorld();
 
-        audioEmitter.playSounds(properties.combustionSounds(), actorLocation);
+        SoundSequence soundSequence = properties.soundSequence();
+
+        if (soundSequence != null) {
+            soundEmitter.playSoundSequence(soundSequence, actor::getLocation);
+        }
 
         currentRadius = properties.minSize();
 

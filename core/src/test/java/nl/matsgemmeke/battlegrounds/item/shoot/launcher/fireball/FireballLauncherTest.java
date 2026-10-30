@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.fireball;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitAction;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitActionRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.projectile.ProjectileHitResult;
@@ -18,20 +16,25 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.ProjectileLaunchSource;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundPlayback;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.entity.SmallFireball;
 import org.bukkit.util.Vector;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -39,16 +42,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class FireballLauncherTest {
 
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final double VELOCITY = 2.0;
-    private static final long GAME_SOUND_DELAY = 5L;
     private static final ParticleEffect TRAJECTORY_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 1, 0.0, 0.0, 0.0, 0.0, null, null);
     private static final UUID FIREBALL_UNIQUE_ID = UUID.randomUUID();
 
     private static final String ITEM_NAME = "Test Item";
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
-    @Mock
-    private AudioEmitter audioEmitter;
     @Mock
     private CollisionResultAdapter collisionResultAdapter;
     @Mock
@@ -65,36 +66,37 @@ class FireballLauncherTest {
     private ProjectileRegistry projectileRegistry;
     @Mock
     private Scheduler scheduler;
+    @Mock
+    private SoundEmitter soundEmitter;
 
     @Test
-    void cancelStopsOngoingSoundPlaySchedules() {
+    @DisplayName("cancel stops ongoing sound playbacks")
+    void cancel() {
         SmallFireball fireball = mock(SmallFireball.class);
         World world = mock(World.class);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
-        Schedule soundPlaySchedule = mock(Schedule.class);
+        SoundPlayback soundPlayback = mock(SoundPlayback.class);
 
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        GameSound gameSound = mock(GameSound.class);
-        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
-
-        FireballProperties properties = new FireballProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
+        FireballProperties properties = new FireballProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
         LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
         when(projectileSource.launchProjectile(eq(SmallFireball.class), any(Vector.class))).thenReturn(fireball);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
-        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
 
-        FireballLauncher launcher = new FireballLauncher(audioEmitter, collisionResultAdapter, particleEffectSpawner, projectileHitActionRegistry, projectileRegistry, scheduler, properties, itemEffect);
+        FireballLauncher launcher = new FireballLauncher(collisionResultAdapter, particleEffectSpawner, projectileHitActionRegistry, projectileRegistry, scheduler, soundEmitter, properties, itemEffect);
         launcher.launch(context);
         launcher.cancel();
 
-        verify(soundPlaySchedule).stop();
+        verify(soundPlayback).cancel();
     }
 
     @Test
-    void launchStartsScheduleThatActivatesEffectWhenProjectileHitActionGetsCalled() {
+    @DisplayName("launch starts schedule that activates effect when projectile hit action gets called")
+    void launch() {
         World world = mock(World.class);
         Location direction = new Location(world, 1.0, 1.0, 1.0, 0.0f, 0.0f);
         Location fireballLocation = new Location(world, 1.0, 1.0, 1.0);
@@ -112,21 +114,14 @@ class FireballLauncherTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(repeatingSchedule).addTask(any(ScheduleTask.class));
 
-        Schedule soundPlaySchedule = mock(Schedule.class);
-        doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
-
-        GameSound gameSound = mock(GameSound.class);
-        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
-
-        FireballProperties properties = new FireballProperties(List.of(gameSound), TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
+        FireballProperties properties = new FireballProperties(SOUND_SEQUENCE, TRAJECTORY_PARTICLE_EFFECT, VELOCITY);
         LaunchContext context = new LaunchContext(ITEM_NAME, damageSource, source, direction, () -> LAUNCH_DIRECTION, world);
 
         when(collisionResultAdapter.adapt(projectileHitResult, fireball)).thenReturn(collisionResult);
         when(scheduler.createRepeatingSchedule(0L, 1L)).thenReturn(repeatingSchedule);
-        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
         doAnswer(MockUtils.answerRunProjectileHitAction(projectileHitResult)).when(projectileHitActionRegistry).registerProjectileHitAction(eq(fireball), any(ProjectileHitAction.class));
 
-        FireballLauncher launcher = new FireballLauncher(audioEmitter, collisionResultAdapter, particleEffectSpawner, projectileHitActionRegistry, projectileRegistry, scheduler, properties, itemEffect);
+        FireballLauncher launcher = new FireballLauncher(collisionResultAdapter, particleEffectSpawner, projectileHitActionRegistry, projectileRegistry, scheduler, soundEmitter, properties, itemEffect);
         launcher.launch(context);
         
         ArgumentCaptor<ItemEffectContext> itemEffectContextCaptor = ArgumentCaptor.forClass(ItemEffectContext.class);
@@ -143,7 +138,7 @@ class FireballLauncherTest {
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
-        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(particleEffectSpawner).spawnParticleEffect(TRAJECTORY_PARTICLE_EFFECT, fireballLocation);
         verify(projectileHitActionRegistry).removeProjectileHitAction(fireball);
         verify(projectileRegistry).register(FIREBALL_UNIQUE_ID);

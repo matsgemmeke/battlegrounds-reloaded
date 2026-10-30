@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.configuration.spec;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.firemode.FullyAutomaticModeSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.shoot.spread.SingleProjectileSpreadPatternSpec;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +63,7 @@ class SpecDeserializerTest {
 
         assertThat(gunSpec.reloading.type).isEqualTo("MAGAZINE");
         assertThat(gunSpec.reloading.duration).isEqualTo(48);
-        assertThat(gunSpec.reloading.reloadSounds).isEqualTo("BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44");
+        assertThat(gunSpec.reloading.soundSequence).isEqualTo("submachine-gun-reload-1");
 
         assertThat(gunSpec.shooting.fireMode).isInstanceOfSatisfying(FullyAutomaticModeSpec.class, fireMode -> {
             assertThat(fireMode.type).isEqualTo("FULLY_AUTOMATIC");
@@ -74,7 +74,7 @@ class SpecDeserializerTest {
 
         assertThat(gunSpec.shooting.projectile.effect.type).isEqualTo("DAMAGE");
 
-        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("REDSTONE");
+        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.particle).isEqualTo("DUST");
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.count).isEqualTo(1);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.offsetX).isEqualTo(0.0);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.offsetY).isEqualTo(0.0);
@@ -82,7 +82,7 @@ class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.extra).isEqualTo(0);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.blockData).isNull();
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.color).isEqualTo("#ffffff");
-        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.size).isEqualTo(1);
+        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.size).isEqualTo(0.25f);
 
         assertThat(gunSpec.shooting.recoil.type).isEqualTo("CAMERA_MOVEMENT");
         assertThat(gunSpec.shooting.recoil.horizontal).containsExactly(-1.0f, 0.0f, 1.0f);

@@ -1,14 +1,16 @@
 package nl.matsgemmeke.battlegrounds.entity;
 
-import nl.matsgemmeke.battlegrounds.InternalsProvider;
+import nl.matsgemmeke.battlegrounds.compatibility.VersionAdapter;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.Hitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.item.Matchable;
+import nl.matsgemmeke.battlegrounds.sound.SoundCue;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Player;
@@ -19,6 +21,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -26,6 +30,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -44,16 +49,28 @@ import static org.mockito.Mockito.*;
 class DefaultGamePlayerTest {
 
     private static final int ITEM_SLOT = 5;
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
 
-    @Mock
-    private InternalsProvider internals;
+    private static final float SOUND_VOLUME = 1.0f;
+    private static final float SOUND_PITCH = 2.0f;
+
     @Mock
     private HitboxProvider<Player> hitboxProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private Player player;
+    @Mock
+    private VersionAdapter versionAdapter;
     @InjectMocks
     private DefaultGamePlayer gamePlayer;
+
+    @BeforeEach
+    void setUp() {
+        MockBukkit.mock();
+    }
+
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
 
     @Test
     void getUniqueIdReturnsPlayerUUID() {
@@ -217,18 +234,19 @@ class DefaultGamePlayerTest {
     @Test
     @DisplayName("addItem adds given item stack to player's inventory")
     void addItem_addsItemToInventory() {
+        ItemStack itemStack = mock(ItemStack.class);
         PlayerInventory inventory = mock(PlayerInventory.class);
 
         when(player.getInventory()).thenReturn(inventory);
 
-        gamePlayer.addItem(ITEM_STACK);
+        gamePlayer.addItem(itemStack);
 
-        verify(inventory).addItem(ITEM_STACK);
+        verify(inventory).addItem(itemStack);
     }
 
     @Test
     void getHeldItemReturnsItemInMainHand() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(inventory.getItemInMainHand()).thenReturn(itemStack);
@@ -242,7 +260,7 @@ class DefaultGamePlayerTest {
 
     @Test
     void setHeldItemSetsItemInMainHand() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
@@ -322,13 +340,14 @@ class DefaultGamePlayerTest {
     @Test
     @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
     void setItem_setsItemInPlayerInventory() {
+        ItemStack itemStack = mock(ItemStack.class);
         PlayerInventory playerInventory = mock(PlayerInventory.class);
 
         when(player.getInventory()).thenReturn(playerInventory);
 
-        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
+        gamePlayer.setItem(ITEM_SLOT, itemStack);
 
-        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
+        verify(playerInventory).setItem(ITEM_SLOT, itemStack);
     }
 
     @Test
@@ -397,12 +416,13 @@ class DefaultGamePlayerTest {
     }
 
     @Test
-    void applyViewMagnificationCallsInternalSetWalkSpeedFunction() {
+    @DisplayName("applyViewMagnification calls version adapter walk speed function")
+    void applyViewMagnification() {
         float magnification = -0.1f;
 
         gamePlayer.applyViewMagnification(magnification);
 
-        verify(internals).setWalkSpeed(player, magnification);
+        verify(versionAdapter).setWalkSpeed(player, magnification);
     }
 
     @Test
@@ -416,15 +436,27 @@ class DefaultGamePlayerTest {
     }
 
     @Test
-    void modifyCameraRotationCallsInternalPlayerRotationFunction() {
+    @DisplayName("modifyCameraRotation calls version adapter rotation function")
+    void modifyCameraRotation() {
         gamePlayer.modifyCameraRotation(1.0f, 1.0f);
 
-        verify(internals).setPlayerRotation(player, 1.0f, 1.0f);
+        verify(versionAdapter).setPlayerRotation(player, 1.0f, 1.0f);
+    }
+
+    @Test
+    @DisplayName("playSound plays given sound cue to player at given location")
+    void playSound() {
+        Location location = new Location(null, 1, 2, 3);
+        SoundCue soundCue = new SoundCue(null, SOUND_VOLUME, SOUND_PITCH);
+
+        gamePlayer.playSound(location, soundCue);
+
+        verify(player).playSound(location, (Sound) null, SOUND_VOLUME, SOUND_PITCH);
     }
 
     @Test
     void removeItemStackFromInventory() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);

@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import org.bukkit.Material;
 import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerDropItemEvent;
@@ -32,7 +31,6 @@ import static org.mockito.Mockito.*;
 class PlayerDropItemEventHandlerTest {
 
     private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -45,6 +43,8 @@ class PlayerDropItemEventHandlerTest {
     private Item item;
     @Mock
     private ItemInteractionDispatcher itemInteractionDispatcher;
+    @Mock
+    private ItemStack itemStack;
     @Mock
     private Player player;
     @Mock
@@ -102,8 +102,8 @@ class PlayerDropItemEventHandlerTest {
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatchDropItem(gamePlayer, ITEM_STACK)).thenReturn(result);
-        when(item.getItemStack()).thenReturn(ITEM_STACK);
+        when(itemInteractionDispatcher.dispatchDropItem(gamePlayer, itemStack)).thenReturn(result);
+        when(item.getItemStack()).thenReturn(itemStack);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 

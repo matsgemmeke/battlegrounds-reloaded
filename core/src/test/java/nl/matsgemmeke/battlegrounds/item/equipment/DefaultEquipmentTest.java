@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentContext;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentResult;
 import nl.matsgemmeke.battlegrounds.item.deploy.action.DeploymentAction;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -106,38 +105,37 @@ class DefaultEquipmentTest {
     }
 
     @Test
-    void matchesWithItemStackIfItemTemplateIsNotNullAndMatchesWithDisplayItemTemplate() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+    @DisplayName("isMatching returns true when display item template is not null and matches with given item stack")
+    void matches_matchWithDisplayItem() {
+        ItemStack itemStack = mock(ItemStack.class);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setDisplayItemTemplate(displayItemTemplate);
-
         boolean matches = equipment.isMatching(itemStack);
 
-        assertTrue(matches);
+        assertThat(matches).isTrue();
     }
 
     @Test
-    void matchesWithItemStackIfActivatorIsNotNullAndMatchesWithTheItemStack() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+    @DisplayName("matches returns true when activator is not null and matches with given item stack")
+    void matches_matchWithActivator() {
+        ItemStack itemStack = mock(ItemStack.class);
 
         Activator activator = mock(Activator.class);
         when(activator.isMatching(itemStack)).thenReturn(true);
 
-        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setActivator(activator);
-
         boolean matches = equipment.isMatching(itemStack);
 
-        assertTrue(matches);
+        assertThat(matches).isTrue();
     }
 
     @Test
-    void doesNotMatchWithItemStackIfItDoesNotMatchWithEitherDisplayItemOrActivator() {
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+    @DisplayName("matches returns false when given item stack does not match with neither display item nor activator")
+    void matches_noMatch() {
+        ItemStack itemStack = mock(ItemStack.class);
 
         Activator activator = mock(Activator.class);
         when(activator.isMatching(itemStack)).thenReturn(false);
@@ -145,13 +143,11 @@ class DefaultEquipmentTest {
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.matchesTemplate(itemStack)).thenReturn(false);
 
-        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setActivator(activator);
         equipment.setDisplayItemTemplate(displayItemTemplate);
-
         boolean matches = equipment.isMatching(itemStack);
 
-        assertFalse(matches);
+        assertThat(matches).isFalse();
     }
 
     @Test
@@ -219,12 +215,11 @@ class DefaultEquipmentTest {
     @DisplayName("update creates new ItemStack from display item template and sets held item of user")
     void update_success() {
         EquipmentUser user = mock(EquipmentUser.class);
-        ItemStack itemStack = new ItemStack(Material.SHEARS);
+        ItemStack itemStack = mock(ItemStack.class);
 
         ItemTemplate displayItemTemplate = mock(ItemTemplate.class);
         when(displayItemTemplate.createItemStack(any())).thenReturn(itemStack);
 
-        DefaultEquipment equipment = new DefaultEquipment();
         equipment.setUser(user);
         equipment.setDisplayItemTemplate(displayItemTemplate);
         equipment.setName("test");
