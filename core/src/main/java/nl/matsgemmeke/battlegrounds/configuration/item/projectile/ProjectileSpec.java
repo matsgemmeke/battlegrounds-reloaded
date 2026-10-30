@@ -23,8 +23,6 @@ public abstract class ProjectileSpec {
     @Valid
     public ParticleEffectSpec trajectoryParticleEffect;
 
-    public String launchSounds;
-
     public String soundSequence;
 
     public Map<String, @Valid TriggerSpec> triggers = new HashMap<>();
