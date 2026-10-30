@@ -21,6 +21,8 @@ import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +30,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -46,7 +49,6 @@ import static org.mockito.Mockito.*;
 class DefaultGamePlayerTest {
 
     private static final int ITEM_SLOT = 5;
-    private static final ItemStack ITEM_STACK = new ItemStack(Material.STONE);
 
     private static final float SOUND_VOLUME = 1.0f;
     private static final float SOUND_PITCH = 2.0f;
@@ -59,6 +61,16 @@ class DefaultGamePlayerTest {
     private VersionAdapter versionAdapter;
     @InjectMocks
     private DefaultGamePlayer gamePlayer;
+
+    @BeforeEach
+    void setUp() {
+        MockBukkit.mock();
+    }
+
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
 
     @Test
     void getUniqueIdReturnsPlayerUUID() {
@@ -222,18 +234,19 @@ class DefaultGamePlayerTest {
     @Test
     @DisplayName("addItem adds given item stack to player's inventory")
     void addItem_addsItemToInventory() {
+        ItemStack itemStack = mock(ItemStack.class);
         PlayerInventory inventory = mock(PlayerInventory.class);
 
         when(player.getInventory()).thenReturn(inventory);
 
-        gamePlayer.addItem(ITEM_STACK);
+        gamePlayer.addItem(itemStack);
 
-        verify(inventory).addItem(ITEM_STACK);
+        verify(inventory).addItem(itemStack);
     }
 
     @Test
     void getHeldItemReturnsItemInMainHand() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(inventory.getItemInMainHand()).thenReturn(itemStack);
@@ -247,7 +260,7 @@ class DefaultGamePlayerTest {
 
     @Test
     void setHeldItemSetsItemInMainHand() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
@@ -327,13 +340,14 @@ class DefaultGamePlayerTest {
     @Test
     @DisplayName("setItem sets given item stack in the player's inventory at the given slot")
     void setItem_setsItemInPlayerInventory() {
+        ItemStack itemStack = mock(ItemStack.class);
         PlayerInventory playerInventory = mock(PlayerInventory.class);
 
         when(player.getInventory()).thenReturn(playerInventory);
 
-        gamePlayer.setItem(ITEM_SLOT, ITEM_STACK);
+        gamePlayer.setItem(ITEM_SLOT, itemStack);
 
-        verify(playerInventory).setItem(ITEM_SLOT, ITEM_STACK);
+        verify(playerInventory).setItem(ITEM_SLOT, itemStack);
     }
 
     @Test
@@ -442,7 +456,7 @@ class DefaultGamePlayerTest {
 
     @Test
     void removeItemStackFromInventory() {
-        ItemStack itemStack = new ItemStack(Material.STONE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);

@@ -82,7 +82,7 @@ class SpecDeserializerTest {
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.extra).isEqualTo(0);
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.blockData).isNull();
         assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.color).isEqualTo("#ffffff");
-        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.size).isEqualTo(1);
+        assertThat(gunSpec.shooting.projectile.trajectoryParticleEffect.dustOptions.size).isEqualTo(0.25f);
 
         assertThat(gunSpec.shooting.recoil.type).isEqualTo("CAMERA_MOVEMENT");
         assertThat(gunSpec.shooting.recoil.horizontal).containsExactly(-1.0f, 0.0f, 1.0f);

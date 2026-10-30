@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.game.component.item;
 
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeapon;
 import nl.matsgemmeke.battlegrounds.item.melee.MeleeWeaponUser;
-import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -34,7 +33,7 @@ class DefaultMeleeWeaponRegistryTest {
     @Test
     @DisplayName("getAssignedMeleeWeapon returns empty optional when given user is not registered")
     void getAssignedMeleeWeapon_userNotRegistered() {
-        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+        ItemStack itemStack = mock(ItemStack.class);
 
         Optional<MeleeWeapon> meleeWeaponOptional = meleeWeaponRegistry.getAssignedMeleeWeapon(user, itemStack);
 
@@ -44,7 +43,7 @@ class DefaultMeleeWeaponRegistryTest {
     @Test
     @DisplayName("getAssignedMeleeWeapon returns empty optional when melee weapon given item stack is not registered to given user")
     void getAssignedMeleeWeapon_meleeWeaponNotRegisteredToUser() {
-        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+        ItemStack itemStack = mock(ItemStack.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.getUser()).thenReturn(Optional.of(user));
@@ -57,8 +56,9 @@ class DefaultMeleeWeaponRegistryTest {
     }
 
     @Test
-    void getAssignedMeleeWeaponReturnsOptionalWithMeleeWeaponWhenGivenItemStackMatchesWithRegisteredMeleeWeapon() {
-        ItemStack itemStack = new ItemStack(Material.IRON_SWORD);
+    @DisplayName("getAssignedMeleeWeapon returns optional with melee weapon when given item stack matches with registered melee weapon")
+    void getAssignedMeleeWeapon_successful() {
+        ItemStack itemStack = mock(ItemStack.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.getUser()).thenReturn(Optional.of(user));
@@ -95,7 +95,7 @@ class DefaultMeleeWeaponRegistryTest {
     @Test
     @DisplayName("getUnassignedMeleeWeapon returns empty optional when no unassigned melee weapon matches given item stack")
     void getUnassignedMeleeWeapon_noMatchingMeleeWeapon() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.isMatching(itemStack)).thenReturn(false);
@@ -109,7 +109,7 @@ class DefaultMeleeWeaponRegistryTest {
     @Test
     @DisplayName("getUnassignedMeleeWeapon returns optional with matching unassigned melee weapon")
     void getUnassignedMeleeWeapon_matchingMeleeWeapon() {
-        ItemStack itemStack = new ItemStack(Material.IRON_HOE);
+        ItemStack itemStack = mock(ItemStack.class);
 
         MeleeWeapon meleeWeapon = mock(MeleeWeapon.class);
         when(meleeWeapon.isMatching(itemStack)).thenReturn(true);
