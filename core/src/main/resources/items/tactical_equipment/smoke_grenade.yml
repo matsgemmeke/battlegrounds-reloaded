@@ -28,16 +28,16 @@ deploy:
     remove-deployment: false
   throwing:
     cooldown: 30
-    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    sound-sequence: equipment-throw-1
     velocity: 1.2
   cooking:
-    cook-sounds: ENTITY_TNT_PRIMED-1-2-0
+    sound-sequence: equipment-prime-1
   dropping:
     velocity: 1.0
     cooldown: 30
 effect:
   type: SMOKE_SCREEN
-  activation-sounds: BLOCK_FIRE_EXTINGUISH-1-0-0
+  activation-sound-sequence: equipment-activation-2
   min-size: 0.2
   max-size: 3.0
   growth: 0.025

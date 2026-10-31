@@ -1,63 +1,34 @@
 package nl.matsgemmeke.battlegrounds.item.scope;
 
 import com.google.inject.Inject;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
+import com.google.inject.assistedinject.Assisted;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import org.jspecify.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class DefaultScopeAttachment implements ScopeAttachment {
 
-    @NotNull
-    private final AudioEmitter audioEmitter;
+    private final SoundEmitter soundEmitter;
+    private final ScopeProperties scopeProperties;
     private float currentMagnification;
     private int magnificationIndex;
-    @NotNull
-    private List<Float> magnifications;
-    @NotNull
-    private List<GameSound> useSounds;
-    @NotNull
-    private List<GameSound> stopSounds;
-    @NotNull
-    private List<GameSound> changeMagnificationSounds;
     @Nullable
     private ScopeUser currentUser;
     @Nullable
     private ScopeZoomEffect currentEffect;
 
     @Inject
-    public DefaultScopeAttachment(@NotNull AudioEmitter audioEmitter) {
-        this.audioEmitter = audioEmitter;
-        this.useSounds = Collections.emptyList();
-        this.stopSounds = Collections.emptyList();
-        this.changeMagnificationSounds = Collections.emptyList();
-        this.magnifications = Collections.emptyList();
+    public DefaultScopeAttachment(SoundEmitter soundEmitter, @Assisted ScopeProperties scopeProperties) {
+        this.soundEmitter = soundEmitter;
+        this.scopeProperties = scopeProperties;
         this.magnificationIndex = 0;
+        this.currentMagnification = Float.MIN_VALUE;
     }
 
-    public void configureChangeMagnificationSounds(List<GameSound> changeMagnificationSounds) {
-        this.changeMagnificationSounds = changeMagnificationSounds;
-    }
-
-    public void configureMagnifications(List<Float> magnifications) {
-        this.magnifications = magnifications;
-
-        currentMagnification = magnifications.get(0);
-    }
-
-    public void configureStopSounds(List<GameSound> stopSounds) {
-        this.stopSounds = stopSounds;
-    }
-
-    public void configureUseSounds(List<GameSound> useSounds) {
-        this.useSounds = useSounds;
-    }
-
-    public boolean applyEffect(@NotNull ScopeUser scopeUser) {
-        if (magnifications.isEmpty()) {
+    @Override
+    public boolean applyEffect(ScopeUser scopeUser) {
+        if (scopeProperties.magnifications().isEmpty()) {
             return false;
         }
 
@@ -66,7 +37,11 @@ public class DefaultScopeAttachment implements ScopeAttachment {
             return false;
         }
 
-        audioEmitter.playSounds(useSounds, scopeUser.getLocation());
+        if (currentMagnification == Float.MIN_VALUE) {
+            currentMagnification = scopeProperties.magnifications().getFirst();
+        }
+
+        soundEmitter.playSoundSequence(scopeProperties.useSoundSequence(), scopeUser::getLocation);
 
         currentEffect = new ScopeZoomEffect(scopeUser, currentMagnification);
         currentEffect.apply();
@@ -76,11 +51,15 @@ public class DefaultScopeAttachment implements ScopeAttachment {
         return scopeUser.addEffect(currentEffect);
     }
 
+    @Override
     public boolean isScoped() {
         return currentUser != null;
     }
 
+    @Override
     public boolean nextMagnification() {
+        List<Float> magnifications = scopeProperties.magnifications();
+
         if (magnifications.size() <= 1) {
             return false;
         }
@@ -89,7 +68,8 @@ public class DefaultScopeAttachment implements ScopeAttachment {
         currentMagnification = magnifications.get(magnificationIndex);
 
         if (currentEffect != null && currentUser != null) {
-            audioEmitter.playSounds(changeMagnificationSounds, currentUser.getLocation());
+            soundEmitter.playSoundSequence(scopeProperties.changeMagnificationSoundSequence(), currentUser::getLocation);
+
             currentEffect.setMagnification(currentMagnification);
             currentEffect.update();
         }
@@ -97,12 +77,13 @@ public class DefaultScopeAttachment implements ScopeAttachment {
         return true;
     }
 
+    @Override
     public boolean removeEffect() {
         if (currentEffect == null || currentUser == null) {
             return false;
         }
 
-        audioEmitter.playSounds(stopSounds, currentUser.getLocation());
+        soundEmitter.playSoundSequence(scopeProperties.stopSoundSequence(), currentUser::getLocation);
 
         currentEffect.remove();
         currentUser.removeEffect(currentEffect);

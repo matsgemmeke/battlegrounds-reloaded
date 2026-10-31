@@ -24,7 +24,7 @@ deploy:
       type: SCHEDULED
       offset-delays: [ 100000 ]
   manual-activation:
-    activation-sounds: UI_BUTTON_CLICK-1-1.5-0
+    activation-sound-sequence: equipment-manual-activation-1
     delay: 5
   on-destruction:
     activate-effect: false
@@ -35,14 +35,14 @@ deploy:
   placing:
     cooldown: 10
     material: WARPED_BUTTON
-    place-sounds: BLOCK_CHERRY_WOOD_BUTTON_CLICK_ON-1-1-0
+    sound-sequence: equipment-place-1
   resistances:
     bullet-damage: 0
     explosive-damage: 0
     fire-damage: 0
   throwing:
     cooldown: 30
-    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    sound-sequence: equipment-throw-1
     velocity: 1.0
 effect:
   type: EXPLOSION

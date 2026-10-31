@@ -8,16 +8,17 @@ import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemInteractionDispatcher;
 import nl.matsgemmeke.battlegrounds.game.component.controls.result.DispatchResult;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -31,8 +32,6 @@ import static org.mockito.Mockito.*;
 class PlayerSwapHandItemsEventHandlerTest {
 
     private static final FreeplayGameContext GAME_CONTEXT = new FreeplayGameContext();
-    private static final ItemStack MAIN_HAND_ITEM = createItemStack(Material.IRON_HOE);
-    private static final ItemStack OFF_HAND_ITEM = createItemStack(Material.IRON_HOE);
     private static final UUID PLAYER_ID = UUID.randomUUID();
 
     @Mock
@@ -43,6 +42,10 @@ class PlayerSwapHandItemsEventHandlerTest {
     private GameScope gameScope;
     @Mock
     private ItemInteractionDispatcher itemInteractionDispatcher;
+    @Mock
+    private ItemStack mainHandItemStack;
+    @Mock
+    private ItemStack offHandItemStack;
     @Mock
     private Player player;
     @Mock
@@ -56,15 +59,22 @@ class PlayerSwapHandItemsEventHandlerTest {
 
     @BeforeEach
     void setUp() {
+        MockBukkit.mock();
+
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
         eventHandler = new PlayerSwapHandItemsEventHandler(gameContextProvider, gameScope, itemInteractionDispatcherProvider, playerRegistryProvider);
     }
 
+    @AfterEach
+    void tearDown() {
+        MockBukkit.unmock();
+    }
+
     @Test
     @DisplayName("handle does nothing when player is not in a game context")
     void handle_playerNotInGameContext() {
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
+        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, mainHandItemStack, offHandItemStack);
 
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
 
@@ -78,7 +88,7 @@ class PlayerSwapHandItemsEventHandlerTest {
     @Test
     @DisplayName("handle does nothing when player is not registered in the player registry")
     void handle_playerNotRegistered() {
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
+        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, mainHandItemStack, offHandItemStack);
 
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
@@ -95,7 +105,7 @@ class PlayerSwapHandItemsEventHandlerTest {
     @CsvSource({ "true,false,true", "false,true,true", "false,false,false" })
     @DisplayName("handle cancels event when either dispatch results calls to cancel the event")
     void handle_successful(boolean swapFromCancelEvent, boolean swapToCancelEvent, boolean expectedCancelled) {
-        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, MAIN_HAND_ITEM, OFF_HAND_ITEM);
+        PlayerSwapHandItemsEvent event = new PlayerSwapHandItemsEvent(player, mainHandItemStack, offHandItemStack);
         DispatchResult swapFromResult = new DispatchResult(true, swapFromCancelEvent);
         DispatchResult swapToResult = new DispatchResult(true, swapToCancelEvent);
 
@@ -103,20 +113,13 @@ class PlayerSwapHandItemsEventHandlerTest {
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
         when(playerRegistry.findByUniqueId(PLAYER_ID)).thenReturn(Optional.of(gamePlayer));
         when(itemInteractionDispatcherProvider.get()).thenReturn(itemInteractionDispatcher);
-        when(itemInteractionDispatcher.dispatchSwapFrom(gamePlayer, OFF_HAND_ITEM)).thenReturn(swapFromResult);
-        when(itemInteractionDispatcher.dispatchSwapTo(gamePlayer, MAIN_HAND_ITEM)).thenReturn(swapToResult);
+        when(itemInteractionDispatcher.dispatchSwapFrom(gamePlayer, offHandItemStack)).thenReturn(swapFromResult);
+        when(itemInteractionDispatcher.dispatchSwapTo(gamePlayer, mainHandItemStack)).thenReturn(swapToResult);
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
         eventHandler.handle(event);
 
         assertThat(event.isCancelled()).isEqualTo(expectedCancelled);
-    }
-
-    private static ItemStack createItemStack(Material material) {
-        ItemStack itemStack = mock(ItemStack.class);
-        when(itemStack.getType()).thenReturn(material);
-
-        return itemStack;
     }
 }

@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.shoot.launcher.item;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.actor.ItemActor;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -16,22 +14,24 @@ import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerObserver;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerRun;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.DamageTargetTriggerResult;
-import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
-import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
-import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundPlayback;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.entity.Item;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -39,16 +39,14 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ItemLauncherTest {
 
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final double VELOCITY = 2.0;
     private static final int PICKUP_DELAY = 100;
     private static final ItemStack ITEM_STACK = new ItemStack(Material.STICK);
-    private static final long GAME_SOUND_DELAY = 5L;
 
     private static final String ITEM_NAME = "Test Item";
     private static final Location LAUNCH_DIRECTION = new Location(null, 1, 1, 1);
 
-    @Mock
-    private AudioEmitter audioEmitter;
     @Mock
     private CollisionResultAdapter collisionResultAdapter;
     @Mock
@@ -58,13 +56,14 @@ class ItemLauncherTest {
     @Mock
     private ProjectileLaunchSource projectileSource;
     @Mock
-    private Scheduler scheduler;
+    private SoundEmitter soundEmitter;
 
     @Test
-    void cancelStopsOngoingSoundPlaySchedules() {
+    @DisplayName("cancel cancels sound playbacks")
+    void cancel() {
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
         Item item = mock(Item.class);
-        Schedule soundPlaySchedule = mock(Schedule.class);
+        SoundPlayback soundPlayback = mock(SoundPlayback.class);
 
         World world = mock(World.class);
         when(world.dropItem(direction, ITEM_STACK)).thenReturn(item);
@@ -72,23 +71,21 @@ class ItemLauncherTest {
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
         when(itemTemplate.createItemStack()).thenReturn(ITEM_STACK);
 
-        GameSound gameSound = mock(GameSound.class);
-        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
-
-        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
-
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, SOUND_SEQUENCE, VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
+        when(soundEmitter.playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION))).thenReturn(soundPlayback);
+
+        ItemLauncher itemLauncher = new ItemLauncher(collisionResultAdapter, soundEmitter, itemEffect, properties);
         itemLauncher.launch(launchContext);
         itemLauncher.cancel();
 
-        verify(soundPlaySchedule).stop();
+        verify(soundPlayback).cancel();
     }
 
     @Test
-    void launchDropItemAndStartTriggerRunsThatActivateItemEffect() {
+    @DisplayName("launch drops item and starts triggers that actives the item effect")
+    void launch() {
         Item item = mock(Item.class);
         Location direction = new Location(null, 0, 0, 0, 100.0f, 0);
         DamageTargetTriggerResult triggerResult = mock(DamageTargetTriggerResult.class);
@@ -105,18 +102,10 @@ class ItemLauncherTest {
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        Schedule soundPlaySchedule = mock(Schedule.class);
-        doAnswer(MockUtils.RUN_SCHEDULE_TASK).when(soundPlaySchedule).addTask(any(ScheduleTask.class));
-
-        GameSound gameSound = mock(GameSound.class);
-        when(gameSound.getDelay()).thenReturn(GAME_SOUND_DELAY);
-
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, List.of(gameSound), VELOCITY, PICKUP_DELAY);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, SOUND_SEQUENCE, VELOCITY, PICKUP_DELAY);
         LaunchContext launchContext = new LaunchContext(ITEM_NAME, damageSource, projectileSource, direction, () -> LAUNCH_DIRECTION, world);
 
-        when(scheduler.createSingleRunSchedule(GAME_SOUND_DELAY)).thenReturn(soundPlaySchedule);
-
-        ItemLauncher itemLauncher = new ItemLauncher(audioEmitter, collisionResultAdapter, scheduler, itemEffect, properties);
+        ItemLauncher itemLauncher = new ItemLauncher(collisionResultAdapter, soundEmitter, itemEffect, properties);
         itemLauncher.addTriggerExecutor(triggerExecutor);
         itemLauncher.launch(launchContext);
 
@@ -130,7 +119,7 @@ class ItemLauncherTest {
             assertThat(itemEffectContext.getStartingLocation()).isEqualTo(direction);
         });
 
-        verify(audioEmitter).playSound(gameSound, LAUNCH_DIRECTION);
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == LAUNCH_DIRECTION));
         verify(item).setPickupDelay(PICKUP_DELAY);
         verify(item).setVelocity(new Vector(-1.969615506024416,-0.0,-0.3472963553338606));
     }

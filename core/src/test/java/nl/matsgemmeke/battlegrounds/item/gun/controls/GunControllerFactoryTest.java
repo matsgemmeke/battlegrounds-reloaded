@@ -1,8 +1,8 @@
 package nl.matsgemmeke.battlegrounds.item.gun.controls;
 
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
 import nl.matsgemmeke.battlegrounds.game.component.controls.ItemControllerRegistry;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.item.controls.Action;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBinding;
 import nl.matsgemmeke.battlegrounds.item.controls.ActionBindingMapper;

@@ -1,35 +1,37 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.sound;
 
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.projectile.Projectile;
 import nl.matsgemmeke.battlegrounds.item.trigger.*;
 import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.util.Vector;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
+import java.util.function.Supplier;
 
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class SoundEffectTest {
 
-    private static final List<GameSound> SOUNDS = List.of(mock(GameSound.class));
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
 
-    @Mock
-    private AudioEmitter audioEmitter;
     @Mock
     private DamageSource damageSource;
     @Mock
     private Projectile projectile;
+    @Mock
+    private SoundEmitter soundEmitter;
     @Mock
     private TriggerExecutor triggerExecutor;
     @Mock
@@ -43,11 +45,12 @@ class SoundEffectTest {
     void setUp() {
         when(triggerExecutor.createTriggerRun(any(TriggerContext.class))).thenReturn(triggerRun);
 
-        effect = new SoundEffect(audioEmitter, SOUNDS);
+        effect = new SoundEffect(soundEmitter, SOUND_SEQUENCE);
     }
 
     @Test
-    void onLaunchStartsTriggerRunThatCancelWhenProjectileNoLongerExists() {
+    @DisplayName("onLaunch starts trigger run that cancels when projectile no longer exists")
+    void onLaunch_projectileNoLongerExists() {
         when(projectile.exists()).thenReturn(false);
 
         effect.addTriggerExecutor(triggerExecutor);
@@ -64,7 +67,8 @@ class SoundEffectTest {
     }
 
     @Test
-    void onLaunchStartsTriggerWithObserverThatPlaysSounds() {
+    @DisplayName("onLaunch starts trigger run that plays sound sequence")
+    void onLaunch_successful() {
         Location projectileLocation = new Location(null, 1, 2, 3);
 
         when(projectile.exists()).thenReturn(true);
@@ -78,6 +82,6 @@ class SoundEffectTest {
 
         triggerObserverCaptor.getValue().onActivate(triggerResult);
 
-        verify(audioEmitter).playSounds(SOUNDS, projectileLocation);
+        verify(soundEmitter).playSoundSequence(eq(SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == projectileLocation));
     }
 }

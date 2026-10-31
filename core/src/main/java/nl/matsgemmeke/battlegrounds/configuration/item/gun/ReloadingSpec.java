@@ -1,18 +1,18 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.gun;
 
+import jakarta.validation.constraints.NotNull;
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class ReloadingSpec {
 
-    @Required
+    @NotNull
     @EnumValue(type = ReloadType.class)
     public String type;
 
-    @Required
+    @NotNull
     public Long duration;
 
-    public String reloadSounds;
+    public String soundSequence;
 
     private enum ReloadType {
         MAGAZINE, MANUAL_INSERTION

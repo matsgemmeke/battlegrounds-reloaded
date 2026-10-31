@@ -3,8 +3,6 @@ package nl.matsgemmeke.battlegrounds.item.projectile.effect;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.bounce.BounceEffect;
@@ -15,14 +13,16 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 
 import java.util.Collection;
-import java.util.List;
 
 public class ProjectileEffectFactory {
 
     private final ParticleEffectMapper particleEffectMapper;
     private final SoundEffectFactory soundEffectFactory;
+    private final SoundService soundService;
     private final StickEffectFactory stickEffectFactory;
     private final TrailEffectFactory trailEffectFactory;
     private final TriggerExecutorFactory triggerExecutorFactory;
@@ -31,12 +31,14 @@ public class ProjectileEffectFactory {
     public ProjectileEffectFactory(
             ParticleEffectMapper particleEffectMapper,
             SoundEffectFactory soundEffectFactory,
+            SoundService soundService,
             StickEffectFactory stickEffectFactory,
             TrailEffectFactory trailEffectFactory,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.particleEffectMapper = particleEffectMapper;
         this.soundEffectFactory = soundEffectFactory;
+        this.soundService = soundService;
         this.stickEffectFactory = stickEffectFactory;
         this.trailEffectFactory = trailEffectFactory;
         this.triggerExecutorFactory = triggerExecutorFactory;
@@ -57,18 +59,18 @@ public class ProjectileEffectFactory {
             }
             case SOUND -> {
                 SoundEffectSpec spec = (SoundEffectSpec) projectileEffectSpec;
-                List<GameSound> sounds = DefaultGameSound.parseSounds(spec.sounds);
+                SoundSequence soundSequence = this.createSoundSequence(spec.soundSequence);
+                ProjectileEffect soundEffect = soundEffectFactory.create(soundSequence);
 
-                ProjectileEffect soundEffect = soundEffectFactory.create(sounds);
                 this.addTriggers(soundEffect, spec.triggers.values());
 
                 yield soundEffect;
             }
             case STICK -> {
                 StickEffectSpec spec = (StickEffectSpec) projectileEffectSpec;
-                List<GameSound> stickSounds = DefaultGameSound.parseSounds(spec.sounds);
+                SoundSequence soundSequence = this.createSoundSequence(spec.soundSequence);
+                ProjectileEffect stickEffect = stickEffectFactory.create(soundSequence);
 
-                ProjectileEffect stickEffect = stickEffectFactory.create(stickSounds);
                 this.addTriggers(stickEffect, spec.triggers.values());
 
                 yield stickEffect;
@@ -84,6 +86,11 @@ public class ProjectileEffectFactory {
                 yield trailEffect;
             }
         };
+    }
+
+    private SoundSequence createSoundSequence(String soundSequenceId) {
+        return soundService.getSoundSequence(soundSequenceId)
+                .orElseThrow(() -> new ProjectileEffectCreationException("Sound sequence '%s' does not exist".formatted(soundSequenceId)));
     }
 
     private void addTriggers(ProjectileEffect projectileEffect, Collection<TriggerSpec> triggerSpecs) {

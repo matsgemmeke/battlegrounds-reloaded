@@ -1,17 +1,17 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
+import jakarta.validation.constraints.NotNull;
 import nl.matsgemmeke.battlegrounds.validation.constraint.EnumValue;
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 import org.bukkit.Material;
 
 public class PlacePropertiesSpec {
 
-    @Required
+    @NotNull
     @EnumValue(type = Material.class)
     public String material;
 
-    @Required
+    @NotNull
     public Long cooldown;
 
-    public String placeSounds;
+    public String soundSequence;
 }

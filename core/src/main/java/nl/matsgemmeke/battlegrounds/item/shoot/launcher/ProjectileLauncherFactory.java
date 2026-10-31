@@ -4,8 +4,6 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.item.ParticleEffectSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.projectile.*;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffect;
@@ -24,8 +22,11 @@ import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncher;
 import nl.matsgemmeke.battlegrounds.item.shoot.launcher.item.ItemLauncherFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
+import org.jspecify.annotations.Nullable;
 
-import java.util.List;
+import java.util.Optional;
 
 public class ProjectileLauncherFactory {
 
@@ -36,6 +37,7 @@ public class ProjectileLauncherFactory {
     private final ItemLauncherFactory itemLauncherFactory;
     private final ItemTemplateFactory itemTemplateFactory;
     private final ParticleEffectMapper particleEffectMapper;
+    private final SoundService soundService;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
@@ -47,6 +49,7 @@ public class ProjectileLauncherFactory {
             ItemLauncherFactory itemLauncherFactory,
             ItemTemplateFactory itemTemplateFactory,
             ParticleEffectMapper particleEffectMapper,
+            SoundService soundService,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.arrowLauncherFactory = arrowLauncherFactory;
@@ -56,6 +59,7 @@ public class ProjectileLauncherFactory {
         this.itemLauncherFactory = itemLauncherFactory;
         this.itemTemplateFactory = itemTemplateFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.soundService = soundService;
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
@@ -80,10 +84,10 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createArrowLauncher(ArrowProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
         double velocity = spec.velocity;
 
-        ArrowProperties properties = new ArrowProperties(launchSounds, velocity);
+        ArrowProperties properties = new ArrowProperties(soundSequence, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ArrowLauncher arrowLauncher = arrowLauncherFactory.create(properties, itemEffect);
@@ -98,18 +102,19 @@ public class ProjectileLauncherFactory {
     }
 
     private ProjectileLauncher createFireballLauncher(FireballProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
         ParticleEffect trajectoryParticleEffect = this.createParticleEffect(spec.trajectoryParticleEffect);
         double velocity = spec.velocity;
 
-        FireballProperties properties = new FireballProperties(launchSounds, trajectoryParticleEffect, velocity);
+        FireballProperties properties = new FireballProperties(soundSequence, trajectoryParticleEffect, velocity);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return fireballLauncherFactory.create(properties, itemEffect);
     }
 
     private ProjectileLauncher createHitscanLauncher(HitscanProjectileSpec spec) {
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
+
         ParticleEffect trajectoryParticleEffect = null;
         ParticleEffectSpec trajectoryParticleEffectSpec = spec.trajectoryParticleEffect;
 
@@ -117,7 +122,7 @@ public class ProjectileLauncherFactory {
             trajectoryParticleEffect = particleEffectMapper.map(trajectoryParticleEffectSpec);
         }
 
-        HitscanProperties properties = new HitscanProperties(launchSounds, trajectoryParticleEffect);
+        HitscanProperties properties = new HitscanProperties(soundSequence, trajectoryParticleEffect);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         return hitscanLauncherFactory.create(properties, itemEffect);
@@ -126,10 +131,10 @@ public class ProjectileLauncherFactory {
     private ProjectileLauncher createItemLauncher(ItemProjectileSpec spec) {
         double velocity = spec.velocity;
         int pickupDelay = spec.pickupDelay;
-        List<GameSound> launchSounds = DefaultGameSound.parseSounds(spec.launchSounds);
         ItemTemplate itemTemplate = itemTemplateFactory.create(spec.item);
+        SoundSequence soundSequence = this.createSoundSequence(spec);
 
-        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, launchSounds, velocity, pickupDelay);
+        ItemLaunchProperties properties = new ItemLaunchProperties(itemTemplate, soundSequence, velocity, pickupDelay);
         ItemEffect itemEffect = itemEffectFactory.create(spec.effect);
 
         ItemLauncher itemLauncher = itemLauncherFactory.create(properties, itemEffect);
@@ -141,6 +146,13 @@ public class ProjectileLauncherFactory {
         }
 
         return itemLauncher;
+    }
+
+    @Nullable
+    private SoundSequence createSoundSequence(ProjectileSpec spec) {
+        String soundSequenceId = spec.soundSequence;
+
+        return Optional.ofNullable(soundSequenceId).flatMap(soundService::getSoundSequence).orElse(null);
     }
 
     private ParticleEffect createParticleEffect(ParticleEffectSpec spec) {

@@ -4,8 +4,6 @@ import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.damage.Damage;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
 import nl.matsgemmeke.battlegrounds.item.deploy.activator.Activator;
@@ -24,6 +22,8 @@ import nl.matsgemmeke.battlegrounds.item.trigger.result.TriggerResult;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import nl.matsgemmeke.battlegrounds.util.world.ParticleEffectSpawner;
 import org.bukkit.Location;
 import org.bukkit.Particle;
@@ -33,12 +33,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -52,16 +53,14 @@ class DeploymentTest {
     private static final Location ACTOR_LOCATION = new Location(null, 1, 1, 1);
     private static final long COOLDOWN = 10L;
 
-    private static final List<GameSound> MANUAL_ACTIVATION_SOUNDS = List.of();
+    private static final SoundSequence MANUAL_ACTIVATION_SOUND_SEQUENCE = new SoundSequence(null, null);
     private static final ParticleEffect DESTRUCTION_PARTICLE_EFFECT = new ParticleEffect(Particle.FLAME, 0, 0, 0, 0, 0, null, null);
     private static final long MANUAL_ACTIVATION_DELAY = 10L;
-    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(MANUAL_ACTIVATION_SOUNDS, DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, MANUAL_ACTIVATION_DELAY);
+    private static final DeploymentProperties DEFAULT_PROPERTIES = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_SEQUENCE, DESTRUCTION_PARTICLE_EFFECT, true, true, true, true, MANUAL_ACTIVATION_DELAY);
 
     private static final Damage BULLET_DAMAGE = new Damage(10.0, DamageType.BULLET_DAMAGE, HitboxComponentType.TORSO);
     private static final Damage ENVIRONMENTAL_DAMAGE = new Damage(10.0, DamageType.ENVIRONMENTAL_DAMAGE, HitboxComponentType.TORSO);
 
-    @Mock
-    private AudioEmitter audioEmitter;
     @Mock
     private CollisionResultAdapter collisionResultAdapter;
     @Mock
@@ -70,6 +69,8 @@ class DeploymentTest {
     private ItemEffect itemEffect;
     @Spy
     private ParticleEffectSpawner particleEffectSpawner;
+    @Mock
+    private SoundEmitter soundEmitter;
     @Mock
     private Scheduler scheduler;
 
@@ -91,12 +92,12 @@ class DeploymentTest {
 
         when(scheduler.createSingleRunSchedule(MANUAL_ACTIVATION_DELAY)).thenReturn(delaySchedule);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.addTriggerExecutor(triggerExecutor);
         deployment.startTriggerExecutors(deployer, actor);
         deployment.activate(deployer);
 
-        verify(audioEmitter).playSounds(MANUAL_ACTIVATION_SOUNDS, deployLocation);
+        verify(soundEmitter).playSoundSequence(eq(MANUAL_ACTIVATION_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == deployLocation));
         verify(delaySchedule).start();
         verify(triggerRun).notifyObservers();
     }
@@ -104,7 +105,7 @@ class DeploymentTest {
     @Test
     @DisplayName("destroy throws IllegalStateException when deployment is not deployed yet")
     void destroy_notDeployedYet() {
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
 
         assertThatThrownBy(() -> deployment.destroy(BULLET_DAMAGE))
                 .isInstanceOf(IllegalStateException.class)
@@ -123,7 +124,7 @@ class DeploymentTest {
 
         DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.processDeploymentResult(result);
         deployment.destroy(ENVIRONMENTAL_DAMAGE);
 
@@ -137,9 +138,9 @@ class DeploymentTest {
         Actor actor = mock(Actor.class);
         DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
 
-        DeploymentProperties properties = new DeploymentProperties(List.of(), null, false, false, false, false, 0L);
+        DeploymentProperties properties = new DeploymentProperties(MANUAL_ACTIVATION_SOUND_SEQUENCE, null, false, false, false, false, 0L);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, properties, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, properties, state, itemEffect);
         deployment.processDeploymentResult(result);
         deployment.destroy(BULLET_DAMAGE);
 
@@ -161,7 +162,7 @@ class DeploymentTest {
 
         DeploymentResult result = new DeploymentResult(null, deploymentObject, actor, 0L);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.processDeploymentResult(result);
         deployment.destroy(BULLET_DAMAGE);
 
@@ -177,7 +178,7 @@ class DeploymentTest {
         Activator activator = mock(Activator.class);
         Deployer deployer = mock(Deployer.class);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.assignActivator(activator);
         deployment.prepareActivator(deployer);
 
@@ -189,7 +190,7 @@ class DeploymentTest {
     void processDeploymentResult() {
         DeploymentResult result = new DeploymentResult(null, null, null, 0L);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.processDeploymentResult(result);
 
         verify(state).processAction(deployment, result);
@@ -213,7 +214,7 @@ class DeploymentTest {
 
         when(itemEffect.getLatestPerformance()).thenReturn(Optional.of(effectPerformance));
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.addTriggerExecutor(triggerExecutor);
         deployment.startTriggerExecutors(deployer, actor);
         deployment.replaceActor(newActor);
@@ -232,7 +233,7 @@ class DeploymentTest {
 
         when(scheduler.createSingleRunSchedule(COOLDOWN)).thenReturn(schedule);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.scheduleDeploymentCooldown(deployer, COOLDOWN);
 
         verify(deployer).setCanDeploy(false);
@@ -262,7 +263,7 @@ class DeploymentTest {
 
         when(collisionResultAdapter.adapt(triggerResult)).thenReturn(collisionResult);
 
-        Deployment deployment = new Deployment(audioEmitter, collisionResultAdapter, particleEffectSpawner, scheduler, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
+        Deployment deployment = new Deployment(collisionResultAdapter, particleEffectSpawner, scheduler, soundEmitter, ITEM_NAME, DEFAULT_PROPERTIES, state, itemEffect);
         deployment.addTriggerExecutor(triggerExecutor);
         deployment.processDeploymentResult(result);
         deployment.startTriggerExecutors(deployer, actor);

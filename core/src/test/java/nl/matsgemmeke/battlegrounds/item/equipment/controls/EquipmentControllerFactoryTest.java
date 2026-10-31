@@ -18,6 +18,9 @@ import nl.matsgemmeke.battlegrounds.item.equipment.controls.place.PlaceFunction;
 import nl.matsgemmeke.battlegrounds.item.equipment.controls.throwing.ThrowFunction;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffectFactory;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
+import org.bukkit.Material;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,6 +32,7 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -61,6 +65,8 @@ class EquipmentControllerFactoryTest {
     @Mock
     private Provider<ThrowDeploymentAction> throwDeploymentActionProvider;
     @Mock
+    private SoundService soundService;
+    @Mock
     private Supplier<ItemController<EquipmentUser>> controllerSupplier;
     @Captor
     private ArgumentCaptor<ActionBinding<EquipmentUser>> bindingCaptor;
@@ -71,7 +77,7 @@ class EquipmentControllerFactoryTest {
     void setUp() {
         when(controllerSupplier.get()).thenReturn(controller);
 
-        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemControllerRegistry, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, controllerSupplier);
+        controllerFactory = new EquipmentControllerFactory(actionBindingMapper, itemControllerRegistry, itemTemplateFactory, projectileEffectFactory, dropDeploymentActionProvider, placeDeploymentActionProvider, primeDeploymentActionProvider, throwDeploymentActionProvider, soundService, controllerSupplier);
     }
 
     @Test
@@ -86,13 +92,27 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when throwing sound sequence is invalid")
+    void create_invalidThrowingSoundSequence() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
+
+        when(soundService.getSoundSequence("equipment-throw-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Throw sound sequence 'equipment-throw-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with throw function")
     void create_withThrowFunction() {
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/semtex.yml");
         ThrowDeploymentAction deploymentAction = mock(ThrowDeploymentAction.class);
         ItemTemplate itemTemplate = mock(ItemTemplate.class);
+        SoundSequence soundSequence = mock(SoundSequence.class);
 
         when(itemTemplateFactory.create(equipmentSpec.items.throwItem)).thenReturn(itemTemplate);
+        when(soundService.getSoundSequence("equipment-throw-1")).thenReturn(Optional.of(soundSequence));
         when(throwDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
@@ -103,7 +123,7 @@ class EquipmentControllerFactoryTest {
 
         assertThat(propertiesCaptor.getValue()).satisfies(properties -> {
             assertThat(properties.itemTemplate()).isEqualTo(itemTemplate);
-            assertThat(properties.throwSounds()).isNotEmpty();
+            assertThat(properties.soundSequence()).isEqualTo(soundSequence);
             assertThat(properties.resistances()).containsOnly(
                     entry(DamageType.BULLET_DAMAGE, 0.0),
                     entry(DamageType.EXPLOSIVE_DAMAGE, 0.0),
@@ -139,18 +159,49 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when placing sound sequence is invalid")
+    void create_invalidPlacingSoundSequence() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
+        equipmentSpec.controls.activate = null;
+        equipmentSpec.controls.throwing = null;
+
+        when(soundService.getSoundSequence("equipment-place-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Place sound sequence 'equipment-place-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with place function")
     void create_withPlaceFunction() {
         PlaceDeploymentAction deploymentAction = mock(PlaceDeploymentAction.class);
+        SoundSequence soundSequence = mock(SoundSequence.class);
 
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/c4.yml");
         equipmentSpec.controls.activate = null;
         equipmentSpec.controls.throwing = null;
 
+        when(soundService.getSoundSequence("equipment-place-1")).thenReturn(Optional.of(soundSequence));
         when(placeDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
         ItemController<EquipmentUser> controller = controllerFactory.create(equipmentSpec, equipment);
+
+        ArgumentCaptor<PlaceDeploymentProperties> placeDeploymentPropertiesCaptor = ArgumentCaptor.forClass(PlaceDeploymentProperties.class);
+        verify(deploymentAction).configureProperties(placeDeploymentPropertiesCaptor.capture());
+
+        assertThat(placeDeploymentPropertiesCaptor.getValue()).satisfies(properties -> {
+            assertThat(properties.resistances()).containsOnly(
+                    entry(DamageType.BULLET_DAMAGE, 0.0),
+                    entry(DamageType.EXPLOSIVE_DAMAGE, 0.0),
+                    entry(DamageType.FIRE_DAMAGE, 0.0)
+            );
+            assertThat(properties.material()).isEqualTo(Material.WARPED_BUTTON);
+            assertThat(properties.soundSequence()).isEqualTo(soundSequence);
+            assertThat(properties.health()).isEqualTo(50.0);
+            assertThat(properties.cooldown()).isEqualTo(10L);
+        });
 
         verify(controller).bind(eq(Action.RIGHT_CLICK), bindingCaptor.capture());
 
@@ -176,14 +227,29 @@ class EquipmentControllerFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws EquipmentControllerCreationException when cook sound sequence is invalid")
+    void create_invalidCookingSoundSequence() {
+        EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
+        equipmentSpec.controls.throwing = null;
+
+        when(soundService.getSoundSequence("equipment-prime-1")).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> controllerFactory.create(equipmentSpec, equipment))
+                .isInstanceOf(EquipmentControllerCreationException.class)
+                .hasMessage("Cook sound sequence 'equipment-prime-1' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns ItemController with cook function")
     void create_withCookFunction() {
+        SoundSequence soundSequence = mock(SoundSequence.class);
+        PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
+
         EquipmentSpec equipmentSpec = this.createEquipmentSpec("src/main/resources/items/lethal_equipment/frag_grenade.yml");
         equipmentSpec.controls.throwing = null;
         equipmentSpec.controls.drop = null;
 
-        PrimeDeploymentAction deploymentAction = mock(PrimeDeploymentAction.class);
-
+        when(soundService.getSoundSequence("equipment-prime-1")).thenReturn(Optional.of(soundSequence));
         when(primeDeploymentActionProvider.get()).thenReturn(deploymentAction);
         when(equipment.getId()).thenReturn(EQUIPMENT_ID);
 
@@ -198,6 +264,7 @@ class EquipmentControllerFactoryTest {
         });
 
         verify(itemControllerRegistry).registerEquipmentController(EQUIPMENT_ID, controller);
+        verify(deploymentAction).configureSoundSequence(soundSequence);
     }
 
     @Test

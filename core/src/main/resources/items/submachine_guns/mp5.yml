@@ -36,15 +36,15 @@ item:
 reloading:
   type: MAGAZINE
   duration: 48
-  reload-sounds: BLOCK_WOODEN_DOOR_OPEN-1-2-0, ENTITY_SKELETON_AMBIENT-1-0-3, BLOCK_WOODEN_DOOR_CLOSE-1-2-6, ENTITY_SKELETON_STEP-1-0-38, BLOCK_WOODEN_DOOR_CLOSE-1-2-42, BLOCK_STONE_BUTTON_CLICK_ON-1-1-44, BLOCK_WOODEN_DOOR_CLOSE-1-2-44
+  sound-sequence: submachine-gun-reload-1
 shooting:
   fire-mode:
     type: FULLY_AUTOMATIC
     rate-of-fire: 600
   projectile:
     type: HITSCAN
-    launch-sounds: BLOCK_PISTON_EXTEND-4-2-0, ENTITY_BLAZE_HURT-4-2-0, ENTITY_FIREWORK_ROCKET_BLAST-4-0-0
-    suppressed-sounds: ENTITY_BLAZE_HURT-3-2-0, ENTITY_ITEM_BREAK-3-2-0, ENTITY_FIREWORK_ROCKET_BLAST-3-1-0
+    sound-sequence: submachine-gun-shoot-1
+    sound-suppressed-sequence: submachine-gun-shoot-suppressed-1
     effect:
       type: DAMAGE
       damage-type: BULLET_DAMAGE
@@ -63,7 +63,7 @@ shooting:
         torso: 1
         limbs: 0.7
     trajectory-particle-effect:
-      particle: REDSTONE
+      particle: DUST
       count: 1
       offset-x: 0.0
       offset-y: 0.0
@@ -71,7 +71,7 @@ shooting:
       extra: 0
       dust-options:
         color: '#ffffff'
-        size: 1
+        size: 0.25
   recoil:
     type: CAMERA_MOVEMENT
     horizontal: [-1.0, 0.0, 1.0]

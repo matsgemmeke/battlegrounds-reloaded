@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
 
 public class SmokeScreenEffectSpec extends ItemEffectSpec {
 
-    public String activationSounds;
+    public String activationSoundSequence;
 
     @Required
     public Double minSize;

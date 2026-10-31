@@ -1,12 +1,12 @@
 package nl.matsgemmeke.battlegrounds.item.registry;
 
-import jakarta.validation.Validation;
-import jakarta.validation.Validator;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
+import nl.matsgemmeke.battlegrounds.validation.ValidationException;
+import nl.matsgemmeke.battlegrounds.validation.Violation;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +18,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
 import java.net.URISyntaxException;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,21 +30,17 @@ import static org.mockito.Mockito.spy;
 @ExtendWith(MockitoExtension.class)
 class ItemSpecRegistryProviderTest {
 
+    private static final String VALIDATION_ERROR_MESSAGE = "validation error";
+    private static final Violation VALIDATION_VIOLATION = new Violation("property", "is required");
+
     @TempDir
     private File tempDirectory;
     @Mock
     private Logger logger;
+    @Mock
+    private ObjectValidator objectValidator;
     @Spy
     private SpecDeserializer specDeserializer = new SpecDeserializer();
-
-    private ObjectValidator objectValidator;
-
-    @BeforeEach
-    void setUp() {
-        Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
-
-        objectValidator = new ObjectValidator(validator);
-    }
 
     @AfterEach
     void tearDown() {
@@ -123,7 +120,9 @@ class ItemSpecRegistryProviderTest {
     @Test
     @DisplayName("get logs error message when an item file contains errors in its specification")
     void get_itemSpecificationContainsError() {
-        File itemsFolder = new File("src/test/resources/weapon_creator_provider/items_invalid");
+        File itemsFolder = new File("src/main/resources/items");
+
+        doThrow(new ValidationException(VALIDATION_ERROR_MESSAGE, List.of(VALIDATION_VIOLATION))).when(objectValidator).validate(any(GunSpec.class));
 
         ItemSpecRegistryProvider provider = spy(new ItemSpecRegistryProvider(objectValidator, specDeserializer, itemsFolder, logger));
         ItemSpecRegistry registry = provider.get();
@@ -132,11 +131,11 @@ class ItemSpecRegistryProviderTest {
         assertThat(registry.exists("MP5")).isFalse();
 
         verify(logger).severe("""
-                An error occurred while loading item 'Olympia': Validation failed for object GunSpec (1 constraint violation)
-                 - level-unlocked: value is required""");
+                An error occurred while loading item 'Olympia': validation error
+                 - property: is required""");
         verify(logger).severe("""
-                An error occurred while loading item 'MP5': Validation failed for object GunSpec (1 constraint violation)
-                 - level-unlocked: value is required""");
+                An error occurred while loading item 'MP5': validation error
+                 - property: is required""");
     }
 
     @Test

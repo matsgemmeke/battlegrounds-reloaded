@@ -19,6 +19,8 @@ import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailEffectFact
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.trail.TrailProperties;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.bukkit.Particle;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -27,17 +29,24 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ProjectileEffectFactoryTest {
 
+    private static final String SOUND_SEQUENCE_ID = "equipment-activation-2";
+    private static final SoundSequence SOUND_SEQUENCE = new SoundSequence(null, null);
+
     @Spy
     private ParticleEffectMapper particleEffectMapper;
     @Mock
     private SoundEffectFactory soundEffectFactory;
+    @Mock
+    private SoundService soundService;
     @Mock
     private StickEffectFactory stickEffectFactory;
     @Mock
@@ -82,6 +91,20 @@ class ProjectileEffectFactoryTest {
     }
 
     @Test
+    @DisplayName("create throws ProjectileEffectCreationException when creating sound effect whose sound sequence id is invalid")
+    void create_soundEffectWithInvalidSoundSequenceId() {
+        SoundEffectSpec spec = new SoundEffectSpec();
+        spec.type = "SOUND";
+        spec.soundSequence = SOUND_SEQUENCE_ID;
+
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> projectileEffectFactory.create(spec))
+                .isInstanceOf(ProjectileEffectCreationException.class)
+                .hasMessage("Sound sequence 'equipment-activation-2' does not exist");
+    }
+
+    @Test
     @DisplayName("create returns SoundEffect instance")
     void create_soundEffect() {
         SoundEffect soundEffect = mock(SoundEffect.class);
@@ -90,16 +113,34 @@ class ProjectileEffectFactoryTest {
         SoundEffectSpec spec = new SoundEffectSpec();
         spec.type = "SOUND";
         spec.triggers = Map.of("floor-hit", triggerSpec);
-        spec.sounds = "AMBIENT_CAVE-1-1-0";
+        spec.soundSequence = SOUND_SEQUENCE_ID;
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutorFactory.create(triggerSpec)).thenReturn(triggerExecutor);
 
-        when(soundEffectFactory.create(anyList())).thenReturn(soundEffect);
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
+        when(soundEffectFactory.create(SOUND_SEQUENCE)).thenReturn(soundEffect);
 
         ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 
         assertThat(projectileEffect).isEqualTo(soundEffect);
+    }
+
+    @Test
+    @DisplayName("create throws ProjectileEffectCreationException when creating stick effect whose sound sequence id is invalid")
+    void create_stickEffectWithInvalidSoundSequenceId() {
+        TriggerSpec triggerSpec = this.createTriggerSpec();
+
+        StickEffectSpec spec = new StickEffectSpec();
+        spec.type = "STICK";
+        spec.triggers = Map.of("floor-hit", triggerSpec);
+        spec.soundSequence = SOUND_SEQUENCE_ID;
+
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> projectileEffectFactory.create(spec))
+                .isInstanceOf(ProjectileEffectCreationException.class)
+                .hasMessage("Sound sequence 'equipment-activation-2' does not exist");
     }
 
     @Test
@@ -111,15 +152,15 @@ class ProjectileEffectFactoryTest {
         StickEffectSpec spec = new StickEffectSpec();
         spec.type = "STICK";
         spec.triggers = Map.of("floor-hit", triggerSpec);
-        spec.sounds = "AMBIENT_CAVE-1-1-0";
+        spec.soundSequence = SOUND_SEQUENCE_ID;
 
         TriggerExecutor triggerExecutor = mock(TriggerExecutor.class);
         when(triggerExecutorFactory.create(triggerSpec)).thenReturn(triggerExecutor);
 
-        when(stickEffectFactory.create(anyList())).thenReturn(stickEffect);
+        when(soundService.getSoundSequence(SOUND_SEQUENCE_ID)).thenReturn(Optional.of(SOUND_SEQUENCE));
+        when(stickEffectFactory.create(SOUND_SEQUENCE)).thenReturn(stickEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerExecutorFactory);
-        ProjectileEffect projectileEffect = factory.create(spec);
+        ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 
         assertThat(projectileEffect).isEqualTo(stickEffect);
     }
@@ -139,8 +180,7 @@ class ProjectileEffectFactoryTest {
 
         when(trailEffectFactory.create(any(TrailProperties.class))).thenReturn(trailEffect);
 
-        ProjectileEffectFactory factory = new ProjectileEffectFactory(particleEffectMapper, soundEffectFactory, stickEffectFactory, trailEffectFactory, triggerExecutorFactory);
-        ProjectileEffect projectileEffect = factory.create(spec);
+        ProjectileEffect projectileEffect = projectileEffectFactory.create(spec);
 
         ArgumentCaptor<TrailProperties> trailPropertiesCaptor = ArgumentCaptor.forClass(TrailProperties.class);
         verify(trailEffectFactory).create(trailPropertiesCaptor.capture());

@@ -1,29 +1,29 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.effect;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotNull;
 
 public class GunFireSimulationEffectSpec extends ItemEffectSpec {
 
-    @Required
+    @NotNull
     public Long minDuration;
 
-    @Required
+    @NotNull
     public Long maxDuration;
 
-    @Required
+    @NotNull
     public Long burstInterval;
 
-    @Required
+    @NotNull
     public Long minBurstDuration;
 
-    @Required
+    @NotNull
     public Long maxBurstDuration;
 
-    @Required
+    @NotNull
     public Long minDelayDuration;
 
-    @Required
+    @NotNull
     public Long maxDelayDuration;
 
-    public String activationSounds;
+    public String defaultSoundSequence;
 }

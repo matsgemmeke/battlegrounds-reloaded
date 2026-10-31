@@ -8,8 +8,6 @@ import nl.matsgemmeke.battlegrounds.configuration.item.equipment.DeploymentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.trigger.TriggerSpec;
 import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
-import nl.matsgemmeke.battlegrounds.game.audio.DefaultGameSound;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.game.component.item.EquipmentRegistry;
 import nl.matsgemmeke.battlegrounds.item.ItemTemplate;
 import nl.matsgemmeke.battlegrounds.item.data.ParticleEffect;
@@ -26,9 +24,8 @@ import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
-
-import java.util.Collections;
-import java.util.List;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 
 public class EquipmentFactory {
 
@@ -38,6 +35,7 @@ public class EquipmentFactory {
     private final ItemEffectFactory itemEffectFactory;
     private final ItemTemplateFactory itemTemplateFactory;
     private final ParticleEffectMapper particleEffectMapper;
+    private final SoundService soundService;
     private final TriggerExecutorFactory triggerExecutorFactory;
 
     @Inject
@@ -48,6 +46,7 @@ public class EquipmentFactory {
             ItemEffectFactory itemEffectFactory,
             ItemTemplateFactory itemTemplateFactory,
             ParticleEffectMapper particleEffectMapper,
+            SoundService soundService,
             TriggerExecutorFactory triggerExecutorFactory
     ) {
         this.deploymentFactory = deploymentFactory;
@@ -56,6 +55,7 @@ public class EquipmentFactory {
         this.itemEffectFactory = itemEffectFactory;
         this.itemTemplateFactory = itemTemplateFactory;
         this.particleEffectMapper = particleEffectMapper;
+        this.soundService = soundService;
         this.triggerExecutorFactory = triggerExecutorFactory;
     }
 
@@ -114,11 +114,14 @@ public class EquipmentFactory {
         boolean undoEffectOnDestruction = deploymentSpec.onDestruction.undoEffect;
         boolean removeDeploymentOnReset = deploymentSpec.onReset.removeDeployment;
 
-        List<GameSound> manualActivationSounds = Collections.emptyList();
+        SoundSequence manualActivationSoundSequence = null;
         long manualActivationDelay = 0L;
 
         if (deploymentSpec.manualActivation != null) {
-            manualActivationSounds = DefaultGameSound.parseSounds(deploymentSpec.manualActivation.activationSounds);
+            String manualActivationSoundSequenceId = deploymentSpec.manualActivation.activationSoundSequence;
+
+            manualActivationSoundSequence = soundService.getSoundSequence(manualActivationSoundSequenceId)
+                    .orElseThrow(() -> new EquipmentCreationException("Manual activation sound sequence '%s' does not exist".formatted(manualActivationSoundSequenceId)));
             manualActivationDelay = deploymentSpec.manualActivation.delay;
         }
 
@@ -129,7 +132,7 @@ public class EquipmentFactory {
             destructionParticleEffect = particleEffectMapper.map(destructionParticleEffectSpec);
         }
 
-        DeploymentProperties properties = new DeploymentProperties(manualActivationSounds, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnReset, manualActivationDelay);
+        DeploymentProperties properties = new DeploymentProperties(manualActivationSoundSequence, destructionParticleEffect, activateEffectOnDestruction, removeDeploymentOnDestruction, undoEffectOnDestruction, removeDeploymentOnReset, manualActivationDelay);
         DeploymentState state = new IdleState();
         ItemEffect itemEffect = itemEffectFactory.create(effectSpec);
 

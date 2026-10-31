@@ -2,18 +2,18 @@ package nl.matsgemmeke.battlegrounds.item.effect.smoke;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
-import nl.matsgemmeke.battlegrounds.game.component.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
 import nl.matsgemmeke.battlegrounds.item.actor.Removable;
+import nl.matsgemmeke.battlegrounds.item.collision.CollisionDetector;
 import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.Particle;
 import org.bukkit.World;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Random;
 
@@ -21,20 +21,20 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
 
     private static final long SCHEDULER_DELAY = 0L;
 
-    private final AudioEmitter audioEmitter;
     private final CollisionDetector collisionDetector;
     private final Random random;
     private final Scheduler scheduler;
     private final SmokeScreenProperties properties;
+    private final SoundEmitter soundEmitter;
     private double currentRadius;
     private Location currentLocation;
     private Schedule repeatingSchedule;
 
     @Inject
-    public SmokeScreenEffectPerformance(AudioEmitter audioEmitter, CollisionDetector collisionDetector, Scheduler scheduler, @Assisted SmokeScreenProperties properties) {
-        this.audioEmitter = audioEmitter;
+    public SmokeScreenEffectPerformance(CollisionDetector collisionDetector, Scheduler scheduler, SoundEmitter soundEmitter, @Assisted SmokeScreenProperties properties) {
         this.collisionDetector = collisionDetector;
         this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.properties = properties;
         this.random = new Random();
     }
@@ -51,7 +51,11 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         currentLocation = actor.getLocation();
         currentRadius = properties.minSize();
 
-        audioEmitter.playSounds(properties.activationSounds(), currentLocation);
+        SoundSequence activationSoundSequence = properties.activationSoundSequence();
+
+        if (activationSoundSequence != null) {
+            soundEmitter.playSoundSequence(activationSoundSequence, actor::getLocation);
+        }
 
         long totalDuration = this.getTotalDuration(properties.minDuration(), properties.maxDuration());
 
@@ -83,7 +87,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private void createSmokeEffect(@NotNull Location location, @NotNull World world) {
+    private void createSmokeEffect(Location location, World world) {
         boolean moving = this.hasMovedFromCurrentLocation(location);
 
         if (moving) {
@@ -99,13 +103,13 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         }
     }
 
-    private boolean hasMovedFromCurrentLocation(@NotNull Location location) {
+    private boolean hasMovedFromCurrentLocation(Location location) {
         return location.getX() != currentLocation.getX()
                 || location.getY() != currentLocation.getY()
                 || location.getZ() != currentLocation.getZ();
     }
 
-    private void spawnParticle(@NotNull Location location, @NotNull World world) {
+    private void spawnParticle(Location location, World world) {
         Particle particle = properties.particleEffect().particle();
         int count = properties.particleEffect().count();
         double offsetX = properties.particleEffect().offsetX();
@@ -116,7 +120,7 @@ public class SmokeScreenEffectPerformance extends BaseItemEffectPerformance {
         world.spawnParticle(particle, location, count, offsetX, offsetY, offsetZ, extra);
     }
 
-    private void createSphere(@NotNull Location location, @NotNull World world, double radius) {
+    private void createSphere(Location location, World world, double radius) {
         // Increase the amount of particles based on the radius of the sphere
         int particleAmount = (int) (radius * properties.density());
 

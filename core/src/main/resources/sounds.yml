@@ -1,0 +1,177 @@
+assault-rifle-reload-1:
+  - "block.wooden_door.open 1 2 0"
+  - "block.wooden_door.close 1 2 5"
+  - "block.wooden_door.open 1 2 46"
+  - "block.piston.extend 1 2 46"
+  - "block.wooden_door.open 1 2 50"
+  - "block.piston.contract 1 2 50"
+
+assault-rifle-shoot-1:
+  - "block.piston.contract 4 2 0"
+  - "entity.blaze.hurt 4 2 0"
+  - "entity.zombie.attack_iron_door 4 2 0"
+
+assault-rifle-shoot-2:
+  - "block.piston.extend 4 2 0"
+  - "entity.firework_rocket.blast 4 0 0"
+  - "entity.zombie.attack_iron_door 4 2 0"
+
+assault-rifle-shoot-suppressed-1:
+  - "entity.blaze.hurt 3 2 0"
+  - "entity.zombie.attack_iron_door 0.3 2 0"
+  - "entity.firework_rocket.blast 3 1 0"
+
+equipment-activation-1:
+  - "block.glass.break 1 1 0"
+
+equipment-activation-2:
+  - "block.fire.extinguish 1 0 0"
+
+equipment-activation-3:
+  - "block.piston.extend 4 2 0"
+  - "entity.blaze.hurt 4 2 0"
+  - "entity.firework_rocket.blast 4 0 0"
+
+equipment-activation-4:
+  - "block.note_block.bit 1 2 0"
+
+equipment-manual-activation-1:
+  - "ui.button.click 1 1.5 0"
+
+equipment-place-1:
+  - "block.cherry_wood_button.click_on 1 1 0"
+
+equipment-prime-1:
+  - "entity.tnt.primed 1 2 0"
+
+equipment-throw-1:
+  - "entity.arrow.shoot 1 0 0"
+
+grenade-launcher-reload-1:
+  - "block.wooden_door.open 1 2 16"
+  - "block.piston.extend 1 2 16"
+  - "block.wooden_door.open 1 2 18"
+  - "block.piston.contract 1 2 18"
+
+grenade-launcher-shoot-1:
+  - "block.wooden_door.close 2 2 0"
+  - "entity.arrow.shoot 2 1 1"
+  - "block.iron_door.open 1 2 20"
+  - "block.piston.extend 1 2 20"
+  - "block.wooden_door.close 1 2 26"
+  - "block.piston.contract 1 2 26"
+
+handgun-reload-1:
+  - "block.wooden_door.close 1 2 4"
+  - "block.wooden_door.open 1 2 27"
+  - "block.wooden_door.close 1 2 30"
+
+handgun-reload-2:
+  - "block.stone_button.click_off 1 2 12"
+
+handgun-shoot-1:
+  - "entity.iron_golem.hurt 4 2 0"
+  - "entity.zombie.attack_iron_door 4 2 0"
+
+handgun-shoot-suppressed-1:
+  - "entity.blaze.hurt 3 2 0"
+  - "entity.firework_rocket.blast 3 1 0"
+
+melee-weapon-reload-1:
+  - "block.wooden_door.open 1 2 0"
+  - "block.wooden_door.close 1 2 5"
+
+melee-weapon-throw-1:
+  - "entity.arrow.shoot 1 1.2 0"
+
+rocket-launcher-reload-1:
+  - "entity.skeleton.ambient 1 0 10"
+  - "block.piston.extend 1 0 30"
+  - "block.wooden_door.close 1 0 42"
+  - "entity.skeleton.step 1 0 54"
+
+rocket-launcher-shoot-1:
+  - "block.fire.extinguish 2 1 0"
+  - "entity.zombie.attack_wooden_door 2 0 0"
+
+semtex-beep:
+  - "entity.experience_orb.pickup 1 2 0"
+
+semtex-stick:
+  - "item.flintandsteel.use 0.5 2 0"
+
+shotgun-reload-1:
+  - "block.wooden_door.open 1 2 12"
+  - "block.piston.extend 1 2 12"
+  - "block.wooden_door.open 1 2 16"
+  - "block.piston.contract 1 2 16"
+
+shotgun-shoot-1:
+  - "entity.blaze.hurt 4 2 0"
+  - "entity.generic.explode 4 2 0"
+  - "entity.firework_rocket.blast 4 0 0"
+
+shotgun-shoot-suppressed-1:
+  - "entity.blaze.hurt 4 2 0"
+  - "entity.generic.explode 4 2 0"
+  - "entity.firework_rocket.blast 4 0 0"
+
+sniper-rifle-reload-1:
+  - "block.wooden_door.open 1 2 2"
+  - "block.wooden_door.close 1 2 46"
+  - "block.piston.extend 1 2 48"
+  - "block.wooden_door.close 1 1.8 54"
+
+sniper-rifle-scope-change-magnification-1:
+  - "item.spyglass.use 1 1 0"
+
+sniper-rifle-scope-stop-1:
+  - "item.spyglass.stop_using 1 1 0"
+
+sniper-rifle-scope-use-1:
+  - "item.bundle.insert 1 0.7 0"
+
+sniper-rifle-shoot-1:
+  - "entity.blaze.hurt 8 1 0"
+  - "entity.generic.explode 0.5 0 0"
+  - "entity.generic.explode 8 1.5 0"
+  - "block.stone_button.click_on 1 1 14"
+  - "block.wooden_door.close 1 2 14"
+
+sniper-rifle-shoot-suppressed-1:
+  - "entity.blaze.hurt 6 2 0"
+  - "entity.generic.explode 0.5 1.5 0"
+  - "entity.firework_rocket.blast 6 1 0"
+  - "block.stone_button.click_on 1 1 14"
+  - "block.wooden_door.close 1 2 14"
+
+special-reload-1:
+  - "block.wooden_door.open 1 2 0"
+  - "block.piston.extend 1 2 6"
+  - "block.wooden_door.close 1 2 8"
+  - "block.wooden_door.open 1 2 34"
+  - "block.wooden_door.close 1 2 52"
+  - "block.piston.extend 1 2 56"
+
+special-shoot-1:
+  - "block.wooden_door.close 2 2 0"
+  - "entity.arrow.shoot 2 1 1"
+
+submachine-gun-reload-1:
+  - "block.wooden_door.open 1 2 0"
+  - "entity.skeleton.ambient 1 0 3"
+  - "block.wooden_door.close 1 2 6"
+  - "entity.skeleton.step 1 0 38"
+  - "block.wooden_door.close 1 2 42"
+  - "block.stone_button.click_on 1 1 44"
+  - "block.wooden_door.close 1 2 44"
+
+submachine-gun-shoot-1:
+  - "block.piston.extend 4 2 0"
+  - "entity.blaze.hurt 4 2 0"
+  - "entity.firework_rocket.blast 4 0 0"
+
+submachine-gun-shoot-suppressed-1:
+  - "entity.blaze.hurt 3 2 0"
+  - "entity.item.break 3 2 0"
+  - "entity.firework_rocket.blast 3 1 0"

@@ -19,12 +19,12 @@ public class ParticleEffectMapperTest {
 
     @Test
     public void mapReturnsParticleEffectInstanceWithBlockData() {
-        ParticleEffectSpec spec = this.createParticleEffectSpec("BLOCK_CRACK", "STONE", null);
+        ParticleEffectSpec spec = this.createParticleEffectSpec("BLOCK", "STONE", null);
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
         ParticleEffect particleEffect = mapper.map(spec);
 
-        assertThat(particleEffect.particle()).isEqualTo(Particle.BLOCK_CRACK);
+        assertThat(particleEffect.particle()).isEqualTo(Particle.BLOCK);
         assertThat(particleEffect.count()).isEqualTo(COUNT);
         assertThat(particleEffect.offsetX()).isEqualTo(OFFSET_X);
         assertThat(particleEffect.offsetY()).isEqualTo(OFFSET_Y);
@@ -57,12 +57,12 @@ public class ParticleEffectMapperTest {
         dustOptionsSpec.color = "#ab1234";
         dustOptionsSpec.size = 1.0f;
 
-        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("REDSTONE", null, dustOptionsSpec);
+        ParticleEffectSpec particleEffectSpec = this.createParticleEffectSpec("DUST", null, dustOptionsSpec);
 
         ParticleEffectMapper mapper = new ParticleEffectMapper();
         ParticleEffect particleEffect = mapper.map(particleEffectSpec);
 
-        assertThat(particleEffect.particle()).isEqualTo(Particle.REDSTONE);
+        assertThat(particleEffect.particle()).isEqualTo(Particle.DUST);
         assertThat(particleEffect.count()).isEqualTo(COUNT);
         assertThat(particleEffect.offsetX()).isEqualTo(OFFSET_X);
         assertThat(particleEffect.offsetY()).isEqualTo(OFFSET_Y);

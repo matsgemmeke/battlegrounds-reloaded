@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.projectile.effect;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotBlank;
 
 public class SoundEffectSpec extends ProjectileEffectSpec {
 
-    @Required
-    public String sounds;
+    @NotBlank(message = "sound sequence id is required")
+    public String soundSequence;
 }

@@ -114,7 +114,7 @@ public class ShowHitboxesCommandExecutor {
                 Location particleLocation = location.clone().add(point);
                 Color color = COMPONENT_TYPE_COLORS.get(component.type());
 
-                world.spawnParticle(Particle.REDSTONE, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, 1.0f));
+                world.spawnParticle(Particle.DUST, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, 1.0f));
             }
         }
     }

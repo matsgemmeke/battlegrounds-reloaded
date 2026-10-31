@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.entity.damage.DamageSource;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -13,18 +11,20 @@ import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 import org.bukkit.Location;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static nl.matsgemmeke.battlegrounds.MockUtils.RUN_SCHEDULE_TASK;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,8 +42,8 @@ class GunFireSimulationEffectPerformanceTest {
     private static final long MIN_DELAY_DURATION = 5L;
     private static final long MAX_TOTAL_DURATION = 30L;
     private static final long MIN_TOTAL_DURATION = 20L;
-    private static final List<GameSound> GENERIC_SHOTS_SOUNDS = Collections.emptyList();
-    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(GENERIC_SHOTS_SOUNDS, BURST_INTERVAL, MIN_BURST_DURATION, MAX_BURST_DURATION, MIN_DELAY_DURATION, MAX_DELAY_DURATION, MIN_TOTAL_DURATION, MAX_TOTAL_DURATION);
+    private static final SoundSequence DEFAULT_SOUND_SEQUENCE = new SoundSequence(null, null);
+    private static final GunFireSimulationProperties PROPERTIES = new GunFireSimulationProperties(DEFAULT_SOUND_SEQUENCE, BURST_INTERVAL, MIN_BURST_DURATION, MAX_BURST_DURATION, MIN_DELAY_DURATION, MAX_DELAY_DURATION, MIN_TOTAL_DURATION, MAX_TOTAL_DURATION);
 
     private static final UUID DAMAGE_SOURCE_ID = UUID.randomUUID();
     private static final CollisionResult COLLISION_RESULT = new CollisionResult(null, null, null);
@@ -51,19 +51,19 @@ class GunFireSimulationEffectPerformanceTest {
     @Mock(extraInterfaces = Removable.class)
     private Actor actor;
     @Mock
-    private AudioEmitter audioEmitter;
-    @Mock
     private DamageSource damageSource;
     @Mock
     private GunInfoProvider gunInfoProvider;
     @Mock
     private Scheduler scheduler;
+    @Mock
+    private SoundEmitter soundEmitter;
 
     private GunFireSimulationEffectPerformance performance;
 
     @BeforeEach
     void setUp() {
-        performance = new GunFireSimulationEffectPerformance(audioEmitter, gunInfoProvider, scheduler, PROPERTIES);
+        performance = new GunFireSimulationEffectPerformance(gunInfoProvider, scheduler, soundEmitter, PROPERTIES);
     }
 
     @Test
@@ -89,7 +89,7 @@ class GunFireSimulationEffectPerformanceTest {
         ScheduleTask task = taskCaptor.getValue();
         task.run();
 
-        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, newActorLocation);
+        verify(soundEmitter).playSoundSequence(eq(DEFAULT_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == newActorLocation));
     }
 
     @Test
@@ -130,15 +130,15 @@ class GunFireSimulationEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verify(audioEmitter).playSounds(GENERIC_SHOTS_SOUNDS, ACTOR_LOCATION);
+        verify(soundEmitter).playSoundSequence(eq(DEFAULT_SOUND_SEQUENCE), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == ACTOR_LOCATION));
     }
 
     @Test
     void performStopsSimulatesGunFireOnceActorNoLongerExists() {
         Schedule repeatingSchedule = mock(Schedule.class);
-        List<GameSound> shotSounds = Collections.emptyList();
+        SoundSequence soundSequence = new SoundSequence(null, null);
         int rateOfFire = 120;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(soundSequence, rateOfFire);
         ItemEffectContext context = this.createItemEffectContext();
 
         when(actor.exists()).thenReturn(false);
@@ -150,7 +150,7 @@ class GunFireSimulationEffectPerformanceTest {
         performance.setContext(context);
         performance.start();
 
-        verifyNoInteractions(audioEmitter);
+        verifyNoInteractions(soundEmitter);
         verify(repeatingSchedule).stop();
     }
 
@@ -159,9 +159,9 @@ class GunFireSimulationEffectPerformanceTest {
         Schedule repeatingSchedule = mock(Schedule.class);
         ItemEffectContext context = this.createItemEffectContext();
 
-        List<GameSound> shotSounds = Collections.emptyList();
+        SoundSequence soundSequence = new SoundSequence(null, null);
         int rateOfFire = 1200;
-        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(shotSounds, rateOfFire);
+        GunFireSimulationInfo gunFireSimulationInfo = new GunFireSimulationInfo(soundSequence, rateOfFire);
 
         when(actor.exists()).thenReturn(true);
         when(actor.getLocation()).thenReturn(ACTOR_LOCATION);
@@ -174,8 +174,8 @@ class GunFireSimulationEffectPerformanceTest {
         performance.start();
 
         // The implementation uses random variables, so check the max and min possible amount of executions
-        verify(audioEmitter, atLeast(10)).playSounds(shotSounds, ACTOR_LOCATION);
-        verify(audioEmitter, atMost(20)).playSounds(shotSounds, ACTOR_LOCATION);
+        verify(soundEmitter, atLeast(10)).playSoundSequence(eq(soundSequence), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == ACTOR_LOCATION));
+        verify(soundEmitter, atMost(20)).playSoundSequence(eq(soundSequence), Mockito.<Supplier<Location>>argThat(supplier -> supplier.get() == ACTOR_LOCATION));
         verify(repeatingSchedule, atLeast(1)).stop();
         verify(repeatingSchedule, atMost(10)).stop();
         verify((Removable) actor, atLeast(1)).remove();

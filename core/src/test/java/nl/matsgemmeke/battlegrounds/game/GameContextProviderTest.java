@@ -1,7 +1,5 @@
 package nl.matsgemmeke.battlegrounds.game;
 
-import nl.matsgemmeke.battlegrounds.arena.Arena;
-import nl.matsgemmeke.battlegrounds.game.freeplay.Freeplay;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,39 +20,6 @@ class GameContextProviderTest {
     @BeforeEach
     void setUp() {
         gameContextProvider = new GameContextProvider();
-    }
-
-    @Test
-    @DisplayName("addArena adds arena and returns true")
-    void addArena() {
-        GameKey gameKey = GameKey.ofArena(1);
-        Arena arena = mock(Arena.class);
-
-        boolean added = gameContextProvider.addArena(gameKey, arena);
-
-        assertThat(added).isTrue();
-    }
-
-    @Test
-    @DisplayName("assignFreeplay adds freeplay mode and returns true")
-    void assignFreeplay_success() {
-        Freeplay freeplay = mock(Freeplay.class);
-
-        boolean assigned = gameContextProvider.assignFreeplay(freeplay);
-
-        assertThat(assigned).isTrue();
-    }
-
-    @Test
-    @DisplayName("assignFreeplay does not add freeplay mode and returns false when already assigned")
-    void assignFreeplay_alreadyAssigned() {
-        Freeplay freeplay = mock(Freeplay.class);
-        Freeplay otherFreeplay = mock(Freeplay.class);
-
-        gameContextProvider.assignFreeplay(freeplay);
-        boolean assigned = gameContextProvider.assignFreeplay(otherFreeplay);
-
-        assertThat(assigned).isFalse();
     }
 
     @Test
@@ -108,42 +73,24 @@ class GameContextProviderTest {
     }
 
     @Test
-    @DisplayName("removeArena returns true when removing a registered arena")
-    void removeArena_registeredArena() {
+    @DisplayName("removeGameContext returns true when the given context is registered")
+    void removeGameContext_registeredGameKey() {
         GameKey gameKey = GameKey.ofArena(ARENA_ID);
-        Arena arena = mock(Arena.class);
+        GameContext gameContext = mock(GameContext.class);
 
-        gameContextProvider.addArena(gameKey, arena);
-        boolean removed = gameContextProvider.removeArena(ARENA_ID);
+        gameContextProvider.addGameContext(gameKey, gameContext);
+        boolean removed = gameContextProvider.removeGameContext(gameKey);
 
         assertThat(removed).isTrue();
     }
 
     @Test
-    @DisplayName("removeArena returns false when removing arena that is not registered")
-    void removeArena_unregisteredArena() {
-        boolean removed = gameContextProvider.removeArena(ARENA_ID);
+    @DisplayName("removeGameContext returns false when the given context is not registered")
+    void removeGameContext_unregisteredGameKey() {
+        GameKey gameKey = GameKey.ofFreeplay();
+
+        boolean removed = gameContextProvider.removeGameContext(gameKey);
 
         assertThat(removed).isFalse();
-    }
-
-    @Test
-    @DisplayName("arenaExists returns true when an arena by the given id is registered")
-    void arenaExists_registered() {
-        GameKey gameKey = GameKey.ofArena(ARENA_ID);
-        Arena arena = mock(Arena.class);
-
-        gameContextProvider.addArena(gameKey, arena);
-        boolean arenaExists = gameContextProvider.arenaExists(ARENA_ID);
-
-        assertThat(arenaExists).isTrue();
-    }
-
-    @Test
-    @DisplayName("arenaExists returns false when no arenas by the given id is registered")
-    void arenaExists_unregistered() {
-        boolean arenaExists = gameContextProvider.arenaExists(ARENA_ID);
-
-        assertThat(arenaExists).isFalse();
     }
 }

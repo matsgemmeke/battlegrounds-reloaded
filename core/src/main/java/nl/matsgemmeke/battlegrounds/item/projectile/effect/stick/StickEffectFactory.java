@@ -1,11 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.projectile.effect.stick;
 
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
 import nl.matsgemmeke.battlegrounds.item.projectile.effect.ProjectileEffect;
-
-import java.util.List;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 
 public interface StickEffectFactory {
 
-    ProjectileEffect create(List<GameSound> sounds);
+    ProjectileEffect create(SoundSequence soundSequence);
 }

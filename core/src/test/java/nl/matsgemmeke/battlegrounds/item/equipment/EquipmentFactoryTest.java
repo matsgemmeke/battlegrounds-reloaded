@@ -17,6 +17,8 @@ import nl.matsgemmeke.battlegrounds.item.mapper.particle.ParticleEffectMapper;
 import nl.matsgemmeke.battlegrounds.item.representation.ItemTemplateFactory;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutor;
 import nl.matsgemmeke.battlegrounds.item.trigger.TriggerExecutorFactory;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
+import nl.matsgemmeke.battlegrounds.sound.SoundService;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.junit.jupiter.api.DisplayName;
@@ -26,6 +28,7 @@ import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -34,6 +37,7 @@ import static org.mockito.Mockito.*;
 class EquipmentFactoryTest {
 
     private static final ItemStack ITEM_STACK_DISPLAY = new ItemStack(Material.STICK);
+    private static final SoundSequence MANUAL_ACTIVATION_SOUND_SEQUENCE = new SoundSequence(null, null);
 
     @Mock
     private DeploymentFactory deploymentFactory;
@@ -47,6 +51,8 @@ class EquipmentFactoryTest {
     private ItemTemplateFactory itemTemplateFactory;
     @Spy
     private ParticleEffectMapper particleEffectMapper;
+    @Mock
+    private SoundService soundService;
     @Mock
     private TriggerExecutorFactory triggerExecutorFactory;
     @InjectMocks
@@ -78,7 +84,7 @@ class EquipmentFactoryTest {
             assertThat(properties.activateEffectOnDestruction()).isTrue();
             assertThat(properties.destructionParticleEffect()).isNull();
             assertThat(properties.manualActivationDelay()).isZero();
-            assertThat(properties.manualActivationSounds()).isEmpty();
+            assertThat(properties.manualActivationSoundSequence()).isNull();
             assertThat(properties.removeDeploymentOnDestruction()).isTrue();
             assertThat(properties.removeDeploymentOnReset()).isFalse();
             assertThat(properties.undoEffectOnDestruction()).isFalse();
@@ -108,6 +114,7 @@ class EquipmentFactoryTest {
         when(itemEffectFactory.create(spec.effect)).thenReturn(itemEffect);
         when(itemTemplateFactory.create(spec.items.displayItem)).thenReturn(displayItemTemplate);
         when(itemTemplateFactory.create(spec.items.activatorItem)).thenReturn(activatorItemTemplate);
+        when(soundService.getSoundSequence("equipment-manual-activation-1")).thenReturn(Optional.of(MANUAL_ACTIVATION_SOUND_SEQUENCE));
 
         Equipment equipment = equipmentFactory.create(spec);
 
@@ -118,7 +125,7 @@ class EquipmentFactoryTest {
             assertThat(properties.activateEffectOnDestruction()).isFalse();
             assertThat(properties.destructionParticleEffect()).isNull();
             assertThat(properties.manualActivationDelay()).isEqualTo(5);
-            assertThat(properties.manualActivationSounds()).isNotEmpty();
+            assertThat(properties.manualActivationSoundSequence()).isEqualTo(MANUAL_ACTIVATION_SOUND_SEQUENCE);
             assertThat(properties.removeDeploymentOnDestruction()).isTrue();
             assertThat(properties.removeDeploymentOnReset()).isTrue();
             assertThat(properties.undoEffectOnDestruction()).isFalse();

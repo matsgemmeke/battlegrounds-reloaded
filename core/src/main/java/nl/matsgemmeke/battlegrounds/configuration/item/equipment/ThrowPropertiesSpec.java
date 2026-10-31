@@ -1,14 +1,14 @@
 package nl.matsgemmeke.battlegrounds.configuration.item.equipment;
 
-import nl.matsgemmeke.battlegrounds.validation.constraint.Required;
+import jakarta.validation.constraints.NotNull;
 
 public class ThrowPropertiesSpec {
 
-    @Required
+    @NotNull
     public Double velocity;
 
-    @Required
+    @NotNull
     public Long cooldown;
 
-    public String throwSounds;
+    public String soundSequence;
 }

@@ -1,9 +1,9 @@
 package nl.matsgemmeke.battlegrounds.item.registry;
 
 import nl.matsgemmeke.battlegrounds.configuration.item.equipment.EquipmentSpec;
-import nl.matsgemmeke.battlegrounds.configuration.item.gun.GunSpec;
 import nl.matsgemmeke.battlegrounds.configuration.item.melee.MeleeWeaponSpec;
 import nl.matsgemmeke.battlegrounds.configuration.spec.SpecDeserializer;
+import nl.matsgemmeke.battlegrounds.item.configuration.gun.GunSpec;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

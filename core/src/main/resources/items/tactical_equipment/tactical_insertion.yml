@@ -17,7 +17,7 @@ deploy:
     remove-deployment: true
     undo-effect: false
     particle-effect:
-      particle: BLOCK_CRACK
+      particle: BLOCK
       count: 5
       offset-x: 0.25
       offset-y: 0.25
@@ -28,7 +28,7 @@ deploy:
     remove-deployment: false
   throwing:
     cooldown: 30
-    throw-sounds: ENTITY_ARROW_SHOOT-1-0.5-0
+    sound-sequence: equipment-throw-1
     velocity: 0.0
 effect:
   type: MARK_SPAWN_POINT

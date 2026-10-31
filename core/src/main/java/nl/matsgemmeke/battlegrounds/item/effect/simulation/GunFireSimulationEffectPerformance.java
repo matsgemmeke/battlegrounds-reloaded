@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.item.effect.simulation;
 
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
-import nl.matsgemmeke.battlegrounds.game.audio.GameSound;
-import nl.matsgemmeke.battlegrounds.game.component.AudioEmitter;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunFireSimulationInfo;
 import nl.matsgemmeke.battlegrounds.game.component.info.gun.GunInfoProvider;
 import nl.matsgemmeke.battlegrounds.item.actor.Actor;
@@ -12,6 +10,8 @@ import nl.matsgemmeke.battlegrounds.item.effect.BaseItemEffectPerformance;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectContext;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
+import nl.matsgemmeke.battlegrounds.sound.SoundEmitter;
+import nl.matsgemmeke.battlegrounds.sound.SoundSequence;
 
 import java.util.*;
 
@@ -21,11 +21,11 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     private static final long SCHEDULE_DELAY = 0L;
     private static final long SCHEDULE_INTERVAL = 1L;
 
-    private final AudioEmitter audioEmitter;
     private final GunFireSimulationProperties properties;
     private final GunInfoProvider gunInfoProvider;
     private final Random random;
     private final Scheduler scheduler;
+    private final SoundEmitter soundEmitter;
     private boolean playingSounds;
     private long elapsedTicks;
     private long remainingTicks;
@@ -33,10 +33,10 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
     private Schedule repeatingSchedule;
 
     @Inject
-    public GunFireSimulationEffectPerformance(AudioEmitter audioEmitter, GunInfoProvider gunInfoProvider, Scheduler scheduler, @Assisted GunFireSimulationProperties properties) {
-        this.audioEmitter = audioEmitter;
+    public GunFireSimulationEffectPerformance(GunInfoProvider gunInfoProvider, Scheduler scheduler, SoundEmitter soundEmitter, @Assisted GunFireSimulationProperties properties) {
         this.gunInfoProvider = gunInfoProvider;
         this.scheduler = scheduler;
+        this.soundEmitter = soundEmitter;
         this.properties = properties;
         this.random = new Random();
     }
@@ -59,25 +59,25 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         double roundsPerSecond = (double) gunFireSimulationInfo.rateOfFire() / 60;
         int interval = (int) (TICKS_PER_SECOND / roundsPerSecond);
 
-        this.simulateGunFire(gunFireSimulationInfo.shotSounds(), interval);
+        this.simulateGunFire(gunFireSimulationInfo.shotSoundSequence(), interval);
     }
 
     private void simulateGenericGunFire() {
-        this.simulateGunFire(properties.genericSounds(), properties.burstInterval());
+        this.simulateGunFire(properties.defaultSoundSequence(), properties.burstInterval());
     }
 
-    private void simulateGunFire(List<GameSound> sounds, long interval) {
+    private void simulateGunFire(SoundSequence soundSequence, long interval) {
         totalDuration = random.nextLong(properties.minTotalDuration(), properties.maxTotalDuration());
         elapsedTicks = 0;
         remainingTicks = this.getRandomBurstDurationInTicks();
         playingSounds = true;
 
         repeatingSchedule = scheduler.createRepeatingSchedule(SCHEDULE_DELAY, SCHEDULE_INTERVAL);
-        repeatingSchedule.addTask(() -> this.handleScheduleTick(currentContext, sounds, interval));
+        repeatingSchedule.addTask(() -> this.handleScheduleTick(currentContext, soundSequence, interval));
         repeatingSchedule.start();
     }
 
-    private void handleScheduleTick(ItemEffectContext context, List<GameSound> sounds, long interval) {
+    private void handleScheduleTick(ItemEffectContext context, SoundSequence soundSequence, long interval) {
         Actor actor = context.getActor();
 
         // Stop simulation when source no longer exists
@@ -101,7 +101,7 @@ public class GunFireSimulationEffectPerformance extends BaseItemEffectPerformanc
         }
 
         if (playingSounds && remainingTicks % interval == 0) {
-            audioEmitter.playSounds(sounds, actor.getLocation());
+            soundEmitter.playSoundSequence(soundSequence, actor::getLocation);
         }
 
         if (elapsedTicks > totalDuration) {
