@@ -1,5 +1,8 @@
 package nl.matsgemmeke.battlegrounds.i18n;
 
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +16,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -26,6 +30,8 @@ class TranslatorTest {
     private BattlegroundsConfiguration battlegroundsConfiguration;
     @Mock
     private LanguageConfiguration languageConfiguration;
+    @Mock
+    private MiniMessage miniMessage;
     @InjectMocks
     private Translator translator;
 
@@ -48,5 +54,29 @@ class TranslatorTest {
         TextTemplate textTemplate = translator.translate(TRANSLATION_KEY);
 
         assertThat(textTemplate.getText()).isEqualTo("§aColorful text");
+    }
+
+    @Test
+    @DisplayName("translate returns empty optional when the language configuration has no value at the given translation key")
+    void translate_noValueAtTranslationKey() {
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
+
+        Optional<Component> componentOptional = translator.translateNew(TRANSLATION_KEY);
+
+        assertThat(componentOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("translate returns optional with deserialized component")
+    void translateNew_successful() {
+        TagResolver[] tagResolvers = { mock(TagResolver.class) };
+        Component component = Component.text(TEXT_VALUE);
+
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT_VALUE));
+        when(miniMessage.deserialize(TEXT_VALUE, tagResolvers)).thenReturn(component);
+
+        Optional<Component> componentOptional = translator.translateNew(TRANSLATION_KEY, tagResolvers);
+
+        assertThat(componentOptional).hasValue(component);
     }
 }

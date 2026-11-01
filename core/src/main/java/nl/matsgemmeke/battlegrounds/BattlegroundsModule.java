@@ -64,9 +64,7 @@ import nl.matsgemmeke.battlegrounds.game.freeplay.component.entity.FreeplayMobRe
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.player.FreeplayPlayerLifecycleHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.spawn.FreeplayRespawnHandler;
 import nl.matsgemmeke.battlegrounds.game.freeplay.component.storage.FreeplayStatePersistenceHandler;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfigurationProvider;
+import nl.matsgemmeke.battlegrounds.i18n.I18nModule;
 import nl.matsgemmeke.battlegrounds.item.controls.ItemController;
 import nl.matsgemmeke.battlegrounds.item.deploy.DeploymentFactory;
 import nl.matsgemmeke.battlegrounds.item.effect.ItemEffectPerformance;
@@ -164,6 +162,8 @@ public class BattlegroundsModule implements Module {
 
     @Override
     public void configure(Binder binder) {
+        binder.install(new I18nModule());
+
         // Instance bindings
         binder.bind(BukkitScheduler.class).toInstance(bukkitScheduler);
         binder.bind(Clock.class).toInstance(Clock.systemUTC());
@@ -187,7 +187,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(NamespacedKeyCreator.class).in(Singleton.class);
         binder.bind(ParticleEffectSpawner.class).in(Singleton.class);
         binder.bind(Scheduler.class).in(Singleton.class);
-        binder.bind(Translator.class).in(Singleton.class);
 
         Multibinder<CommandExtension> commandExtensionBinder = Multibinder.newSetBinder(binder, CommandExtension.class);
         commandExtensionBinder.addBinding().to(ArenaCommandExtension.class).in(Singleton.class);
@@ -203,7 +202,6 @@ public class BattlegroundsModule implements Module {
         binder.bind(HitboxConfiguration.class).toProvider(HitboxConfigurationProvider.class).in(Singleton.class);
         binder.bind(HitboxResolver.class).toProvider(HitboxResolverProvider.class).asEagerSingleton();
         binder.bind(ItemSpecRegistry.class).toProvider(ItemSpecRegistryProvider.class).in(Singleton.class);
-        binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
         binder.bind(MeleeWeaponStateRepository.class).toProvider(SqliteMeleeWeaponStateRepositoryProvider.class).in(Singleton.class);
         binder.bind(ScheduledExecutorService.class).toProvider(Executors::newSingleThreadScheduledExecutor);
 
