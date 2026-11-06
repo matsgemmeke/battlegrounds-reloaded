@@ -5,6 +5,7 @@ import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessageSpec;
+import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -34,8 +35,8 @@ class ActionBarMessageFactoryTest {
         ActionBarMessageSpec spec = new ActionBarMessageSpec();
         spec.setText(TEXT);
 
-        ActionBarMessage actionBarMessage = actionBarMessageFactory.create(spec, replacement);
-        actionBarMessage.send(audience);
+        Message message = actionBarMessageFactory.create(spec, replacement);
+        message.send(audience);
 
         ArgumentCaptor<TextComponent> componentCaptor = ArgumentCaptor.forClass(TextComponent.class);
         verify(audience).sendActionBar(componentCaptor.capture());

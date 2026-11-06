@@ -5,6 +5,8 @@ import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessag
 import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessageSpec;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageReader;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageSpec;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.title.TitleMessageReader;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.title.TitleMessageSpec;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,6 +25,8 @@ class MessageSpecFactoryProviderTest {
     private ActionBarMessageReader actionBarMessageReader;
     @Mock
     private ChatMessageReader chatMessageReader;
+    @Mock
+    private TitleMessageReader titleMessageReader;
     @InjectMocks
     private MessageSpecFactoryProvider provider;
 
@@ -31,16 +35,20 @@ class MessageSpecFactoryProviderTest {
     void get() {
         ActionBarMessageSpec actionBarMessageSpec = new ActionBarMessageSpec();
         ChatMessageSpec chatMessageSpec = new ChatMessageSpec();
+        TitleMessageSpec titleMessageSpec = new TitleMessageSpec();
         Section section = mock(Section.class);
 
         when(actionBarMessageReader.read(section)).thenReturn(actionBarMessageSpec);
         when(chatMessageReader.read(section)).thenReturn(chatMessageSpec);
+        when(titleMessageReader.read(section)).thenReturn(titleMessageSpec);
 
         MessageSpecFactory messageSpecFactory = provider.get();
         MessageSpec actionBarResult = messageSpecFactory.create(MessageType.ACTION_BAR, section);
         MessageSpec chatResult = messageSpecFactory.create(MessageType.CHAT, section);
+        MessageSpec titleResult = messageSpecFactory.create(MessageType.TITLE, section);
 
         assertThat(actionBarResult).isEqualTo(actionBarMessageSpec);
         assertThat(chatResult).isEqualTo(chatMessageSpec);
+        assertThat(titleResult).isEqualTo(titleMessageSpec);
     }
 }

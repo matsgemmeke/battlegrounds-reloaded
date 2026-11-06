@@ -7,6 +7,7 @@ import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessageSpec;
+import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import nl.matsgemmeke.battlegrounds.i18n.message.MessageFactory;
 
 import java.util.Arrays;
@@ -21,7 +22,7 @@ public class ActionBarMessageFactory implements MessageFactory<ActionBarMessageS
     }
 
     @Override
-    public ActionBarMessage create(ActionBarMessageSpec spec, Replacement... replacements) {
+    public Message create(ActionBarMessageSpec spec, Replacement... replacements) {
         TagResolver[] tagResolvers = Arrays.stream(replacements)
                 .map(replacement -> Placeholder.unparsed(replacement.key(), replacement.value()))
                 .toArray(TagResolver[]::new);
