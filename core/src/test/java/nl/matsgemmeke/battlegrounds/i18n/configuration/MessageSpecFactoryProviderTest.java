@@ -1,6 +1,8 @@
 package nl.matsgemmeke.battlegrounds.i18n.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.Section;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessageReader;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.actionbar.ActionBarMessageSpec;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageReader;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageSpec;
 import org.junit.jupiter.api.DisplayName;
@@ -18,6 +20,8 @@ import static org.mockito.Mockito.when;
 class MessageSpecFactoryProviderTest {
 
     @Mock
+    private ActionBarMessageReader actionBarMessageReader;
+    @Mock
     private ChatMessageReader chatMessageReader;
     @InjectMocks
     private MessageSpecFactoryProvider provider;
@@ -25,14 +29,18 @@ class MessageSpecFactoryProviderTest {
     @Test
     @DisplayName("get returns instance with object readers")
     void get() {
+        ActionBarMessageSpec actionBarMessageSpec = new ActionBarMessageSpec();
         ChatMessageSpec chatMessageSpec = new ChatMessageSpec();
         Section section = mock(Section.class);
 
+        when(actionBarMessageReader.read(section)).thenReturn(actionBarMessageSpec);
         when(chatMessageReader.read(section)).thenReturn(chatMessageSpec);
 
         MessageSpecFactory messageSpecFactory = provider.get();
+        MessageSpec actionBarResult = messageSpecFactory.create(MessageType.ACTION_BAR, section);
         MessageSpec chatResult = messageSpecFactory.create(MessageType.CHAT, section);
 
+        assertThat(actionBarResult).isEqualTo(actionBarMessageSpec);
         assertThat(chatResult).isEqualTo(chatMessageSpec);
     }
 }

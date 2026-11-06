@@ -8,7 +8,6 @@ public class ChatMessageSpec implements MessageSpec {
     @NotBlank(message = "chat messages must contain a text value")
     private String text;
 
-    @Override
     public String getText() {
         return text;
     }
