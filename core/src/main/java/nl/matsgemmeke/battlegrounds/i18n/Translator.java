@@ -1,11 +1,13 @@
 package nl.matsgemmeke.battlegrounds.i18n;
 
 import com.google.inject.Inject;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.message.CompositeMessageFactory;
+import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import org.bukkit.ChatColor;
 
 import java.util.Optional;
@@ -16,14 +18,14 @@ import java.util.Optional;
 public class Translator {
 
     private final BattlegroundsConfiguration battlegroundsConfiguration;
+    private final CompositeMessageFactory compositeMessageFactory;
     private final LanguageConfiguration languageConfiguration;
-    private final MiniMessage miniMessage;
 
     @Inject
-    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration, MiniMessage miniMessage) {
+    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, CompositeMessageFactory compositeMessageFactory, LanguageConfiguration languageConfiguration, MiniMessage miniMessage) {
         this.battlegroundsConfiguration = battlegroundsConfiguration;
+        this.compositeMessageFactory = compositeMessageFactory;
         this.languageConfiguration = languageConfiguration;
-        this.miniMessage = miniMessage;
     }
 
     /**
@@ -46,17 +48,12 @@ public class Translator {
      * Gets the translation of a certain message by its translation key path.
      *
      * @param translationKey the translation key
-     * @param tagResolvers   the tag resolvers filling placeholders
+     * @param replacements   the placeholder replacements
      * @return               an optional with the deserialized component, or empty when the given translation key has
      *                       no value
      */
-    public Optional<Component> translateNew(String translationKey, TagResolver... tagResolvers) {
-        String textValue = languageConfiguration.getTextValue(translationKey).orElse(null);
-
-        if (textValue == null) {
-            return Optional.empty();
-        }
-
-        return Optional.of(miniMessage.deserialize(textValue, tagResolvers));
+    public Optional<Message> translateNew(String translationKey, Replacement... replacements) {
+        return languageConfiguration.getMessageSpec(translationKey)
+                .map(messageSpec -> compositeMessageFactory.create(messageSpec, replacements));
     }
 }

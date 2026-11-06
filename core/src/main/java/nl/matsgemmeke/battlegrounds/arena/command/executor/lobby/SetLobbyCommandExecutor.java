@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
@@ -14,7 +15,6 @@ import nl.matsgemmeke.battlegrounds.util.world.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class SetLobbyCommandExecutor {
@@ -57,8 +57,8 @@ public class SetLobbyCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.setLobby(lobbyLocationData);
 
-        Map<String, Object> values = Map.of("bg_arena_id", arenaId);
+        Replacement arenaIdReplacement = Replacement.of("bg-arena-id", arenaId);
 
-        player.sendMessage(translator.translate(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()).replace(values));
+        translator.translateNew(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
     }
 }

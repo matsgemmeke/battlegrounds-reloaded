@@ -1,10 +1,11 @@
 package nl.matsgemmeke.battlegrounds.i18n;
 
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageSpec;
+import nl.matsgemmeke.battlegrounds.i18n.configuration.MessageSpec;
+import nl.matsgemmeke.battlegrounds.i18n.message.CompositeMessageFactory;
+import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,9 +30,9 @@ class TranslatorTest {
     @Mock
     private BattlegroundsConfiguration battlegroundsConfiguration;
     @Mock
-    private LanguageConfiguration languageConfiguration;
+    private CompositeMessageFactory compositeMessageFactory;
     @Mock
-    private MiniMessage miniMessage;
+    private LanguageConfiguration languageConfiguration;
     @InjectMocks
     private Translator translator;
 
@@ -59,24 +60,25 @@ class TranslatorTest {
     @Test
     @DisplayName("translate returns empty optional when the language configuration has no value at the given translation key")
     void translate_noValueAtTranslationKey() {
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
+        when(languageConfiguration.getMessageSpec(TRANSLATION_KEY)).thenReturn(Optional.empty());
 
-        Optional<Component> componentOptional = translator.translateNew(TRANSLATION_KEY);
+        Optional<Message> messageOptional = translator.translateNew(TRANSLATION_KEY);
 
-        assertThat(componentOptional).isEmpty();
+        assertThat(messageOptional).isEmpty();
     }
 
     @Test
     @DisplayName("translate returns optional with deserialized component")
     void translateNew_successful() {
-        TagResolver[] tagResolvers = { mock(TagResolver.class) };
-        Component component = Component.text(TEXT_VALUE);
+        MessageSpec messageSpec = mock(ChatMessageSpec.class);
+        Replacement[] replacements = { Replacement.of("test", "test") };
+        Message message = mock(Message.class);
 
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT_VALUE));
-        when(miniMessage.deserialize(TEXT_VALUE, tagResolvers)).thenReturn(component);
+        when(languageConfiguration.getMessageSpec(TRANSLATION_KEY)).thenReturn(Optional.of(messageSpec));
+        when(compositeMessageFactory.create(messageSpec, replacements)).thenReturn(message);
 
-        Optional<Component> componentOptional = translator.translateNew(TRANSLATION_KEY, tagResolvers);
+        Optional<Message> messageOptional = translator.translateNew(TRANSLATION_KEY, replacements);
 
-        assertThat(componentOptional).hasValue(component);
+        assertThat(messageOptional).hasValue(message);
     }
 }

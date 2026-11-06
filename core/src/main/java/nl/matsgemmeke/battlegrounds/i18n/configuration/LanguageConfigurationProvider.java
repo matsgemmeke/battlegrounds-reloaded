@@ -7,9 +7,11 @@ import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
 import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
+import nl.matsgemmeke.battlegrounds.validation.ObjectValidator;
 
 import java.io.File;
 import java.io.InputStream;
+import java.util.logging.Logger;
 
 public class LanguageConfigurationProvider implements Provider<LanguageConfiguration> {
 
@@ -17,6 +19,9 @@ public class LanguageConfigurationProvider implements Provider<LanguageConfigura
 
     private final BattlegroundsConfiguration configuration;
     private final File langFolder;
+    private final Logger logger;
+    private final MessageSpecFactory messageSpecFactory;
+    private final ObjectValidator objectValidator;
     private final ResourceProvider resourceProvider;
     private final YamlConfigurationFileFactory yamlConfigurationFileFactory;
 
@@ -24,11 +29,17 @@ public class LanguageConfigurationProvider implements Provider<LanguageConfigura
     public LanguageConfigurationProvider(
             BattlegroundsConfiguration configuration,
             @Named("LangFolder") File langFolder,
+            @Named("Battlegrounds") Logger logger,
+            MessageSpecFactory messageSpecFactory,
+            ObjectValidator objectValidator,
             ResourceProvider resourceProvider,
             YamlConfigurationFileFactory yamlConfigurationFileFactory
     ) {
         this.configuration = configuration;
         this.langFolder = langFolder;
+        this.logger = logger;
+        this.messageSpecFactory = messageSpecFactory;
+        this.objectValidator = objectValidator;
         this.resourceProvider = resourceProvider;
         this.yamlConfigurationFileFactory = yamlConfigurationFileFactory;
     }
@@ -43,6 +54,6 @@ public class LanguageConfigurationProvider implements Provider<LanguageConfigura
 
         YamlConfigurationFile configurationFile = yamlConfigurationFileFactory.create(langFile, resource);
 
-        return new LanguageConfiguration(configurationFile);
+        return new LanguageConfiguration(configurationFile, logger, messageSpecFactory, objectValidator);
     }
 }

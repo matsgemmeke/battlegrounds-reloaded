@@ -6,9 +6,11 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
 import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -33,7 +35,6 @@ class SetLobbyCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String LOBBY_SET_FAILED_TEXT = LanguageFixture.getTranslation(TranslationKey.LOBBY_SET_FAILED.getPath());
-    private static final String LOBBY_SET_SUCCESSFUL_TEXT = LanguageFixture.getTranslation(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath());
 
     private static final String PLAYER_NAME = "TestPlayer";
     private static final String PLAYER_LOCATION_WORLD = "world";
@@ -59,6 +60,8 @@ class SetLobbyCommandExecutorTest {
     private SetLobbyCommandExecutor commandExecutor;
     @Captor
     private ArgumentCaptor<Location> locationCaptor;
+    @Captor
+    private ArgumentCaptor<Replacement[]> replacementCaptor;
 
     @Test
     @DisplayName("execute logs warning message when the validated arena id is somehow not registered")
@@ -81,16 +84,18 @@ class SetLobbyCommandExecutorTest {
         World world = mock(World.class);
         Location playerLocation = new Location(world, PLAYER_LOCATION_X, PLAYER_LOCATION_Y, PLAYER_LOCATION_Z, PLAYER_LOCATION_YAW, PLAYER_LOCATION_PITCH);
         LocationData lobbyLocationData = new LocationData(PLAYER_LOCATION_WORLD, PLAYER_LOCATION_X, PLAYER_LOCATION_Y, PLAYER_LOCATION_Z, PLAYER_LOCATION_YAW, PLAYER_LOCATION_PITCH);
+        Message message = mock(Message.class);
 
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
         when(player.getLocation()).thenReturn(playerLocation);
         when(locationMapper.toLocationData(any(Location.class))).thenReturn(lobbyLocationData);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
-        when(translator.translate(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath())).thenReturn(new TextTemplate(LOBBY_SET_SUCCESSFUL_TEXT));
+        when(translator.translateNew(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), any(Replacement[].class))).thenReturn(Optional.of(message));
 
         commandExecutor.execute(player, ARENA_ID);
 
         verify(arena).setLobbyLocation(locationCaptor.capture());
+        verify(translator).translateNew(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), replacementCaptor.capture());
 
         assertThat(locationCaptor.getValue()).satisfies(location -> {
             assertThat(location.getWorld()).isEqualTo(world);
@@ -101,7 +106,12 @@ class SetLobbyCommandExecutorTest {
             assertThat(location.getPitch()).isEqualTo(PLAYER_LOCATION_PITCH);
         });
 
+        assertThat(replacementCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("bg-arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
+
         verify(setupConfiguration).setLobby(lobbyLocationData);
-        verify(player).sendMessage("&6You have set the waiting lobby of arena &f1&6 to your current location.");
+        verify(message).send(player);
     }
 }
