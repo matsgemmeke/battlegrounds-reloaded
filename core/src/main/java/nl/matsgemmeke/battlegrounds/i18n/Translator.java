@@ -1,13 +1,15 @@
 package nl.matsgemmeke.battlegrounds.i18n;
 
 import com.google.inject.Inject;
+import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.i18n.message.CompositeMessageFactory;
-import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import org.bukkit.ChatColor;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -16,14 +18,14 @@ import java.util.Optional;
 public class Translator {
 
     private final BattlegroundsConfiguration battlegroundsConfiguration;
-    private final CompositeMessageFactory compositeMessageFactory;
     private final LanguageConfiguration languageConfiguration;
+    private final MiniMessage miniMessage;
 
     @Inject
-    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, CompositeMessageFactory compositeMessageFactory, LanguageConfiguration languageConfiguration, MiniMessage miniMessage) {
+    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration, MiniMessage miniMessage) {
         this.battlegroundsConfiguration = battlegroundsConfiguration;
-        this.compositeMessageFactory = compositeMessageFactory;
         this.languageConfiguration = languageConfiguration;
+        this.miniMessage = miniMessage;
     }
 
     /**
@@ -51,7 +53,17 @@ public class Translator {
      *                       no value
      */
     public Optional<Message> translateNew(String translationKey, Replacement... replacements) {
-        return languageConfiguration.getMessageSpec(translationKey)
-                .map(messageSpec -> compositeMessageFactory.create(messageSpec, replacements));
+        String text = languageConfiguration.getTextValue(translationKey).orElse(null);
+
+        if (text == null) {
+            return Optional.empty();
+        }
+
+        TagResolver[] tagResolvers = Arrays.stream(replacements)
+                .map(replacement -> Placeholder.unparsed(replacement.key(), replacement.value()))
+                .toArray(TagResolver[]::new);
+        Component component = miniMessage.deserialize(text, tagResolvers);
+
+        return Optional.of(new Message(component));
     }
 }

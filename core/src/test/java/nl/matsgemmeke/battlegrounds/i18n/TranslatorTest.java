@@ -1,24 +1,24 @@
 package nl.matsgemmeke.battlegrounds.i18n;
 
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.TextComponent;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.chat.ChatMessageSpec;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.MessageSpec;
-import nl.matsgemmeke.battlegrounds.i18n.message.CompositeMessageFactory;
-import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TranslatorTest {
@@ -26,13 +26,14 @@ class TranslatorTest {
     private static final String LANGUAGE = "en";
     private static final String TRANSLATION_KEY = "key";
     private static final String TEXT_VALUE = "&aColorful text";
+    private static final String TEXT = "<gold>This is a message for player <player>";
 
     @Mock
     private BattlegroundsConfiguration battlegroundsConfiguration;
     @Mock
-    private CompositeMessageFactory compositeMessageFactory;
-    @Mock
     private LanguageConfiguration languageConfiguration;
+    @Spy
+    private MiniMessage miniMessage = MiniMessage.miniMessage();
     @InjectMocks
     private Translator translator;
 
@@ -60,7 +61,7 @@ class TranslatorTest {
     @Test
     @DisplayName("translate returns empty optional when the language configuration has no value at the given translation key")
     void translate_noValueAtTranslationKey() {
-        when(languageConfiguration.getMessageSpec(TRANSLATION_KEY)).thenReturn(Optional.empty());
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
 
         Optional<Message> messageOptional = translator.translateNew(TRANSLATION_KEY);
 
@@ -70,15 +71,16 @@ class TranslatorTest {
     @Test
     @DisplayName("translate returns optional with deserialized component")
     void translateNew_successful() {
-        MessageSpec messageSpec = mock(ChatMessageSpec.class);
-        Replacement[] replacements = { Replacement.of("test", "test") };
-        Message message = mock(Message.class);
+        Replacement[] replacements = { Replacement.of("player", "TestPlayer") };
+        Audience audience = mock(Audience.class);
 
-        when(languageConfiguration.getMessageSpec(TRANSLATION_KEY)).thenReturn(Optional.of(messageSpec));
-        when(compositeMessageFactory.create(messageSpec, replacements)).thenReturn(message);
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
 
-        Optional<Message> messageOptional = translator.translateNew(TRANSLATION_KEY, replacements);
+        translator.translateNew(TRANSLATION_KEY, replacements).ifPresent(message -> message.send(audience));
 
-        assertThat(messageOptional).hasValue(message);
+        ArgumentCaptor<TextComponent> componentCaptor = ArgumentCaptor.forClass(TextComponent.class);
+        verify(audience).sendMessage(componentCaptor.capture());
+
+        assertThat(miniMessage.serialize(componentCaptor.getValue())).isEqualTo("<gold>This is a message for player TestPlayer");
     }
 }
