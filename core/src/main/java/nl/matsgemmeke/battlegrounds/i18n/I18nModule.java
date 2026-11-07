@@ -6,15 +6,12 @@ import com.google.inject.Singleton;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfigurationProvider;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.MessageSpecFactory;
-import nl.matsgemmeke.battlegrounds.i18n.configuration.MessageSpecFactoryProvider;
 
 public class I18nModule implements Module {
 
     @Override
     public void configure(Binder binder) {
-        binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class);
-        binder.bind(MessageSpecFactory.class).toProvider(MessageSpecFactoryProvider.class).in(Singleton.class);
+        binder.bind(LanguageConfiguration.class).toProvider(LanguageConfigurationProvider.class).in(Singleton.class);
         binder.bind(MiniMessage.class).toProvider(MiniMessage::miniMessage).in(Singleton.class);
         binder.bind(Translator.class).in(Singleton.class);
     }
