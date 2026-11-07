@@ -4,16 +4,18 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
 import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 
+import java.util.List;
+
 public class ChatMessage implements Message {
 
-    private final Component component;
+    private final List<Component> components;
 
-    public ChatMessage(Component component) {
-        this.component = component;
+    public ChatMessage(List<Component> components) {
+        this.components = components;
     }
 
     @Override
     public void send(Audience audience) {
-        audience.sendMessage(component);
+        components.forEach(audience::sendMessage);
     }
 }

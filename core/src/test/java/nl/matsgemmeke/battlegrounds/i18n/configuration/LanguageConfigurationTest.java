@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Logger;
@@ -80,7 +81,7 @@ class LanguageConfigurationTest {
     @DisplayName("getMessageSpec returns empty optional when section at given path has an invalid specification")
     void getMessageSpec_invalidSpec() {
         ChatMessageSpec messageSpec = new ChatMessageSpec();
-        messageSpec.setText("");
+        messageSpec.setLines(Collections.emptyList());
 
         Section section = mock(Section.class);
         when(section.getString("type")).thenReturn(Optional.of(TYPE));
@@ -94,14 +95,14 @@ class LanguageConfigurationTest {
 
         verify(logger).severe("""
                 Attempted to load message at 'path' but was invalid (1 constraint violation):
-                 - text: chat messages must contain a text value""");
+                 - lines: chat messages must contain at least one line""");
     }
 
     @Test
     @DisplayName("getMessageSpec returns optional with valid message specification from given path")
     void getMessageSpec_successful() {
         ChatMessageSpec messageSpec = new ChatMessageSpec();
-        messageSpec.setText("hello");
+        messageSpec.setLines(List.of("hello"));
 
         Section section = mock(Section.class);
         when(section.getString("type")).thenReturn(Optional.of(TYPE));

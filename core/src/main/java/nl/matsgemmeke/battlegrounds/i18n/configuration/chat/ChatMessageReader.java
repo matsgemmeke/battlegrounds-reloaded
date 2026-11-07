@@ -4,14 +4,23 @@ import nl.matsgemmeke.battlegrounds.configuration.Section;
 import nl.matsgemmeke.battlegrounds.configuration.polymorphic.ObjectReader;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.MessageSpec;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ChatMessageReader implements ObjectReader<MessageSpec> {
 
     @Override
     public MessageSpec read(Section section) {
-        String text = section.getString("text").orElse(null);
+        List<String> lines = new ArrayList<>();
+
+        if (section.isList("lines")) {
+            lines.addAll(section.getStringList("lines"));
+        } else {
+            section.getString("lines").ifPresent(lines::add);
+        }
 
         ChatMessageSpec spec = new ChatMessageSpec();
-        spec.setText(text);
+        spec.setLines(lines);
         return spec;
     }
 }

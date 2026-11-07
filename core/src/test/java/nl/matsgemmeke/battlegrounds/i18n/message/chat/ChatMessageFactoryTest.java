@@ -13,6 +13,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -33,7 +35,7 @@ class ChatMessageFactoryTest {
         Audience audience = mock(Audience.class);
 
         ChatMessageSpec spec = new ChatMessageSpec();
-        spec.setText(TEXT);
+        spec.setLines(List.of(TEXT));
 
         Message message = chatMessageFactory.create(spec, replacement);
         message.send(audience);

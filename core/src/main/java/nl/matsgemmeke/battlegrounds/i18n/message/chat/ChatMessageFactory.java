@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.i18n.message.Message;
 import nl.matsgemmeke.battlegrounds.i18n.message.MessageFactory;
 
 import java.util.Arrays;
+import java.util.List;
 
 public class ChatMessageFactory implements MessageFactory<ChatMessageSpec> {
 
@@ -27,9 +28,10 @@ public class ChatMessageFactory implements MessageFactory<ChatMessageSpec> {
                 .map(replacement -> Placeholder.unparsed(replacement.key(), replacement.value()))
                 .toArray(TagResolver[]::new);
 
-        String text = spec.getText();
-        Component component = miniMessage.deserialize(text, tagResolvers);
+        List<Component> components = spec.getLines().stream()
+                .map(line -> miniMessage.deserialize(line, tagResolvers))
+                .toList();
 
-        return new ChatMessage(component);
+        return new ChatMessage(components);
     }
 }

@@ -2,8 +2,6 @@ package nl.matsgemmeke.battlegrounds.i18n;
 
 import com.google.inject.Inject;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
-import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.message.CompositeMessageFactory;

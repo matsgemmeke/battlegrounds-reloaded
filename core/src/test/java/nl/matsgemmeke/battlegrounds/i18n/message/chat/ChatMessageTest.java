@@ -5,6 +5,8 @@ import net.kyori.adventure.text.Component;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -16,7 +18,7 @@ class ChatMessageTest {
         Component component = Component.text("test");
         Audience audience = mock(Audience.class);
 
-        ChatMessage message = new ChatMessage(component);
+        ChatMessage message = new ChatMessage(List.of(component));
         message.send(audience);
 
         verify(audience).sendMessage(component);
