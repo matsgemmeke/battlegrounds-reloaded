@@ -86,12 +86,12 @@ class SetLobbyCommandExecutorTest {
         when(player.getLocation()).thenReturn(playerLocation);
         when(locationMapper.toLocationData(any(Location.class))).thenReturn(lobbyLocationData);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
-        when(translator.translateNew(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), any(Replacement[].class))).thenReturn(Optional.of(message));
+        when(translator.translateMessage(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), any(Replacement[].class))).thenReturn(Optional.of(message));
 
         commandExecutor.execute(player, ARENA_ID);
 
         verify(arena).setLobbyLocation(locationCaptor.capture());
-        verify(translator).translateNew(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), replacementCaptor.capture());
+        verify(translator).translateMessage(eq(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath()), replacementCaptor.capture());
 
         assertThat(locationCaptor.getValue()).satisfies(location -> {
             assertThat(location.getWorld()).isEqualTo(world);

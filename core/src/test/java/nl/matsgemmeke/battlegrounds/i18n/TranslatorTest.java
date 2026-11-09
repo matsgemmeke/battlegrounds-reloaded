@@ -59,24 +59,24 @@ class TranslatorTest {
     }
 
     @Test
-    @DisplayName("translate returns empty optional when the language configuration has no value at the given translation key")
-    void translate_noValueAtTranslationKey() {
+    @DisplayName("translateMessage returns empty optional when the language configuration has no value at the given translation key")
+    void translateMessage_noValueAtTranslationKey() {
         when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
 
-        Optional<Message> messageOptional = translator.translateNew(TRANSLATION_KEY);
+        Optional<Message> messageOptional = translator.translateMessage(TRANSLATION_KEY);
 
         assertThat(messageOptional).isEmpty();
     }
 
     @Test
-    @DisplayName("translate returns optional with deserialized component")
-    void translateNew_successful() {
+    @DisplayName("translateMessage returns optional with deserialized component")
+    void translateMessage_successful() {
         Replacement[] replacements = { Replacement.of("player", "TestPlayer") };
         Audience audience = mock(Audience.class);
 
         when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
 
-        translator.translateNew(TRANSLATION_KEY, replacements).ifPresent(message -> message.send(audience));
+        translator.translateMessage(TRANSLATION_KEY, replacements).ifPresent(message -> message.send(audience));
 
         ArgumentCaptor<TextComponent> componentCaptor = ArgumentCaptor.forClass(TextComponent.class);
         verify(audience).sendMessage(componentCaptor.capture());

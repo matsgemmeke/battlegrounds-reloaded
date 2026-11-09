@@ -1,11 +1,11 @@
 package nl.matsgemmeke.battlegrounds.i18n.configuration;
 
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -20,55 +20,90 @@ class LanguageConfigurationTest {
 
     private static final String PATH = "path";
     private static final String TEXT_VALUE = "hello";
+    private static final List<String> TEXT_VALUES = List.of("good", "morning");
 
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
-    private ConfigurationFile configurationFile;
-    @InjectMocks
+    private ConfigurationFile mainConfigurationFile;
+    @Mock(answer = Answers.RETURNS_DEEP_STUBS)
+    private ConfigurationFile fallbackConfigurationFile;
+
     private LanguageConfiguration languageConfiguration;
 
-    @Test
-    @DisplayName("getTextValue returns empty optional when given path does not exist")
-    void getTextValue_nonexistentPath() {
-        when(configurationFile.getRootSection().exists(PATH)).thenReturn(false);
-
-        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
-
-        assertThat(textValueOptional).isEmpty();
+    @BeforeEach
+    void setUp() {
+        languageConfiguration = new LanguageConfiguration(mainConfigurationFile, fallbackConfigurationFile);
     }
 
     @Test
-    @DisplayName("getTextValue returns empty optional when given path leads to empty list")
-    void getTextValue_emptyList() {
-        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
-        when(configurationFile.getRootSection().isList(PATH)).thenReturn(true);
-        when(configurationFile.getRootSection().getStringList(PATH)).thenReturn(List.of());
+    @DisplayName("getTextValue returns optional with single text value from main configuration file")
+    void getTextValue_presentAsSingleValueInMainConfigurationFile() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(mainConfigurationFile.getRootSection().isList(PATH)).thenReturn(false);
+        when(mainConfigurationFile.getRootSection().getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
 
-        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
 
-        assertThat(textValueOptional).isEmpty();
+        assertThat(textOptional).hasValue(TEXT_VALUE);
     }
 
     @Test
-    @DisplayName("getTextValue returns optional with joined strings from list")
-    void getTextValue_stringList() {
-        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
-        when(configurationFile.getRootSection().isList(PATH)).thenReturn(true);
-        when(configurationFile.getRootSection().getStringList(PATH)).thenReturn(List.of(TEXT_VALUE, "world"));
+    @DisplayName("getTextValue returns optional with text value joined from list from main configuration file")
+    void getTextValue_presentAsListInMainConfigurationFile() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(mainConfigurationFile.getRootSection().isList(PATH)).thenReturn(true);
+        when(mainConfigurationFile.getRootSection().getStringList(PATH)).thenReturn(TEXT_VALUES);
 
-        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
 
-        assertThat(textValueOptional).hasValue("hello\nworld");
+        assertThat(textOptional).hasValue("good\nmorning");
     }
 
     @Test
-    @DisplayName("getTextValue returns optional with string value at given path")
-    void getTextValue_singleString() {
-        when(configurationFile.getRootSection().exists(PATH)).thenReturn(true);
-        when(configurationFile.getRootSection().isList(PATH)).thenReturn(false);
-        when(configurationFile.getRootSection().getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
+    @DisplayName("getTextValue returns empty optional when text value from main configuration file is blank")
+    void getTextValue_blankInMainConfigurationFile() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(mainConfigurationFile.getRootSection().isList(PATH)).thenReturn(false);
+        when(mainConfigurationFile.getRootSection().getString(PATH)).thenReturn(Optional.of(""));
 
-        Optional<String> textValueOptional = languageConfiguration.getTextValue(PATH);
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
 
-        assertThat(textValueOptional).hasValue(TEXT_VALUE);
+        assertThat(textOptional).isEmpty();
+    }
+
+    @Test
+    @DisplayName("getTextValue returns optional with single text value from fallback configuration file")
+    void getTextValue_presentAsSingleValueInFallbackConfigurationFile() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(false);
+        when(fallbackConfigurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(fallbackConfigurationFile.getRootSection().isList(PATH)).thenReturn(false);
+        when(fallbackConfigurationFile.getRootSection().getString(PATH)).thenReturn(Optional.of(TEXT_VALUE));
+
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textOptional).hasValue(TEXT_VALUE);
+    }
+
+    @Test
+    @DisplayName("getTextValue returns optional with text value joined from list from fallback configuration file")
+    void getTextValue_presentAsListInFallbackConfigurationFile() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(false);
+        when(fallbackConfigurationFile.getRootSection().exists(PATH)).thenReturn(true);
+        when(fallbackConfigurationFile.getRootSection().isList(PATH)).thenReturn(true);
+        when(fallbackConfigurationFile.getRootSection().getStringList(PATH)).thenReturn(TEXT_VALUES);
+
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textOptional).hasValue("good\nmorning");
+    }
+
+    @Test
+    @DisplayName("getTextValue returns empty optional when both main and fallback configuration file does not contain the given path")
+    void getTextValue_absentInBothFiles() {
+        when(mainConfigurationFile.getRootSection().exists(PATH)).thenReturn(false);
+        when(fallbackConfigurationFile.getRootSection().exists(PATH)).thenReturn(false);
+
+        Optional<String> textOptional = languageConfiguration.getTextValue(PATH);
+
+        assertThat(textOptional).isEmpty();
     }
 }

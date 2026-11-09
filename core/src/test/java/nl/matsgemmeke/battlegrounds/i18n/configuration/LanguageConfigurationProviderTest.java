@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.i18n.configuration;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
+import nl.matsgemmeke.battlegrounds.resource.ResourceProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,13 +39,18 @@ class LanguageConfigurationProviderTest {
     @Test
     @DisplayName("get creates new configuration instance with corresponding configuration file")
     void get() throws FileNotFoundException {
-        File langFile = new File("src/main/resources/lang/lang_en.yml");
-        FileInputStream resource = new FileInputStream(langFile);
-        YamlConfigurationFile configurationFile = mock(YamlConfigurationFile.class);
+        File mainLangFile = new File("src/main/resources/lang/lang_fr.yml");
+        File fallbackLangFile = new File("src/main/resources/lang/lang_en.yml");
+        FileInputStream mainResource = new FileInputStream(mainLangFile);
+        FileInputStream fallbackResource = new FileInputStream(fallbackLangFile);
+        YamlConfigurationFile mainConfigurationFile = mock(YamlConfigurationFile.class);
+        YamlConfigurationFile fallbackConfigurationFile = mock(YamlConfigurationFile.class);
 
-        when(configuration.getLanguage()).thenReturn("en");
-        when(resourceProvider.getResource("lang/lang_en.yml")).thenReturn(resource);
-        when(yamlConfigurationFileFactory.create(new File(langFolder, "lang_en.yml"), resource)).thenReturn(configurationFile);
+        when(configuration.getLanguage()).thenReturn("fr");
+        when(resourceProvider.getResource("lang/lang_fr.yml")).thenReturn(mainResource);
+        when(resourceProvider.getResource("lang/lang_en.yml")).thenReturn(fallbackResource);
+        when(yamlConfigurationFileFactory.create(new File(langFolder, "lang_fr.yml"), mainResource)).thenReturn(mainConfigurationFile);
+        when(yamlConfigurationFileFactory.create(new File(langFolder, "lang_en.yml"), fallbackResource)).thenReturn(fallbackConfigurationFile);
 
         LanguageConfiguration configuration = provider.get();
 

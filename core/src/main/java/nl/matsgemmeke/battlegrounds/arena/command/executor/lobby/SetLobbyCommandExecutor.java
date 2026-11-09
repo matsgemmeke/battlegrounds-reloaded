@@ -59,6 +59,6 @@ public class SetLobbyCommandExecutor {
 
         Replacement arenaIdReplacement = Replacement.of("bg-arena-id", arenaId);
 
-        translator.translateNew(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
+        translator.translateMessage(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
     }
 }

@@ -6,7 +6,7 @@ import com.google.inject.name.Named;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
+import nl.matsgemmeke.battlegrounds.resource.ResourceProvider;
 
 import java.io.File;
 import java.io.InputStream;

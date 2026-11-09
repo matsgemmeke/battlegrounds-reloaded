@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.sound.configuration;
 import nl.matsgemmeke.battlegrounds.configuration.ConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFile;
 import nl.matsgemmeke.battlegrounds.configuration.yaml.YamlConfigurationFileFactory;
-import nl.matsgemmeke.battlegrounds.util.ResourceProvider;
+import nl.matsgemmeke.battlegrounds.resource.ResourceProvider;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

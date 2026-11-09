@@ -1,0 +1,2 @@
+setup:
+  lobby-set-successful: "<gold>Vous avez fixé la salle d'attente de l'arène <white><bg-arena-id><gold> sur votre emplacement actuel."

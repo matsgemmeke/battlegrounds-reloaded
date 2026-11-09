@@ -52,7 +52,7 @@ public class Translator {
      * @return               an optional with the deserialized component, or empty when the given translation key has
      *                       no value
      */
-    public Optional<Message> translateNew(String translationKey, Replacement... replacements) {
+    public Optional<Message> translateMessage(String translationKey, Replacement... replacements) {
         String text = languageConfiguration.getTextValue(translationKey).orElse(null);
 
         if (text == null) {
