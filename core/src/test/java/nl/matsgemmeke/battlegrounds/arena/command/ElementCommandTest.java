@@ -4,7 +4,7 @@ import nl.matsgemmeke.battlegrounds.arena.command.executor.element.AddSpawnPoint
 import nl.matsgemmeke.battlegrounds.arena.command.executor.element.RemoveElementCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Message;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
@@ -17,6 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
@@ -25,10 +26,6 @@ class ElementCommandTest {
 
     private static final int ELEMENT_ID = 1;
     private static final int TEAM_ID = 2;
-    private static final String UNKNOWN_COMMAND_TEXT = "unknown command";
-    private static final String ELEMENT_HELP_MENU_HEADER_TEXT = "header";
-    private static final String ELEMENT_HELP_MENU_FOOTER_TEXT = "footer";
-    private static final String SPECIFY_ELEMENT_TYPE_TEXT = "specify element type";
 
     @Mock
     private AddSpawnPointCommandExecutor addSpawnPointCommandExecutor;
@@ -47,28 +44,31 @@ class ElementCommandTest {
     @DisplayName("onDefault sends unknown command message when command has args")
     void onDefault_withArgs() {
         String[] args = new String[] { "test" };
+        Message message = mock(Message.class);
 
-        when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate(UNKNOWN_COMMAND_TEXT));
+        when(translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(Optional.of(message));
 
         command.onDefault(player, args);
 
-        verify(player).sendMessage(UNKNOWN_COMMAND_TEXT);
+        verify(message).send(player);
     }
 
     @Test
     @DisplayName("onDefault shows help menu to player as JSON messages")
     void onDefault_playerSender() {
         CommandInfo commandInfo = new CommandInfo(null, null, null, new String[0]);
+        Message headerMessage = mock(Message.class);
+        Message footerMessage = mock(Message.class);
 
-        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_HEADER_TEXT));
-        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_FOOTER_TEXT));
+        when(translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(Optional.of(headerMessage));
+        when(translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(Optional.of(footerMessage));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(player, null);
 
-        verify(player).sendMessage(ELEMENT_HELP_MENU_HEADER_TEXT);
+        verify(headerMessage).send(player);
         verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
-        verify(player).sendMessage(ELEMENT_HELP_MENU_FOOTER_TEXT);
+        verify(footerMessage).send(player);
     }
 
     @Test
@@ -76,26 +76,30 @@ class ElementCommandTest {
     void onDefault_consoleSender() {
         CommandInfo commandInfo = new CommandInfo(null, null, null, new String[0]);
         CommandSender sender = mock(CommandSender.class);
+        Message headerMessage = mock(Message.class);
+        Message footerMessage = mock(Message.class);
 
-        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_HEADER_TEXT));
-        when(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ELEMENT_HELP_MENU_FOOTER_TEXT));
+        when(translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath())).thenReturn(Optional.of(headerMessage));
+        when(translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath())).thenReturn(Optional.of(footerMessage));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(sender, null);
 
-        verify(sender).sendMessage(ELEMENT_HELP_MENU_HEADER_TEXT);
+        verify(headerMessage).send(sender);
         verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
-        verify(sender).sendMessage(ELEMENT_HELP_MENU_FOOTER_TEXT);
+        verify(footerMessage).send(sender);
     }
 
     @Test
     @DisplayName("onAdd sends specify element type message")
     void onAdd() {
-        when(translator.translate(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath())).thenReturn(new TextTemplate(SPECIFY_ELEMENT_TYPE_TEXT));
+        Message message = mock(Message.class);
+
+        when(translator.translateMessage(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath())).thenReturn(Optional.of(message));
 
         command.onAdd(player);
 
-        verify(player).sendMessage(SPECIFY_ELEMENT_TYPE_TEXT);
+        verify(message).send(player);
     }
 
     @Test

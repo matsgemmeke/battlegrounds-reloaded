@@ -47,11 +47,11 @@ public class ElementCommand extends BaseCommand {
     @Default
     public void onDefault(CommandSender sender, String[] args) {
         if (args != null && args.length > 0) {
-            sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+            translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath()).ifPresent(message -> message.send(sender));
             return;
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath()).getText());
+        translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath()).ifPresent(message -> message.send(sender));
 
         if (sender instanceof Player player) {
             helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
@@ -59,12 +59,12 @@ public class ElementCommand extends BaseCommand {
             helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath()).getText());
+        translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath()).ifPresent(message -> message.send(sender));
     }
 
     @Subcommand("add")
     public void onAdd(Player player) {
-        player.sendMessage(translator.translate(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath()).getText());
+        translator.translateMessage(TranslationKey.SPECIFY_ELEMENT_TYPE.getPath()).ifPresent(message -> message.send(player));
     }
 
     @Subcommand("add spawnpoint")
