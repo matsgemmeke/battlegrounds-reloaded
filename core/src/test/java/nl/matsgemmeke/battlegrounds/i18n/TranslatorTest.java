@@ -83,4 +83,24 @@ class TranslatorTest {
 
         assertThat(miniMessage.serialize(componentCaptor.getValue())).isEqualTo("<gold>This is a message for player TestPlayer");
     }
+
+    @Test
+    @DisplayName("translateText returns empty optional when the language configuration has no value at the given translation key")
+    void translateText_unknownTranslationKey() {
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
+
+        Optional<String> optionalString = translator.translateText(TRANSLATION_KEY);
+
+        assertThat(optionalString).isEmpty();
+    }
+
+    @Test
+    @DisplayName("translateText returns optional with corresponding text value")
+    void translateText_successful() {
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
+
+        Optional<String> optionalString = translator.translateText(TRANSLATION_KEY);
+
+        assertThat(optionalString).hasValue(TEXT);
+    }
 }

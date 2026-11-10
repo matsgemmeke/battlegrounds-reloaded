@@ -45,12 +45,11 @@ public class Translator {
     }
 
     /**
-     * Gets the translation of a certain message by its translation key path.
+     * Gets the translation of a certain message by its translation key.
      *
      * @param translationKey the translation key
      * @param replacements   the placeholder replacements
-     * @return               an optional with the deserialized component, or empty when the given translation key has
-     *                       no value
+     * @return               an optional with the message, or empty when the given translation key has no value
      */
     public Optional<Message> translateMessage(String translationKey, Replacement... replacements) {
         String text = languageConfiguration.getTextValue(translationKey).orElse(null);
@@ -65,5 +64,15 @@ public class Translator {
         Component component = miniMessage.deserialize(text, tagResolvers);
 
         return Optional.of(new Message(component));
+    }
+
+    /**
+     * Gets the translation of an individual text value by its translation key.
+     *
+     * @param translationKey the translation key
+     * @return               an optional with the text value, or empty when the given translation key has no value
+     */
+    public Optional<String> translateText(String translationKey) {
+        return languageConfiguration.getTextValue(translationKey);
     }
 }
