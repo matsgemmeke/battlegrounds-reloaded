@@ -7,7 +7,6 @@ import nl.matsgemmeke.battlegrounds.command.HelpMenu;
 import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -58,8 +57,8 @@ class ArenaCommandTest {
     }
 
     @Test
-    @DisplayName("onDefault shows help menu to player as JSON messages")
-    void onDefault_playerSender() {
+    @DisplayName("onDefault shows help menu to given console sender")
+    void onDefault_noArgs() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
         when(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_HEADER_TEXT));
@@ -69,25 +68,8 @@ class ArenaCommandTest {
         command.onDefault(player, null);
 
         verify(player).sendMessage(ARENA_HELP_MENU_HEADER_TEXT);
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(helpMenu).send(player, List.of(commandInfo));
         verify(player).sendMessage(ARENA_HELP_MENU_FOOTER_TEXT);
-    }
-
-    @Test
-    @DisplayName("onDefault shows help menu to sender as normal messages")
-    void onDefault_consoleSender() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
-        CommandSender sender = mock(CommandSender.class);
-
-        when(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_HEADER_TEXT));
-        when(translator.translate(TranslationKey.ARENA_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(ARENA_HELP_MENU_FOOTER_TEXT));
-
-        command.addCommandInfo(commandInfo);
-        command.onDefault(sender, null);
-
-        verify(sender).sendMessage(ARENA_HELP_MENU_HEADER_TEXT);
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
-        verify(sender).sendMessage(ARENA_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test

@@ -53,11 +53,7 @@ public class ArenaCommand extends BaseCommand {
 
         sender.sendMessage(translator.translate(TranslationKey.ARENA_HELP_MENU_HEADER.getPath()).getText());
 
-        if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
-        } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
-        }
+        helpMenu.send(sender, commandInfoList);
 
         sender.sendMessage(translator.translate(TranslationKey.ARENA_HELP_MENU_FOOTER.getPath()).getText());
     }

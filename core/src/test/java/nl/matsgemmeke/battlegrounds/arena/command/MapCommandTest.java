@@ -65,8 +65,8 @@ class MapCommandTest {
     }
 
     @Test
-    @DisplayName("onDefault shows help menu to player as JSON messages")
-    void onDefault_playerSender() {
+    @DisplayName("onDefault shows help menu to given console sender")
+    void onDefault_noArgs() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
 
         when(translator.translate(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_HEADER_TEXT));
@@ -76,25 +76,8 @@ class MapCommandTest {
         command.onDefault(player, null);
 
         verify(player).sendMessage(MAP_HELP_MENU_HEADER_TEXT);
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(helpMenu).send(player, List.of(commandInfo));
         verify(player).sendMessage(MAP_HELP_MENU_FOOTER_TEXT);
-    }
-
-    @Test
-    @DisplayName("onDefault shows help menu to sender as normal messages")
-    void onDefault_consoleSender() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
-        CommandSender sender = mock(CommandSender.class);
-
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_HEADER_TEXT));
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_FOOTER_TEXT));
-
-        command.addCommandInfo(commandInfo);
-        command.onDefault(sender, null);
-
-        verify(sender).sendMessage(MAP_HELP_MENU_HEADER_TEXT);
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
-        verify(sender).sendMessage(MAP_HELP_MENU_FOOTER_TEXT);
     }
 
     @Test

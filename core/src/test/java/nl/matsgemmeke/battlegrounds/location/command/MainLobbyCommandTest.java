@@ -8,7 +8,6 @@ import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.location.command.executor.RemoveMainLobbyCommandExecutor;
 import nl.matsgemmeke.battlegrounds.location.command.executor.SetMainLobbyCommandExecutor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -59,8 +58,8 @@ class MainLobbyCommandTest {
     }
 
     @Test
-    @DisplayName("onDefault shows help menu to player as JSON messages")
-    void onDefault_playerSender() {
+    @DisplayName("onDefault shows help menu to given console sender")
+    void onDefault_noArgs() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
 
         when(translator.translate(TranslationKey.MAIN_LOBBY_HELP_MENU_HEADER.getPath())).thenReturn(MAIN_LOBBY_HELP_MENU_HEADER_TEXT_TEMPLATE);
@@ -70,25 +69,8 @@ class MainLobbyCommandTest {
         mainLobbyCommand.onDefault(player, null);
 
         verify(player).sendMessage(" \n&6&l Main lobby commands\n ");
-        verify(helpMenu).sendHelpMenuAsJsonMessages(player, List.of(commandInfo));
+        verify(helpMenu).send(player, List.of(commandInfo));
         verify(player).sendMessage(" ");
-    }
-
-    @Test
-    @DisplayName("onDefault shows help menu to sender as normal messages")
-    void onDefault_consoleSender() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
-        CommandSender sender = mock(CommandSender.class);
-
-        when(translator.translate(TranslationKey.MAIN_LOBBY_HELP_MENU_HEADER.getPath())).thenReturn(MAIN_LOBBY_HELP_MENU_HEADER_TEXT_TEMPLATE);
-        when(translator.translate(TranslationKey.MAIN_LOBBY_HELP_MENU_FOOTER.getPath())).thenReturn(MAIN_LOBBY_HELP_MENU_FOOTER_TEXT_TEMPLATE);
-
-        mainLobbyCommand.addCommandInfo(commandInfo);
-        mainLobbyCommand.onDefault(sender, null);
-
-        verify(sender).sendMessage(" \n&6&l Main lobby commands\n ");
-        verify(helpMenu).sendHelpMenuAsNormalMessages(sender, List.of(commandInfo));
-        verify(sender).sendMessage(" ");
     }
 
     @Test
