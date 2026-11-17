@@ -35,6 +35,7 @@ public class Translator {
      * @param key the translation key
      * @return the translation message from the message path as a text template
      */
+    @Deprecated
     public TextTemplate translate(String key) {
         String textValue = languageConfiguration.getTextValue(key).orElse(null);
 
