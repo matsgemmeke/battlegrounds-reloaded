@@ -22,7 +22,7 @@ public class LanguageConfiguration {
             return this.lookup(path, fallbackConfigurationFile);
         }
 
-        if (value.isBlank()) {
+        if (value.isEmpty()) {
             return Optional.empty();
         }
 

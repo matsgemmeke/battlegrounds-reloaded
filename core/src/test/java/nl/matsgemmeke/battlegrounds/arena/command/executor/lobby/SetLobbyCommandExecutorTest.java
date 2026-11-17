@@ -104,7 +104,7 @@ class SetLobbyCommandExecutorTest {
 
         assertThat(replacementCaptor.getValue()).satisfiesExactly(replacement -> {
             assertThat(replacement.key()).isEqualTo("bg-arena-id");
-            assertThat(replacement.value()).isEqualTo("1");
+            assertThat(replacement.value()).isEqualTo(ARENA_ID);
         });
 
         verify(setupConfiguration).setLobby(lobbyLocationData);

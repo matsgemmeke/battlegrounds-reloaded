@@ -34,6 +34,8 @@ class TranslatorTest {
     private LanguageConfiguration languageConfiguration;
     @Spy
     private MiniMessage miniMessage = MiniMessage.miniMessage();
+    @Spy
+    private ReplacementMapper replacementMapper;
     @InjectMocks
     private Translator translator;
 
@@ -71,7 +73,7 @@ class TranslatorTest {
     @Test
     @DisplayName("translateMessage returns optional with deserialized component")
     void translateMessage_successful() {
-        Replacement[] replacements = { Replacement.of("player", "TestPlayer") };
+        Replacement[] replacements = { Replacement.unparsed("player", "TestPlayer") };
         Audience audience = mock(Audience.class);
 
         when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));

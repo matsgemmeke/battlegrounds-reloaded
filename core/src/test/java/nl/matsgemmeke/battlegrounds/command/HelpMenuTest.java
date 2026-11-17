@@ -1,25 +1,22 @@
 package nl.matsgemmeke.battlegrounds.command;
 
+import net.kyori.adventure.audience.Audience;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import static java.util.Map.entry;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,7 +30,8 @@ class HelpMenuTest {
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg test";
-    private static final String[] SUBCOMMAND_PERMISSIONS = new String[] { "battlegrounds.test" };
+    private static final String SUBCOMMAND_PERMISSION = "battlegrounds.test";
+    private static final String[] SUBCOMMAND_PERMISSIONS = { SUBCOMMAND_PERMISSION };
 
     @Mock
     private Translator translator;
@@ -41,6 +39,70 @@ class HelpMenuTest {
     private HelpMenu helpMenu;
     @Captor
     private ArgumentCaptor<Map<String, Object>> valuesCaptor;
+
+    @Test
+    @DisplayName("send does nothing for given empty command list")
+    void send_empty() {
+        Audience audience = mock(Audience.class);
+
+        helpMenu.send(audience, List.of());
+
+        verifyNoInteractions(translator);
+    }
+
+    @Test
+    @DisplayName("send does not send any messages when given audience does not have permissions for any command")
+    void send_notPermitted() {
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+
+        Player player = mock(Player.class);
+        when(player.hasPermission(SUBCOMMAND_PERMISSION)).thenReturn(false);
+        doCallRealMethod().when(player).forEachAudience(any());
+
+        helpMenu.send(player, List.of(commandInfo));
+
+        verifyNoInteractions(translator);
+    }
+
+    @Test
+    @DisplayName("send sends messages to all audience members for commands without permissions")
+    void send_noPermission() {
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, new String[0]);
+        Message helpMenuCommandMessage = mock(Message.class);
+
+        Player permittedPlayer = mock(Player.class);
+        doCallRealMethod().when(permittedPlayer).forEachAudience(any());
+
+        when(translator.translateMessage(eq(TranslationKey.HELP_MENU_COMMAND.getPath()), any(Replacement[].class))).thenReturn(Optional.of(helpMenuCommandMessage));
+
+        helpMenu.send(permittedPlayer, List.of(commandInfo));
+
+        verify(helpMenuCommandMessage).send(permittedPlayer);
+    }
+
+    @Test
+    @DisplayName("send sends messages to all audience members who have permission")
+    void send_permitted() {
+        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        Message helpMenuCommandMessage = mock(Message.class);
+
+        Player permittedPlayer = mock(Player.class);
+        when(permittedPlayer.hasPermission(SUBCOMMAND_PERMISSION)).thenReturn(true);
+        doCallRealMethod().when(permittedPlayer).forEachAudience(any());
+
+        Player nonPermittedPlayer = mock(Player.class);
+        when(nonPermittedPlayer.hasPermission(SUBCOMMAND_PERMISSION)).thenReturn(false);
+        doCallRealMethod().when(nonPermittedPlayer).forEachAudience(any());
+
+        Audience audience = Audience.audience(permittedPlayer, nonPermittedPlayer);
+
+        when(translator.translateMessage(eq(TranslationKey.HELP_MENU_COMMAND.getPath()), any(Replacement[].class))).thenReturn(Optional.of(helpMenuCommandMessage));
+
+        helpMenu.send(audience, List.of(commandInfo));
+
+        verify(helpMenuCommandMessage).send(permittedPlayer);
+        verify(helpMenuCommandMessage, never()).send(nonPermittedPlayer);
+    }
 
     @Test
     @DisplayName("sendHelpMenuAsJsonMessages shows help menu with permitted commands to given sender as normal messages")

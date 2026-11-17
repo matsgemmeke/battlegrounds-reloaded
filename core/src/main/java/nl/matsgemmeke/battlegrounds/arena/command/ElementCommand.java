@@ -53,11 +53,7 @@ public class ElementCommand extends BaseCommand {
 
         translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_HEADER.getPath()).ifPresent(message -> message.send(sender));
 
-        if (sender instanceof Player player) {
-            helpMenu.sendHelpMenuAsJsonMessages(player, commandInfoList);
-        } else {
-            helpMenu.sendHelpMenuAsNormalMessages(sender, commandInfoList);
-        }
+        helpMenu.send(sender, commandInfoList);
 
         translator.translateMessage(TranslationKey.ELEMENT_HELP_MENU_FOOTER.getPath()).ifPresent(message -> message.send(sender));
     }

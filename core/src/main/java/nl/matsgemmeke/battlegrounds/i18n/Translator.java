@@ -3,7 +3,6 @@ package nl.matsgemmeke.battlegrounds.i18n;
 import com.google.inject.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
@@ -20,12 +19,14 @@ public class Translator {
     private final BattlegroundsConfiguration battlegroundsConfiguration;
     private final LanguageConfiguration languageConfiguration;
     private final MiniMessage miniMessage;
+    private final ReplacementMapper replacementMapper;
 
     @Inject
-    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration, MiniMessage miniMessage) {
+    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration, MiniMessage miniMessage, ReplacementMapper replacementMapper) {
         this.battlegroundsConfiguration = battlegroundsConfiguration;
         this.languageConfiguration = languageConfiguration;
         this.miniMessage = miniMessage;
+        this.replacementMapper = replacementMapper;
     }
 
     /**
@@ -58,9 +59,7 @@ public class Translator {
             return Optional.empty();
         }
 
-        TagResolver[] tagResolvers = Arrays.stream(replacements)
-                .map(replacement -> Placeholder.unparsed(replacement.key(), replacement.value()))
-                .toArray(TagResolver[]::new);
+        TagResolver[] tagResolvers = Arrays.stream(replacements).map(replacementMapper::map).toArray(TagResolver[]::new);
         Component component = miniMessage.deserialize(text, tagResolvers);
 
         return Optional.of(new Message(component));

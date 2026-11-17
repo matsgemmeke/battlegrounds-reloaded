@@ -57,7 +57,7 @@ public class SetLobbyCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.setLobby(lobbyLocationData);
 
-        Replacement arenaIdReplacement = Replacement.of("bg-arena-id", arenaId);
+        Replacement arenaIdReplacement = Replacement.unparsed("bg-arena-id", arenaId);
 
         translator.translateMessage(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
     }
