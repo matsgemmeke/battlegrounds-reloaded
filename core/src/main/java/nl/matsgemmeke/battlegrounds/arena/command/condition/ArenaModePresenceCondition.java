@@ -31,7 +31,9 @@ public class ArenaModePresenceCondition implements Condition {
         Player player = context.getIssuer().getPlayer();
 
         if (player == null) {
-            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath()).getText());
+            throw translator.translateLegacyText(TranslationKey.NOT_IN_ARENA_MODE.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         UUID playerId = player.getUniqueId();
@@ -41,6 +43,8 @@ public class ArenaModePresenceCondition implements Condition {
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath()).getText());
+        throw translator.translateLegacyText(TranslationKey.NOT_IN_ARENA_MODE.getPath())
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }

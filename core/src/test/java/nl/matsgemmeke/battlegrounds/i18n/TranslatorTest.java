@@ -3,6 +3,7 @@ package nl.matsgemmeke.battlegrounds.i18n;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -33,6 +34,8 @@ class TranslatorTest {
     @Mock
     private LanguageConfiguration languageConfiguration;
     @Spy
+    private LegacyComponentSerializer legacyComponentSerializer = LegacyComponentSerializer.legacySection();
+    @Spy
     private MiniMessage miniMessage = MiniMessage.miniMessage();
     @Spy
     private ReplacementMapper replacementMapper;
@@ -58,6 +61,26 @@ class TranslatorTest {
         TextTemplate textTemplate = translator.translate(TRANSLATION_KEY);
 
         assertThat(textTemplate.getText()).isEqualTo("§aColorful text");
+    }
+
+    @Test
+    @DisplayName("translateLegacyText returns empty optional when the language configuration has no value at the given translation key")
+    void translateLegacyText_unknownTranslationKey() {
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
+
+        Optional<String> optionalText = translator.translateLegacyText(TRANSLATION_KEY);
+
+        assertThat(optionalText).isEmpty();
+    }
+
+    @Test
+    @DisplayName("translateLegacyText returns optional with corresponding text value converted with legacy codes")
+    void translateLegacyText_successful() {
+        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
+
+        Optional<String> optionalText = translator.translateLegacyText(TRANSLATION_KEY);
+
+        assertThat(optionalText).hasValue("§6This is a message for player <player>");
     }
 
     @Test

@@ -3,11 +3,9 @@ package nl.matsgemmeke.battlegrounds.arena.command.condition;
 import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
-import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -15,6 +13,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -31,7 +32,7 @@ import static org.mockito.Mockito.when;
 class ArenaModePresenceConditionTest {
 
     private static final UUID PLAYER_ID = UUID.randomUUID();
-    private static final String NOT_IN_ARENA_MODE_TEXT = LanguageFixture.getTranslation(TranslationKey.NOT_IN_ARENA_MODE.getPath());
+    private static final String NOT_IN_ARENA_MODE_TEXT = "not in arena mode";
 
     @Mock
     private BukkitCommandIssuer issuer;
@@ -51,15 +52,17 @@ class ArenaModePresenceConditionTest {
         when(conditionContext.getIssuer()).thenReturn(issuer);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NOT_IN_ARENA_MODE_TEXT })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when issuer is not a player")
-    void validateCondition_issuerIsNoPlayer() {
+    void validateCondition_issuerIsNoPlayer(String message) {
         when(issuer.getPlayer()).thenReturn(null);
-        when(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(NOT_IN_ARENA_MODE_TEXT));
+        when(translator.translateLegacyText(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("&cUnable to perform action; you are not participating in an arena.");
+                .hasMessage(message);
     }
 
     @Test
@@ -75,32 +78,36 @@ class ArenaModePresenceConditionTest {
         assertThatNoException().isThrownBy(() -> condition.validateCondition(conditionContext));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NOT_IN_ARENA_MODE_TEXT })
+    @NullSource
     @DisplayName("validationCondition throws ConditionFailedException when issuer is not in a game context")
-    void validationCondition_issuerIsInNoGame() {
+    void validationCondition_issuerIsInNoGame(String message) {
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(NOT_IN_ARENA_MODE_TEXT));
+        when(translator.translateLegacyText(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("&cUnable to perform action; you are not participating in an arena.");
+                .hasMessage(message);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NOT_IN_ARENA_MODE_TEXT })
+    @NullSource
     @DisplayName("validationCondition throws ConditionFailedException when issuer is a game context other than arena mode")
-    void validationCondition_issuerIsNonArenaGameContext() {
+    void validationCondition_issuerIsNonArenaGameContext(String message) {
         GameContext gameContext = mock(GameContext.class);
         when(gameContext.getType()).thenReturn(GameContextType.FREEPLAY_MODE);
 
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(gameContext));
-        when(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(NOT_IN_ARENA_MODE_TEXT));
+        when(translator.translateLegacyText(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("&cUnable to perform action; you are not participating in an arena.");
+                .hasMessage(message);
     }
 }

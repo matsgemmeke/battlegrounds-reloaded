@@ -44,7 +44,7 @@ public class LeaveCommandExecutor {
 
         if (gameContext == null || gameContext.getType() != GameContextType.ARENA_MODE) {
             logger.warning("Player %s attempts to leave its current arena, however they are not registered in a game context despite prior validation".formatted(player.getName()));
-            player.sendMessage(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath()).getText());
+            translator.translateMessage(TranslationKey.NOT_IN_ARENA_MODE.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 

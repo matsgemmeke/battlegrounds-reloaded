@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import org.bukkit.ChatColor;
@@ -18,13 +19,21 @@ public class Translator {
 
     private final BattlegroundsConfiguration battlegroundsConfiguration;
     private final LanguageConfiguration languageConfiguration;
+    private final LegacyComponentSerializer legacyComponentSerializer;
     private final MiniMessage miniMessage;
     private final ReplacementMapper replacementMapper;
 
     @Inject
-    public Translator(BattlegroundsConfiguration battlegroundsConfiguration, LanguageConfiguration languageConfiguration, MiniMessage miniMessage, ReplacementMapper replacementMapper) {
+    public Translator(
+            BattlegroundsConfiguration battlegroundsConfiguration,
+            LanguageConfiguration languageConfiguration,
+            LegacyComponentSerializer legacyComponentSerializer,
+            MiniMessage miniMessage,
+            ReplacementMapper replacementMapper
+    ) {
         this.battlegroundsConfiguration = battlegroundsConfiguration;
         this.languageConfiguration = languageConfiguration;
+        this.legacyComponentSerializer = legacyComponentSerializer;
         this.miniMessage = miniMessage;
         this.replacementMapper = replacementMapper;
     }
@@ -44,6 +53,20 @@ public class Translator {
         }
 
         return new TextTemplate(ChatColor.translateAlternateColorCodes('&', textValue));
+    }
+
+    /**
+     * Gets the translation of an individual text value by its translation key, with MiniMessage tags converted to
+     * legacy codes.
+     *
+     * @param translationKey the translation key
+     * @return               an optional with the text value converted to legacy, or empty when the given translation
+     *                       key has no value
+     */
+    public Optional<String> translateLegacyText(String translationKey) {
+        return languageConfiguration.getTextValue(translationKey)
+                .map(miniMessage::deserialize)
+                .map(legacyComponentSerializer::serialize);
     }
 
     /**

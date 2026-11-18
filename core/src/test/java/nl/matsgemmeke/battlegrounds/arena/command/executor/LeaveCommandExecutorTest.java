@@ -2,13 +2,12 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import com.google.inject.Provider;
 import nl.matsgemmeke.battlegrounds.MockUtils;
-import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
 import nl.matsgemmeke.battlegrounds.game.GameContext;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameContextType;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Message;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -30,7 +29,6 @@ class LeaveCommandExecutorTest {
 
     private static final UUID PLAYER_ID = UUID.randomUUID();
     private static final String PLAYER_NAME = "TestPlayer";
-    private static final TextTemplate NOT_IN_ARENA_MODE_TEXT_TEMPLATE = LanguageFixture.getTextTemplate(TranslationKey.NOT_IN_ARENA_MODE.getPath());
 
     @Mock
     private GameContextProvider gameContextProvider;
@@ -52,32 +50,36 @@ class LeaveCommandExecutorTest {
     @Test
     @DisplayName("execute logs warning message when the given player is not in a game context")
     void execute_notInAnyGameContext() {
+        Message notInArenaModeMessage = mock(Message.class);
+
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(player.getName()).thenReturn(PLAYER_NAME);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(NOT_IN_ARENA_MODE_TEXT_TEMPLATE);
+        when(translator.translateMessage(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(Optional.of(notInArenaModeMessage));
 
         commandExecutor.execute(player);
 
         verify(logger).warning("Player TestPlayer attempts to leave its current arena, however they are not registered in a game context despite prior validation");
-        verify(player).sendMessage("&cUnable to perform action; you are not participating in an arena.");
+        verify(notInArenaModeMessage).send(player);
     }
 
     @Test
     @DisplayName("execute logs warning message when the given player is in a game context other than arena mode")
     void execute_notInArenaMode() {
+        Message notInArenaModeMessage = mock(Message.class);
+
         GameContext gameContext = mock(GameContext.class);
         when(gameContext.getType()).thenReturn(GameContextType.FREEPLAY_MODE);
 
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(player.getName()).thenReturn(PLAYER_NAME);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(gameContext));
-        when(translator.translate(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(NOT_IN_ARENA_MODE_TEXT_TEMPLATE);
+        when(translator.translateMessage(TranslationKey.NOT_IN_ARENA_MODE.getPath())).thenReturn(Optional.of(notInArenaModeMessage));
 
         commandExecutor.execute(player);
 
         verify(logger).warning("Player TestPlayer attempts to leave its current arena, however they are not registered in a game context despite prior validation");
-        verify(player).sendMessage("&cUnable to perform action; you are not participating in an arena.");
+        verify(notInArenaModeMessage).send(player);
     }
 
     @Test

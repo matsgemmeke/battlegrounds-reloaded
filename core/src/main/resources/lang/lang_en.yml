@@ -66,7 +66,7 @@ errors:
   generic-error: "&cAn unexpected error occurred while processing this command. Please try again or contact an administrator."
   invalid-syntax: "&cCorrect usage: %bg_command% %bg_syntax%"
   no-map-selected: "&cYou must select a map first! Use /bg arena map select <arena> <map>."
-  not-in-arena-mode: "&cUnable to perform action; you are not participating in an arena."
+  not-in-arena-mode: "<red>Unable to perform action; you are not participating in an arena."
   not-in-freeplay-mode: "&cUnable to perform action; you are not in freeplay mode."
   player-only-command: "&cOnly players can use this command."
   unknown-command: "&cUnknown command, please type /bg help"
