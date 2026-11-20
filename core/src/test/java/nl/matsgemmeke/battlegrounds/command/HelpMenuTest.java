@@ -12,6 +12,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 import java.util.Optional;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 import static org.mockito.Mockito.verify;
 
@@ -72,24 +73,52 @@ class HelpMenuTest {
     @Test
     @DisplayName("send sends messages to all audience members who have permission")
     void send_permitted() {
-        CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        CommandInfo commandInfoWithDescription = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        CommandInfo commandInfoWithoutDescription = new CommandInfo(null, "/bg descriptionless", "bg descriptionless", new String[] { "battlegrounds.descriptionless" });
         Message helpMenuCommandMessage = mock(Message.class);
 
         Player permittedPlayer = mock(Player.class);
-        when(permittedPlayer.hasPermission(SUBCOMMAND_PERMISSION)).thenReturn(true);
+        when(permittedPlayer.hasPermission(anyString())).thenReturn(true);
         doCallRealMethod().when(permittedPlayer).forEachAudience(any());
 
         Player nonPermittedPlayer = mock(Player.class);
-        when(nonPermittedPlayer.hasPermission(SUBCOMMAND_PERMISSION)).thenReturn(false);
+        when(nonPermittedPlayer.hasPermission(anyString())).thenReturn(false);
         doCallRealMethod().when(nonPermittedPlayer).forEachAudience(any());
 
         Audience audience = Audience.audience(permittedPlayer, nonPermittedPlayer);
 
         when(translator.translateMessage(eq(TranslationKey.HELP_MENU_COMMAND.getPath()), any(Replacement[].class))).thenReturn(Optional.of(helpMenuCommandMessage));
 
-        helpMenu.send(audience, List.of(commandInfo));
+        helpMenu.send(audience, List.of(commandInfoWithDescription, commandInfoWithoutDescription));
 
-        verify(helpMenuCommandMessage).send(permittedPlayer);
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator, times(2)).translateMessage(eq(TranslationKey.HELP_MENU_COMMAND.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getAllValues()).satisfiesExactly(replacements -> {
+            assertThat(replacements).satisfiesExactly(replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-description");
+                assertThat(replacement.value()).isEqualTo(SUBCOMMAND_DESCRIPTION);
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-usage");
+                assertThat(replacement.value()).isEqualTo(SUBCOMMAND_USAGE);
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-suggestion");
+                assertThat(replacement.value()).isEqualTo(SUBCOMMAND_SUGGESTION);
+            });
+        }, replacements -> {
+            assertThat(replacements).satisfiesExactly(replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-description");
+                assertThat(replacement.value()).isBlank();
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-usage");
+                assertThat(replacement.value()).isEqualTo("/bg descriptionless");
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("bg-suggestion");
+                assertThat(replacement.value()).isEqualTo("bg descriptionless");
+            });
+        });
+
+        verify(helpMenuCommandMessage, times(2)).send(permittedPlayer);
         verify(helpMenuCommandMessage, never()).send(nonPermittedPlayer);
     }
 }

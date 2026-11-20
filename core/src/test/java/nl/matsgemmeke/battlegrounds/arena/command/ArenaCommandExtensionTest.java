@@ -6,7 +6,6 @@ import nl.matsgemmeke.battlegrounds.arena.command.completion.ElementIdCommandCom
 import nl.matsgemmeke.battlegrounds.arena.command.completion.MapNameCommandCompletionHandler;
 import nl.matsgemmeke.battlegrounds.arena.command.condition.*;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -14,6 +13,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -69,7 +70,7 @@ class ArenaCommandExtensionTest {
     void configure() {
         when(commandManager.getCommandCompletions()).thenReturn(commandCompletions);
         when(commandManager.getCommandConditions()).thenReturn(commandConditions);
-        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
+        when(translator.translateLegacyText(anyString())).thenReturn(Optional.of("text"));
 
         commandExtension.configure(commandManager);
 

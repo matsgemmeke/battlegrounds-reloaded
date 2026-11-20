@@ -8,7 +8,7 @@ public class ReplacementMapper {
 
     public TagResolver map(Replacement replacement) {
         String key = replacement.key();
-        String value = replacement.value().toString();
+        String value = replacement.value();
 
         if (replacement.type() == ReplacementType.PARSED) {
             return Placeholder.parsed(key, value);

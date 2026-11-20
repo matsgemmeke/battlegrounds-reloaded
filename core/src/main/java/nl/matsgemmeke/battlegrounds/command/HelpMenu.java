@@ -9,6 +9,7 @@ import org.bukkit.permissions.Permissible;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 public class HelpMenu {
 
@@ -37,8 +38,10 @@ public class HelpMenu {
     }
 
     private void send(Audience audience, CommandInfo commandInfo) {
+        String description = Optional.ofNullable(commandInfo.description()).orElse("");
+
         Replacement[] replacements = {
-                Replacement.unparsed("bg-description", commandInfo.description()),
+                Replacement.unparsed("bg-description", description),
                 Replacement.unparsed("bg-usage", commandInfo.usage()),
                 Replacement.parsed("bg-suggestion", commandInfo.suggestion())
         };

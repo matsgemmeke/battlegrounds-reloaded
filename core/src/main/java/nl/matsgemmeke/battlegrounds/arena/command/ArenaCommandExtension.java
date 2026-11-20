@@ -126,10 +126,10 @@ public class ArenaCommandExtension implements CommandExtension {
     @Override
     public void configure(PaperCommandManager commandManager) {
         // Arena commands
-        String createArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).getText();
-        String lobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY.getPath()).getText();
-        String mapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP.getPath()).getText();
-        String removeArenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).getText();
+        String createArenaCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_CREATE_ARENA.getPath()).orElse(null);
+        String lobbyCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_LOBBY.getPath()).orElse(null);
+        String mapCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_MAP.getPath()).orElse(null);
+        String removeArenaCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_REMOVE_ARENA.getPath()).orElse(null);
 
         arenaCommand.addCommandInfo(new CommandInfo(createArenaCommandDescription, CREATE_ARENA_COMMAND_USAGE, CREATE_ARENA_COMMAND_SUGGESTION, CREATE_ARENA_COMMAND_PERMISSIONS));
         arenaCommand.addCommandInfo(new CommandInfo(lobbyCommandDescription, LOBBY_COMMAND_USAGE, LOBBY_COMMAND_SUGGESTION, LOBBY_COMMAND_PERMISSIONS));
@@ -137,24 +137,24 @@ public class ArenaCommandExtension implements CommandExtension {
         arenaCommand.addCommandInfo(new CommandInfo(removeArenaCommandDescription, REMOVE_ARENA_COMMAND_USAGE, REMOVE_ARENA_COMMAND_SUGGESTION, REMOVE_ARENA_COMMAND_PERMISSIONS));
 
         // Lobby commands
-        String lobbyRemoveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_REMOVE.getPath()).getText();
-        String lobbySetCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LOBBY_SET.getPath()).getText();
+        String lobbyRemoveCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_LOBBY_REMOVE.getPath()).orElse(null);
+        String lobbySetCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_LOBBY_SET.getPath()).orElse(null);
 
         lobbyCommand.addCommandInfo(new CommandInfo(lobbyRemoveCommandDescription, REMOVE_LOBBY_COMMAND_USAGE, REMOVE_LOBBY_COMMAND_SUGGESTION, REMOVE_LOBBY_COMMAND_PERMISSIONS));
         lobbyCommand.addCommandInfo(new CommandInfo(lobbySetCommandDescription, SET_LOBBY_COMMAND_USAGE, SET_LOBBY_COMMAND_SUGGESTION, SET_LOBBY_COMMAND_PERMISSIONS));
 
         // Map commands
-        String createMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).getText();
-        String removeMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_REMOVE_MAP.getPath()).getText();
-        String selectMapCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAP_SELECT.getPath()).getText();
+        String createMapCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_CREATE_MAP.getPath()).orElse(null);
+        String removeMapCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_REMOVE_MAP.getPath()).orElse(null);
+        String selectMapCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_MAP_SELECT.getPath()).orElse(null);
 
         mapCommand.addCommandInfo(new CommandInfo(createMapCommandDescription, CREATE_MAP_COMMAND_USAGE, CREATE_MAP_COMMAND_SUGGESTION, CREATE_MAP_COMMAND_PERMISSIONS));
         mapCommand.addCommandInfo(new CommandInfo(removeMapCommandDescription, REMOVE_MAP_COMMAND_USAGE, REMOVE_MAP_COMMAND_SUGGESTION, REMOVE_MAP_COMMAND_PERMISSIONS));
         mapCommand.addCommandInfo(new CommandInfo(selectMapCommandDescription, SELECT_MAP_COMMAND_USAGE, SELECT_MAP_COMMAND_SUGGESTION, SELECT_MAP_COMMAND_PERMISSIONS));
 
         // Element commands
-        String addElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_ADD.getPath()).getText();
-        String removeElementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT_REMOVE.getPath()).getText();
+        String addElementCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_ELEMENT_ADD.getPath()).orElse(null);
+        String removeElementCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_ELEMENT_REMOVE.getPath()).orElse(null);
 
         elementCommand.addCommandInfo(new CommandInfo(addElementCommandDescription, ADD_ELEMENT_COMMAND_USAGE, ADD_ELEMENT_COMMAND_SUGGESTION, ADD_ELEMENT_COMMAND_PERMISSIONS));
         elementCommand.addCommandInfo(new CommandInfo(removeElementCommandDescription, REMOVE_ELEMENT_COMMAND_USAGE, REMOVE_ELEMENT_COMMAND_SUGGESTION, REMOVE_ELEMENT_COMMAND_PERMISSIONS));
