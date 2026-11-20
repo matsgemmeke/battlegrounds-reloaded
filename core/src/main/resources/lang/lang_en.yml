@@ -2,7 +2,6 @@ admin:
   arena-already-exists: "&cAn arena by the id %bg_arena% already exists"
   arena-confirm-removal: "&cAre you sure you want to remove arena %bg_arena%? Rerun the command to confirm the removal."
   arena-created: "&6You have created a new arena by the id &f%bg_arena%&6."
-  arena-not-exists: "&cAn arena by the id %bg_arena% doesn't exist"
   arena-removal-failed: "&cFailed to remove arena %bg_arena%!"
   arena-removed: "&6You have removed arena &f%bg_arena% &6and its content."
   map-already-exists: "&cArena %bg_arena% already has a map by the name of %bg_map%"
@@ -49,7 +48,7 @@ commands:
   element-help-menu-header: " \n&6&l Element commands\n "
   help-menu-command: " - <hover:show_text:'<bg-description>'><click:suggest_command:'<bg-suggestion>'><bg-usage>"
   lobby-help-menu-footer: " "
-  lobby-help-menu-header: " \n<gold><bold> Lobby commands\n "
+  lobby-help-menu-header: " \n&6&l Lobby commands\n "
   main-lobby-help-menu-footer: " "
   main-lobby-help-menu-header: " \n&6&l Main lobby commands\n "
   map-help-menu-footer: " "
@@ -72,6 +71,7 @@ errors:
   unknown-command: "&cUnknown command, please type /bg help"
 
 setup:
+  arena-not-exists: "<red>An arena by the id <bg-arena-id> doesn't exist"
   element-not-exists: "&cThe selected map %bg_map_name% does not contain an element with the id %bg_element_id%."
   element-remove-failed: "&cYou are currently unable to remove this element. Please try again later."
   element-remove-successful: "&6You have removed element with id &f%bg_element_id% &6from map &f%bg_map_name%&6."

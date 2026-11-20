@@ -5,18 +5,25 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,14 +51,16 @@ class ExistentArenaIdConditionTest {
         assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { FAILED_MESSAGE })
+    @NullSource
     @DisplayName("validationCondition throws ConditionFailedException when arena does not exist")
-    void validateCondition_arenaNotExists() {
+    void validateCondition_arenaNotExists(String message) {
         when(arenaRegistry.exists(ARENA_ID)).thenReturn(false);
-        when(translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(FAILED_MESSAGE));
+        when(translator.translateLegacyText(eq(TranslationKey.ARENA_NOT_EXISTS.getPath()), any(Replacement[].class))).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(FAILED_MESSAGE);
+                .hasMessage(message);
     }
 }

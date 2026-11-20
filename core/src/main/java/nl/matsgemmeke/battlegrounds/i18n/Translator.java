@@ -60,13 +60,21 @@ public class Translator {
      * legacy codes.
      *
      * @param translationKey the translation key
+     * @param replacements   the placeholder replacements
      * @return               an optional with the text value converted to legacy, or empty when the given translation
      *                       key has no value
      */
-    public Optional<String> translateLegacyText(String translationKey) {
-        return languageConfiguration.getTextValue(translationKey)
-                .map(miniMessage::deserialize)
-                .map(legacyComponentSerializer::serialize);
+    public Optional<String> translateLegacyText(String translationKey, Replacement... replacements) {
+        String text = languageConfiguration.getTextValue(translationKey).orElse(null);
+
+        if (text == null) {
+            return Optional.empty();
+        }
+
+        TagResolver[] tagResolvers = Arrays.stream(replacements).map(replacementMapper::map).toArray(TagResolver[]::new);
+        Component component = miniMessage.deserialize(text, tagResolvers);
+
+        return Optional.of(legacyComponentSerializer.serialize(component));
     }
 
     /**

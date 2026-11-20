@@ -76,11 +76,13 @@ class TranslatorTest {
     @Test
     @DisplayName("translateLegacyText returns optional with corresponding text value converted with legacy codes")
     void translateLegacyText_successful() {
+        Replacement[] replacements = { Replacement.unparsed("player", "TestPlayer") };
+
         when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
 
-        Optional<String> optionalText = translator.translateLegacyText(TRANSLATION_KEY);
+        Optional<String> optionalText = translator.translateLegacyText(TRANSLATION_KEY, replacements);
 
-        assertThat(optionalText).hasValue("§6This is a message for player <player>");
+        assertThat(optionalText).hasValue("§6This is a message for player TestPlayer");
     }
 
     @Test

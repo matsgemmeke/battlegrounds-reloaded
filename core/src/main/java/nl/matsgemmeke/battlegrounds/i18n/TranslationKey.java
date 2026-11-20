@@ -9,7 +9,7 @@ public enum TranslationKey {
     ARENA_HELP_MENU_FOOTER("commands.arena-help-menu-footer"),
     ARENA_HELP_MENU_HEADER("commands.arena-help-menu-header"),
     ARENA_NOT_AVAILABLE("errors.arena-not-available"),
-    ARENA_NOT_EXISTS("admin.arena-not-exists"),
+    ARENA_NOT_EXISTS("setup.arena-not-exists"),
     ARENA_REMOVAL_FAILED("admin.arena-removal-failed"),
     ARENA_REMOVED("admin.arena-removed"),
     BATTLEGROUNDS_HELP_MENU_FOOTER("commands.battlegrounds-help-menu-footer"),
