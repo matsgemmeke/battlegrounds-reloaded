@@ -49,7 +49,7 @@ commands:
   element-help-menu-header: " \n&6&l Element commands\n "
   help-menu-command: " - <hover:show_text:'<bg-description>'><click:suggest_command:'<bg-suggestion>'><bg-usage>"
   lobby-help-menu-footer: " "
-  lobby-help-menu-header: " \n&6&l Lobby commands\n "
+  lobby-help-menu-header: " \n<gold><bold> Lobby commands\n "
   main-lobby-help-menu-footer: " "
   main-lobby-help-menu-header: " \n&6&l Main lobby commands\n "
   map-help-menu-footer: " "

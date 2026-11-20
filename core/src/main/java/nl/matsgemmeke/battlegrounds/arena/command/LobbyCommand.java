@@ -42,15 +42,15 @@ public class LobbyCommand extends BaseCommand {
     @Default
     public void onDefault(CommandSender sender, String[] args) {
         if (args != null && args.length > 0) {
-            sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+            translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath()).ifPresent(message -> message.send(sender));
             return;
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.LOBBY_HELP_MENU_HEADER.getPath()).getText());
+        translator.translateMessage(TranslationKey.LOBBY_HELP_MENU_HEADER.getPath()).ifPresent(message -> message.send(sender));
 
         helpMenu.send(sender, commandInfoList);
 
-        sender.sendMessage(translator.translate(TranslationKey.LOBBY_HELP_MENU_FOOTER.getPath()).getText());
+        translator.translateMessage(TranslationKey.LOBBY_HELP_MENU_FOOTER.getPath()).ifPresent(message -> message.send(sender));
     }
 
     @Subcommand("remove")
