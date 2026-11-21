@@ -9,13 +9,13 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMapMetadata;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
 import java.time.Clock;
 import java.time.Instant;
-import java.util.Map;
 import java.util.UUID;
 
 public class CreateMapCommandExecutor {
@@ -52,8 +52,11 @@ public class CreateMapCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.createMap(mapCreationInfo);
 
-        Map<String, Object> values = Map.of("bg_arena", arenaId, "bg_map", mapName);
+        Replacement[] replacements = {
+                Replacement.parsed("arena-id", String.valueOf(arenaId)),
+                Replacement.parsed("map-name", mapName)
+        };
 
-        player.sendMessage(translator.translate(TranslationKey.MAP_CREATED.getPath()).replace(values));
+        translator.translateMessage(TranslationKey.MAP_CREATED.getPath(), replacements).ifPresent(message -> message.send(player));
     }
 }

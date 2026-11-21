@@ -7,9 +7,7 @@ import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigur
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.MapCreationInfo;
 import nl.matsgemmeke.battlegrounds.arena.exception.ArenaNotFoundException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +18,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,8 +44,6 @@ class CreateMapCommandExecutorTest {
     private Translator translator;
     @InjectMocks
     private CreateMapCommandExecutor commandExecutor;
-    @Captor
-    private ArgumentCaptor<Map<String, Object>> textTemplateValuesCaptor;
 
     @Test
     @DisplayName("execute throws ArenaNotFoundException when no arena instance is found for given arena id")
@@ -65,12 +60,12 @@ class CreateMapCommandExecutorTest {
     void execute_successful() {
         Arena arena = mock(Arena.class);
         ArenaSetupConfiguration arenaSetupConfiguration = mock(ArenaSetupConfiguration.class);
-        TextTemplate mapCreatedTextTemplate = mock(TextTemplate.class);
+        Message mapCreatedMessage = mock(Message.class);
 
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(arenaSetupConfiguration);
-        when(translator.translate(TranslationKey.MAP_CREATED.getPath())).thenReturn(mapCreatedTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_CREATED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(mapCreatedMessage));
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
 
@@ -92,11 +87,15 @@ class CreateMapCommandExecutorTest {
             assertThat(mapCreationInfo.createdBy()).isEqualTo(PLAYER_ID);
         });
 
-        verify(mapCreatedTextTemplate).replace(textTemplateValuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.MAP_CREATED.getPath()), replacementsCaptor.capture());
 
-        assertThat(textTemplateValuesCaptor.getValue()).contains(
-                entry("bg_arena", ARENA_ID),
-                entry("bg_map", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
     }
 }

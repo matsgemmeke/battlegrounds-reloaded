@@ -59,7 +59,7 @@ public enum TranslationKey {
     MAIN_LOBBY_SET("setup.main-lobby-set"),
     MAP_ALREADY_EXISTS("admin.map-already-exists"),
     MAP_CONFIRM_REMOVAL("admin.map-confirm-removal"),
-    MAP_CREATED("admin.map-created"),
+    MAP_CREATED("setup.map-created"),
     MAP_NOT_EXISTS("setup.map-not-exists"),
     MAP_HELP_MENU_FOOTER("commands.map-help-menu-footer"),
     MAP_HELP_MENU_HEADER("commands.map-help-menu-header"),
