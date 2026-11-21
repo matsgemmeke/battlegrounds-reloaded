@@ -17,12 +17,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -53,8 +51,6 @@ class ExistentMapNameConditionTest {
     private Translator translator;
     @InjectMocks
     private ExistentMapNameCondition condition;
-    @Captor
-    private ArgumentCaptor<Map<String, Object>> valuesCaptor;
 
     @ParameterizedTest
     @ValueSource(strings = { GENERIC_ERROR_MESSAGE })
@@ -113,10 +109,10 @@ class ExistentMapNameConditionTest {
         verify(translator).translateLegacyText(eq(TranslationKey.MAP_NOT_EXISTS.getPath()), replacementsCaptor.capture());
 
         assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
-            assertThat(replacement.key()).isEqualTo("bg-arena-id");
+            assertThat(replacement.key()).isEqualTo("arena-id");
             assertThat(replacement.value()).isEqualTo("1");
         }, replacement -> {
-            assertThat(replacement.key()).isEqualTo("bg-map-name");
+            assertThat(replacement.key()).isEqualTo("map-name");
             assertThat(replacement.value()).isEqualTo(MAP_NAME);
         });
     }

@@ -58,8 +58,8 @@ public class ExistentMapNameCondition implements ParameterCondition<String> {
         }
 
         Replacement[] replacements = {
-                Replacement.parsed("bg-arena-id", String.valueOf(arenaId)),
-                Replacement.parsed("bg-map-name", mapName)
+                Replacement.parsed("arena-id", String.valueOf(arenaId)),
+                Replacement.parsed("map-name", mapName)
         };
 
         throw translator.translateLegacyText(TranslationKey.MAP_NOT_EXISTS.getPath(), replacements)
