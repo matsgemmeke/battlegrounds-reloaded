@@ -5,7 +5,6 @@ import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -13,6 +12,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -48,15 +50,17 @@ class MapSelectedConditionTest {
         when(conditionContext.getIssuer()).thenReturn(issuer);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NO_MAP_SELECTED_MESSAGE })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when the condition context has no player")
-    void validateCondition_conditionContextWithoutPlayer() {
+    void validateCondition_conditionContextWithoutPlayer(String errorMessage) {
         when(issuer.getPlayer()).thenReturn(null);
-        when(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(new TextTemplate(NO_MAP_SELECTED_MESSAGE));
+        when(translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(NO_MAP_SELECTED_MESSAGE);
+                .hasMessage(errorMessage);
     }
 
     @Test
@@ -71,16 +75,18 @@ class MapSelectedConditionTest {
         assertThatCode(() -> condition.validateCondition(conditionContext)).doesNotThrowAnyException();
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NO_MAP_SELECTED_MESSAGE })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when player has no map selected")
-    void validateCondition_noMapSelected() {
+    void validateCondition_noMapSelected(String errorMessage) {
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(mapSelector.getSelection(PLAYER_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(new TextTemplate(NO_MAP_SELECTED_MESSAGE));
+        when(translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(NO_MAP_SELECTED_MESSAGE);
+                .hasMessage(errorMessage);
     }
 }

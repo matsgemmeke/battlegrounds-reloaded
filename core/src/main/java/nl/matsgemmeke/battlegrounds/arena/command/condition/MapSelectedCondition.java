@@ -29,7 +29,9 @@ public class MapSelectedCondition implements Condition {
         Player player = context.getIssuer().getPlayer();
 
         if (player == null) {
-            throw new ConditionFailedException(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath()).getText());
+            throw translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         UUID playerId = player.getUniqueId();
@@ -38,6 +40,8 @@ public class MapSelectedCondition implements Condition {
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath()).getText());
+        throw translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }
