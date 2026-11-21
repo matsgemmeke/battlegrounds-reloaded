@@ -44,7 +44,7 @@ public class JoinCommandExecutor {
 
         if (gameContext == null) {
             logger.warning("Player %s attempted to join arena %s, however no game context was found for validated game key %s".formatted(player.getName(), arenaId, gameKey));
-            player.sendMessage(translator.translate(TranslationKey.ARENA_NOT_AVAILABLE.getPath()).getText());
+            translator.translateMessage(TranslationKey.ARENA_NOT_AVAILABLE.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -58,7 +58,7 @@ public class JoinCommandExecutor {
         switch (joinResult) {
             case ALREADY_IN_GAME -> {
                 logger.warning("Player %s passed arena join validation, but was already in game".formatted(player.getName()));
-                player.sendMessage(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath()).getText());
+                translator.translateMessage(TranslationKey.ALREADY_IN_ARENA_MODE.getPath()).ifPresent(message -> message.send(player));
             }
         }
     }

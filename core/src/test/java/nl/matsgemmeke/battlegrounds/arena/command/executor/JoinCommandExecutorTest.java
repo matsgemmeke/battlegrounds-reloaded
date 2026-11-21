@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.membership.JoinResult;
 import nl.matsgemmeke.battlegrounds.game.component.membership.MembershipService;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Message;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -30,9 +30,6 @@ class JoinCommandExecutorTest {
     private static final ArenaGameContext GAME_CONTEXT = new ArenaGameContext(GAME_KEY, null);
     private static final String PLAYER_NAME = "TestPlayer";
 
-    private static final String ARENA_NOT_AVAILABLE_MESSAGE = "arena not available";
-    private static final String ALREADY_IN_ARENA_MODE_MESSAGE = "already in arena mode";
-
     @Mock
     private GameContextProvider gameContextProvider;
     @Mock
@@ -53,29 +50,33 @@ class JoinCommandExecutorTest {
     @Test
     @DisplayName("execute logs warning message when the given arena id is somehow not a valid game key after validation")
     void execute_unknownGameContext() {
+        Message arenaNotAvaiableMessage = mock(Message.class);
+
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.ARENA_NOT_AVAILABLE.getPath())).thenReturn(new TextTemplate(ARENA_NOT_AVAILABLE_MESSAGE));
+        when(translator.translateMessage(TranslationKey.ARENA_NOT_AVAILABLE.getPath())).thenReturn(Optional.of(arenaNotAvaiableMessage));
         when(player.getName()).thenReturn(PLAYER_NAME);
 
         commandExecutor.execute(player, ARENA_ID);
 
         verify(logger).warning("Player TestPlayer attempted to join arena 1, however no game context was found for validated game key ARENA-1");
-        verify(player).sendMessage(ARENA_NOT_AVAILABLE_MESSAGE);
+        verify(arenaNotAvaiableMessage).send(player);
     }
 
     @Test
     @DisplayName("execute logs warning message when the player is somehow already registered in the arena after validation")
     void execute_playerAlreadyRegistered() {
+        Message alreadyInArenaModeMessage = mock(Message.class);
+
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
         when(membershipServiceProvider.get()).thenReturn(membershipService);
         when(membershipService.join(player)).thenReturn(JoinResult.ALREADY_IN_GAME);
         when(player.getName()).thenReturn(PLAYER_NAME);
-        when(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(ALREADY_IN_ARENA_MODE_MESSAGE));
+        when(translator.translateMessage(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())).thenReturn(Optional.of(alreadyInArenaModeMessage));
 
         commandExecutor.execute(player, ARENA_ID);
 
         verify(logger).warning("Player TestPlayer passed arena join validation, but was already in game");
-        verify(player).sendMessage(ALREADY_IN_ARENA_MODE_MESSAGE);
+        verify(alreadyInArenaModeMessage).send(player);
     }
 }
