@@ -4,7 +4,6 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.game.*;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -12,6 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -79,19 +81,21 @@ class ArenaModeAbsenceConditionTest {
         assertThatNoException().isThrownBy(() -> condition.validateCondition(conditionContext));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { ERROR_MESSAGE })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when player issuer is registered in arena game context")
-    void validateCondition_issuerPresentInArena() {
+    void validateCondition_issuerPresentInArena(String errorMessage) {
         GameContext gameContext = mock(GameContext.class);
         when(gameContext.getType()).thenReturn(GameContextType.ARENA_MODE);
 
         when(issuer.getPlayer()).thenReturn(player);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(gameContextProvider.getGameContext(PLAYER_ID)).thenReturn(Optional.of(gameContext));
-        when(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())).thenReturn(new TextTemplate(ERROR_MESSAGE));
+        when(translator.translateLegacyText(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(ERROR_MESSAGE);
+                .hasMessage(errorMessage);
     }
 }

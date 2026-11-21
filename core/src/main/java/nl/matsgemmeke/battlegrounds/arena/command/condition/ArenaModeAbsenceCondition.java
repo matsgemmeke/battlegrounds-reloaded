@@ -39,6 +39,8 @@ public class ArenaModeAbsenceCondition implements Condition {
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.ALREADY_IN_ARENA_MODE.getPath()).getText());
+        throw translator.translateLegacyText(TranslationKey.ALREADY_IN_ARENA_MODE.getPath())
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }
