@@ -1,7 +1,4 @@
 admin:
-  arena-confirm-removal: "&cAre you sure you want to remove arena %bg_arena%? Rerun the command to confirm the removal."
-  arena-removal-failed: "&cFailed to remove arena %bg_arena%!"
-  arena-removed: "&6You have removed arena &f%bg_arena% &6and its content."
   map-confirm-removal: "&cAre you sure you want to remove map %bg_map% from arena %bg_arena%? Rerun the command to confirm the removal."
   map-removal-failed: "&cFailed to remove map %bg_map% from arena %bg_arena%. Please contact an administrator if you believe this is an error."
   map-removed: "&6You have removed map &f%bg_map% &6and its elements from arena &f%bg_arena%&6."
@@ -67,8 +64,11 @@ errors:
 
 setup:
   arena-already-exists: "<red>An arena by the id <arena-id> already exists"
+  arena-confirm-removal: "<red>Are you sure you want to remove arena <arena-id>? Rerun the command to confirm the removal."
   arena-created: "<gold>You have created a new arena by the id <white><arena-id><gold>."
   arena-not-exists: "<red>An arena by the id <bg-arena-id> doesn't exist"
+  arena-removal-failed: "<red>An unexpected error occurred while attempting to remove arena <arena-id>"
+  arena-removed: "<gold>You have removed arena <white><arena-id> <gold>and its content."
   element-not-exists: "<red>The selected map <bg-map-name> does not contain an element with the id <bg-element-id>."
   element-remove-failed: "&cYou are currently unable to remove this element. Please try again later."
   element-remove-successful: "&6You have removed element with id &f%bg_element_id% &6from map &f%bg_map_name%&6."

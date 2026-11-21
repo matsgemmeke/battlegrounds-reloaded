@@ -2,9 +2,7 @@ package nl.matsgemmeke.battlegrounds.arena.command.executor;
 
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
 import org.bukkit.command.CommandSender;
@@ -13,12 +11,14 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.io.TempDir;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.io.File;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
@@ -28,7 +28,6 @@ class RemoveArenaCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final GameKey GAME_KEY = GameKey.ofArena(ARENA_ID);
-    private static final String MESSAGE = "hello";
 
     @TempDir
     private static File tempDir;
@@ -57,25 +56,45 @@ class RemoveArenaCommandExecutorTest {
     @Test
     @DisplayName("execute adds command sender to confirm list upon first executing the command")
     void execute_firstExecution() {
-        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        Message arenaConfirmRemovalMessage = mock(Message.class);
+
+        when(translator.translateMessage(eq(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()), any(Replacement[].class))).thenReturn(Optional.of(arenaConfirmRemovalMessage));
 
         commandExecutor.execute(sender, ARENA_ID);
 
-        verify(sender).sendMessage(MESSAGE);
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
+
+        verify(arenaConfirmRemovalMessage).send(sender);
         verify(scheduler).createSingleRunSchedule(200L);
     }
 
     @Test
     @DisplayName("execute notifies command sender when failing to remove arena")
     void execute_arenaRemovalFailed() {
+        Message arenaRemovalFailedMessage = mock(Message.class);
+
         when(gameContextProvider.removeGameContext(GAME_KEY)).thenReturn(false);
-        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        when(translator.translateMessage(eq(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()), any(Replacement[].class))).thenReturn(Optional.empty());
+        when(translator.translateMessage(eq(TranslationKey.ARENA_REMOVAL_FAILED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(arenaRemovalFailedMessage));
 
         commandExecutor.execute(sender, ARENA_ID);
         commandExecutor.execute(sender, ARENA_ID);
 
-        verify(sender).sendMessage(MESSAGE);
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.ARENA_REMOVAL_FAILED.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
+
+        verify(arenaRemovalFailedMessage).send(sender);
     }
 
     @Test
@@ -84,15 +103,25 @@ class RemoveArenaCommandExecutorTest {
         File arenaFolder = new File(arenasFolder, "arena-" + ARENA_ID);
         arenaFolder.mkdirs();
 
+        Message arenaRemovedMessage = mock(Message.class);
+
         when(gameContextProvider.removeGameContext(GAME_KEY)).thenReturn(true);
-        when(translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath())).thenReturn(new TextTemplate("test"));
-        when(translator.translate(TranslationKey.ARENA_REMOVED.getPath())).thenReturn(new TextTemplate(MESSAGE));
+        when(translator.translateMessage(eq(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()), any(Replacement[].class))).thenReturn(Optional.empty());
+        when(translator.translateMessage(eq(TranslationKey.ARENA_REMOVED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(arenaRemovedMessage));
 
         commandExecutor.execute(sender, ARENA_ID);
         commandExecutor.execute(sender, ARENA_ID);
+
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.ARENA_REMOVED.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
 
         assertThat(arenaFolder).doesNotExist();
 
-        verify(sender).sendMessage(MESSAGE);
+        verify(arenaRemovedMessage).send(sender);
     }
 }

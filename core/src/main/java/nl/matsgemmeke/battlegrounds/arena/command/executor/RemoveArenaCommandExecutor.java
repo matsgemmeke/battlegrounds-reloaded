@@ -4,6 +4,7 @@ import com.google.inject.Inject;
 import jakarta.inject.Named;
 import nl.matsgemmeke.battlegrounds.game.GameContextProvider;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -14,7 +15,6 @@ import org.bukkit.command.CommandSender;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class RemoveArenaCommandExecutor {
 
@@ -36,13 +36,12 @@ public class RemoveArenaCommandExecutor {
     }
 
     public void execute(CommandSender sender, int arenaId) {
-        Map<String, Object> values = Map.of("bg_arena", arenaId);
+        Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
         if (!confirmList.contains(sender)) {
             confirmList.add(sender);
 
-            String confirmMessage = translator.translate(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath()).replace(values);
-            sender.sendMessage(confirmMessage);
+            translator.translateMessage(TranslationKey.ARENA_CONFIRM_REMOVAL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(sender));
 
             Schedule schedule = scheduler.createSingleRunSchedule(CONFIRM_LIST_COOLDOWN);
             schedule.addTask(() -> confirmList.remove(sender));
@@ -54,8 +53,7 @@ public class RemoveArenaCommandExecutor {
         boolean removed = gameContextProvider.removeGameContext(gameKey);
 
         if (!removed) {
-            String removalFailedMessage = translator.translate(TranslationKey.ARENA_REMOVAL_FAILED.getPath()).replace(values);
-            sender.sendMessage(removalFailedMessage);
+            translator.translateMessage(TranslationKey.ARENA_REMOVAL_FAILED.getPath(), arenaIdReplacement).ifPresent(message -> message.send(sender));
             return;
         }
 
@@ -64,7 +62,6 @@ public class RemoveArenaCommandExecutor {
         File arenaFolder = new File(arenasFolder, "arena-" + arenaId);
         FileUtil.deleteFolder(arenaFolder);
 
-        String removedMessage = translator.translate(TranslationKey.ARENA_REMOVED.getPath()).replace(values);
-        sender.sendMessage(removedMessage);
+        translator.translateMessage(TranslationKey.ARENA_REMOVED.getPath(), arenaIdReplacement).ifPresent(message -> message.send(sender));
     }
 }
