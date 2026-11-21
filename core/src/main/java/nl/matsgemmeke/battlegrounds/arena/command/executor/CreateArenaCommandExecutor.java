@@ -6,11 +6,11 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaFactory;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.settings.ArenaSettings;
 import nl.matsgemmeke.battlegrounds.game.GameKey;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class CreateArenaCommandExecutor {
@@ -26,18 +26,17 @@ public class CreateArenaCommandExecutor {
         this.translator = translator;
     }
 
-    public void execute(Player player, int id) {
+    public void execute(Player player, int arenaId) {
         ArenaSettings settings = ArenaSettings.getDefaultSettings();
         UUID uniqueId = player.getUniqueId();
 
-        Arena arena = arenaFactory.create(id, settings, uniqueId);
-        GameKey gameKey = GameKey.ofArena(id);
+        Arena arena = arenaFactory.create(arenaId, settings, uniqueId);
+        GameKey gameKey = GameKey.ofArena(arenaId);
 
         arenaRegistry.addArena(gameKey, arena);
 
-        Map<String, Object> values = Map.of("bg_arena", id);
-        String message = translator.translate(TranslationKey.ARENA_CREATED.getPath()).replace(values);
+        Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
-        player.sendMessage(message);
+        translator.translateMessage(TranslationKey.ARENA_CREATED.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
     }
 }

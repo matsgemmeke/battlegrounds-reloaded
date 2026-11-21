@@ -5,7 +5,7 @@ public enum TranslationKey {
     ALREADY_IN_ARENA_MODE("errors.already-in-arena-mode"),
     ARENA_ALREADY_EXISTS("setup.arena-already-exists"),
     ARENA_CONFIRM_REMOVAL("admin.arena-confirm-removal"),
-    ARENA_CREATED("admin.arena-created"),
+    ARENA_CREATED("setup.arena-created"),
     ARENA_HELP_MENU_FOOTER("commands.arena-help-menu-footer"),
     ARENA_HELP_MENU_HEADER("commands.arena-help-menu-header"),
     ARENA_NOT_AVAILABLE("errors.arena-not-available"),
