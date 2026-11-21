@@ -7,10 +7,10 @@ import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
-import java.util.Map;
 import java.util.logging.Logger;
 
 public class NonexistentMapNameCondition implements ParameterCondition<String> {
@@ -33,18 +33,19 @@ public class NonexistentMapNameCondition implements ParameterCondition<String> {
         if (arenaId == null) {
             logger.warning("NonexistentMapNameCondition: argument \"arena-id\" was not resolved; check parameter order/name");
 
-            String message = translator.translate(TranslationKey.GENERIC_ERROR.getPath()).getText();
-
-            throw new ConditionFailedException(message);
+            throw translator.translateLegacyText(TranslationKey.GENERIC_ERROR.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         Arena arena = arenaRegistry.getArena(arenaId).orElse(null);
 
         if (arena == null) {
-            Map<String, Object> values = Map.of("bg_arena", arenaId);
-            String message = translator.translate(TranslationKey.ARENA_NOT_EXISTS.getPath()).replace(values);
+            Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
-            throw new ConditionFailedException(message);
+            throw translator.translateLegacyText(TranslationKey.ARENA_NOT_EXISTS.getPath(), arenaIdReplacement)
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         ArenaMap map = arena.getMap(mapName).orElse(null);
@@ -53,9 +54,13 @@ public class NonexistentMapNameCondition implements ParameterCondition<String> {
             return;
         }
 
-        Map<String, Object> values = Map.of("bg_arena", arenaId, "bg_map", mapName);
-        String message = translator.translate(TranslationKey.MAP_ALREADY_EXISTS.getPath()).replace(values);
+        Replacement[] replacements = {
+                Replacement.parsed("arena-id", String.valueOf(arenaId)),
+                Replacement.parsed("map-name", mapName)
+        };
 
-        throw new ConditionFailedException(message);
+        throw translator.translateLegacyText(TranslationKey.MAP_ALREADY_EXISTS.getPath(), replacements)
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }
