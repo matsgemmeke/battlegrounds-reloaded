@@ -5,10 +5,9 @@ import nl.matsgemmeke.battlegrounds.arena.command.executor.RemoveMapCommandExecu
 import nl.matsgemmeke.battlegrounds.arena.command.executor.SelectMapCommandExecutor;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Message;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,10 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.mockito.Mockito.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class MapCommandTest {
@@ -29,13 +27,10 @@ class MapCommandTest {
     private static final int ARENA_ID = 1;
     private static final String MAP_NAME = "The Map";
 
-    private static final String MAP_HELP_MENU_HEADER_TEXT = "map help menu header";
-    private static final String MAP_HELP_MENU_FOOTER_TEXT = "map help menu footer";
     private static final String SUBCOMMAND_DESCRIPTION = "just a map command";
     private static final String SUBCOMMAND_USAGE = "/bg arena map test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg arena map test ";
     private static final String[] SUBCOMMAND_PERMISSIONS = new String[0];
-    private static final String UNKNOWN_COMMAND_MESSAGE = "unknown command";
 
     @Mock
     private CreateMapCommandExecutor createMapCommandExecutor;
@@ -56,28 +51,31 @@ class MapCommandTest {
     @DisplayName("onDefault sends unknown command message when command has args")
     void onDefault_withArgs() {
         String[] args = new String[] { "test" };
+        Message unknownCommandMessage = mock(Message.class);
 
-        when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate(UNKNOWN_COMMAND_MESSAGE));
+        when(translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(Optional.of(unknownCommandMessage));
 
         command.onDefault(player, args);
 
-        verify(player).sendMessage(UNKNOWN_COMMAND_MESSAGE);
+        verify(unknownCommandMessage).send(player);
     }
 
     @Test
     @DisplayName("onDefault shows help menu to given console sender")
     void onDefault_noArgs() {
         CommandInfo commandInfo = new CommandInfo(SUBCOMMAND_DESCRIPTION, SUBCOMMAND_USAGE, SUBCOMMAND_SUGGESTION, SUBCOMMAND_PERMISSIONS);
+        Message mapHelpMenuHeaderMessage = mock(Message.class);
+        Message mapHelpMenuFooterMessage = mock(Message.class);
 
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_HEADER_TEXT));
-        when(translator.translate(TranslationKey.MAP_HELP_MENU_FOOTER.getPath())).thenReturn(new TextTemplate(MAP_HELP_MENU_FOOTER_TEXT));
+        when(translator.translateMessage(TranslationKey.MAP_HELP_MENU_HEADER.getPath())).thenReturn(Optional.of(mapHelpMenuHeaderMessage));
+        when(translator.translateMessage(TranslationKey.MAP_HELP_MENU_FOOTER.getPath())).thenReturn(Optional.of(mapHelpMenuFooterMessage));
 
         command.addCommandInfo(commandInfo);
         command.onDefault(player, null);
 
-        verify(player).sendMessage(MAP_HELP_MENU_HEADER_TEXT);
+        verify(mapHelpMenuHeaderMessage).send(player);
         verify(helpMenu).send(player, List.of(commandInfo));
-        verify(player).sendMessage(MAP_HELP_MENU_FOOTER_TEXT);
+        verify(mapHelpMenuFooterMessage).send(player);
     }
 
     @Test

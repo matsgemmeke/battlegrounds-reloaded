@@ -9,11 +9,11 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
 
 public class ExistentElementIdCondition implements ParameterCondition<Integer> {
@@ -32,18 +32,18 @@ public class ExistentElementIdCondition implements ParameterCondition<Integer> {
         Player player = context.getIssuer().getPlayer();
 
         if (player == null) {
-            String message = translator.translate(TranslationKey.PLAYER_ONLY_COMMAND.getPath()).getText();
-
-            throw new ConditionFailedException(message);
+            throw translator.translateLegacyText(TranslationKey.PLAYER_ONLY_COMMAND.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         UUID playerId = player.getUniqueId();
         ArenaMapSelection mapSelection = mapSelector.getSelection(playerId).orElse(null);
 
         if (mapSelection == null) {
-            String message = translator.translate(TranslationKey.NO_MAP_SELECTED.getPath()).getText();
-
-            throw new ConditionFailedException(message);
+            throw translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         ArenaMap map = mapSelection.map();
@@ -52,12 +52,13 @@ public class ExistentElementIdCondition implements ParameterCondition<Integer> {
             return;
         }
 
-        Map<String, Object> values = Map.of(
-                "bg_map_name", map.getName(),
-                "bg_element_id", elementId
-        );
-        String message = translator.translate(TranslationKey.ELEMENT_NOT_EXISTS.getPath()).replace(values);
+        Replacement[] replacements = {
+                Replacement.parsed("bg-map-name", map.getName()),
+                Replacement.parsed("bg-element-id", String.valueOf(elementId))
+        };
 
-        throw new ConditionFailedException(message);
+        throw translator.translateLegacyText(TranslationKey.ELEMENT_NOT_EXISTS.getPath(), replacements)
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }

@@ -7,22 +7,23 @@ import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyMap;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -47,43 +48,44 @@ class ExistentElementIdConditionTest {
     private Translator translator;
     @InjectMocks
     private ExistentElementIdCondition condition;
-    @Captor
-    private ArgumentCaptor<Map<String, Object>> valuesCaptor;
 
     @BeforeEach
     void setUp() {
         when(conditionContext.getIssuer()).thenReturn(issuer);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { PLAYER_ONLY_COMMAND_TEXT })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when the issuer is not a player")
-    void validateCondition_issuerIsNoPlayer() {
+    void validateCondition_issuerIsNoPlayer(String message) {
         when(issuer.getPlayer()).thenReturn(null);
-        when(translator.translate(TranslationKey.PLAYER_ONLY_COMMAND.getPath())).thenReturn(new TextTemplate(PLAYER_ONLY_COMMAND_TEXT));
+        when(translator.translateLegacyText(TranslationKey.PLAYER_ONLY_COMMAND.getPath())).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ELEMENT_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(PLAYER_ONLY_COMMAND_TEXT);
+                .hasMessage(message);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { NO_MAP_SELECTED_TEXT })
+    @NullSource
     @DisplayName("validationCondition throws ConditionFailedException when player has not selected a map")
-    void validationCondition_noMapSelected() {
+    void validationCondition_noMapSelected(String message) {
         when(issuer.getPlayer().getUniqueId()).thenReturn(PLAYER_ID);
         when(mapSelector.getSelection(PLAYER_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(new TextTemplate(NO_MAP_SELECTED_TEXT));
+        when(translator.translateLegacyText(TranslationKey.NO_MAP_SELECTED.getPath())).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ELEMENT_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(NO_MAP_SELECTED_TEXT);
+                .hasMessage(message);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { ELEMENT_NOT_EXISTS_TEXT })
+    @NullSource
     @DisplayName("validationCondition throws ConditionFailedException when given element id does not exist in the selected map")
-    void validationCondition_elementIdDoesNotExist() {
-        TextTemplate elementNotExistsTextTemplate = mock(TextTemplate.class);
-        when(elementNotExistsTextTemplate.replace(anyMap())).thenReturn(ELEMENT_NOT_EXISTS_TEXT);
-
+    void validationCondition_elementIdDoesNotExist(String message) {
         ArenaMap map = mock(ArenaMap.class);
         when(map.elementExists(ELEMENT_ID)).thenReturn(false);
         when(map.getName()).thenReturn(MAP_NAME);
@@ -92,18 +94,22 @@ class ExistentElementIdConditionTest {
 
         when(issuer.getPlayer().getUniqueId()).thenReturn(PLAYER_ID);
         when(mapSelector.getSelection(PLAYER_ID)).thenReturn(Optional.of(mapSelection));
-        when(translator.translate(TranslationKey.ELEMENT_NOT_EXISTS.getPath())).thenReturn(elementNotExistsTextTemplate);
+        when(translator.translateLegacyText(eq(TranslationKey.ELEMENT_NOT_EXISTS.getPath()), any(Replacement[].class))).thenReturn(Optional.ofNullable(message));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ELEMENT_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(ELEMENT_NOT_EXISTS_TEXT);
+                .hasMessage(message);
 
-        verify(elementNotExistsTextTemplate).replace(valuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateLegacyText(eq(TranslationKey.ELEMENT_NOT_EXISTS.getPath()), replacementsCaptor.capture());
 
-        assertThat(valuesCaptor.getValue()).containsOnly(
-                entry("bg_map_name", MAP_NAME),
-                entry("bg_element_id", ELEMENT_ID)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("bg-map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("bg-element-id");
+            assertThat(replacement.value()).isEqualTo("5");
+        });
     }
 
     @Test
