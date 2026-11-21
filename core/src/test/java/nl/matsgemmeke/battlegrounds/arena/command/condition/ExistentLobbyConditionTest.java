@@ -6,30 +6,33 @@ import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.fixture.LanguageFixture;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.Location;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThatNoException;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class ExistentLobbyConditionTest {
 
     private static final int ARENA_ID = 1;
-    private static final String LOBBY_NOT_EXISTS_TEXT = LanguageFixture.getTranslation(TranslationKey.LOBBY_NOT_EXISTS.getPath());
+    private static final String LOBBY_NOT_EXISTS_TEXT = "lobby not exists";
 
     @Mock
     private ArenaRegistry arenaRegistry;
@@ -63,17 +66,27 @@ class ExistentLobbyConditionTest {
         assertThatNoException().isThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID));
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { LOBBY_NOT_EXISTS_TEXT })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when given arena id matches with an arena without a lobby location")
-    void validationCondition_arenaWithoutLobby() {
+    void validationCondition_arenaWithoutLobby(String errorMessage) {
         Arena arena = mock(Arena.class);
         when(arena.getLobbyLocation()).thenReturn(Optional.empty());
 
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
-        when(translator.translate(TranslationKey.LOBBY_NOT_EXISTS.getPath())).thenReturn(new TextTemplate(LOBBY_NOT_EXISTS_TEXT));
+        when(translator.translateLegacyText(eq(TranslationKey.LOBBY_NOT_EXISTS.getPath()), any(Replacement[].class))).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("&cArena 1 has no waiting lobby set up.");
+                .hasMessage(errorMessage);
+
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateLegacyText(eq(TranslationKey.LOBBY_NOT_EXISTS.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("bg-arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
     }
 }

@@ -8,10 +8,9 @@ import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.Arena;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
-
-import java.util.Map;
 
 public class ExistentLobbyCondition implements ParameterCondition<Integer> {
 
@@ -32,9 +31,10 @@ public class ExistentLobbyCondition implements ParameterCondition<Integer> {
             return;
         }
 
-        Map<String, Object> values = Map.of("bg_arena_id", arenaId);
-        String message = translator.translate(TranslationKey.LOBBY_NOT_EXISTS.getPath()).replace(values);
+        Replacement arenaIdReplacement = Replacement.parsed("bg-arena-id", String.valueOf(arenaId));
 
-        throw new ConditionFailedException(message);
+        throw translator.translateLegacyText(TranslationKey.LOBBY_NOT_EXISTS.getPath(), arenaIdReplacement)
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }
