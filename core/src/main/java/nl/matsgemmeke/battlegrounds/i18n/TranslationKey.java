@@ -3,7 +3,7 @@ package nl.matsgemmeke.battlegrounds.i18n;
 public enum TranslationKey {
 
     ALREADY_IN_ARENA_MODE("errors.already-in-arena-mode"),
-    ARENA_ALREADY_EXISTS("admin.arena-already-exists"),
+    ARENA_ALREADY_EXISTS("setup.arena-already-exists"),
     ARENA_CONFIRM_REMOVAL("admin.arena-confirm-removal"),
     ARENA_CREATED("admin.arena-created"),
     ARENA_HELP_MENU_FOOTER("commands.arena-help-menu-footer"),

@@ -4,10 +4,9 @@ import co.aikar.commands.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.command.condition.ParameterCondition;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
-
-import java.util.Map;
 
 public class NonexistentArenaIdCondition implements ParameterCondition<Integer> {
 
@@ -26,9 +25,10 @@ public class NonexistentArenaIdCondition implements ParameterCondition<Integer> 
             return;
         }
 
-        Map<String, Object> values = Map.of("bg_arena", arenaId);
-        String message = translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath()).replace(values);
+        Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
-        throw new ConditionFailedException(message);
+        throw translator.translateLegacyText(TranslationKey.ARENA_ALREADY_EXISTS.getPath(), arenaIdReplacement)
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }

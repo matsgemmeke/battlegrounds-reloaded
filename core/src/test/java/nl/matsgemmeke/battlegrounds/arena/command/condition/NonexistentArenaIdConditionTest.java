@@ -5,18 +5,26 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,14 +52,24 @@ class NonexistentArenaIdConditionTest {
         assertThatCode(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID)).doesNotThrowAnyException();
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { ARENA_EXISTS_MESSAGE })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when arena exists")
-    void validateCondition_arenaExists() {
+    void validateCondition_arenaExists(String errorMessage) {
         when(arenaRegistry.exists(ARENA_ID)).thenReturn(true);
-        when(translator.translate(TranslationKey.ARENA_ALREADY_EXISTS.getPath())).thenReturn(new TextTemplate(ARENA_EXISTS_MESSAGE));
+        when(translator.translateLegacyText(eq(TranslationKey.ARENA_ALREADY_EXISTS.getPath()), any(Replacement[].class))).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext, execContext, ARENA_ID))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage(ARENA_EXISTS_MESSAGE);
+                .hasMessage(errorMessage);
+
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateLegacyText(eq(TranslationKey.ARENA_ALREADY_EXISTS.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        });
     }
 }
