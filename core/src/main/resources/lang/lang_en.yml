@@ -1,7 +1,4 @@
 admin:
-  map-confirm-removal: "&cAre you sure you want to remove map %bg_map% from arena %bg_arena%? Rerun the command to confirm the removal."
-  map-removal-failed: "&cFailed to remove map %bg_map% from arena %bg_arena%. Please contact an administrator if you believe this is an error."
-  map-removed: "&6You have removed map &f%bg_map% &6and its elements from arena &f%bg_arena%&6."
   map-selected: "&6You have selected map &f%bg_map% &6in arena &f%bg_arena%&6. You can now add elements to this map."
   reload-failed: "&cFailed to reload configuration files"
   reload-success: "&6Successfully reloaded all configuration files."
@@ -81,7 +78,10 @@ setup:
   main-lobby-remove: "&6You have successfully removed the main lobby location."
   main-lobby-set: "&6You have set the main lobby to your current location."
   map-already-exists: "<red>Arena <arena-id> already has a map by the name of <map-name>"
+  map-confirm-removal: "<red>Are you sure you want to remove map <map-name> from arena <arena-id>? Rerun the command to confirm the removal."
   map-created: "<gold>You have added a new map to arena <white><arena-id> <gold>by the name of <white><map-name><gold>."
+  map-removal-failed: "<red>Failed to remove map <map-name> from arena <arena-id>. Please contact an administrator if you believe this is an error."
+  map-removed: "<gold>You have removed map <white><map-name> <gold>and its elements from arena <white><arena-id><gold>."
   map-not-exists: "<red>Arena <arena-id> does not have a map by the name of <map-name>"
   spawn-point-added: "&6You have added a spawn point element by the id of &f%bg_element_id% &6to the map &f%bg_map_name%&6."
   specify-element-type: "&cSpecify an element type to add."

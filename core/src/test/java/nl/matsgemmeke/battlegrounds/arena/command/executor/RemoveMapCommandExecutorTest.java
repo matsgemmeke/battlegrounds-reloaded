@@ -6,9 +6,7 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfiguration;
 import nl.matsgemmeke.battlegrounds.arena.configuration.setup.ArenaSetupConfigurationProvider;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
 import nl.matsgemmeke.battlegrounds.scheduling.ScheduleTask;
 import nl.matsgemmeke.battlegrounds.scheduling.Scheduler;
@@ -27,7 +25,6 @@ import java.util.Optional;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -35,9 +32,6 @@ class RemoveMapCommandExecutorTest {
 
     private static final int ARENA_ID = 1;
     private static final String MAP_NAME = "Level 1";
-    private static final String MAP_REMOVAL_FAILED_MESSAGE = "map removal failed";
-    private static final String MAP_CONFIRM_REMOVAL_MESSAGE = "map confirm removal";
-    private static final String MAP_REMOVED_MESSAGE = "map removed";
 
     @Mock
     private ArenaSetupConfigurationProvider arenaSetupConfigurationProvider;
@@ -59,47 +53,53 @@ class RemoveMapCommandExecutorTest {
     @Test
     @DisplayName("execute sends error message when given arena id has no corresponding arena")
     void execute_arenaNotFound() {
-        TextTemplate mapRemovalFailedTextTemplate = mock(TextTemplate.class);
-        when(mapRemovalFailedTextTemplate.replace(anyMap())).thenReturn(MAP_REMOVAL_FAILED_MESSAGE);
+        Message mapRemovalFailedMessage = mock(Message.class);
 
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.MAP_REMOVAL_FAILED.getPath())).thenReturn(mapRemovalFailedTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_REMOVAL_FAILED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(mapRemovalFailedMessage));
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
 
-        verify(mapRemovalFailedTextTemplate).replace(textTemplateValuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.MAP_REMOVAL_FAILED.getPath()), replacementsCaptor.capture());
 
-        assertThat(textTemplateValuesCaptor.getValue()).containsOnly(
-                entry("bg_arena", ARENA_ID),
-                entry("bg_map", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
 
-        verify(player).sendMessage(MAP_REMOVAL_FAILED_MESSAGE);
+        verify(mapRemovalFailedMessage).send(player);
         verify(logger).severe("Arena 1 is null in remove map command despite prior validation");
     }
 
     @Test
     @DisplayName("execute sends error message when given arena does not contain a map by the given name")
     void execute_mapNotFound() {
+        Message mapRemovalFailedMessage = mock(Message.class);
+
         Arena arena = mock(Arena.class);
         when(arena.getMap(MAP_NAME)).thenReturn(Optional.empty());
 
-        TextTemplate mapRemovalFailedTextTemplate = mock(TextTemplate.class);
-        when(mapRemovalFailedTextTemplate.replace(anyMap())).thenReturn(MAP_REMOVAL_FAILED_MESSAGE);
-
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
-        when(translator.translate(TranslationKey.MAP_REMOVAL_FAILED.getPath())).thenReturn(mapRemovalFailedTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_REMOVAL_FAILED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(mapRemovalFailedMessage));
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
 
-        verify(mapRemovalFailedTextTemplate).replace(textTemplateValuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.MAP_REMOVAL_FAILED.getPath()), replacementsCaptor.capture());
 
-        assertThat(textTemplateValuesCaptor.getValue()).containsOnly(
-                entry("bg_arena", ARENA_ID),
-                entry("bg_map", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
 
-        verify(player).sendMessage(MAP_REMOVAL_FAILED_MESSAGE);
+        verify(mapRemovalFailedMessage).send(player);
         verify(logger).severe("Map Level 1 in arena 1 is null in remove map command despite prior validation");
     }
 
@@ -107,6 +107,7 @@ class RemoveMapCommandExecutorTest {
     @DisplayName("execute sends confirm removal message again after it ran out")
     void execute_confirmRemovalRunsOut() {
         ArenaMap map = mock(ArenaMap.class);
+        Message mapConfirmRemovalMessage = mock(Message.class);
 
         Arena arena = mock(Arena.class);
         when(arena.getMap(MAP_NAME)).thenReturn(Optional.of(map));
@@ -114,24 +115,25 @@ class RemoveMapCommandExecutorTest {
         Schedule schedule = mock(Schedule.class);
         doAnswer(MockUtils.answerRunScheduleTask()).when(schedule).addTask(any(ScheduleTask.class));
 
-        TextTemplate mapConfirmRemovalTextTemplate = mock(TextTemplate.class);
-        when(mapConfirmRemovalTextTemplate.replace(anyMap())).thenReturn(MAP_CONFIRM_REMOVAL_MESSAGE);
-
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
-        when(translator.translate(TranslationKey.MAP_CONFIRM_REMOVAL.getPath())).thenReturn(mapConfirmRemovalTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_CONFIRM_REMOVAL.getPath()), any(Replacement[].class))).thenReturn(Optional.of(mapConfirmRemovalMessage));
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
 
-        verify(mapConfirmRemovalTextTemplate, times(2)).replace(textTemplateValuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator, times(2)).translateMessage(eq(TranslationKey.MAP_CONFIRM_REMOVAL.getPath()), replacementsCaptor.capture());
 
-        assertThat(textTemplateValuesCaptor.getValue()).containsOnly(
-                entry("bg_arena", ARENA_ID),
-                entry("bg_map", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
 
-        verify(player, times(2)).sendMessage(MAP_CONFIRM_REMOVAL_MESSAGE);
+        verify(mapConfirmRemovalMessage, times(2)).send(player);
         verify(schedule, times(2)).start();
     }
 
@@ -141,36 +143,34 @@ class RemoveMapCommandExecutorTest {
         ArenaMap map = mock(ArenaMap.class);
         Schedule schedule = mock(Schedule.class);
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        Message mapRemovedMessage = mock(Message.class);
 
         Arena arena = mock(Arena.class);
         when(arena.getMap(MAP_NAME)).thenReturn(Optional.of(map));
 
-        TextTemplate mapConfirmRemovalTextTemplate = mock(TextTemplate.class);
-        when(mapConfirmRemovalTextTemplate.replace(anyMap())).thenReturn(MAP_CONFIRM_REMOVAL_MESSAGE);
-
-        TextTemplate mapRemovedTextTemplate = mock(TextTemplate.class);
-        when(mapRemovedTextTemplate.replace(anyMap())).thenReturn(MAP_REMOVED_MESSAGE);
-
         when(arenaRegistry.getArena(ARENA_ID)).thenReturn(Optional.of(arena));
-        when(translator.translate(TranslationKey.MAP_CONFIRM_REMOVAL.getPath())).thenReturn(mapConfirmRemovalTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_CONFIRM_REMOVAL.getPath()), any(Replacement[].class))).thenReturn(Optional.empty());
         when(scheduler.createSingleRunSchedule(200L)).thenReturn(schedule);
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
-        when(translator.translate(TranslationKey.MAP_REMOVED.getPath())).thenReturn(mapRemovedTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.MAP_REMOVED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(mapRemovedMessage));
 
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
         commandExecutor.execute(player, ARENA_ID, MAP_NAME);
 
-        verify(mapConfirmRemovalTextTemplate).replace(textTemplateValuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.MAP_REMOVED.getPath()), replacementsCaptor.capture());
 
-        assertThat(textTemplateValuesCaptor.getValue()).containsOnly(
-                entry("bg_arena", ARENA_ID),
-                entry("bg_map", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("arena-id");
+            assertThat(replacement.value()).isEqualTo("1");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
 
-        verify(player).sendMessage(MAP_CONFIRM_REMOVAL_MESSAGE);
         verify(schedule).start();
         verify(arena).removeMap(map);
         verify(setupConfiguration).removeMap(MAP_NAME);
-        verify(player).sendMessage(MAP_REMOVED_MESSAGE);
+        verify(mapRemovedMessage).send(player);
     }
 }
