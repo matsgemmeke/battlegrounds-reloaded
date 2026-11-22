@@ -53,14 +53,14 @@ public class BattlegroundsCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
-        String joinCommandDescription = translator.translate(TranslationKey.DESCRIPTION_JOIN.getPath()).getText();
-        String leaveCommandDescription = translator.translate(TranslationKey.DESCRIPTION_LEAVE.getPath()).getText();
-        String giveWeaponCommandDescription = translator.translate(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).getText();
-        String arenaCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ARENA.getPath()).getText();
-        String elementCommandDescription = translator.translate(TranslationKey.DESCRIPTION_ELEMENT.getPath()).getText();
-        String mainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAIN_LOBBY.getPath()).getText();
-        String reloadCommandDescription = translator.translate(TranslationKey.DESCRIPTION_RELOAD.getPath()).getText();
-        String toolsCommandDescription = translator.translate(TranslationKey.DESCRIPTION_TOOLS.getPath()).getText();
+        String joinCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_JOIN.getPath()).orElse(null);
+        String leaveCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_LEAVE.getPath()).orElse(null);
+        String giveWeaponCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_GIVE_WEAPON.getPath()).orElse(null);
+        String arenaCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_ARENA.getPath()).orElse(null);
+        String elementCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_ELEMENT.getPath()).orElse(null);
+        String mainLobbyCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_MAIN_LOBBY.getPath()).orElse(null);
+        String reloadCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_RELOAD.getPath()).orElse(null);
+        String toolsCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_TOOLS.getPath()).orElse(null);
 
         CommandInfo joinCommandInfo = new CommandInfo(joinCommandDescription, JOIN_COMMAND_USAGE, JOIN_COMMAND_SUGGESTION, JOIN_COMMAND_PERMISSIONS);
         CommandInfo leaveCommandInfo = new CommandInfo(leaveCommandDescription, LEAVE_COMMAND_USAGE, LEAVE_COMMAND_SUGGESTION, LEAVE_COMMAND_PERMISSIONS);
