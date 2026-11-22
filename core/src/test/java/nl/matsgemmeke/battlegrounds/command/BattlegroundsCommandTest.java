@@ -1,7 +1,6 @@
 package nl.matsgemmeke.battlegrounds.command;
 
 import nl.matsgemmeke.battlegrounds.i18n.Message;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -40,11 +39,13 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onCatchUnknown sends error message to command sender")
     void onCatchUnknown() {
-        when(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(new TextTemplate("test"));
+        Message unknownCommandMessage = mock(Message.class);
+
+        when(translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath())).thenReturn(Optional.of(unknownCommandMessage));
 
         bgCommand.onCatchUnknown(player);
 
-        verify(player).sendMessage("test");
+        verify(unknownCommandMessage).send(player);
     }
 
     @Test

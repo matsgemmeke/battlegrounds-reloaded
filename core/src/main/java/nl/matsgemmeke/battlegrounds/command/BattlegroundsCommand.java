@@ -50,7 +50,7 @@ public class BattlegroundsCommand extends BaseCommand {
 
     @CatchUnknown
     public void onCatchUnknown(CommandSender sender) {
-        sender.sendMessage(translator.translate(TranslationKey.UNKNOWN_COMMAND.getPath()).getText());
+        translator.translateMessage(TranslationKey.UNKNOWN_COMMAND.getPath()).ifPresent(message -> message.send(sender));
     }
 
     @CommandCompletion("<weapon>")
