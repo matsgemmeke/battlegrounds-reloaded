@@ -5,11 +5,11 @@ import co.aikar.commands.MessageKeys;
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 
 import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 
 public class CommandBootstrapper {
@@ -41,14 +41,15 @@ public class CommandBootstrapper {
         String language = battlegroundsConfiguration.getLanguage();
         Locale locale = Locale.forLanguageTag(language);
 
-        Map<String, Object> invalidSyntaxMessageValues = Map.of(
-                "bg_command", ACF_COMMAND_PLACEHOLDER,
-                "bg_syntax", ACF_SYNTAX_PLACEHOLDER
-        );
-        String invalidSyntaxMessage = translator.translate(TranslationKey.INVALID_SYNTAX.getPath()).replace(invalidSyntaxMessageValues);
-
         BukkitLocales locales = commandManager.getLocales();
         locales.setDefaultLocale(locale);
-        locales.addMessage(locale, MessageKeys.INVALID_SYNTAX, invalidSyntaxMessage);
+
+        Replacement[] invalidSyntaxReplacements = {
+                Replacement.parsed("command", ACF_COMMAND_PLACEHOLDER),
+                Replacement.parsed("syntax", ACF_SYNTAX_PLACEHOLDER)
+        };
+
+        translator.translateLegacyText(TranslationKey.INVALID_SYNTAX.getPath(), invalidSyntaxReplacements)
+                .ifPresent(message -> locales.addMessage(locale, MessageKeys.INVALID_SYNTAX, message));
     }
 }

@@ -51,7 +51,7 @@ errors:
   command-sender-must-be-player: "<red>Must be a player to use this command."
   freeplay-mode-not-exists: "<red>Unable to perform action; freeplay mode is not enabled."
   generic-error: "<red>An unexpected error occurred while processing this command. Please try again or contact an administrator."
-  invalid-syntax: "<red>Correct usage: <bg-command> <bg-syntax>"
+  invalid-syntax: "<red>Correct usage: <command> <syntax>"
   no-map-selected: "<red>You must select a map first! Use /bg arena map select <arena> <map>."
   not-in-arena-mode: "<red>Unable to perform action; you are not participating in an arena."
   not-in-freeplay-mode: "<red>Unable to perform action; you are not in freeplay mode."

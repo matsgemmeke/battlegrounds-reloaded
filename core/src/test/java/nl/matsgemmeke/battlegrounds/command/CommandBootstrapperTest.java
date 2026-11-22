@@ -2,12 +2,11 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
@@ -15,8 +14,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.HashSet;
 import java.util.Locale;
+import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,10 +47,21 @@ class CommandBootstrapperTest {
         commandExtensions.add(commandExtension);
 
         when(battlegroundsConfiguration.getLanguage()).thenReturn(LANGUAGE);
-        when(translator.translate(TranslationKey.INVALID_SYNTAX.getPath())).thenReturn(new TextTemplate(INVALID_SYNTAX_MESSAGE));
+        when(translator.translateLegacyText(eq(TranslationKey.INVALID_SYNTAX.getPath()), any(Replacement[].class))).thenReturn(Optional.of(INVALID_SYNTAX_MESSAGE));
         when(commandManager.getLocales()).thenReturn(bukkitLocales);
 
         commandBootstrapper.initialize();
+
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateLegacyText(eq(TranslationKey.INVALID_SYNTAX.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("command");
+            assertThat(replacement.value()).isEqualTo("{command}");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("syntax");
+            assertThat(replacement.value()).isEqualTo("{syntax}");
+        });
 
         verify(commandExtension).configure(commandManager);
         verify(bukkitLocales).setDefaultLocale(Locale.FRENCH);
