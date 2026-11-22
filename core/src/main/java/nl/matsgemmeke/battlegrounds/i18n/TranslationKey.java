@@ -65,7 +65,7 @@ public enum TranslationKey {
     MAP_HELP_MENU_HEADER("commands.map-help-menu-header"),
     MAP_REMOVAL_FAILED("setup.map-removal-failed"),
     MAP_REMOVED("setup.map-removed"),
-    MAP_SELECTED("admin.map-selected"),
+    MAP_SELECTED("setup.map-selected"),
     NO_MAP_SELECTED("errors.no-map-selected"),
     NOT_IN_ARENA_MODE("errors.not-in-arena-mode"),
     NOT_IN_FREEPLAY_MODE("errors.not-in-freeplay-mode"),

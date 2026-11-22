@@ -7,11 +7,11 @@ import nl.matsgemmeke.battlegrounds.arena.ArenaRegistry;
 import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -35,8 +35,8 @@ public class SelectMapCommandExecutor {
 
         // Extra check, the command should have already validated the arena id
         if (arena == null) {
-            player.sendMessage(translator.translate(TranslationKey.GENERIC_ERROR.getPath()).getText());
             logger.severe("Arena %s is null in remove map command despite prior validation".formatted(arenaId));
+            translator.translateMessage(TranslationKey.GENERIC_ERROR.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -44,8 +44,8 @@ public class SelectMapCommandExecutor {
 
         // Extra check, the command should have already validated the map name
         if (map == null) {
-            player.sendMessage(translator.translate(TranslationKey.GENERIC_ERROR.getPath()).getText());
             logger.severe("Map %s in arena %s is null in remove map command despite prior validation".formatted(mapName, arenaId));
+            translator.translateMessage(TranslationKey.GENERIC_ERROR.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -54,8 +54,11 @@ public class SelectMapCommandExecutor {
 
         mapSelector.select(playerId, selection);
 
-        Map<String, Object> textTemplateValues = Map.of("bg_arena", arenaId, "bg_map", mapName);
+        Replacement[] replacements = {
+                Replacement.parsed("arena-id", String.valueOf(arenaId)),
+                Replacement.parsed("map-name", mapName)
+        };
 
-        player.sendMessage(translator.translate(TranslationKey.MAP_SELECTED.getPath()).replace(textTemplateValues));
+        translator.translateMessage(TranslationKey.MAP_SELECTED.getPath(), replacements).ifPresent(message -> message.send(player));
     }
 }
