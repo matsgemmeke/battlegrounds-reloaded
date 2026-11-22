@@ -8,11 +8,11 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.element.Element;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -42,8 +42,8 @@ public class RemoveElementCommandExecutor {
 
         // Extra null check, the command should have already validated that the player has selected a map
         if (selection == null) {
-            player.sendMessage(translator.translate(TranslationKey.NO_MAP_SELECTED.getPath()).getText());
             logger.severe("Player %s attempted to remove element %s without map selection despite prior validation".formatted(player.getName(), elementId));
+            translator.translateMessage(TranslationKey.NO_MAP_SELECTED.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -52,16 +52,15 @@ public class RemoveElementCommandExecutor {
         String mapName = map.getName();
         Element element = map.getElement(elementId).orElse(null);
 
+        Replacement[] replacements = {
+                Replacement.parsed("map-name", mapName),
+                Replacement.parsed("element-id", String.valueOf(elementId))
+        };
+
         // Extra null check, the command should have already validated the element id
         if (element == null) {
-            Map<String, Object> values = Map.of(
-                    "bg_map_name", mapName,
-                    "bg_element_id", elementId
-            );
-            String message = translator.translate(TranslationKey.ELEMENT_NOT_EXISTS.getPath()).replace(values);
-
-            player.sendMessage(message);
             logger.severe("Player %s attempted to remove element %s in map %s in arena %s, but the element id is invalid despite prior validation".formatted(player.getName(), elementId, mapName, arenaId));
+            translator.translateMessage(TranslationKey.ELEMENT_NOT_EXISTS.getPath(), replacements).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -70,12 +69,6 @@ public class RemoveElementCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.removeElement(mapName, elementId);
 
-        Map<String, Object> values = Map.of(
-                "bg_map_name", mapName,
-                "bg_element_id", elementId
-        );
-        String message = translator.translate(TranslationKey.ELEMENT_REMOVE_SUCCESSFUL.getPath()).replace(values);
-
-        player.sendMessage(message);
+        translator.translateMessage(TranslationKey.ELEMENT_REMOVE_SUCCESSFUL.getPath(), replacements).ifPresent(message -> message.send(player));
     }
 }
