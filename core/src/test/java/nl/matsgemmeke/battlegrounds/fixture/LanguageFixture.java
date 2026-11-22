@@ -29,20 +29,6 @@ public final class LanguageFixture {
         return new TextTemplate(String.valueOf(value));
     }
 
-    public static String getTranslation(String translationKey) {
-        if (translations == null) {
-            load();
-        }
-
-        Object value = resolve(translationKey);
-
-        if (value == null) {
-            throw new IllegalArgumentException("No translation found for key: " + translationKey);
-        }
-
-        return String.valueOf(value);
-    }
-
     private static void load() {
         try (InputStream input = LanguageFixture.class.getResourceAsStream(RESOURCE_PATH)) {
             if (input == null) {

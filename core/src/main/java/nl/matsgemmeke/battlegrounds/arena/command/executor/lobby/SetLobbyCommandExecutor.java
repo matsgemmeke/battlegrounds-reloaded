@@ -45,7 +45,7 @@ public class SetLobbyCommandExecutor {
 
         if (arena == null) {
             logger.warning("Player %s attempted to set the lobby for arena %s, however no arena was found for this validated arena id".formatted(player.getName(), arenaId));
-            player.sendMessage(translator.translate(TranslationKey.LOBBY_SET_FAILED.getPath()).getText());
+            translator.translateMessage(TranslationKey.LOBBY_SET_FAILED.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -57,7 +57,7 @@ public class SetLobbyCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.setLobby(lobbyLocationData);
 
-        Replacement arenaIdReplacement = Replacement.unparsed("bg-arena-id", String.valueOf(arenaId));
+        Replacement arenaIdReplacement = Replacement.unparsed("arena-id", String.valueOf(arenaId));
 
         translator.translateMessage(TranslationKey.LOBBY_SET_SUCCESSFUL.getPath(), arenaIdReplacement).ifPresent(message -> message.send(player));
     }
