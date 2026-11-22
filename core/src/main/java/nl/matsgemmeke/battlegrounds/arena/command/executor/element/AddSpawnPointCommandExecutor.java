@@ -11,6 +11,7 @@ import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
 import nl.matsgemmeke.battlegrounds.configuration.model.LocationData;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
@@ -18,7 +19,6 @@ import nl.matsgemmeke.battlegrounds.util.world.LocationUtils;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import java.util.Map;
 import java.util.UUID;
 import java.util.logging.Logger;
 
@@ -51,8 +51,8 @@ public class AddSpawnPointCommandExecutor {
 
         // Extra check, the command should have already validated that the player has selected a map
         if (selection == null) {
-            player.sendMessage(translator.translate(TranslationKey.GENERIC_ERROR.getPath()).getText());
             logger.severe("Player %s has no map selection despite prior validation".formatted(player.getName()));
+            translator.translateMessage(TranslationKey.GENERIC_ERROR.getPath()).ifPresent(message -> message.send(player));
             return;
         }
 
@@ -74,11 +74,11 @@ public class AddSpawnPointCommandExecutor {
         ArenaSetupConfiguration setupConfiguration = arenaSetupConfigurationProvider.get(arenaId);
         setupConfiguration.createSpawnPoint(data);
 
-        Map<String, Object> values = Map.of(
-                "bg_element_id", elementId,
-                "bg_map_name", mapName
-        );
+        Replacement[] replacements = {
+                Replacement.parsed("element-id", String.valueOf(elementId)),
+                Replacement.parsed("map-name", mapName)
+        };
 
-        player.sendMessage(translator.translate(TranslationKey.SPAWN_POINT_ADDED.getPath()).replace(values));
+        translator.translateMessage(TranslationKey.SPAWN_POINT_ADDED.getPath(), replacements).ifPresent(message -> message.send(player));
     }
 }

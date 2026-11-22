@@ -83,5 +83,5 @@ setup:
   map-removed: "<gold>You have removed map <white><map-name> <gold>and its elements from arena <white><arena-id><gold>."
   map-not-exists: "<red>Arena <arena-id> does not have a map by the name of <map-name>"
   map-selected: "<gold>You have selected map <white><map-name> <gold>in arena <white><arena-id><gold>. You can now add elements to this map."
-  spawn-point-added: "&6You have added a spawn point element by the id of &f%bg_element_id% &6to the map &f%bg_map_name%&6."
+  spawn-point-added: "<gold>You have added a spawn point element by the id of <white><element-id> <gold>to the map <white><map-name><gold>."
   specify-element-type: "&cSpecify an element type to add."

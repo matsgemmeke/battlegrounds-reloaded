@@ -8,9 +8,7 @@ import nl.matsgemmeke.battlegrounds.arena.map.ArenaMap;
 import nl.matsgemmeke.battlegrounds.arena.map.element.SpawnPoint;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelection;
 import nl.matsgemmeke.battlegrounds.arena.map.selection.ArenaMapSelector;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import nl.matsgemmeke.battlegrounds.util.world.LocationMapper;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,18 +17,15 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.entry;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -50,9 +45,6 @@ class AddSpawnPointCommandExecutorTest {
     private static final float LOCATION_YAW = 90.0f;
     private static final float LOCATION_PITCH = 0.0f;
 
-    private static final String GENERIC_ERROR_TEXT = "generic error";
-    private static final String SPAWN_POINT_ADDED_TEXT = "spawn point added";
-
     @Mock
     private ArenaMapSelector mapSelector;
     @Mock
@@ -67,27 +59,28 @@ class AddSpawnPointCommandExecutorTest {
     private Translator translator;
     @InjectMocks
     private AddSpawnPointCommandExecutor commandExecutor;
-    @Captor
-    private ArgumentCaptor<Map<String, Object>> valuesCaptor;
 
     @Test
     @DisplayName("execute sends an error message when the given player has no selected map")
     void execute_noSelectedMap() {
+        Message genericErrorMessage = mock(Message.class);
+
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
         when(mapSelector.getSelection(PLAYER_ID)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.GENERIC_ERROR.getPath())).thenReturn(new TextTemplate(GENERIC_ERROR_TEXT));
+        when(translator.translateMessage(TranslationKey.GENERIC_ERROR.getPath())).thenReturn(Optional.of(genericErrorMessage));
         when(player.getName()).thenReturn(PLAYER_NAME);
 
         commandExecutor.execute(player, TEAM_ID);
 
-        verify(player).sendMessage(GENERIC_ERROR_TEXT);
         verify(logger).severe("Player TestPlayer has no map selection despite prior validation");
+        verify(genericErrorMessage).send(player);
     }
 
     @Test
     @DisplayName("execute adds a spawn point to the map and the arena setup configuration")
     void execute_successful() {
         ArenaSetupConfiguration setupConfiguration = mock(ArenaSetupConfiguration.class);
+        Message spawnPointAddedMessage = mock(Message.class);
 
         World world = mock(World.class);
         when(world.getName()).thenReturn(LOCATION_WORLD);
@@ -99,9 +92,6 @@ class AddSpawnPointCommandExecutorTest {
         when(map.getName()).thenReturn(MAP_NAME);
         when(map.generateNextElementId()).thenReturn(ELEMENT_ID);
 
-        TextTemplate spawnPointAddedTextTemplate = mock(TextTemplate.class);
-        when(spawnPointAddedTextTemplate.replace(anyMap())).thenReturn(SPAWN_POINT_ADDED_TEXT);
-
         ArenaMapSelection selection = new ArenaMapSelection(arena, map);
         Location playerLocation = new Location(world, LOCATION_X, LOCATION_Y, LOCATION_Z, LOCATION_YAW, LOCATION_PITCH);
 
@@ -110,7 +100,7 @@ class AddSpawnPointCommandExecutorTest {
         when(player.getLocation()).thenReturn(playerLocation);
         when(locationMapper.toLocationData(any(Location.class))).thenCallRealMethod();
         when(arenaSetupConfigurationProvider.get(ARENA_ID)).thenReturn(setupConfiguration);
-        when(translator.translate(TranslationKey.SPAWN_POINT_ADDED.getPath())).thenReturn(spawnPointAddedTextTemplate);
+        when(translator.translateMessage(eq(TranslationKey.SPAWN_POINT_ADDED.getPath()), any(Replacement[].class))).thenReturn(Optional.of(spawnPointAddedMessage));
 
         commandExecutor.execute(player, TEAM_ID);
 
@@ -145,13 +135,18 @@ class AddSpawnPointCommandExecutorTest {
             });
         });
 
-        verify(spawnPointAddedTextTemplate).replace(valuesCaptor.capture());
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.SPAWN_POINT_ADDED.getPath()), replacementsCaptor.capture());
 
-        assertThat(valuesCaptor.getValue()).contains(
-                entry("bg_element_id", ELEMENT_ID),
-                entry("bg_map_name", MAP_NAME)
-        );
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("element-id");
+            assertThat(replacement.value()).isEqualTo("2");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("map-name");
+            assertThat(replacement.value()).isEqualTo(MAP_NAME);
+        });
 
-        verify(player).sendMessage(SPAWN_POINT_ADDED_TEXT);
+        verify(spawnPointAddedMessage).send(player);
+        verifyNoInteractions(logger);
     }
 }
