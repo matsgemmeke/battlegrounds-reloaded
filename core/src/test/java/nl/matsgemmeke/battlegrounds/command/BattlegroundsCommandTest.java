@@ -22,6 +22,7 @@ class BattlegroundsCommandTest {
     private static final String SUBCOMMAND_DESCRIPTION = "just a test";
     private static final String SUBCOMMAND_USAGE = "/bg test <nr>";
     private static final String SUBCOMMAND_SUGGESTION = "/bg test ";
+    private static final String WEAPON_NAME = "test weapon";
 
     @Mock
     private GiveWeaponCommandExecutor giveWeaponCommandExecutor;
@@ -69,11 +70,9 @@ class BattlegroundsCommandTest {
     @Test
     @DisplayName("onGiveWeapon delegates to GiveWeaponExecutor")
     void onGiveWeapon() {
-        String[] args = { "test", "weapon" };
+        bgCommand.onGiveWeapon(player, WEAPON_NAME);
 
-        bgCommand.onGiveWeapon(player, args);
-
-        verify(giveWeaponCommandExecutor).execute(player, args);
+        verify(giveWeaponCommandExecutor).execute(player, WEAPON_NAME);
     }
 
     @Test

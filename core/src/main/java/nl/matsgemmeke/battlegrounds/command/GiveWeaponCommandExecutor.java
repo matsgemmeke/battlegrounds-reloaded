@@ -12,7 +12,6 @@ import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
-import nl.matsgemmeke.battlegrounds.item.registry.ItemSpecRegistry;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -23,7 +22,6 @@ public class GiveWeaponCommandExecutor {
 
     private final GameContextProvider gameContextProvider;
     private final GameScope gameScope;
-    private final ItemSpecRegistry itemSpecRegistry;
     private final Provider<ItemCreator> itemCreatorProvider;
     private final Provider<PlayerRegistry> playerRegistryProvider;
     private final Translator translator;
@@ -32,32 +30,20 @@ public class GiveWeaponCommandExecutor {
     public GiveWeaponCommandExecutor(
             GameContextProvider gameContextProvider,
             GameScope gameScope,
-            ItemSpecRegistry itemSpecRegistry,
             Translator translator,
             Provider<ItemCreator> itemCreatorProvider,
             Provider<PlayerRegistry> playerRegistryProvider
     ) {
         this.gameContextProvider = gameContextProvider;
         this.gameScope = gameScope;
-        this.itemSpecRegistry = itemSpecRegistry;
         this.translator = translator;
         this.itemCreatorProvider = itemCreatorProvider;
         this.playerRegistryProvider = playerRegistryProvider;
     }
 
-    public void execute(Player player, String[] args) {
+    public void execute(Player player, String weaponName) {
         GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY)
                 .orElseThrow(() -> new UnknownGameKeyException("No game context found game key %s".formatted(FREEPLAY_GAME_KEY)));
-
-        String weaponName = String.join(" ", args);
-
-        if (!itemSpecRegistry.exists(weaponName)) {
-            Map<String, Object> values = Map.of("bg_weapon", weaponName);
-            String message = translator.translate(TranslationKey.WEAPON_NOT_EXISTS.getPath()).replace(values);
-
-            player.sendMessage(message);
-            return;
-        }
 
         gameScope.runInScope(gameContext, () -> this.giveWeapon(player, weaponName));
     }

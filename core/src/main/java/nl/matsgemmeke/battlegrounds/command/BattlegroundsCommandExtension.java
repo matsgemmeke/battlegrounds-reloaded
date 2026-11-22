@@ -2,6 +2,7 @@ package nl.matsgemmeke.battlegrounds.command;
 
 import co.aikar.commands.PaperCommandManager;
 import com.google.inject.Inject;
+import nl.matsgemmeke.battlegrounds.command.condition.ExistentWeaponCondition;
 import nl.matsgemmeke.battlegrounds.command.condition.FreeplayModePresenceCondition;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
@@ -41,12 +42,14 @@ public class BattlegroundsCommandExtension implements CommandExtension {
     private static final String[] TOOLS_COMMAND_PERMISSIONS = new String[] { "battlegrounds.tools" };
 
     private final BattlegroundsCommand bgCommand;
+    private final ExistentWeaponCondition existentWeaponCondition;
     private final FreeplayModePresenceCondition freeplayModePresenceCondition;
     private final Translator translator;
 
     @Inject
-    public BattlegroundsCommandExtension(BattlegroundsCommand bgCommand, FreeplayModePresenceCondition freeplayModePresenceCondition, Translator translator) {
+    public BattlegroundsCommandExtension(BattlegroundsCommand bgCommand, ExistentWeaponCondition existentWeaponCondition, FreeplayModePresenceCondition freeplayModePresenceCondition, Translator translator) {
         this.bgCommand = bgCommand;
+        this.existentWeaponCondition = existentWeaponCondition;
         this.freeplayModePresenceCondition = freeplayModePresenceCondition;
         this.translator = translator;
     }
@@ -83,6 +86,7 @@ public class BattlegroundsCommandExtension implements CommandExtension {
         commandManager.registerCommand(bgCommand);
 
         var commandConditions = commandManager.getCommandConditions();
+        commandConditions.addCondition(String.class, "existent-weapon", existentWeaponCondition);
         commandConditions.addCondition("freeplay-mode-presence", freeplayModePresenceCondition);
     }
 }

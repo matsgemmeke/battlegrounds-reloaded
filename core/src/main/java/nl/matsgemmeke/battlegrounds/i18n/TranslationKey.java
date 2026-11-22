@@ -80,7 +80,7 @@ public enum TranslationKey {
     TOOLS_HELP_MENU_HEADER("commands.tools-help-menu-header"),
     UNKNOWN_COMMAND("errors.unknown-command"),
     WEAPON_GIVEN("commands.weapon-given"),
-    WEAPON_NOT_EXISTS("admin.weapon-not-exists");
+    WEAPON_NOT_EXISTS("errors.weapon-not-exists");
 
     private final String path;
 
