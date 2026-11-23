@@ -31,8 +31,8 @@ public class LocationCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
-        String removeMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAIN_LOBBY_REMOVE.getPath()).getText();
-        String setMainLobbyCommandDescription = translator.translate(TranslationKey.DESCRIPTION_MAIN_LOBBY_SET.getPath()).getText();
+        String removeMainLobbyCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_MAIN_LOBBY_REMOVE.getPath()).orElse(null);
+        String setMainLobbyCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_MAIN_LOBBY_SET.getPath()).orElse(null);
 
         mainLobbyCommand.addCommandInfo(new CommandInfo(removeMainLobbyCommandDescription, REMOVE_MAIN_LOBBY_COMMAND_USAGE, REMOVE_MAIN_LOBBY_COMMAND_SUGGESTION, REMOVE_MAIN_LOBBY_COMMAND_PERMISSIONS));
         mainLobbyCommand.addCommandInfo(new CommandInfo(setMainLobbyCommandDescription, SET_MAIN_LOBBY_COMMAND_USAGE, SET_MAIN_LOBBY_COMMAND_SUGGESTION, SET_MAIN_LOBBY_COMMAND_PERMISSIONS));

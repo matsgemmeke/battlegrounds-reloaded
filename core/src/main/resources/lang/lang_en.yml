@@ -35,7 +35,7 @@ commands:
   lobby-help-menu-footer: " "
   lobby-help-menu-header: " \n&6&l Lobby commands\n "
   main-lobby-help-menu-footer: " "
-  main-lobby-help-menu-header: " \n&6&l Main lobby commands\n "
+  main-lobby-help-menu-header: " \n<gold><bold> Main lobby commands\n "
   map-help-menu-footer: " "
   map-help-menu-header: " \n&6&l Map commands\n "
   reload-failed: "<red>Failed to reload configuration files"

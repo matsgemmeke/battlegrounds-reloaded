@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.location.command;
 
 import co.aikar.commands.*;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.location.command.condition.ExistentMainLobbyCondition;
 import org.junit.jupiter.api.DisplayName;
@@ -11,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -39,7 +40,7 @@ class LocationCommandExtensionTest {
     @DisplayName("configure adds commands to given command manager")
     void configure() {
         when(commandManager.getCommandConditions()).thenReturn(commandConditions);
-        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
+        when(translator.translateLegacyText(anyString())).thenReturn(Optional.of("test"));
 
         commandExtension.configure(commandManager);
 
