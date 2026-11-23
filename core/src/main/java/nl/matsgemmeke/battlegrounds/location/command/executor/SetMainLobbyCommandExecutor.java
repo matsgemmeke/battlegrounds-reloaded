@@ -24,12 +24,11 @@ public class SetMainLobbyCommandExecutor {
     }
 
     public void execute(Player player) {
-        // Get the center location of the block the player is standing on
         Location location = LocationUtils.getCenterLocation(player.getLocation());
         LocationData locationData = locationMapper.toLocationData(location);
 
         locationConfiguration.setMainLobbyLocation(locationData);
 
-        player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_SET.getPath()).getText());
+        translator.translateMessage(TranslationKey.MAIN_LOBBY_SET.getPath()).ifPresent(message -> message.send(player));
     }
 }

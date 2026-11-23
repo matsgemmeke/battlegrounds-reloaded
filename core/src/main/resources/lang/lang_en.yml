@@ -75,7 +75,7 @@ setup:
   lobby-set-successful: "<gold>You have set the waiting lobby of arena <white><arena-id><gold> to your current location."
   main-lobby-not-exists: "<red>There is currently no waiting lobby set up."
   main-lobby-remove: "<gold>You have successfully removed the main lobby location."
-  main-lobby-set: "&6You have set the main lobby to your current location."
+  main-lobby-set: "<gold>You have set the main lobby to your current location."
   map-already-exists: "<red>Arena <arena-id> already has a map by the name of <map-name>"
   map-confirm-removal: "<red>Are you sure you want to remove map <map-name> from arena <arena-id>? Rerun the command to confirm the removal."
   map-created: "<gold>You have added a new map to arena <white><arena-id> <gold>by the name of <white><map-name><gold>."
