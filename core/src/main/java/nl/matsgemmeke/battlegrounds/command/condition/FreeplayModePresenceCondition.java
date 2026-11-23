@@ -40,15 +40,18 @@ public class FreeplayModePresenceCondition implements Condition<BukkitCommandIss
         Player player = conditionContext.getIssuer().getPlayer();
 
         if (player == null) {
-            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath()).getText());
+            throw translator.translateLegacyText(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         }
 
         UUID playerId = conditionContext.getIssuer().getPlayer().getUniqueId();
 
-        GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElseThrow(() -> {
-            String message = translator.translate(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath()).getText();
-            return new ConditionFailedException(message);
-        });
+        GameContext gameContext = gameContextProvider.getGameContext(FREEPLAY_GAME_KEY).orElseThrow(() ->
+                translator.translateLegacyText(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath())
+                        .map(ConditionFailedException::new)
+                        .orElseGet(ConditionFailedException::new)
+        );
 
         gameScope.runInScope(gameContext, () -> {
             PlayerRegistry playerRegistry = playerRegistryProvider.get();
@@ -57,7 +60,9 @@ public class FreeplayModePresenceCondition implements Condition<BukkitCommandIss
                 return;
             }
 
-            throw new ConditionFailedException(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath()).getText());
+            throw translator.translateLegacyText(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())
+                    .map(ConditionFailedException::new)
+                    .orElseGet(ConditionFailedException::new);
         });
     }
 }

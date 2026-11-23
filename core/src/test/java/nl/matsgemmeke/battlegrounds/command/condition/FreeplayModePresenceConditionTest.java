@@ -4,10 +4,10 @@ import co.aikar.commands.BukkitCommandIssuer;
 import co.aikar.commands.ConditionContext;
 import co.aikar.commands.ConditionFailedException;
 import com.google.inject.Provider;
+import nl.matsgemmeke.battlegrounds.MockUtils;
 import nl.matsgemmeke.battlegrounds.freeplay.FreeplayGameContext;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.entity.Player;
@@ -15,6 +15,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.NullSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -54,29 +57,33 @@ class FreeplayModePresenceConditionTest {
         when(conditionContext.getIssuer()).thenReturn(issuer);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { "error" })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when the condition context has no player")
-    void validateCondition_conditionContextWithoutPlayer() {
+    void validateCondition_conditionContextWithoutPlayer(String errorMessage) {
         when(issuer.getPlayer()).thenReturn(null);
-        when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translateLegacyText(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("error");
+                .hasMessage(errorMessage);
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { "error" })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when freeplay mode context does not exists")
-    void validateCondition_freeplayModeNotExists() {
+    void validateCondition_freeplayModeNotExists(String errorMessage) {
         Player player = mock(Player.class);
 
         when(issuer.getPlayer()).thenReturn(player);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.empty());
-        when(translator.translate(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translateLegacyText(TranslationKey.FREEPLAY_MODE_NOT_EXISTS.getPath())).thenReturn(Optional.ofNullable(errorMessage));
 
         assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("error");
+                .hasMessage(errorMessage);
     }
 
     @Test
@@ -100,9 +107,11 @@ class FreeplayModePresenceConditionTest {
         assertThatCode(() -> runnableCaptor.getValue().run()).doesNotThrowAnyException();
     }
 
-    @Test
+    @ParameterizedTest
+    @ValueSource(strings = { "error" })
+    @NullSource
     @DisplayName("validateCondition throws ConditionFailedException when player is not in freeplay mode")
-    void validationCondition_playerNotInFreeplayMode() {
+    void validationCondition_playerNotInFreeplayMode(String errorMessage) {
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(PLAYER_ID);
 
@@ -112,15 +121,11 @@ class FreeplayModePresenceConditionTest {
         when(issuer.getPlayer()).thenReturn(player);
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(GAME_CONTEXT));
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
-        when(translator.translate(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(new TextTemplate("error"));
+        when(translator.translateLegacyText(TranslationKey.NOT_IN_FREEPLAY_MODE.getPath())).thenReturn(Optional.ofNullable(errorMessage));
+        doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(GAME_CONTEXT), any(Runnable.class));
 
-        condition.validateCondition(conditionContext);
-
-        ArgumentCaptor<Runnable> runnableCaptor = ArgumentCaptor.forClass(Runnable.class);
-        verify(gameScope).runInScope(eq(GAME_CONTEXT), runnableCaptor.capture());
-
-        assertThatThrownBy(() -> runnableCaptor.getValue().run())
+        assertThatThrownBy(() -> condition.validateCondition(conditionContext))
                 .isInstanceOf(ConditionFailedException.class)
-                .hasMessage("error");
+                .hasMessage(errorMessage);
     }
 }
