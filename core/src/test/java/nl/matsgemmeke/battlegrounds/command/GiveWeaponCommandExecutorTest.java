@@ -6,9 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.GamePlayer;
 import nl.matsgemmeke.battlegrounds.game.*;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
-import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
-import nl.matsgemmeke.battlegrounds.i18n.Translator;
+import nl.matsgemmeke.battlegrounds.i18n.*;
 import nl.matsgemmeke.battlegrounds.item.*;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -17,12 +15,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -86,10 +86,10 @@ class GiveWeaponCommandExecutorTest {
     @Test
     @DisplayName("execute gives assigned weapon to player")
     void execute_givesWeaponToPlayer() {
-        String message = "weapon given: %bg_weapon%";
         GameContext gameContext = mock(GameContext.class);
         GamePlayer gamePlayer = mock(GamePlayer.class);
         ItemStack itemStack = mock(ItemStack.class);
+        Message weaponGivenMessage = mock(Message.class);
 
         PlayerInventory inventory = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(inventory);
@@ -99,22 +99,30 @@ class GiveWeaponCommandExecutorTest {
 
         Weapon weapon = mock(Weapon.class);
         when(weapon.getItemStack()).thenReturn(itemStack);
-        when(weapon.getName()).thenReturn("test");
+        when(weapon.getName()).thenReturn(WEAPON_NAME);
 
         ItemCreator itemCreator = mock(ItemCreator.class);
-        when(itemCreator.createWeapon(gamePlayer, "test weapon")).thenReturn(weapon);
+        when(itemCreator.createWeapon(gamePlayer, WEAPON_NAME)).thenReturn(weapon);
 
         when(gameContextProvider.getGameContext(GAME_KEY)).thenReturn(Optional.of(gameContext));
         when(itemCreatorProvider.get()).thenReturn(itemCreator);
         when(player.getUniqueId()).thenReturn(UNIQUE_ID);
         when(playerRegistryProvider.get()).thenReturn(playerRegistry);
-        when(translator.translate(TranslationKey.WEAPON_GIVEN.getPath())).thenReturn(new TextTemplate(message));
+        when(translator.translateMessage(eq(TranslationKey.WEAPON_GIVEN.getPath()), any(Replacement[].class))).thenReturn(Optional.of(weaponGivenMessage));
 
         doAnswer(MockUtils.answerRunGameScopeRunnable()).when(gameScope).runInScope(eq(gameContext), any(Runnable.class));
 
         commandExecutor.execute(player, WEAPON_NAME);
 
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.WEAPON_GIVEN.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("weapon");
+            assertThat(replacement.value()).isEqualTo(WEAPON_NAME);
+        });
+
         verify(inventory).addItem(itemStack);
-        verify(player).sendMessage("weapon given: test");
+        verify(weaponGivenMessage).send(player);
     }
 }

@@ -9,12 +9,11 @@ import nl.matsgemmeke.battlegrounds.game.GameKey;
 import nl.matsgemmeke.battlegrounds.game.GameScope;
 import nl.matsgemmeke.battlegrounds.game.component.entity.PlayerRegistry;
 import nl.matsgemmeke.battlegrounds.game.component.item.ItemCreator;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.item.Weapon;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
 
 public class GiveWeaponCommandExecutor {
 
@@ -56,10 +55,10 @@ public class GiveWeaponCommandExecutor {
         ItemCreator itemCreator = itemCreatorProvider.get();
         Weapon weapon = itemCreator.createWeapon(gamePlayer, weaponName);
 
-        Map<String, Object> values = Map.of("bg_weapon", weapon.getName());
-        String message = translator.translate(TranslationKey.WEAPON_GIVEN.getPath()).replace(values);
-
         player.getInventory().addItem(weapon.getItemStack());
-        player.sendMessage(message);
+
+        Replacement weaponReplacement = Replacement.parsed("weapon", weapon.getName());
+
+        translator.translateMessage(TranslationKey.WEAPON_GIVEN.getPath(), weaponReplacement).ifPresent(message -> message.send(player));
     }
 }

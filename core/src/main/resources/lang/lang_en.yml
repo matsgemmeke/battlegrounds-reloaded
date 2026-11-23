@@ -42,7 +42,7 @@ commands:
   map-help-menu-header: " \n&6&l Map commands\n "
   tools-help-menu-footer: " "
   tools-help-menu-header: " \n&6&l List of tools\n "
-  weapon-given: "&6You have been given a %bg_weapon%."
+  weapon-given: "<gold>You have been given a <white><weapon><gold>."
 
 errors:
   already-in-arena-mode: "<red>Unable to perform action; you are already participating in an arena."
