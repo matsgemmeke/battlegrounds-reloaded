@@ -26,6 +26,8 @@ public class ExistentMainLobbyCondition implements Condition {
             return;
         }
 
-        throw new ConditionFailedException(translator.translate(TranslationKey.MAIN_LOBBY_NOT_EXISTS.getPath()).getText());
+        throw translator.translateLegacyText(TranslationKey.MAIN_LOBBY_NOT_EXISTS.getPath())
+                .map(ConditionFailedException::new)
+                .orElseGet(ConditionFailedException::new);
     }
 }

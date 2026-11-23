@@ -73,7 +73,7 @@ setup:
   lobby-remove-successful: "<gold>You have removed the waiting lobby from arena <white><arena-id><gold>."
   lobby-set-failed: "<red>You are currently unable to set the lobby for this arena at the moment. Please try again later."
   lobby-set-successful: "<gold>You have set the waiting lobby of arena <white><arena-id><gold> to your current location."
-  main-lobby-not-exists: "&cThere is currently no waiting lobby set up."
+  main-lobby-not-exists: "<red>There is currently no waiting lobby set up."
   main-lobby-remove: "&6You have successfully removed the main lobby location."
   main-lobby-set: "&6You have set the main lobby to your current location."
   map-already-exists: "<red>Arena <arena-id> already has a map by the name of <map-name>"
