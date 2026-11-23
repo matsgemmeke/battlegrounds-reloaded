@@ -19,9 +19,9 @@ public class ReloadCommandExecutor {
 
     public void execute(CommandSender sender) {
         if (config.load()) {
-            sender.sendMessage(translator.translate(TranslationKey.RELOAD_SUCCESS.getPath()).getText());
+            translator.translateMessage(TranslationKey.RELOAD_SUCCESS.getPath()).ifPresent(message -> message.send(sender));
         } else {
-            sender.sendMessage(translator.translate(TranslationKey.RELOAD_FAILED.getPath()).getText());
+            translator.translateMessage(TranslationKey.RELOAD_FAILED.getPath()).ifPresent(message -> message.send(sender));
         }
     }
 }

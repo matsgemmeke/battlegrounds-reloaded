@@ -1,6 +1,4 @@
 admin:
-  reload-failed: "&cFailed to reload configuration files"
-  reload-success: "&6Successfully reloaded all configuration files."
   tool-hitbox-success: "&6Showing hitboxes for &f%bg_seconds% &6seconds inside a range of &f%bg_range% &6blocks."
   tool-not-exists: "&cA tool by the name of %bg_tool% doesn't exist"
 
@@ -40,6 +38,8 @@ commands:
   main-lobby-help-menu-header: " \n&6&l Main lobby commands\n "
   map-help-menu-footer: " "
   map-help-menu-header: " \n&6&l Map commands\n "
+  reload-failed: "<red>Failed to reload configuration files"
+  reload-success: "<gold>Successfully reloaded all configuration files."
   tools-help-menu-footer: " "
   tools-help-menu-header: " \n&6&l List of tools\n "
   weapon-given: "<gold>You have been given a <white><weapon><gold>."
