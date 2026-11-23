@@ -20,6 +20,6 @@ public class RemoveMainLobbyCommandExecutor {
     public void execute(Player player) {
         locationConfiguration.removeMainLobbyLocation();
 
-        player.sendMessage(translator.translate(TranslationKey.MAIN_LOBBY_REMOVE.getPath()).getText());
+        translator.translateMessage(TranslationKey.MAIN_LOBBY_REMOVE.getPath()).ifPresent(message -> message.send(player));
     }
 }
