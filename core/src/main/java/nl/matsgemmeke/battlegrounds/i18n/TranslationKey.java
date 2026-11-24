@@ -75,7 +75,7 @@ public enum TranslationKey {
     SPAWN_POINT_ADDED("setup.spawn-point-added"),
     SPECIFY_ELEMENT_TYPE("setup.specify-element-type"),
     TOOL_HITBOX_SUCCESS("tools.hitbox-success"),
-    TOOL_NOT_EXISTS("admin.tool-not-exists"),
+    TOOL_NOT_EXISTS("tools.tool-not-exists"),
     TOOLS_HELP_MENU_FOOTER("commands.tools-help-menu-footer"),
     TOOLS_HELP_MENU_HEADER("commands.tools-help-menu-header"),
     UNKNOWN_COMMAND("errors.unknown-command"),

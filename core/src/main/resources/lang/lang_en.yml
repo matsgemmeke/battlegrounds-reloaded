@@ -37,7 +37,7 @@ commands:
   reload-failed: "<red>Failed to reload configuration files"
   reload-success: "<gold>Successfully reloaded all configuration files."
   tools-help-menu-footer: " "
-  tools-help-menu-header: " \n&6&l List of tools\n "
+  tools-help-menu-header: " \n<gold><bold> List of tools\n "
   weapon-given: "<gold>You have been given a <white><weapon><gold>."
 
 errors:
@@ -84,4 +84,4 @@ setup:
 
 tools:
   hitbox-success: "<gold>Showing hitboxes for <white><seconds> <gold>seconds inside a range of <white><range> <gold>blocks."
-  tool-not-exists: "&cA tool by the name of %bg_tool% doesn't exist"
+  tool-not-exists: "<red>A tool by the name of <tool> doesn't exist"

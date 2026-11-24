@@ -37,7 +37,7 @@ public class ShowHitboxesCommandExecutor {
             { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 }
     };
     private static final double DISTANCE_BETWEEN_PARTICLES = 0.2;
-    private static final float PARTICLE_SIZE = 0.25f;
+    private static final float PARTICLE_SIZE = 0.5f;
 
     private final HitboxResolver hitboxResolver;
     private final Scheduler scheduler;

@@ -24,7 +24,7 @@ public class ToolsCommandExtension implements CommandExtension {
 
     @Override
     public void configure(PaperCommandManager commandManager) {
-        String showHitboxesCommandDescription = translator.translate(TranslationKey.DESCRIPTION_SHOW_HITBOXES.getPath()).getText();
+        String showHitboxesCommandDescription = translator.translateLegacyText(TranslationKey.DESCRIPTION_SHOW_HITBOXES.getPath()).orElse(null);
 
         CommandInfo showHitboxesCommandInfo = new CommandInfo(showHitboxesCommandDescription, SHOW_HITBOXES_COMMAND_USAGE, SHOW_HITBOXES_COMMAND_SUGGESTION, SHOW_HITBOXES_COMMAND_PERMISSIONS);
 

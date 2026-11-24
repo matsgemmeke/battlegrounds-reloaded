@@ -2,7 +2,6 @@ package nl.matsgemmeke.battlegrounds.tools;
 
 import co.aikar.commands.PaperCommandManager;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -10,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,7 +31,7 @@ class ToolsCommandExtensionTest {
     @Test
     @DisplayName("configure initializes commands")
     void configure() {
-        when(translator.translate(anyString())).thenReturn(new TextTemplate("text"));
+        when(translator.translateLegacyText(anyString())).thenReturn(Optional.of("text"));
 
         commandExtension.configure(commandManager);
 

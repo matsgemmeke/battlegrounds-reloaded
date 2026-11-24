@@ -5,6 +5,7 @@ import co.aikar.commands.annotation.*;
 import com.google.inject.Inject;
 import nl.matsgemmeke.battlegrounds.command.CommandInfo;
 import nl.matsgemmeke.battlegrounds.command.HelpMenu;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import org.bukkit.command.CommandSender;
@@ -12,7 +13,6 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @CommandAlias("battlegrounds|bg|battle")
 @CommandPermission("battlegrounds.tools")
@@ -40,16 +40,17 @@ public class ToolsCommand extends BaseCommand {
     public void onDefault(CommandSender sender, String[] args) {
         // With ACF we can only use CatchUnknown on root commands, so we catch unknown tool names in the onDefault
         if (args != null && args.length > 0 ) {
-            Map<String, Object> values = Map.of("bg_tool", args[0]);
-            sender.sendMessage(translator.translate(TranslationKey.TOOL_NOT_EXISTS.getPath()).replace(values));
+            Replacement toolReplacement = Replacement.parsed("tool", args[0]);
+
+            translator.translateMessage(TranslationKey.TOOL_NOT_EXISTS.getPath(), toolReplacement).ifPresent(message -> message.send(sender));
             return;
         }
 
-        sender.sendMessage(translator.translate(TranslationKey.TOOLS_HELP_MENU_HEADER.getPath()).getText());
+        translator.translateMessage(TranslationKey.TOOLS_HELP_MENU_HEADER.getPath()).ifPresent(message -> message.send(sender));
 
         helpMenu.send(sender, commandInfoList);
 
-        sender.sendMessage(translator.translate(TranslationKey.TOOLS_HELP_MENU_FOOTER.getPath()).getText());
+        translator.translateMessage(TranslationKey.TOOLS_HELP_MENU_FOOTER.getPath()).ifPresent(message -> message.send(sender));
     }
 
     @Subcommand("showhitboxes")
