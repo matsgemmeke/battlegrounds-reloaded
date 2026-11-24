@@ -4,7 +4,6 @@ import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import nl.matsgemmeke.battlegrounds.configuration.BattlegroundsConfiguration;
 import nl.matsgemmeke.battlegrounds.i18n.configuration.LanguageConfiguration;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,19 +17,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class TranslatorTest {
 
-    private static final String LANGUAGE = "en";
     private static final String TRANSLATION_KEY = "key";
-    private static final String TEXT_VALUE = "&aColorful text";
     private static final String TEXT = "<gold>This is a message for player <player>";
 
-    @Mock
-    private BattlegroundsConfiguration battlegroundsConfiguration;
     @Mock
     private LanguageConfiguration languageConfiguration;
     @Spy
@@ -41,27 +35,6 @@ class TranslatorTest {
     private ReplacementMapper replacementMapper;
     @InjectMocks
     private Translator translator;
-
-    @Test
-    @DisplayName("translate throws InvalidTranslationKeyException when given key is not a path to a valid text value")
-    void translate_invalidKey() {
-        when(battlegroundsConfiguration.getLanguage()).thenReturn(LANGUAGE);
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
-
-        assertThatThrownBy(() -> translator.translate(TRANSLATION_KEY))
-                .isInstanceOf(InvalidTranslationKeyException.class)
-                .hasMessage("Translation for key \"key\" in language configuration 'en' not found");
-    }
-
-    @Test
-    @DisplayName("translate returns text template with the text value from given path, formatted as ChatColor messages")
-    void translate_successful() {
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT_VALUE));
-
-        TextTemplate textTemplate = translator.translate(TRANSLATION_KEY);
-
-        assertThat(textTemplate.getText()).isEqualTo("§aColorful text");
-    }
 
     @Test
     @DisplayName("translateLegacyText returns empty optional when the language configuration has no value at the given translation key")
@@ -109,25 +82,5 @@ class TranslatorTest {
         verify(audience).sendMessage(componentCaptor.capture());
 
         assertThat(miniMessage.serialize(componentCaptor.getValue())).isEqualTo("<gold>This is a message for player TestPlayer");
-    }
-
-    @Test
-    @DisplayName("translateText returns empty optional when the language configuration has no value at the given translation key")
-    void translateText_unknownTranslationKey() {
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.empty());
-
-        Optional<String> optionalString = translator.translateText(TRANSLATION_KEY);
-
-        assertThat(optionalString).isEmpty();
-    }
-
-    @Test
-    @DisplayName("translateText returns optional with corresponding text value")
-    void translateText_successful() {
-        when(languageConfiguration.getTextValue(TRANSLATION_KEY)).thenReturn(Optional.of(TEXT));
-
-        Optional<String> optionalString = translator.translateText(TRANSLATION_KEY);
-
-        assertThat(optionalString).hasValue(TEXT);
     }
 }
