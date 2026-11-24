@@ -6,6 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponent;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -36,6 +37,7 @@ public class ShowHitboxesCommandExecutor {
             { 0, 4 }, { 1, 5 }, { 2, 6 }, { 3, 7 }
     };
     private static final double DISTANCE_BETWEEN_PARTICLES = 0.2;
+    private static final float PARTICLE_SIZE = 0.25f;
 
     private final HitboxResolver hitboxResolver;
     private final Scheduler scheduler;
@@ -55,10 +57,12 @@ public class ShowHitboxesCommandExecutor {
         schedule.addTask(() -> this.drawNearbyEntityHitboxes(player, range));
         schedule.start();
 
-        Map<String, Object> values = Map.of("bg_range", range, "bg_seconds", seconds);
-        String message = translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath()).replace(values);
+        Replacement[] replacements = {
+                Replacement.parsed("range", String.valueOf(range)),
+                Replacement.parsed("seconds", String.valueOf(seconds))
+        };
 
-        player.sendMessage(message);
+        translator.translateMessage(TranslationKey.TOOL_HITBOX_SUCCESS.getPath(), replacements).ifPresent(message -> message.send(player));
     }
 
     private void drawNearbyEntityHitboxes(Player player, double range) {
@@ -114,7 +118,7 @@ public class ShowHitboxesCommandExecutor {
                 Location particleLocation = location.clone().add(point);
                 Color color = COMPONENT_TYPE_COLORS.get(component.type());
 
-                world.spawnParticle(Particle.DUST, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, 1.0f));
+                world.spawnParticle(Particle.DUST, particleLocation, 1, 0, 0,0, 0, new DustOptions(color, PARTICLE_SIZE));
             }
         }
     }

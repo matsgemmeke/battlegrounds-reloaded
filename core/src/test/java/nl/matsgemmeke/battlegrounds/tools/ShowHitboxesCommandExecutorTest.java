@@ -6,7 +6,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxComponentType;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
-import nl.matsgemmeke.battlegrounds.i18n.TextTemplate;
+import nl.matsgemmeke.battlegrounds.i18n.Message;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -27,6 +27,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.mockito.Mockito.*;
@@ -36,7 +37,6 @@ class ShowHitboxesCommandExecutorTest {
 
     private static final int SECONDS = 10;
     private static final double RANGE = 20.0;
-    private static final String TOOL_HITBOX_SUCCESS_MESSAGE = "Displaying hitboxes for %bg_seconds% seconds inside a range of %bg_range% blocks.";
 
     @Mock
     private HitboxResolver hitboxResolver;
@@ -62,6 +62,7 @@ class ShowHitboxesCommandExecutorTest {
         Hitbox hitbox = new Hitbox(baseLocation, relativeHitbox);
         Entity entity = mock(Entity.class);
         Schedule schedule = mock(Schedule.class);
+        Message toolHitboxSuccessMessage = mock(Message.class);
 
         World world = mock(World.class);
         when(world.getNearbyEntities(playerLocation, RANGE, RANGE, RANGE)).thenReturn(List.of(entity));
@@ -75,7 +76,7 @@ class ShowHitboxesCommandExecutorTest {
 
         when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
-        when(translator.translate(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(new TextTemplate(TOOL_HITBOX_SUCCESS_MESSAGE));
+        when(translator.translateMessage(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(Optional.of(toolHitboxSuccessMessage));
 
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);
@@ -86,6 +87,6 @@ class ShowHitboxesCommandExecutorTest {
         commandExecutor.execute(player, SECONDS, RANGE);
 
         verify(world, times(24)).spawnParticle(any(Particle.class), any(Location.class), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), any(DustOptions.class));
-        verify(player).sendMessage("Displaying hitboxes for 10 seconds inside a range of 20.0 blocks.");
+        verify(toolHitboxSuccessMessage).send(player);
     }
 }

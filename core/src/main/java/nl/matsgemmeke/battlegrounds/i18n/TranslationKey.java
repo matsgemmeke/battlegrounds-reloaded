@@ -74,7 +74,7 @@ public enum TranslationKey {
     RELOAD_SUCCESS("commands.reload-success"),
     SPAWN_POINT_ADDED("setup.spawn-point-added"),
     SPECIFY_ELEMENT_TYPE("setup.specify-element-type"),
-    TOOL_HITBOX_SUCCESS("admin.tool-hitbox-success"),
+    TOOL_HITBOX_SUCCESS("tools.hitbox-success"),
     TOOL_NOT_EXISTS("admin.tool-not-exists"),
     TOOLS_HELP_MENU_FOOTER("commands.tools-help-menu-footer"),
     TOOLS_HELP_MENU_HEADER("commands.tools-help-menu-header"),
