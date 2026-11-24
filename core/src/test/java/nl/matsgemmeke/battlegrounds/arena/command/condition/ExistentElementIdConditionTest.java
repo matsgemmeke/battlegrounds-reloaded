@@ -104,10 +104,10 @@ class ExistentElementIdConditionTest {
         verify(translator).translateLegacyText(eq(TranslationKey.ELEMENT_NOT_EXISTS.getPath()), replacementsCaptor.capture());
 
         assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
-            assertThat(replacement.key()).isEqualTo("bg-map-name");
+            assertThat(replacement.key()).isEqualTo("map-name");
             assertThat(replacement.value()).isEqualTo(MAP_NAME);
         }, replacement -> {
-            assertThat(replacement.key()).isEqualTo("bg-element-id");
+            assertThat(replacement.key()).isEqualTo("element-id");
             assertThat(replacement.value()).isEqualTo("5");
         });
     }

@@ -44,7 +44,7 @@ public class ExistentMapNameCondition implements ParameterCondition<String> {
         Arena arena = arenaRegistry.getArena(arenaId).orElse(null);
 
         if (arena == null) {
-            Replacement arenaIdReplacement = Replacement.parsed("bg-arena-id", String.valueOf(arenaId));
+            Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
             throw translator.translateLegacyText(TranslationKey.ARENA_NOT_EXISTS.getPath(), arenaIdReplacement)
                     .map(ConditionFailedException::new)

@@ -41,9 +41,9 @@ public class HelpMenu {
         String description = Optional.ofNullable(commandInfo.description()).orElse("");
 
         Replacement[] replacements = {
-                Replacement.unparsed("bg-description", description),
-                Replacement.unparsed("bg-usage", commandInfo.usage()),
-                Replacement.parsed("bg-suggestion", commandInfo.suggestion())
+                Replacement.parsed("description", description),
+                Replacement.parsed("suggestion", commandInfo.suggestion()),
+                Replacement.parsed("usage", commandInfo.usage())
         };
 
         translator.translateMessage(TranslationKey.HELP_MENU_COMMAND.getPath(), replacements).ifPresent(message -> message.send(audience));

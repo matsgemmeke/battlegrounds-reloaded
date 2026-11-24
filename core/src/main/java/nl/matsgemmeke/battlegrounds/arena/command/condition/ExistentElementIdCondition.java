@@ -53,8 +53,8 @@ public class ExistentElementIdCondition implements ParameterCondition<Integer> {
         }
 
         Replacement[] replacements = {
-                Replacement.parsed("bg-map-name", map.getName()),
-                Replacement.parsed("bg-element-id", String.valueOf(elementId))
+                Replacement.parsed("map-name", map.getName()),
+                Replacement.parsed("element-id", String.valueOf(elementId))
         };
 
         throw translator.translateLegacyText(TranslationKey.ELEMENT_NOT_EXISTS.getPath(), replacements)

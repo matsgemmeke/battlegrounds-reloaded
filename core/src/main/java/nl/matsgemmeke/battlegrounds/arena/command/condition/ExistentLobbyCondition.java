@@ -31,7 +31,7 @@ public class ExistentLobbyCondition implements ParameterCondition<Integer> {
             return;
         }
 
-        Replacement arenaIdReplacement = Replacement.parsed("bg-arena-id", String.valueOf(arenaId));
+        Replacement arenaIdReplacement = Replacement.parsed("arena-id", String.valueOf(arenaId));
 
         throw translator.translateLegacyText(TranslationKey.LOBBY_NOT_EXISTS.getPath(), arenaIdReplacement)
                 .map(ConditionFailedException::new)

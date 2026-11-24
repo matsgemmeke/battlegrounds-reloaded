@@ -96,25 +96,25 @@ class HelpMenuTest {
 
         assertThat(replacementsCaptor.getAllValues()).satisfiesExactly(replacements -> {
             assertThat(replacements).satisfiesExactly(replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-description");
+                assertThat(replacement.key()).isEqualTo("description");
                 assertThat(replacement.value()).isEqualTo(SUBCOMMAND_DESCRIPTION);
             }, replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-usage");
-                assertThat(replacement.value()).isEqualTo(SUBCOMMAND_USAGE);
-            }, replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-suggestion");
+                assertThat(replacement.key()).isEqualTo("suggestion");
                 assertThat(replacement.value()).isEqualTo(SUBCOMMAND_SUGGESTION);
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("usage");
+                assertThat(replacement.value()).isEqualTo(SUBCOMMAND_USAGE);
             });
         }, replacements -> {
             assertThat(replacements).satisfiesExactly(replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-description");
+                assertThat(replacement.key()).isEqualTo("description");
                 assertThat(replacement.value()).isBlank();
             }, replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-usage");
-                assertThat(replacement.value()).isEqualTo("/bg descriptionless");
-            }, replacement -> {
-                assertThat(replacement.key()).isEqualTo("bg-suggestion");
+                assertThat(replacement.key()).isEqualTo("suggestion");
                 assertThat(replacement.value()).isEqualTo("bg descriptionless");
+            }, replacement -> {
+                assertThat(replacement.key()).isEqualTo("usage");
+                assertThat(replacement.value()).isEqualTo("/bg descriptionless");
             });
         });
 

@@ -25,7 +25,7 @@ public class ExistentArenaIdCondition implements ParameterCondition<Integer> {
             return;
         }
 
-        Replacement arenaIdReplacement = Replacement.unparsed("bg-arena-id", String.valueOf(arenaId));
+        Replacement arenaIdReplacement = Replacement.unparsed("arena-id", String.valueOf(arenaId));
 
         throw translator.translateLegacyText(TranslationKey.ARENA_NOT_EXISTS.getPath(), arenaIdReplacement)
                 .map(ConditionFailedException::new)

@@ -7,6 +7,7 @@ import nl.matsgemmeke.battlegrounds.entity.hitbox.HitboxResolver;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.RelativeHitbox;
 import nl.matsgemmeke.battlegrounds.entity.hitbox.provider.HitboxProvider;
 import nl.matsgemmeke.battlegrounds.i18n.Message;
+import nl.matsgemmeke.battlegrounds.i18n.Replacement;
 import nl.matsgemmeke.battlegrounds.i18n.TranslationKey;
 import nl.matsgemmeke.battlegrounds.i18n.Translator;
 import nl.matsgemmeke.battlegrounds.scheduling.Schedule;
@@ -22,6 +23,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -30,6 +32,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -76,7 +79,7 @@ class ShowHitboxesCommandExecutorTest {
 
         when(hitboxResolver.resolveHitboxProvider(entity)).thenReturn(hitboxProvider);
         when(scheduler.createRepeatingSchedule(0L, 1L, 200L)).thenReturn(schedule);
-        when(translator.translateMessage(TranslationKey.TOOL_HITBOX_SUCCESS.getPath())).thenReturn(Optional.of(toolHitboxSuccessMessage));
+        when(translator.translateMessage(eq(TranslationKey.TOOL_HITBOX_SUCCESS.getPath()), any(Replacement[].class))).thenReturn(Optional.of(toolHitboxSuccessMessage));
 
         doAnswer(invocation -> {
             ScheduleTask task = invocation.getArgument(0);
@@ -85,6 +88,17 @@ class ShowHitboxesCommandExecutorTest {
         }).when(schedule).addTask(any(ScheduleTask.class));
 
         commandExecutor.execute(player, SECONDS, RANGE);
+
+        ArgumentCaptor<Replacement[]> replacementsCaptor = ArgumentCaptor.forClass(Replacement[].class);
+        verify(translator).translateMessage(eq(TranslationKey.TOOL_HITBOX_SUCCESS.getPath()), replacementsCaptor.capture());
+
+        assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
+            assertThat(replacement.key()).isEqualTo("range");
+            assertThat(replacement.value()).isEqualTo("20.0");
+        }, replacement -> {
+            assertThat(replacement.key()).isEqualTo("seconds");
+            assertThat(replacement.value()).isEqualTo("10");
+        });
 
         verify(world, times(24)).spawnParticle(any(Particle.class), any(Location.class), anyInt(), anyDouble(), anyDouble(), anyDouble(), anyDouble(), any(DustOptions.class));
         verify(toolHitboxSuccessMessage).send(player);

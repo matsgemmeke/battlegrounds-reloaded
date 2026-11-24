@@ -85,7 +85,7 @@ class ExistentLobbyConditionTest {
         verify(translator).translateLegacyText(eq(TranslationKey.LOBBY_NOT_EXISTS.getPath()), replacementsCaptor.capture());
 
         assertThat(replacementsCaptor.getValue()).satisfiesExactly(replacement -> {
-            assertThat(replacement.key()).isEqualTo("bg-arena-id");
+            assertThat(replacement.key()).isEqualTo("arena-id");
             assertThat(replacement.value()).isEqualTo("1");
         });
     }
